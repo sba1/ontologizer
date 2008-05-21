@@ -1,0 +1,75 @@
+<html>
+  <head>
+    <title>Overview</title>
+    <meta content="">
+  </head>
+ <body>  
+  <H1><FONT COLOR="BLUE">Overview</FONT></H1>
+  <ul>
+	<li><a href="#intro">Introduction</a></li>  
+	<li><a href="#GO">Gene Ontology</a></li> 
+	<li><a href="#annot">Annotations</a></li>   
+	<li><a href="#pop">Population Files and Statistical Testing</a></li>   
+	
+  </ul>
+ 
+ 
+  <H1><FONT COLOR="BLUE">Introduction</font></h1>
+  <a name="intro"></a>
+  <P>The Ontologizer is a stand-alone Java application for exploration, visualization,
+  and statistical analysis of biological data using Gene Ontology (GO). Users can analyze
+  large data sets such as those that typically arise from microarray experiments (among many other scenarios)
+  for annotations to GO terms in order to gain an overview of the biological characteristics of the data
+  they are analyzing. </p>
+  <p>This help section intends to give a brief overview of the most important topics involved in GO analysis. More
+  detailed information is available at the homepage of the <a href="http://www.geneontology.org">Gene Ontology</a>
+  consortium or the homepage of the <a href="http:///www.charite.de/ch/medgen/ontologizer">Ontologizer</a> project.
+  </p>
+ <H1><FONT COLOR="BLUE">Gene Ontology</FONT></H1>
+ <a name="GO"></a>
+<P>The Gene Ontology (GO) Consortium (http://www.geneontology.org) provides a structured,
+controlled vocabulary for describing the roles of genes and
+gene products in any organism. Three separate ontologies are
+provided: <B>Biological process</B> describes the biological
+objective to which the gene product contributes, <B>Molecular
+function</B> describes the biochemical activity of a gene
+product and <B>Cellular component</B> refers to the place in
+the cell in which a gene product exerts its activity (Ashburner
+et al., 2000). The terms in the GO database form a directed
+acyclic graph, in which terms are children of one or several
+more general terms. For instance, the term "DNA replication"
+(GO:0006260) is a child of the term "DNAreplication and cell
+cycle" (GO:0000067) and also of the term "S phase of mitotic
+cell cycle" (GO:0000084).</P>
+
+
+<H1><FONT COLOR="BLUE">Annotations</FONT></H1>
+ <a name="annot"></a>
+<P>The GO Terms do not themselves describe specific genes or gene
+products. Rather, collaborating databases generate gene association
+files consisting of links between genes or gene products
+and GO terms. Genes and gene products are annotated at the
+most specific level possible, but are considered to share the
+attributes of all the parent nodes (<I>true-path rule</i>). At
+present, association files have
+been made available for over 30 organisms, including human,
+mouse, yeast and <I>Caenorhabditis elegans</I>.</P>
+
+ <H1><FONT COLOR="BLUE">Population Files and Statistical Testing</FONT></H1>
+ <a name="pop"></a>
+<P>For many types of analysis, users may want merely a listing of annotation counts in their dataset(s). It 
+can also be useful to know if the number of genes annotated to any given term is more than expected by
+chance, i.e., if there is a statistically significant overrepresentation of annotations to GO terms in the dataset.</P>
+<P>To perform this type of analysis, one needs to have a population dataset against which the annotations in the study dataset
+can be compared. For instance, if one is looking at a set of genes that are overexpressed in a microarray experiment, the population
+set might be all genes on the chip. If one is looking at all human proteins that contain a given sequence motif, the population
+set might be the entire human proteome. The correct population set will depend on the biological question and is always a superset of the study sets.</P>
+<P>The Ontologizer 2.0 performs statistical analysis for overrepresentation using the standard
+procedure based on summing the tail of the hypergeometric distribution. We refer to this procedure as the <i>term-for-term</i> approach.
+The Ontologizer implements
+a new procedure, the <i>parent-child</i> method, that has several advantages with respect to the term-for-term approach. Several
+methods for multiple-testing correction are provided. A
+more detailed account of these procedures is available at the Ontologizer homepage.</P>
+
+</body>
+</html>
