@@ -1,0 +1,58 @@
+<html>
+  <head>
+    <title>Results</title>
+    <meta content="">
+    
+  </head>
+ 
+  <body>
+   <h1><FONT COLOR="BLUE">Results</FONT></h1>
+   <p>This page describes how to interpret the results of analysis with the Ontologizer.</p>
+
+  <ul>
+   <li><a href="#table">Main Table</a></li>
+   <li><a href="#graph">Graphic</a></li>
+   <li><a href="#select">Selections</a></li>
+  </ul>
+  
+  <H1><FONT COLOR="BLUE">Main Table</FONT></H1>
+ <a name="table"></a>
+ <p>Once the Ontologizer is finished with the calculations, a Table is shown with a summary of the
+ results for each GO term with at least one annotation in the study set. Each term is shown on
+ a separate row. The meaning of the columns is as follows:</p>
+ <ul>
+ <li><b>GO id</b>: The accession number of the GO term</li>
+ <li><b>Name</b>: The name of the GO term</li>
+ <li><b>NSP</b>: The namespace, or subontology: biological process (<B>B</b>), cellular component (<B>C</b>)
+ or molecular function (<B>F</b>)</li>
+ <li><b>P-value</b>: The nominal (uncorrected) P-value resulting from the observed overrepresentation of the GO term</li>
+ <li><b>Adj. P-Value</b>: The adjusted P-Value (adjusted by the MTC procedure chosen by the user)</li>
+ <li><b>Pop. Count</b>: The number of genes in the population set that are annotated to the GO term in question</li>
+ 
+ <li><b>Study Count</b>: The number of genes in the study set that are annotated to the GO term in question</li>
+ </ul>
+
+  <p>Note that the significant terms are marked in color, whereby the terms from biological process are shown in green,
+  terms from molecular function in yellow and terms from cellular component in magenta.</p>
+  <p>Marking any term in the table causes more detailed information about the term to be shown in the
+  lower half of the window, with the full term definition as well as a list of parent and child terms. Users can 
+  click on the entries of the parent or child terms to go to their entries.</p>
+  <P>The table can be saved as a text file that can be used as input to R or other programs.</p>
+  
+<H1><FONT COLOR="BLUE">Graphic</FONT></H1>
+<a name="graph"></a>
+<p>A click on the "graph" button (third from left on the upper right) will cause a Graph-Viz-generated graph to be
+displayed on the right hand side of the window. The significant terms as well as all ancestor terms of the significant
+terms are shown, and the significant terms are color-coded as in the table. Clicking on a node in the graph
+causes the corresxponding term to be selected in the table.</p>
+ <H1><FONT COLOR="BLUE">Selections</FONT></H1>
+<a name="select"></a> 
+<p>It is possible to restrict the list of terms displayed in the table to all descendents of a given term. For instance,
+users may want to view all terms from the subontology cellular_component. To do so, enter the name of the term
+in the text box "<b>Display all terms emanating from...</b>". Note that there is an underslash for the terms of the three 
+subontologies biological_process, cellular_component, and molecular_function.
+</p>
+<p>Users can select additional terms or can remove terms from the graphical display by checking or unchecking the
+select boxes in the table. To regenerate the graph, double-click on the "graph" button. </p>
+  </body>
+ </html>
