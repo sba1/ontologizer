@@ -310,7 +310,7 @@ public class EnrichedGOTermsResult extends AbstractGOTermsResult
 					title = " title=\"" +props.goTerm.getDefinition() + "\"";
 				else title = "";
 
-				out.printf("<tr" + title + ">");
+				out.println("<tr" + title + ">");
 				out.println("<td>");
 				out.printf("<a name=\"%s\" href=\"http://www.ebi.ac.uk/ego/DisplayGoTerm?id=%s\">", props.goTerm.getID().id, props.goTerm.getIDAsString());
 				out.println(props.goTerm.getIDAsString());
