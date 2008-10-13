@@ -58,16 +58,12 @@ public class IndependentUniformCalculation implements ICalculation
 		class SinglePValuesCalculation implements IPValueCalculation
 		{
 			public PopulationSet populationSet;
-
 			public StudySet observedStudySet;
-
-			//public AssociationContainer goAssociations;
 
 			public GOGraph graph;
 
 			public int currentStudySetSize()
 			{
-				// TODO Auto-generated method stub
 				return observedStudySet.getGeneCount();
 			}
 
