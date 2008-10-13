@@ -201,13 +201,13 @@ class AnalyseThread extends Thread
 							if (!result.isDisposed())
 							{
 								result.updateProgress(current);
-								result.appendLog("Parse OBO File ("+terms+" terms)");
+								result.appendLog("Parse OBO file ("+terms+" terms)");
 							}
 						}});
 				}
 			});
 			display.asyncExec(new ResultAppendLogRunnable(diag));
-			display.asyncExec(new ResultAppendLogRunnable("Building GO Graph"));
+			display.asyncExec(new ResultAppendLogRunnable("Building GO graph"));
 			TermContainer goTerms = new TermContainer(oboParser.getTermMap(), oboParser.getFormatVersion(), oboParser.getDate());
 			GOGraph goGraph = new GOGraph(goTerms);
 
@@ -235,7 +235,7 @@ class AnalyseThread extends Thread
 			/* Parse the GO association file containing GO annotations for genes or gene
 			 * products. Results are placed in association parser.
 			 */
-			display.asyncExec(new ResultAppendLogRunnable("Parse Associations"));
+			display.asyncExec(new ResultAppendLogRunnable("Parse associations"));
 			AssociationParser ap = new AssociationParser(associationsFile,goTerms,populationSet.getAllGeneNames(), new IAssociationParserProgress()
 			{
 				public void init(final int max)
