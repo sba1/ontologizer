@@ -3,6 +3,7 @@ package ontologizer;
 import java.util.*;
 import java.util.Map.Entry;
 
+import ontologizer.go.GOGraph;
 import ontologizer.go.Term;
 import ontologizer.go.TermContainer;
 import ontologizer.go.TermID;
@@ -35,13 +36,20 @@ public class GOTermCounter implements Iterable<TermID>
 	 * relationships.
 	 */
 	private TermContainer GOterms;
+	
+	/**
+	 * The graph of the ontology
+	 */
+	private GOGraph graph;
 
-	public GOTermCounter(TermContainer tc)
+	public GOTermCounter(GOGraph g)
 	{
 		processHashMap = new HashMap<TermID, AssociationCounter>();
 		functionHashMap = new HashMap<TermID, AssociationCounter>();
 		componentHashMap = new HashMap<TermID, AssociationCounter>();
-		GOterms = tc;
+		
+		graph = g;
+		GOterms = g.getGoTermContainer();
 	}
 
 	/**
@@ -89,6 +97,7 @@ public class GOTermCounter implements Iterable<TermID>
 				ParentTermID par = gt.next();
 				stack.push(par.termid);
 			}
+
 			/*
 			 * The stack now has all parents of gt Now go up the DAG to find
 			 * parents of parents and so on.

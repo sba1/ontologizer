@@ -66,8 +66,8 @@ public class TermForTermCalculation extends AbstractHypergeometricCalculation
 
 			private PValue [] calculatePValues(StudySet studySet)
 			{
-				GOTermCounter studyTermCounter = studySet.countGOTerms(graph.getGoTermContainer(),goAssociations);
-				GOTermCounter populationTermCounter = populationSet.countGOTerms(graph.getGoTermContainer(),goAssociations);
+				GOTermCounter studyTermCounter = studySet.countGOTerms(graph,goAssociations);
+				GOTermCounter populationTermCounter = populationSet.countGOTerms(graph,goAssociations);
 				int i = 0;
 
 				PValue p [] = new PValue[populationTermCounter.getTotalNumberOfAnnotatedTerms()];
