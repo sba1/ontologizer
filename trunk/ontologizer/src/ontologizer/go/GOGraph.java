@@ -1,6 +1,7 @@
 package ontologizer.go;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -357,7 +358,7 @@ public class GOGraph
 	 * 
 	 * @param vistingVertex
 	 */
-	public void walkToSource(Set<TermID> goTermIDSet,
+	public void walkToSource(Collection<TermID> goTermIDSet,
 			IVisitingGOVertex vistingVertex)
 	{
 		/*
@@ -370,7 +371,7 @@ public class GOGraph
 
 		HashSet<Term> visited = new HashSet<Term>();
 
-		/* Add al terms to the queue */
+		/* Add all terms to the queue */
 		LinkedList<Term> queue = new LinkedList<Term>();
 		for (TermID id : goTermIDSet)
 		{
@@ -411,7 +412,7 @@ public class GOGraph
 
 	/**
 	 * Starting at the vertices within the goTermIDSet walk to the sinks of the
-	 * DAG and call the method visiting of given object implementimg
+	 * DAG and call the method visiting of given object implementing
 	 * IVisitingGOVertex.
 	 * 
 	 * @param goTermID
@@ -430,7 +431,7 @@ public class GOGraph
 
 	/**
 	 * Starting at the vertices within the goTermIDSet walk to the sinks of the
-	 * DAG and call the method visiting of given object implementimg
+	 * DAG and call the method visiting of given object implementing
 	 * IVisitingGOVertex.
 	 * 
 	 * @param goTermIDSet
@@ -445,7 +446,7 @@ public class GOGraph
 		/* Implemented as breadth-first search */
 		HashSet<Term> visited = new HashSet<Term>();
 
-		/* Add al terms to the queue */
+		/* Add all terms to the queue */
 		LinkedList<Term> queue = new LinkedList<Term>();
 		for (TermID id : goTermIDSet)
 		{
@@ -571,6 +572,21 @@ public class GOGraph
 			walkToSource(term, visitor);
 		}
 		return nodeSet;
+	}
+	
+	/**
+	 * Returns the parents shared by both t1 and t2.
+	 * 
+	 * @param t1
+	 * @param t2
+	 * @return
+	 */
+	public Set<TermID> getSharedParents(TermID t1, TermID t2)
+	{
+		Set<TermID> p1 = getTermsOfInducedGraph(null,t1);
+		Set<TermID> p2 = getTermsOfInducedGraph(null,t2);
+		p1.retainAll(p2);
+		return p1;
 	}
 	
 	/**
