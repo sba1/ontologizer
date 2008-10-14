@@ -127,4 +127,9 @@ public class AssociationContainer
 	{
 		return gene2assocs.keySet();
 	}
+
+	public boolean containsGene(ByteString g1)
+	{
+		return get(g1) != null;
+	}
 }
