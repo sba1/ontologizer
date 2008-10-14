@@ -217,14 +217,14 @@ public class StudySet implements Iterable<ByteString>
 
 	/**
 	 * Some datasets contain gene entries which refer to the same gene
-	 * but differ in their name (i.e. synonymes). This method filters
+	 * but differ in their name (i.e. synonyms). This method filters
 	 * them out by using the association container.
 	 *
 	 * @param associationContainer
 	 */
 	public void filterOutDuplicateGenes(AssociationContainer associationContainer)
 	{
-		/* This will be filled with unigue genes */
+		/* This will be filled with unique genes */
 		HashMap<ByteString,String> uniqueGenes = new HashMap<ByteString,String>();
 
 		for (ByteString geneName : geneNames.keySet())
@@ -298,12 +298,12 @@ public class StudySet implements Iterable<ByteString>
 	 * @param goTerms
      * @param associationContainer
 	 */
-	public GOTermCounter countGOTerms(TermContainer goTerms, AssociationContainer associationContainer)
+	public GOTermCounter countGOTerms(GOGraph graph, AssociationContainer associationContainer)
 	{
 		/* Return cached enumerator if available */
 		if (goTermCounter != null) return goTermCounter;
 
-		goTermCounter =  new GOTermCounter(goTerms);
+		goTermCounter =  new GOTermCounter(graph);
 
 		/* Iterate over all gene names and add their annotations to the goTermCounter */
 		for (ByteString geneName : geneNames.keySet())

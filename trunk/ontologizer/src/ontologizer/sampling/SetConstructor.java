@@ -263,7 +263,7 @@ public class SetConstructor
 
 			if (wantSubTermMatrix)
 			{
-				GOTermCounter populationTermCounter = completePop.countGOTerms(graph.getGoTermContainer(),assocs);
+				GOTermCounter populationTermCounter = completePop.countGOTerms(graph,assocs);
 				PrintWriter matrixOut = new PrintWriter(new File(outDir,"subtermMatrix.txt"));
 
 				matrixOut.print("TermID");
