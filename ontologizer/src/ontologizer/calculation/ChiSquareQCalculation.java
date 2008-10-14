@@ -52,8 +52,8 @@ public class ChiSquareQCalculation implements ICalculation
 		studySetResult.setCalculationName(this.getName());
 		studySetResult.setCorrectionName(testCorrection.getName());
 
-		GOTermCounter studyTermCounter = studySet.countGOTerms(graph.getGoTermContainer(),goAssociations);
-		GOTermCounter populationTermCounter = populationSet.countGOTerms(graph.getGoTermContainer(),goAssociations);
+		GOTermCounter studyTermCounter = studySet.countGOTerms(graph,goAssociations);
+		GOTermCounter populationTermCounter = populationSet.countGOTerms(graph,goAssociations);
 		ChiSquareQGOTermProperties props[] = new ChiSquareQGOTermProperties[populationTermCounter.getTotalNumberOfAnnotatedTerms()];
 
 		try
@@ -108,7 +108,7 @@ public class ChiSquareQCalculation implements ICalculation
 				System.out.println((b+1) + " of " + NUMBER_OF_PERMUTATIONS);
 
 				StudySet randomStudySet = populationSet.generateRandomStudySet(studySet.getGeneCount());
-				GOTermCounter randomStudyTermCounter = randomStudySet.countGOTerms(graph.getGoTermContainer(),goAssociations);
+				GOTermCounter randomStudyTermCounter = randomStudySet.countGOTerms(graph,goAssociations);
 
 				for (TermID term : populationTermCounter)
 				{
