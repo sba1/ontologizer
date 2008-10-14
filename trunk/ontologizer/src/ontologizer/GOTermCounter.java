@@ -1,13 +1,12 @@
 package ontologizer;
 
 import java.util.*;
-import java.util.Map.Entry;
+import java.util.logging.Logger;
 
 import ontologizer.go.GOGraph;
 import ontologizer.go.Term;
-import ontologizer.go.TermContainer;
 import ontologizer.go.TermID;
-import ontologizer.go.ParentTermID;
+import ontologizer.go.GOGraph.IVisitingGOVertex;
 
 /**
  * This class encapsulates the counting of explicit and implicit annotations for
@@ -19,6 +18,8 @@ import ontologizer.go.ParentTermID;
 
 public class GOTermCounter implements Iterable<TermID>
 {
+	private static Logger logger = Logger.getLogger(GOTermCounter.class.getCanonicalName());
+
 	/**
 	 * Explicit and total annotations to a given term in the biological process
 	 * namespace; key: a GO:id, value: an Association Counter object.
@@ -32,12 +33,6 @@ public class GOTermCounter implements Iterable<TermID>
 	private HashMap<TermID, AssociationCounter> componentHashMap;
 
 	/**
-	 * This object holds information about all terms and their ancestor
-	 * relationships.
-	 */
-	private TermContainer GOterms;
-
-	/**
 	 * The graph of the ontology
 	 */
 	private GOGraph graph;
@@ -49,7 +44,6 @@ public class GOTermCounter implements Iterable<TermID>
 		componentHashMap = new HashMap<TermID, AssociationCounter>();
 
 		graph = g;
-		GOterms = g.getGoTermContainer();
 	}
 
 	/**
@@ -59,16 +53,9 @@ public class GOTermCounter implements Iterable<TermID>
 	 */
 	public void add(ArrayList<TermID> ids)
 	{
-		if (ids == null)
-		{
-			System.err.println("Error: Attempt to use empty "
-					+ " set of annotations at GOTermCounter.add");
-			System.exit(1);
-		}
-
 		Iterator<TermID> it;
-		/** First add direct counts for ids */
 
+		/* First, add direct counts for ids */
 		it = ids.iterator();
 		while (it.hasNext())
 		{
@@ -76,52 +63,15 @@ public class GOTermCounter implements Iterable<TermID>
 			addDirect(id);
 		}
 
-		Stack<TermID> stack = new Stack<TermID>();
-		HashSet<TermID> allTerms = new HashSet<TermID>();
-
-		it = ids.iterator(); // reset
-		while (it.hasNext())
+		/* Second, add the indirect counts for ids */
+		final HashSet<TermID> allTerms = new HashSet<TermID>();
+		graph.walkToSource(ids, new IVisitingGOVertex()
 		{
-			TermID goid = it.next();
-			allTerms.add(goid);
-			Term gt = GOterms.get(goid);
-			if (gt == null)
+			public void visiting(TermID goTermID)
 			{
-				System.err.println("Error: Could not retrieve " + " info for "
-						+ goid + " at GOTermCounter.add");
-				System.exit(1);
+				allTerms.add(goTermID);
 			}
-			gt.setParentIterator();
-			while (gt.hasNext())
-			{
-				ParentTermID par = gt.next();
-				stack.push(par.termid);
-			}
-
-			/*
-			 * The stack now has all parents of gt Now go up the DAG to find
-			 * parents of parents and so on.
-			 */
-			while (!stack.empty())
-			{
-				TermID acc = stack.pop();
-				allTerms.add(acc);
-				Term gt2 = GOterms.get(acc);
-				if (gt2 == null)
-				{
-					System.err.println("[Ontologizer -- Noncritical error]: "
-							+ "Could not find " + acc);
-				} else
-				{
-					gt2.setParentIterator();
-					while (gt2.hasNext())
-					{
-						ParentTermID par = gt2.next();
-						stack.push(par.termid);
-					}
-				}
-			} // while (! stack.empty() )
-		} // while (it.hashNext() )
+		});
 
 		/*
 		 * When we get here, allTerms has a list of all terms that are directly
@@ -136,13 +86,12 @@ public class GOTermCounter implements Iterable<TermID>
 			TermID id = it2.next();
 			addTotal(id);
 		}
-
 	}
 
 	/** Add direct annotation */
 	private void addDirect(TermID id)
 	{
-		Term gt = GOterms.get(id);
+		Term gt = graph.getGOTerm(id);
 		AssociationCounter ac = null;
 		if (gt == null)
 		{
@@ -196,7 +145,7 @@ public class GOTermCounter implements Iterable<TermID>
 	/** Add to total (direct + indirect) annotation */
 	private void addTotal(TermID id)
 	{
-		Term gt = GOterms.get(id);
+		Term gt = graph.getGOTerm(id);
 		AssociationCounter ac = null;
 		if (gt == null)
 		{
@@ -304,37 +253,6 @@ public class GOTermCounter implements Iterable<TermID>
 		return sum;
 
 	}
-
-	private void appendHashMap(StringBuilder str, HashMap<String, AssociationCounter> map)
-	{
-		Iterator<Entry<String,AssociationCounter>> iter = map.entrySet().iterator();
-		while (iter.hasNext())
-		{
-			Entry<String,AssociationCounter> entry = iter.next();
-			str.append(entry.getKey());
-			str.append(" ");
-			str.append(entry.getValue().getCount());
-			str.append("\n");
-		}
-	}
-
-/*
-	public HashMap<String, AssociationCounter> getComponentHashMap()
-	{
-		return componentHashMap;
-	}
-
-
-	public HashMap<String, AssociationCounter> getFunctionHashMap()
-	{
-		return functionHashMap;
-	}
-
-
-	public HashMap<String, AssociationCounter> getProcessHashMap()
-	{
-		return processHashMap;
-	}*/
 
 	public Iterator<TermID> iterator()
 	{
