@@ -88,15 +88,6 @@ public class ResultWindow extends ApplicationWindow
 		shell.open();
 	}
 
-	/**
-	 * Dispose the window.
-	 */
-	public void dispose()
-	{
-		if (!shell.isDisposed())
-			shell.dispose();
-	}
-
 	public void addResults(AbstractGOTermsResult result)
 	{
 		boolean added = false;
