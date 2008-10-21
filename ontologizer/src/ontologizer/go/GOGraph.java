@@ -675,5 +675,30 @@ public class GOGraph
 
 		return levels;
 	}
+
+	/** Returns the number of terms in this ontology */
+	public int numberOfTerms()
+	{
+		/* Don't forget the artificial term */
+		return goTermContainer.termCount() + 1; 
+	}
+
+	/**
+	 * Returns the highest term id used in this ontology.
+	 * 
+	 * @return
+	 */
+	public int maximumTermID()
+	{
+		int id=0;
+
+		for (Term t : goTermContainer)
+		{
+			if (t.getID().id > id)
+				id = t.getID().id;
+		}
+
+		return id;
+	}
 	
 }
