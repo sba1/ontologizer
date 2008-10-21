@@ -18,7 +18,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Handler;
-import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
@@ -39,10 +38,13 @@ import ontologizer.calculation.AbstractGOTermsResult;
 import ontologizer.calculation.CalculationRegistry;
 import ontologizer.calculation.EnrichedGOTermsResult;
 import ontologizer.calculation.ICalculation;
+import ontologizer.calculation.SemanticCalculation;
+import ontologizer.calculation.SemanticResult;
 import ontologizer.go.GOGraph;
 import ontologizer.go.IOBOParserProgress;
 import ontologizer.go.OBOParser;
 import ontologizer.go.TermContainer;
+import ontologizer.gui.swt.MainWindow.Set;
 import ontologizer.gui.swt.images.Images;
 import ontologizer.gui.swt.support.SWTUtil;
 import ontologizer.statistics.AbstractResamplingTestCorrection;
@@ -50,7 +52,9 @@ import ontologizer.statistics.AbstractTestCorrection;
 import ontologizer.statistics.IResampling;
 import ontologizer.statistics.IResamplingProgress;
 import ontologizer.statistics.TestCorrectionRegistry;
+import ontologizer.worksets.WorkSet;
 import ontologizer.worksets.WorkSetList;
+import ontologizer.worksets.WorkSetLoadThread;
 
 import org.eclipse.swt.graphics.DeviceData;
 import org.eclipse.swt.widgets.Display;
@@ -81,7 +85,7 @@ class AnalyseThread extends Thread
 
 	public AnalyseThread(Display display, MainWindow main, ResultWindow result, String definitionFile, String associationsFile, String mappingFile, PopulationSet populationSet, StudySetList studySetList, String methodName, String mtcName, int noP)
 	{
-		super(Ontologizer.threadGroup,"Analyze Thread");
+		super(Ontologizer.threadGroup, "Analyze Thread");
 
 		this.display = display;
 		this.main = main;
@@ -661,53 +665,106 @@ public class Ontologizer
 		/* When the analyze button is pressed */
 		main.addAnalyseAction(new ISimpleAction(){public void act()
 		{
-			Iterator<MainWindow.Set> iter = main.getSetEntriesOfCurrentPopulationIterator();
-			if (iter != null)
+			List<MainWindow.Set> list = main.getSetEntriesOfCurrentPopulation();
+			if (list.size() > 1)
 			{
-				if (iter.hasNext())
+				PopulationSet populationSet = getPopulationSetFromList(list);
+				StudySetList studySetList = getStudySetListFromList(list);
+	
+				String defintionFile = main.getDefinitionFileString();
+				String associationsFile = main.getAssociationsFileString();
+				String mappingFile = main.getMappingFileString();
+				String methodName = main.getSelectedMethodName();
+				String mtcName = main.getSelectedMTCName();
+
+				if (mappingFile != null && mappingFile.length() == 0)
+					mappingFile = null;
+
+				Display display = main.getShell().getDisplay();
+				
+				final ResultWindow result = new ResultWindow(display);
+				result.setBusyPointer(true);
+				resultWindowList.add(result);
+
+				/* Now let's start the task...TODO: Refactorize! */
+				final Thread newThread = new AnalyseThread(display,main,
+						result,defintionFile,associationsFile,mappingFile,
+						populationSet,studySetList,methodName,mtcName,
+						GlobalPreferences.getNumberOfPermutations());
+				result.addCloseAction(new ISimpleAction(){public void act()
 				{
-					StudySetList studySetList = new StudySetList("guiList");
-
-					MainWindow.Set pSet = iter.next();
-					PopulationSet populationSet = new PopulationSet(pSet.name,pSet.entries);
-					
-					while (iter.hasNext())
-					{
-						MainWindow.Set sSet = iter.next();
-						StudySet studySet = new StudySet(sSet.name, sSet.entries);
-						studySetList.addStudySet(studySet);
-					}
-	
-					String defintionFile = main.getDefinitionFileString();
-					String associationsFile = main.getAssociationsFileString();
-					String mappingFile = main.getMappingFileString();
-					String methodName = main.getSelectedMethodName();
-					String mtcName = main.getSelectedMTCName();
-
-					if (mappingFile != null && mappingFile.length() == 0)
-						mappingFile = null;
-
-					Display display = main.getShell().getDisplay();
-					
-					final ResultWindow result = new ResultWindow(display);
-					result.setBusyPointer(true);
-					resultWindowList.add(result);
-	
-					/* Now let's start the task...TODO: Refactorize! */
-					final Thread newThread = new AnalyseThread(display,main,
-							result,defintionFile,associationsFile,mappingFile,
-							populationSet,studySetList,methodName,mtcName,
-							GlobalPreferences.getNumberOfPermutations());
-					result.addCloseAction(new ISimpleAction(){public void act()
-					{
-						newThread.interrupt();
-						resultWindowList.remove(result);
-						result.dispose();
-					}});
-					newThread.start();
-				}
+					newThread.interrupt();
+					resultWindowList.remove(result);
+					result.dispose();
+				}});
+				newThread.start();
 			}
 		}});
+		
+		/* When the "Similarity" button is pressed */
+		main.addSimilarityAction(new ISimpleAction()
+		{
+			public void act()
+			{
+				List<MainWindow.Set> list = main.getSetEntriesOfCurrentPopulation();
+				if (list.size() > 1)
+				{
+					final StudySetList studySetList = getStudySetListFromList(list);
+
+					final WorkSet workSet = main.getSelectedWorkingSet();
+					WorkSetLoadThread.obtainDatafiles(workSet, new Runnable()
+					{
+						private ResultWindow rw;
+						private Display display;
+
+						public void run()
+						{
+							display = main.getShell().getDisplay(); 
+
+							GOGraph graph = WorkSetLoadThread.getGraph(workSet.getOboPath());
+							AssociationContainer assoc = WorkSetLoadThread.getAssociations(workSet.getAssociationPath());
+
+							display.asyncExec(new Runnable()
+							{
+								public void run()
+								{
+									rw = new ResultWindow(display);
+									rw.open();
+								}
+							});
+
+							SemanticCalculation s = new SemanticCalculation(graph,assoc);
+
+							for (StudySet studySet : studySetList)
+							{
+								final SemanticResult sr = s.calculate(studySet);
+								double [][] mat = sr.mat;
+								
+								for (int i=0;i<mat.length;i++)
+								{
+									for (int j=0;j<mat.length;j++)
+									{
+										System.out.print(mat[i][j] + "  ");
+									}
+									System.out.println();
+								}
+
+								display.asyncExec(new Runnable()
+								{
+									public void run()
+									{
+										rw.addResults(sr);
+									}
+								});
+
+							}
+
+							WorkSetLoadThread.releaseDatafiles(workSet);
+						}
+					});
+				}
+			}
+		});
 		
 		/* On a new project event */
 		main.addNewProjectAction(new ISimpleAction()
@@ -891,6 +948,30 @@ public class Ontologizer
 		}
 
 		display.dispose();
+	}
+
+	private static PopulationSet getPopulationSetFromList(List<Set> list)
+	{
+		if (list == null) return null;
+		return new PopulationSet(list.get(0).name,list.get(0).entries);
+	}
+	
+	private static StudySetList getStudySetListFromList(List<Set> list)
+	{
+		Iterator<MainWindow.Set> iter = list.iterator();
+
+		/* Skip population */
+		iter.next();
+
+		StudySetList studySetList = new StudySetList("guiList");
+
+		while (iter.hasNext())
+		{
+			MainWindow.Set sSet = iter.next();
+			StudySet studySet = new StudySet(sSet.name, sSet.entries);
+			studySetList.addStudySet(studySet);
+		}
+		return studySetList;
 	}
 
 	private static void copyFileToTemp(String file, String tempDir)
