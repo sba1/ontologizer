@@ -5,6 +5,8 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
 	<classpathentry kind="lib" path="colt.jar"/>
 	<classpathentry kind="lib" path="commons-cli-1.1.jar"/>
+	<classpathentry kind="lib" path="nattable-core-1.6.2.jar"/>
+	<classpathentry kind="lib" path="log4j-1.2.15.jar"/>
 	<classpathentry kind="var" path="SWT_LIB" sourcepath="/SWT_SRC"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
