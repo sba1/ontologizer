@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Enumeration;
 import java.util.InvalidPropertiesFormatException;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -32,6 +31,7 @@ import java.util.zip.ZipOutputStream;
 import ontologizer.calculation.CalculationRegistry;
 import ontologizer.gui.swt.support.SWTUtil;
 import ontologizer.statistics.TestCorrectionRegistry;
+import ontologizer.worksets.WorkSet;
 import ontologizer.worksets.WorkSetList;
 
 import org.eclipse.swt.SWT;
@@ -90,7 +90,7 @@ class TreeItemData
 /**
  * Ontologizer's main window.
  * 
- * TODO: Seperate out the data.
+ * TODO: Separate out the data.
  * 
  * @author Sebastian Bauer
  * 
@@ -130,6 +130,7 @@ public class MainWindow extends ApplicationWindow
 	private ToolItem removeToolItem = null;
 	private ToolItem analyzeToolItem = null;
 	private ToolItem newProjectToolItem = null;
+	private ToolItem similarityToolItem = null;
 
 	/* Menu Items */
 	private MenuItem preferencesMenuItem;
@@ -663,12 +664,12 @@ public class MainWindow extends ApplicationWindow
 	/**
 	 * Get all the set entries of the current selected population.
 	 * This includes the population which is always the first
-	 * entry accessable via the iterator. If no population was given
+	 * entry accessible via the iterator. If no population was given
 	 * the set is empty.
 	 * 
 	 * @return might return null if no set is selected
 	 */
-	public Iterator<Set> getSetEntriesOfCurrentPopulationIterator()
+	public List<Set> getSetEntriesOfCurrentPopulation()
 	{
 		/* Store current genes */
 		storeGenes();
@@ -692,6 +693,7 @@ public class MainWindow extends ApplicationWindow
 				list.add(set);
 			} else
 			{
+				/* Empty population */
 				Set set = new Set();
 				set.name = projectData.projectDirectory.getName();
 				set.entries = new String[0];
@@ -712,7 +714,7 @@ public class MainWindow extends ApplicationWindow
 				list.add(set);
 			}
 
-			return list.iterator();
+			return list;
 		}
 		return null;
 	}
@@ -753,7 +755,7 @@ public class MainWindow extends ApplicationWindow
 	}
 
 	/**
-	 * Add a new action which is executed when the analyse button
+	 * Add a new action which is executed when the "Analyze" button
 	 * is pressed.
 	 * 
 	 * @param ba
@@ -763,6 +765,24 @@ public class MainWindow extends ApplicationWindow
 		analyzeToolItem.addSelectionListener(new org.eclipse.swt.events.SelectionAdapter()
 		{
 			public void widgetSelected(org.eclipse.swt.events.SelectionEvent e)
+			{
+				ba.act();
+			}
+		});
+	}
+	
+	/**
+	 * Add a new action which is executed when the "Similarity" button
+	 * is pressed.
+	 *  
+	 * @param ba
+	 */
+	public void addSimilarityAction(final ISimpleAction ba)
+	{
+		similarityToolItem.addSelectionListener(new SelectionAdapter()
+		{
+			@Override
+			public void widgetSelected(SelectionEvent e)
 			{
 				ba.act();
 			}
@@ -1311,6 +1331,10 @@ public class MainWindow extends ApplicationWindow
 		});
 
 		new ToolItem(toolbar,SWT.SEPARATOR);
+		similarityToolItem = new ToolItem(toolbar,0);
+		similarityToolItem.setText("Similarity");
+		
+		new ToolItem(toolbar,SWT.SEPARATOR);
 		
 		analyzeToolItem = new ToolItem(toolbar,0);
 		analyzeToolItem.setText("Analyze");
@@ -1634,5 +1658,15 @@ public class MainWindow extends ApplicationWindow
 
 			updateGenes();
 		}
+	}
+	
+	/**
+	 * Returns the selected working set.
+	 * 
+	 * @return
+	 */
+	public WorkSet getSelectedWorkingSet()
+	{
+		return settingsComposite.getSelectedWorkset();
 	}
 }
