@@ -8,12 +8,14 @@ package ontologizer.gui.swt;
 
 import ontologizer.calculation.AbstractGOTermsResult;
 import ontologizer.calculation.EnrichedGOTermsResult;
+import ontologizer.calculation.SemanticResult;
 import ontologizer.calculation.svd.SVDResult;
 import ontologizer.gui.swt.images.Images;
 import ontologizer.gui.swt.result.AbstractResultComposite;
 import ontologizer.gui.swt.result.EnrichedGOTermsComposite;
 import ontologizer.gui.swt.result.PValuesSVDGOTermsComposite;
 import ontologizer.gui.swt.result.SVDGOTermsComposite;
+import ontologizer.gui.swt.result.SemanticSimilarityComposite;
 import ontologizer.gui.swt.support.SWTUtil;
 
 import org.eclipse.swt.SWT;
@@ -30,6 +32,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Menu;
@@ -86,6 +89,28 @@ public class ResultWindow extends ApplicationWindow
 		tableOutputDialog = new FileDialog(shell, SWT.SAVE);
 
 		shell.open();
+	}
+
+	public void addResults(SemanticResult sr)
+	{
+		boolean added = false;
+
+		cTabFolder.setRedraw(false);
+
+		CTabItem cTabItem = new CTabItem(cTabFolder, SWT.NONE);
+		cTabItem.setText(sr.name);
+		SemanticSimilarityComposite ssc = new SemanticSimilarityComposite(cTabFolder,0);
+		ssc.setResult(sr);
+		cTabItem.setControl(ssc);
+		added = true;
+
+		if (added && cTabFolder.getSelectionIndex() == -1)
+		{
+			cTabFolder.setSelection(0);
+			updateWindowTitle();
+		}
+		cTabFolder.setRedraw(true);
+
 	}
 
 	public void addResults(AbstractGOTermsResult result)
@@ -161,7 +186,10 @@ public class ResultWindow extends ApplicationWindow
 	private AbstractResultComposite getSelectedResultComposite()
 	{
 		if (cTabFolder.getSelection() == null) return null;
-		return (AbstractResultComposite)(cTabFolder.getSelection().getControl());
+		Control c = cTabFolder.getSelection().getControl();
+
+		if (c instanceof AbstractResultComposite) return (AbstractResultComposite)c;
+		return null;
 	}
 
 	/**
@@ -183,7 +211,10 @@ public class ResultWindow extends ApplicationWindow
 	private void updateWindowTitle()
 	{
 		AbstractResultComposite comp = getSelectedResultComposite();
-		shell.setText("Ontologizer - Results for " + comp.getTitle());
+		if (comp != null)
+			shell.setText("Ontologizer - Results for " + comp.getTitle());
+		else
+			shell.setText("Ontologizer - Results");
 	}
 
 	/**
