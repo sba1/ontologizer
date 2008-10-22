@@ -3,46 +3,10 @@ package ontologizer.gui.swt.result;
 import ontologizer.gui.swt.support.GraphCanvas;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
-
-abstract class FolderComposite extends Composite
-{
-	private CTabFolder graphFolder;
-	private CTabItem tabItem;
-	private Composite contents;
-	
-	public FolderComposite(Composite parent, int style)
-	{
-		super(parent, style);
-		setLayout(new FillLayout());
-
-		graphFolder = new CTabFolder(this,SWT.BORDER);
-		graphFolder.setMaximizeVisible(true);
-		graphFolder.setSingle(true);
-		graphFolder.setSelectionBackground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
-		tabItem = new CTabItem(graphFolder,0);
-
-		contents = createContents(graphFolder);
-		tabItem.setControl(contents);
-		graphFolder.setSelection(0);
-	}
-	
-	public void setText(String text)
-	{
-		tabItem.setText(text);
-	}
-	
-	protected abstract Composite createContents(Composite parent);
-	
-	public Composite getContents()
-	{
-		return contents;
-	}
-}
 
 /**
  * Implements the logic of the result controls.
@@ -57,6 +21,9 @@ public class ResultControls extends Composite
 	private FolderComposite tableComposite;
 	private FolderComposite graphComposite;
 	private FolderComposite browserComposite;
+
+	private GraphCanvas graphCanvas;
+	private Browser browser;
 
 	public ResultControls(Composite parent, int style)
 	{
@@ -85,6 +52,8 @@ public class ResultControls extends Composite
 			protected Composite createContents(Composite parent)
 			{
 				Composite comp = new Composite(parent,0);
+				comp.setLayout(new FillLayout());
+				graphCanvas = new GraphCanvas(comp,0);
 				return comp;
 			}
 		};
@@ -96,6 +65,8 @@ public class ResultControls extends Composite
 			protected Composite createContents(Composite parent)
 			{
 				Composite comp = new Composite(parent,0);
+				comp.setLayout(new FillLayout());
+				browser = new Browser(comp, SWT.BORDER);
 				return comp;
 			}
 		};
