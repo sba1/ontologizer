@@ -1,10 +1,11 @@
 package ontologizer.gui.swt.result;
 
 import net.sourceforge.nattable.NatTable;
+import ontologizer.ByteString;
 import ontologizer.calculation.SemanticResult;
-import ontologizer.gui.swt.support.SWTUtil;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseMoveListener;
@@ -12,7 +13,6 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
@@ -24,12 +24,16 @@ import org.eclipse.swt.widgets.Text;
  */
 public class SemanticSimilarityComposite extends Composite
 {
+	private SemanticResult result;
+
 	private SemanticSimilarityNatModel semanticSimilarityNatModel;
 	private NatTable natTable;
+	private Point natTableLastSelected = new Point(-1,-1);
 
 	private Text selectedSimilarityText;
 
 	private ResultControls resultControls;
+	private Browser browser;
 
 	public SemanticSimilarityComposite(Composite parent, int style)
 	{
@@ -38,6 +42,7 @@ public class SemanticSimilarityComposite extends Composite
 		setLayout(new FillLayout());
 
 		resultControls = new ResultControls(this,0);
+		browser = resultControls.getBrowser();
 		Composite tableComposite = resultControls.getTableComposite();
 		tableComposite.setLayout(new GridLayout());
 
@@ -72,7 +77,22 @@ public class SemanticSimilarityComposite extends Composite
 
 	public void updateSelectedText()
 	{
-		selectedSimilarityText.setText(Double.toString(getLastSelectedValue()));
+		Point newNatTableLastSelected = natTable.getSelectionSupport().getLastSelectedCell();
+		if (natTableLastSelected.x != newNatTableLastSelected.x ||
+			natTableLastSelected.y != newNatTableLastSelected.y)
+		{
+			selectedSimilarityText.setText(Double.toString(getLastSelectedValue()));
+
+			ByteString gene1 = result.names[newNatTableLastSelected.x];
+			ByteString gene2 = result.names[newNatTableLastSelected.y];
+
+			updateBrowser(gene1,gene2);
+			newNatTableLastSelected.x = newNatTableLastSelected.x;
+			newNatTableLastSelected.y = newNatTableLastSelected.y;
+		}
+
+//		natTableLastSelected = newNatTableLastSelected;
+//		selectedSimilarityText.setText(Double.toString(getLastSelectedValue()));
 	}
 
 	public double getLastSelectedValue()
@@ -88,8 +108,25 @@ public class SemanticSimilarityComposite extends Composite
 		return semanticSimilarityNatModel.getValue(x,y);
 	}
 
+	public void updateBrowser(ByteString g1, ByteString g2)
+	{
+		StringBuilder str = new StringBuilder();
+		str.append("<html>");
+		str.append("<body>");
+		str.append("<h1>");
+		str.append(g1.toString());
+		str.append(" ");
+		str.append(g2.toString());
+		str.append("</h1>");
+		str.append("</body>");
+		str.append("<html/>");
+
+		browser.setText(str.toString());
+	}
+
 	public void setResult(SemanticResult result)
 	{
+		this.result = result;
 		semanticSimilarityNatModel.setValues(result.mat);
 		semanticSimilarityNatModel.setNames(result.names);
 		natTable.updateResize();
