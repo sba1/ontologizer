@@ -1,45 +1,48 @@
-package ontologizer.gui.swt.result;
+package ontologizer.gui.swt.support;
 
 import java.io.BufferedInputStream;
 import java.io.File;
-import java.util.HashSet;
-
-import ontologizer.GODOTWriter;
-import ontologizer.IDotNodeAttributesProvider;
-import ontologizer.calculation.AbstractGOTermsResult;
-import ontologizer.go.GOGraph;
-import ontologizer.go.Term;
-import ontologizer.go.TermID;
-import ontologizer.gui.swt.support.IGraphGenerationFinished;
 
 import org.eclipse.swt.widgets.Display;
 
 /**
  * Generates the graph by executing DOT. When finished
- * the finished method of the specified constructor argument
- * is executed in the context of the GUI thread.
+ * the layoutFinished method of the specified constructor
+ * argument is executed in the context of the GUI thread.
  *
  * @author Sebastian Bauer
  */
-public class GraphGenerationThread extends Thread
+public class NewGraphGenerationThread extends Thread
 {
-	public GOGraph go;
-	public Term emanatingTerm;
-	public HashSet<TermID> leafTerms = new HashSet<TermID>();
-	public AbstractGOTermsResult result;
-	public Display display;
-	public String gfxOutFilename;
-	public String dotPath;
+//	public GOGraph go;
+//	public Term emanatingTerm;
+//	public HashSet<TermID> leafTerms = new HashSet<TermID>();
+//	public AbstractGOTermsResult result;
+	private Display display;
+	private String dotCMDPath;
+	private String gfxOutFilename;
 
-	private IGraphGenerationFinished finished;
-	private IDotNodeAttributesProvider provider;
+	private IGraphGenerationSupport support;
+//	private IDotNodeAttributesProvider provider;
 
-	public GraphGenerationThread(IGraphGenerationFinished finished, IDotNodeAttributesProvider provider)
+	public NewGraphGenerationThread(Display display, String dotCMDPath, IGraphGenerationSupport support)
 	{
 		setPriority(Thread.MIN_PRIORITY);
 
-		this.finished = finished;
-		this.provider = provider;
+		this.display = display;
+		this.support = support;
+		this.dotCMDPath = dotCMDPath;
+	}
+
+	/**
+	 * Sets the name of the graphical file which should be generated.
+	 *
+	 * @param gfxOutFilename defines the name of the graphics which should be generated.
+	 * Specifying null leads to a layout of the graph.
+	 */
+	public void setGfxOutFilename(String gfxOutFilename)
+	{
+		this.gfxOutFilename = gfxOutFilename;
 	}
 
 	public void run()
@@ -57,7 +60,8 @@ public class GraphGenerationThread extends Thread
 			if (gfxOutFilename != null) gfxFile = new File(gfxOutFilename);
 			else gfxFile = null;
 
-			if (result != null)
+			support.writeDOT(dotTmpFile);
+/*			if (result != null)
 			{
 				result.writeDOT(go, dotTmpFile,
 					emanatingTerm != null ? emanatingTerm.getID() : null,
@@ -68,7 +72,7 @@ public class GraphGenerationThread extends Thread
 					emanatingTerm != null ? emanatingTerm.getID() : null,
 					leafTerms, provider);
 			}
-
+*/
 			String [] args;
 			if (gfxFile != null)
 			{
@@ -82,13 +86,13 @@ public class GraphGenerationThread extends Thread
 					gfxOption = "-Tps2";
 
 				args = new String[]{
-						dotPath, dotTmpFile.getCanonicalPath(),
+						dotCMDPath, dotTmpFile.getCanonicalPath(),
 						gfxOption, "-o", gfxFile.getCanonicalPath(),
 						"-Tdot", "-o", layoutedDotTmpFile.getCanonicalPath()};
 			} else
 			{
 				args = new String[]{
-						dotPath, dotTmpFile.getCanonicalPath(),
+						dotCMDPath, dotTmpFile.getCanonicalPath(),
 						"-Tdot", "-o", layoutedDotTmpFile.getCanonicalPath()};
 			}
 
@@ -111,17 +115,18 @@ public class GraphGenerationThread extends Thread
 			{
 				public void run()
 				{
-					finished.finished(success,"Dot returned a failure!",gfxFile,layoutedDotTmpFile);
+					support.layoutFinished(success,"Dot returned a failure!",gfxFile,layoutedDotTmpFile);
 				}
 			});
 		} catch (final Exception e)
 		{
 			e.printStackTrace();
+
 			/* Enable the generate graph button */
 			display.syncExec(new Runnable(){
 				public void run()
 				{
-					finished.finished(false,e.toString(),null,null);
+					support.layoutFinished(false,e.toString(),null,null);
 				}});
 		}
 	}
