@@ -1,9 +1,11 @@
 package ontologizer.gui.swt.result;
 
+import ontologizer.gui.swt.ISimpleAction;
 import ontologizer.gui.swt.support.GraphCanvas;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.browser.LocationListener;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -71,11 +73,41 @@ public class ResultControls extends Composite
 			}
 		};
 		browserComposite.setText("Browser");
+		browserComposite.addMaximizeAction(new ISimpleAction()
+		{
+			public void act()
+			{
+				verticalSashForm.setMaximizedControl(browserComposite);
+			}
+		});
+		browserComposite.addRestoreAction(new ISimpleAction()
+		{
+			public void act()
+			{
+				verticalSashForm.setMaximizedControl(null);
+			}
+		});
+		
 		
 	}
 
 	public Composite getTableComposite()
 	{
 		return tableComposite.getContents();
+	}
+	
+	public void addBrowserLocationListener(LocationListener ll)
+	{
+		browser.addLocationListener(ll);
+	}
+	
+	public GraphCanvas getGraphCanvas()
+	{
+		return graphCanvas;
+	}
+	
+	public Browser getBrowser()
+	{
+		return browser;
 	}
 }

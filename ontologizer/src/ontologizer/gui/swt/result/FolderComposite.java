@@ -1,7 +1,13 @@
 package ontologizer.gui.swt.result;
 
+import java.util.LinkedList;
+
+import ontologizer.gui.swt.ISimpleAction;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabFolder2Adapter;
+import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -17,6 +23,9 @@ abstract class FolderComposite extends Composite
 	private CTabItem tabItem;
 	private Composite contents;
 	
+	private LinkedList<ISimpleAction> maximizeActionList = new LinkedList<ISimpleAction>();
+	private LinkedList<ISimpleAction> restoreActionList = new LinkedList<ISimpleAction>();
+	
 	public FolderComposite(Composite parent, int style)
 	{
 		super(parent, style);
@@ -31,8 +40,32 @@ abstract class FolderComposite extends Composite
 		contents = createContents(folder);
 		tabItem.setControl(contents);
 		folder.setSelection(0);
+		
+		folder.addCTabFolder2Listener(new CTabFolder2Adapter()
+		{
+			@Override
+			public void maximize(CTabFolderEvent event)
+			{
+				folder.setMaximized(true);
+				for (ISimpleAction act : maximizeActionList)
+					act.act();
+			}
+			
+			@Override
+			public void restore(CTabFolderEvent event)
+			{
+				folder.setMaximized(false);
+				for (ISimpleAction act : restoreActionList)
+					act.act();
+			}
+		});
 	}
 	
+	/**
+	 * Sets the title of the folder.
+	 * 
+	 * @param text
+	 */
 	public void setText(String text)
 	{
 		tabItem.setText(text);
@@ -40,9 +73,29 @@ abstract class FolderComposite extends Composite
 	
 	protected abstract Composite createContents(Composite parent);
 	
+	/**
+	 * Returns the composite in which the actual contents should be placed.
+	 * 
+	 * @return
+	 */
 	public Composite getContents()
 	{
 		return contents;
+	}
+	
+	public void setMaximized(boolean max)
+	{
+		folder.setMaximized(max);
+	}
+	
+	public void addMaximizeAction(ISimpleAction action)
+	{
+		maximizeActionList.add(action);
+	}
+	
+	public void addRestoreAction(ISimpleAction action)
+	{
+		restoreActionList.add(action);
 	}
 }
 
