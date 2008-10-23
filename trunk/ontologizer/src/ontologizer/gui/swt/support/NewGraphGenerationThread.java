@@ -14,7 +14,7 @@ import org.eclipse.swt.widgets.Display;
  */
 public class NewGraphGenerationThread extends Thread
 {
-	private Display display;
+	protected Display display;
 	private String dotCMDPath;
 	private String gfxOutFilename;
 
