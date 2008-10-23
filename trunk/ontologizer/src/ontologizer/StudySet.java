@@ -151,6 +151,20 @@ public class StudySet implements Iterable<ByteString>
 	}
 	
 	/**
+	 * Returns the genes in order of the iterator as an array.
+	 * 
+	 * @return
+	 */
+	public ByteString [] getGenes()
+	{
+		ByteString [] genes = new ByteString[geneNames.size()];
+		int i=0;
+		for (ByteString gene : this)
+			genes[i++]=gene;
+		return genes;
+	}
+
+	/**
 	 * Returns the gene description of the specified gene.
 	 * 
 	 * @return the gene description or null if the gene is not contained.
