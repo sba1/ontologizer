@@ -2,6 +2,7 @@ package ontologizer.gui.swt.result;
 
 import java.io.File;
 import java.util.HashSet;
+import java.util.Locale;
 
 import net.sourceforge.nattable.NatTable;
 import ontologizer.ByteString;
@@ -141,6 +142,8 @@ public class SemanticSimilarityComposite extends Composite
 	private void updateGraph(ByteString g1, ByteString g2)
 	{
 		HashSet<TermID> leafTerms = new HashSet<TermID>();
+		final HashSet<TermID> gene1Set = new HashSet<TermID>();
+		final HashSet<TermID> gene2Set = new HashSet<TermID>();
 
 		AbstractGOGraphGenerationThread gggt = new AbstractGOGraphGenerationThread(getDisplay(),result.g,GlobalPreferences.getDOTPath())
 		{
@@ -180,12 +183,39 @@ public class SemanticSimilarityComposite extends Composite
 				}
 				attributes.append("\"");
 
+				double saturation = 1.0f;// - (((float) rank + 1) / significants_count) * 0.8f;
+
+				/* Always full brightness */
+				double brightness = 1.0f;
+
+				double hue = 0.0;
+				/* Hue depends on namespace */
+				if (gene1Set.contains(id))
+				{
+					if (gene2Set.contains(id))
+						hue = 120.f / 360;
+					else hue = 240.f / 360;
+				} else
+				{
+					if (gene2Set.contains(id)) hue = 60.f / 360;
+				}
+
+				String style = "filled,gradientfill";
+				String fillcolor = String.format(Locale.US, "%f,%f,%f", hue, saturation, brightness);
+				attributes.append(",style=\""+ style + "\",color=\"white\",fillcolor=\"" + fillcolor + "\"");
+
 				return attributes.toString();
 			};
 		};
 
 		Gene2Associations g2a1 = result.assoc.get(g1);
 		Gene2Associations g2a2 = result.assoc.get(g2);
+
+		for (TermID t : g2a1.getAssociations())
+			gene1Set.addAll(result.g.getTermsOfInducedGraph(null, t));
+
+		for (TermID t : g2a2.getAssociations())
+			gene2Set.addAll(result.g.getTermsOfInducedGraph(null, t));
 
 		leafTerms.addAll(g2a1.getAssociations());
 		leafTerms.addAll(g2a2.getAssociations());
