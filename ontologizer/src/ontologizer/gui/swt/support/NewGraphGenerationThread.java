@@ -14,16 +14,11 @@ import org.eclipse.swt.widgets.Display;
  */
 public class NewGraphGenerationThread extends Thread
 {
-//	public GOGraph go;
-//	public Term emanatingTerm;
-//	public HashSet<TermID> leafTerms = new HashSet<TermID>();
-//	public AbstractGOTermsResult result;
 	private Display display;
 	private String dotCMDPath;
 	private String gfxOutFilename;
 
 	private IGraphGenerationSupport support;
-//	private IDotNodeAttributesProvider provider;
 
 	public NewGraphGenerationThread(Display display, String dotCMDPath, IGraphGenerationSupport support)
 	{
@@ -76,18 +71,7 @@ public class NewGraphGenerationThread extends Thread
 			else gfxFile = null;
 
 			support.writeDOT(dotTmpFile);
-/*			if (result != null)
-			{
-				result.writeDOT(go, dotTmpFile,
-					emanatingTerm != null ? emanatingTerm.getID() : null,
-					leafTerms, provider);
-			} else
-			{
-				GODOTWriter.writeDOT(go, dotTmpFile,
-					emanatingTerm != null ? emanatingTerm.getID() : null,
-					leafTerms, provider);
-			}
-*/
+
 			String [] args;
 			if (gfxFile != null)
 			{
