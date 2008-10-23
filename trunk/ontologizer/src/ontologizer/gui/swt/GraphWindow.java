@@ -52,7 +52,7 @@ class GraphWindow extends ApplicationWindow
 
 	public void setVisibleTerms(final GOGraph graph, final Set<TermID> terms)
 	{
-		GraphGenerationThread ggt = new GraphGenerationThread(new IGraphGenerationFinished()
+		GraphGenerationThread ggt = new GraphGenerationThread(shell.getDisplay(),GlobalPreferences.getDOTPath(),new IGraphGenerationFinished()
 		{
 			public void finished(boolean success, String msg, File pngFile, File dotFile)
 			{
@@ -117,10 +117,8 @@ class GraphWindow extends ApplicationWindow
 			}
 		});
 		ggt.go = graph;
-		ggt.dotPath = GlobalPreferences.getDOTPath();
 		ggt.emanatingTerm = null;
 		ggt.leafTerms.addAll(terms);
-		ggt.display = shell.getDisplay();
 		ggt.start();
 	}
 }

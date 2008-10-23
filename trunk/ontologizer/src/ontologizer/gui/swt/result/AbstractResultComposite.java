@@ -246,13 +246,11 @@ public abstract class AbstractResultComposite extends Composite
 	 */
 	protected GraphGenerationThread createGraphGenerationThread(IGraphGenerationFinished finished, IDotNodeAttributesProvider attrProvider)
 	{
-		GraphGenerationThread ggt = new GraphGenerationThread(finished,attrProvider);
+		GraphGenerationThread ggt = new GraphGenerationThread(getDisplay(),GlobalPreferences.getDOTPath(),finished,attrProvider);
 		ggt.go = go;
-		ggt.dotPath = GlobalPreferences.getDOTPath();
 		ggt.emanatingTerm = getEmanatingTerm();
 		ggt.leafTerms.addAll(getCheckedTermsCollection());
 		ggt.result = result;
-		ggt.display = getDisplay();
 		return ggt;
 	}
 
