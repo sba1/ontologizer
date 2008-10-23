@@ -1068,14 +1068,12 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite
 	 */
 	private EnrichedGraphGenerationThread createGraphGenerationThread(IGraphGenerationFinished finished)
 	{
-		EnrichedGraphGenerationThread ggt = new EnrichedGraphGenerationThread(finished);
+		EnrichedGraphGenerationThread ggt = new EnrichedGraphGenerationThread(getDisplay(),GlobalPreferences.getDOTPath(),finished);
 		ggt.go = go;
-		ggt.dotPath = GlobalPreferences.getDOTPath();
 		ggt.emanatingTerm = getEmanatingTerm();
 		ggt.significanceLevel = getSignificanceLevel();
 		ggt.leafTerms.addAll(getCheckedTermsCollection());
 		ggt.result = result;
-		ggt.display = getDisplay();
 		return ggt;
 	}
 
@@ -1154,7 +1152,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite
 			}
 		});
 
-		ggt.gfxOutFilename = path;
+		ggt.setGfxOutFilename(path);
 		ggt.start();
 	}
 

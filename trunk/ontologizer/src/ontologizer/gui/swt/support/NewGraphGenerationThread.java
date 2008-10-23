@@ -34,6 +34,21 @@ public class NewGraphGenerationThread extends Thread
 		this.dotCMDPath = dotCMDPath;
 	}
 
+	public NewGraphGenerationThread(Display display, String dotCMDPath)
+	{
+		this(display,dotCMDPath,null);
+	}
+
+	/**
+	 * Sets the support interface.
+	 *
+	 * @param support
+	 */
+	public void setSupport(IGraphGenerationSupport support)
+	{
+		this.support = support;
+	}
+
 	/**
 	 * Sets the name of the graphical file which should be generated.
 	 *
