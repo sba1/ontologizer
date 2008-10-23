@@ -1,8 +1,16 @@
 package ontologizer.gui.swt.result;
 
+import java.io.File;
+import java.util.HashSet;
+
 import net.sourceforge.nattable.NatTable;
 import ontologizer.ByteString;
+import ontologizer.association.Gene2Associations;
 import ontologizer.calculation.SemanticResult;
+import ontologizer.go.TermID;
+import ontologizer.gui.swt.GlobalPreferences;
+import ontologizer.gui.swt.support.GraphCanvas;
+import ontologizer.util.Util;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
@@ -14,6 +22,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
 
 /**
@@ -34,6 +43,7 @@ public class SemanticSimilarityComposite extends Composite
 
 	private ResultControls resultControls;
 	private Browser browser;
+	private GraphCanvas graphCanvas;
 
 	public SemanticSimilarityComposite(Composite parent, int style)
 	{
@@ -43,6 +53,8 @@ public class SemanticSimilarityComposite extends Composite
 	
 		resultControls = new ResultControls(this,0);
 		browser = resultControls.getBrowser();
+		graphCanvas = resultControls.getGraphCanvas();
+
 		Composite tableComposite = resultControls.getTableComposite();
 		tableComposite.setLayout(new GridLayout());
 
@@ -87,8 +99,10 @@ public class SemanticSimilarityComposite extends Composite
 			ByteString gene2 = result.names[newNatTableLastSelected.y];
 
 			updateBrowser(gene1,gene2);
-			newNatTableLastSelected.x = newNatTableLastSelected.x;
-			newNatTableLastSelected.y = newNatTableLastSelected.y;
+			updateGraph(gene1,gene2);
+
+			natTableLastSelected.x = newNatTableLastSelected.x;
+			natTableLastSelected.y = newNatTableLastSelected.y;
 		}
 			
 //		natTableLastSelected = newNatTableLastSelected;
@@ -108,7 +122,7 @@ public class SemanticSimilarityComposite extends Composite
 		return semanticSimilarityNatModel.getValue(x,y); 
 	}
 
-	public void updateBrowser(ByteString g1, ByteString g2)
+	private void updateBrowser(ByteString g1, ByteString g2)
 	{
 		StringBuilder str = new StringBuilder();
 		str.append("<html>");
@@ -122,6 +136,62 @@ public class SemanticSimilarityComposite extends Composite
 		str.append("<html/>");
 		
 		browser.setText(str.toString());
+	}
+	
+	private void updateGraph(ByteString g1, ByteString g2)
+	{
+		HashSet<TermID> leafTerms = new HashSet<TermID>();
+		
+		AbstractGOGraphGenerationThread gggt = new AbstractGOGraphGenerationThread(getDisplay(),result.g,GlobalPreferences.getDOTPath())
+		{
+			public void layoutFinished(boolean success, String msg, File pngFile, File dotFile)
+			{
+				if (success)
+				{
+					try
+					{
+						graphCanvas.setLayoutedDotFile(dotFile);
+					} catch (Exception e)
+					{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+
+			public String getDotNodeAttributes(TermID id)
+			{
+				StringBuilder attributes = new StringBuilder();
+				attributes.append("label=\"");
+
+				if (result.g.isRootGOTermID(id))
+				{
+					attributes.append("Gene Ontology");
+				} else
+				{
+					attributes.append(id.toString());
+					attributes.append("\\n");
+					
+					String label = result.g.getGOTerm(id).getName();
+					if (GlobalPreferences.getWrapColumn() != -1)
+						label = Util.wrapLine(label,"\\n",GlobalPreferences.getWrapColumn());
+					
+					attributes.append(label);
+				}
+				attributes.append("\"");
+				
+				return attributes.toString();
+			};
+		};
+
+		Gene2Associations g2a1 = result.assoc.get(g1);
+		Gene2Associations g2a2 = result.assoc.get(g2);
+		
+		leafTerms.addAll(g2a1.getAssociations());
+		leafTerms.addAll(g2a2.getAssociations());
+		
+		gggt.setLeafTerms(leafTerms);
+		gggt.start();
 	}
 	
 	public void setResult(SemanticResult result)

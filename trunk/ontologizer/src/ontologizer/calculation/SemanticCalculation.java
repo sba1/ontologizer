@@ -222,6 +222,8 @@ public class SemanticCalculation
 		sr.mat = mat;
 		sr.names = study.getGenes();
 		sr.name = study.getName();
+		sr.assoc = goAssociations;
+		sr.g = graph;
 		return sr;
 	}
 
