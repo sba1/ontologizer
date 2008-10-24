@@ -1,6 +1,7 @@
 package ontologizer.gui.swt.result;
 
 import ontologizer.gui.swt.ISimpleAction;
+import ontologizer.gui.swt.support.FolderComposite;
 import ontologizer.gui.swt.support.GraphCanvas;
 
 import org.eclipse.swt.SWT;

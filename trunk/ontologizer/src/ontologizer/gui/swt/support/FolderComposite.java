@@ -1,4 +1,4 @@
-package ontologizer.gui.swt.result;
+package ontologizer.gui.swt.support;
 
 import java.util.LinkedList;
 
@@ -17,7 +17,7 @@ import org.eclipse.swt.widgets.Composite;
  *
  * @author Sebastian Bauer
  */
-abstract class FolderComposite extends Composite
+public abstract class FolderComposite extends Composite
 {
 	private CTabFolder folder;
 	private CTabItem tabItem;
