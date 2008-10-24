@@ -36,6 +36,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -584,11 +585,9 @@ public class ResultWindow extends ApplicationWindow
 	{
 		statusComposite = new Composite(shell,0);
 		statusComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL|GridData.GRAB_HORIZONTAL));
-		statusComposite.setLayout(SWTUtil.newEmptyMarginGridLayout(2));
-
-		minimizedComposite = new Composite(statusComposite, SWT.NONE);
-		minimizedComposite.setVisible(false);
-		minimizedComposite.setLayout(new FillLayout());
+		GridLayout statusLayout = SWTUtil.newEmptyMarginGridLayout(2);
+		statusLayout.horizontalSpacing = 0;
+		statusComposite.setLayout(statusLayout);
 
 		progressComposite = new Composite(statusComposite, SWT.NONE);
 		progressComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL|GridData.GRAB_HORIZONTAL));
@@ -598,6 +597,7 @@ public class ResultWindow extends ApplicationWindow
 		progressText.setBackground(shell.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 		progressText.setEditable(false);
 		progressText.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL|GridData.FILL_HORIZONTAL));
+		progressText.setText("huhuh");
 		progressBar = new ProgressBar(progressComposite, SWT.NONE);
 		progressBar.setVisible(false);
 	}
@@ -699,6 +699,12 @@ public class ResultWindow extends ApplicationWindow
 	{
 		public Object addMinimized(String name, final IRestoredAdapter adapter)
 		{
+			if (minimizedComposite == null)
+			{
+				minimizedComposite = new Composite(statusComposite, SWT.NONE);
+				minimizedComposite.setLayout(new RowLayout(SWT.HORIZONTAL));
+			}
+
 			final Button but = new Button(minimizedComposite,0);
 			but.setText(name);
 			but.addSelectionListener(new SelectionAdapter()
@@ -709,12 +715,14 @@ public class ResultWindow extends ApplicationWindow
 					adapter.restored();
 					but.dispose();
 					minimizedComposite.layout();
+					statusComposite.layout();
+					statusComposite.getParent().layout();
 				}
 			});
-			System.out.println(minimizedComposite.isVisible());
 			if (!minimizedComposite.isVisible()) minimizedComposite.setVisible(true);
 			minimizedComposite.layout();
 			statusComposite.layout();
+			statusComposite.getParent().layout();
 			return null;
 		};
 	};
