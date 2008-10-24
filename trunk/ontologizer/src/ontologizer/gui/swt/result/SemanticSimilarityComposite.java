@@ -24,7 +24,6 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
 
 /**
@@ -33,7 +32,7 @@ import org.eclipse.swt.widgets.Text;
  * @author Sebastian Bauer
  *
  */
-public class SemanticSimilarityComposite extends Composite
+public class SemanticSimilarityComposite extends Composite implements IGraphAction
 {
 	private SemanticResult result;
 
@@ -236,5 +235,25 @@ public class SemanticSimilarityComposite extends Composite
 	public void setMinimizedAdapter(IMinimizedAdapter minimizedAdapter)
 	{
 		resultControls.setMinimizedAdapter(minimizedAdapter);
+	}
+
+	public void resetZoom()
+	{
+		graphCanvas.zoomReset();
+	}
+
+	public void setScaleToFit(boolean fit)
+	{
+		graphCanvas.setScaleToFit(fit);
+	}
+
+	public void zoomIn()
+	{
+		graphCanvas.zoomIn();
+	}
+
+	public void zoomOut()
+	{
+		graphCanvas.zoomOut();
 	}
 }

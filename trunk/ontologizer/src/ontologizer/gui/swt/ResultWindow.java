@@ -13,6 +13,7 @@ import ontologizer.calculation.svd.SVDResult;
 import ontologizer.gui.swt.images.Images;
 import ontologizer.gui.swt.result.AbstractResultComposite;
 import ontologizer.gui.swt.result.EnrichedGOTermsComposite;
+import ontologizer.gui.swt.result.IGraphAction;
 import ontologizer.gui.swt.result.PValuesSVDGOTermsComposite;
 import ontologizer.gui.swt.result.SVDGOTermsComposite;
 import ontologizer.gui.swt.result.SemanticSimilarityComposite;
@@ -23,7 +24,6 @@ import ontologizer.gui.swt.support.SWTUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -33,7 +33,6 @@ import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
@@ -187,6 +186,19 @@ public class ResultWindow extends ApplicationWindow
 					progressText.setText("");
 			}
 		});
+	}
+
+	/**
+	 *
+	 * @return
+	 */
+	private IGraphAction getSelectedCompositeAsGraphAction()
+	{
+		if (cTabFolder.getSelection() == null) return null;
+		Control c = cTabFolder.getSelection().getControl();
+
+		if (c instanceof IGraphAction) return (IGraphAction)c;
+		return null;
 	}
 
 	/**
@@ -520,36 +532,36 @@ public class ResultWindow extends ApplicationWindow
 		zoomOutItem.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e)
 			{
-				EnrichedGOTermsComposite comp = getSelectedResultCompositeIfEnriched();
+				IGraphAction comp = getSelectedCompositeAsGraphAction();
 				if (comp != null)
-					comp.graphZoomOut();
+					comp.zoomOut();
 				scaleToFitItem.setSelection(false);
 			}
 		});
 		zoomInItem.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e)
 			{
-				EnrichedGOTermsComposite comp = getSelectedResultCompositeIfEnriched();
+				IGraphAction comp = getSelectedCompositeAsGraphAction();
 				if (comp != null)
-					comp.graphZoomIn();
+					comp.zoomIn();
 				scaleToFitItem.setSelection(false);
 			}
 		});
 		resetZoomItem.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e)
 			{
-				EnrichedGOTermsComposite comp = getSelectedResultCompositeIfEnriched();
+				IGraphAction comp = getSelectedCompositeAsGraphAction();
 				if (comp != null)
-					comp.graphResetZoom();
+					comp.resetZoom();
 				scaleToFitItem.setSelection(false);
 			}
 		});
 		scaleToFitItem.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e)
 			{
-				EnrichedGOTermsComposite comp = getSelectedResultCompositeIfEnriched();
+				IGraphAction comp = getSelectedCompositeAsGraphAction();
 				if (comp != null)
-					comp.graphSetScaleToFit(scaleToFitItem.getSelection());
+					comp.setScaleToFit(scaleToFitItem.getSelection());
 			}
 		});
 	}
@@ -597,7 +609,6 @@ public class ResultWindow extends ApplicationWindow
 		progressText.setBackground(shell.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 		progressText.setEditable(false);
 		progressText.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL|GridData.FILL_HORIZONTAL));
-		progressText.setText("huhuh");
 		progressBar = new ProgressBar(progressComposite, SWT.NONE);
 		progressBar.setVisible(false);
 	}
