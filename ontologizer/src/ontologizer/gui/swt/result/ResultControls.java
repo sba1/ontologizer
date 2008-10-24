@@ -3,6 +3,8 @@ package ontologizer.gui.swt.result;
 import ontologizer.gui.swt.ISimpleAction;
 import ontologizer.gui.swt.support.FolderComposite;
 import ontologizer.gui.swt.support.GraphCanvas;
+import ontologizer.gui.swt.support.IMinimizedAdapter;
+import ontologizer.gui.swt.support.IRestoredAdapter;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
@@ -28,6 +30,17 @@ public class ResultControls extends Composite
 	private GraphCanvas graphCanvas;
 	private Browser browser;
 
+	private IMinimizedAdapter minimizedAdapter;
+
+	private ISimpleAction restoreAction = new ISimpleAction()
+	{
+		public void act()
+		{
+			upperSashForm.setMaximizedControl(null);
+			verticalSashForm.setMaximizedControl(null);
+		}
+	};
+
 	public ResultControls(Composite parent, int style)
 	{
 		super(parent, style);
@@ -37,6 +50,7 @@ public class ResultControls extends Composite
 		verticalSashForm = new SashForm(this, SWT.VERTICAL);
 		upperSashForm = new SashForm(verticalSashForm, SWT.HORIZONTAL);
 
+		/* Table */
 		tableComposite = new FolderComposite(upperSashForm,0)
 		{
 			@Override
@@ -48,7 +62,17 @@ public class ResultControls extends Composite
 			}
 		};
 		tableComposite.setText("Table");
-		
+		tableComposite.addMaximizeAction(new ISimpleAction()
+		{
+			public void act()
+			{
+				verticalSashForm.setMaximizedControl(upperSashForm);
+				upperSashForm.setMaximizedControl(tableComposite);
+			}
+		});
+		tableComposite.addRestoreAction(restoreAction);
+
+		/* Graph */
 		graphComposite = new FolderComposite(upperSashForm,0)
 		{
 			@Override
@@ -61,7 +85,37 @@ public class ResultControls extends Composite
 			}
 		};
 		graphComposite.setText("Graph");
+		graphComposite.addMaximizeAction(new ISimpleAction()
+		{
+			public void act()
+			{
+				verticalSashForm.setMaximizedControl(upperSashForm);
+				upperSashForm.setMaximizedControl(graphComposite);
+			}
+		});
+		graphComposite.addRestoreAction(restoreAction);
+		graphComposite.addMinimizeAction(new ISimpleAction()
+		{
+			public void act()
+			{
+				if (minimizedAdapter != null)
+				{
+					graphComposite.setVisible(false);
+					upperSashForm.layout();
+					
+					minimizedAdapter.addMinimized("Graph", new IRestoredAdapter()
+					{
+						public void restored()
+						{
+							graphComposite.setVisible(true);
+							upperSashForm.layout();
+						}
+					});
+				}
+			}
+		});
 
+		/* Browser */
 		browserComposite = new FolderComposite(verticalSashForm,0)
 		{
 			@Override
@@ -81,14 +135,28 @@ public class ResultControls extends Composite
 				verticalSashForm.setMaximizedControl(browserComposite);
 			}
 		});
-		browserComposite.addRestoreAction(new ISimpleAction()
+		browserComposite.addRestoreAction(restoreAction);
+		browserComposite.addMinimizeAction(new ISimpleAction()
 		{
 			public void act()
 			{
-				verticalSashForm.setMaximizedControl(null);
+				if (minimizedAdapter != null)
+				{
+					browserComposite.setVisible(false);
+					verticalSashForm.layout();
+					
+					minimizedAdapter.addMinimized("Browser", new IRestoredAdapter()
+					{
+						public void restored()
+						{
+							browserComposite.setVisible(true);
+							verticalSashForm.layout();
+						}
+					});
+				}
 			}
 		});
-		
+
 		
 	}
 
@@ -110,5 +178,10 @@ public class ResultControls extends Composite
 	public Browser getBrowser()
 	{
 		return browser;
+	}
+	
+	public void setMinimizedAdapter(IMinimizedAdapter minimizedAdapter)
+	{
+		this.minimizedAdapter = minimizedAdapter;
 	}
 }

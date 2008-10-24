@@ -16,11 +16,14 @@ import ontologizer.gui.swt.result.EnrichedGOTermsComposite;
 import ontologizer.gui.swt.result.PValuesSVDGOTermsComposite;
 import ontologizer.gui.swt.result.SVDGOTermsComposite;
 import ontologizer.gui.swt.result.SemanticSimilarityComposite;
+import ontologizer.gui.swt.support.IMinimizedAdapter;
+import ontologizer.gui.swt.support.IRestoredAdapter;
 import ontologizer.gui.swt.support.SWTUtil;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -30,8 +33,10 @@ import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
@@ -52,6 +57,10 @@ public class ResultWindow extends ApplicationWindow
 {
 	private CTabFolder cTabFolder = null;
 	private ToolBar toolbar = null;
+	
+	private Composite statusComposite = null;
+	private Composite minimizedComposite = null;
+
 	private Composite progressComposite = null;
 	private Text progressText = null;
 	private ProgressBar progressBar = null;
@@ -101,6 +110,7 @@ public class ResultWindow extends ApplicationWindow
 		cTabItem.setText(sr.name);
 		SemanticSimilarityComposite ssc = new SemanticSimilarityComposite(cTabFolder,0);
 		ssc.setResult(sr);
+		ssc.setMinimizedAdapter(minimizedAdapter);
 		cTabItem.setControl(ssc);
 		added = true;
 		
@@ -226,7 +236,7 @@ public class ResultWindow extends ApplicationWindow
 		shell.setLayout(new GridLayout());
 		createToolBar(shell);
 		createCTabFolder();
-		createProgressComposite();
+		createStatusComposite();
 		shell.setSize(new org.eclipse.swt.graphics.Point(649,486));
 	}
 
@@ -570,11 +580,20 @@ public class ResultWindow extends ApplicationWindow
 	 * This method initializes progressComposite	
 	 *
 	 */
-	private void createProgressComposite()
+	private void createStatusComposite()
 	{
-		progressComposite = new Composite(shell, SWT.NONE);
+		statusComposite = new Composite(shell,0);
+		statusComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL|GridData.GRAB_HORIZONTAL));
+		statusComposite.setLayout(SWTUtil.newEmptyMarginGridLayout(2));
+
+		minimizedComposite = new Composite(statusComposite, SWT.NONE);
+		minimizedComposite.setVisible(false);
+		minimizedComposite.setLayout(new FillLayout());
+		
+		progressComposite = new Composite(statusComposite, SWT.NONE);
 		progressComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL|GridData.GRAB_HORIZONTAL));
 		progressComposite.setLayout(SWTUtil.newEmptyMarginGridLayout(2));
+
 		progressText = new Text(progressComposite, SWT.READ_ONLY);
 		progressText.setBackground(shell.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 		progressText.setEditable(false);
@@ -671,4 +690,32 @@ public class ResultWindow extends ApplicationWindow
 	{
 		progressBar.setSelection(p);
 	}
+	
+	/**
+	 * This is the minimized adapter whose method is called whenever
+	 * something needs to minimized.
+	 */
+	private IMinimizedAdapter minimizedAdapter = new IMinimizedAdapter()
+	{
+		public Object addMinimized(String name, final IRestoredAdapter adapter)
+		{
+			final Button but = new Button(minimizedComposite,0);
+			but.setText(name);
+			but.addSelectionListener(new SelectionAdapter()
+			{
+				@Override
+				public void widgetSelected(SelectionEvent e)
+				{
+					adapter.restored();
+					but.dispose();
+					minimizedComposite.layout();
+				}
+			});
+			System.out.println(minimizedComposite.isVisible());
+			if (!minimizedComposite.isVisible()) minimizedComposite.setVisible(true);
+			minimizedComposite.layout();
+			statusComposite.layout();
+			return null;
+		};
+	};
 }
