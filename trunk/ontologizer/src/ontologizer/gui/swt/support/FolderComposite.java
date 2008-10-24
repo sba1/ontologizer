@@ -24,6 +24,7 @@ public abstract class FolderComposite extends Composite
 	private Composite contents;
 	
 	private LinkedList<ISimpleAction> maximizeActionList = new LinkedList<ISimpleAction>();
+	private LinkedList<ISimpleAction> minimizeActionList = new LinkedList<ISimpleAction>();
 	private LinkedList<ISimpleAction> restoreActionList = new LinkedList<ISimpleAction>();
 	
 	public FolderComposite(Composite parent, int style)
@@ -58,6 +59,13 @@ public abstract class FolderComposite extends Composite
 				for (ISimpleAction act : restoreActionList)
 					act.act();
 			}
+			
+			@Override
+			public void minimize(CTabFolderEvent event)
+			{
+				for (ISimpleAction act : minimizeActionList)
+					act.act();
+			}
 		});
 	}
 	
@@ -90,6 +98,7 @@ public abstract class FolderComposite extends Composite
 	
 	public void addMaximizeAction(ISimpleAction action)
 	{
+		folder.setMaximizeVisible(true);
 		maximizeActionList.add(action);
 	}
 	
@@ -97,5 +106,12 @@ public abstract class FolderComposite extends Composite
 	{
 		restoreActionList.add(action);
 	}
+	
+	public void addMinimizeAction(ISimpleAction action)
+	{
+		folder.setMinimizeVisible(true);
+		minimizeActionList.add(action);
+	}
+	
 }
 

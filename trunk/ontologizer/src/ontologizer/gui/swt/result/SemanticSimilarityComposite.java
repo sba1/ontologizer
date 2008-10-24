@@ -11,6 +11,7 @@ import ontologizer.calculation.SemanticResult;
 import ontologizer.go.TermID;
 import ontologizer.gui.swt.GlobalPreferences;
 import ontologizer.gui.swt.support.GraphCanvas;
+import ontologizer.gui.swt.support.IMinimizedAdapter;
 import ontologizer.util.Util;
 
 import org.eclipse.swt.SWT;
@@ -230,5 +231,10 @@ public class SemanticSimilarityComposite extends Composite
 		semanticSimilarityNatModel.setValues(result.mat);
 		semanticSimilarityNatModel.setNames(result.names);
 		natTable.updateResize();
+	}
+
+	public void setMinimizedAdapter(IMinimizedAdapter minimizedAdapter)
+	{
+		resultControls.setMinimizedAdapter(minimizedAdapter);
 	}
 }
