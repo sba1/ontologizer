@@ -1,17 +1,14 @@
 package ontologizer.gui.swt.threads;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import ontologizer.ByteString;
-import ontologizer.FileCache;
 import ontologizer.GeneFilter;
 import ontologizer.PopulationSet;
 import ontologizer.StudySet;
 import ontologizer.StudySetList;
-import ontologizer.FileCache.FileDownload;
 import ontologizer.association.AssociationContainer;
 import ontologizer.association.AssociationParser;
 import ontologizer.association.IAssociationParserProgress;
@@ -23,7 +20,6 @@ import ontologizer.go.GOGraph;
 import ontologizer.go.IOBOParserProgress;
 import ontologizer.go.OBOParser;
 import ontologizer.go.TermContainer;
-import ontologizer.gui.swt.MainWindow;
 import ontologizer.gui.swt.Ontologizer;
 import ontologizer.gui.swt.ResultWindow;
 import ontologizer.statistics.AbstractResamplingTestCorrection;
@@ -34,11 +30,8 @@ import ontologizer.statistics.TestCorrectionRegistry;
 
 import org.eclipse.swt.widgets.Display;
 
-public class AnalyseThread extends Thread
+public class AnalyseThread extends AbstractOntologizerThread
 {
-	private Display display;
-	private MainWindow main;
-	private ResultWindow result;
 	private String definitionFile;
 	private String associationsFile;
 	private String mappingFile;
@@ -48,18 +41,15 @@ public class AnalyseThread extends Thread
 	private StudySetList studySetList;
 	private int numberOfPermutations;
 
-	public AnalyseThread(Display display, MainWindow main, ResultWindow result, String definitionFile, String associationsFile, String mappingFile, PopulationSet populationSet, StudySetList studySetList, String methodName, String mtcName, int noP)
+	public AnalyseThread(Display display, Runnable calledWhenFinished, ResultWindow result, String definitionFile, String associationsFile, String mappingFile, PopulationSet populationSet, StudySetList studySetList, String methodName, String mtcName, int noP)
 	{
-		super(Ontologizer.threadGroup, "Analyze Thread");
+		super("Analyze Thread",calledWhenFinished,display,result);
 
-		this.display = display;
-		this.main = main;
 		this.definitionFile = definitionFile;
 		this.associationsFile = associationsFile;
 		this.mappingFile = mappingFile;
 		this.populationSet = populationSet;
 		this.studySetList = studySetList;
-		this.result = result;
 		this.methodName = methodName;
 		this.mtcName = mtcName;
 		this.numberOfPermutations = noP;
@@ -67,7 +57,7 @@ public class AnalyseThread extends Thread
 		setPriority(Thread.MIN_PRIORITY);
 	}
 
-	public void run()
+	public void perform()
 	{
 		try
 		{
@@ -378,79 +368,5 @@ public class AnalyseThread extends Thread
 				});
 			}
 		}
-		finally
-		{
-			display.syncExec(new Runnable(){ public void run()
-			{
-				if (!main.getShell().isDisposed())
-					main.enableAnalyseButton();
-			}});
-		}
-	}
-
-	/**
-	 * Downloads a file in a synchron manner.
-	 *
-	 * @param filename
-	 * @param message defines the message sent to the result window.
-	 * @return
-	 * @throws IOException
-	 * @throws InterruptedException
-	 */
-	private String downloadFile(String filename, final String message) throws IOException, InterruptedException
-	{
-		String newPath = FileCache.getCachedFileNameBlocking(filename,
-				new FileDownload()
-		{
-			private boolean messageSeen;
-
-			public void initProgress(final int max)
-			{
-				if (!messageSeen)
-				{
-					display.asyncExec(new Runnable() {
-						public void run()
-						{
-							if (!result.isDisposed())
-							{
-								result.appendLog(message);
-								result.updateProgress(0);
-								result.showProgressBar();
-							}
-						}});
-					messageSeen = true;
-				}
-
-				if (max == -1) return;
-
-				if (!result.isDisposed())
-				{
-					display.asyncExec(new Runnable() {
-						public void run()
-						{
-							if (!result.isDisposed())
-								result.initProgress(max);
-						}});
-				}
-			}
-
-			public void progress(final int current)
-			{
-				if (!result.isDisposed())
-				{
-					display.asyncExec(new Runnable() {
-						public void run()
-						{
-							if (!result.isDisposed())
-								result.updateProgress(current);
-						}});
-
-				}
-
-			}
-
-			public void ready(Exception ex, String name) { }
-		});
-		return newPath;
 	}
 };
