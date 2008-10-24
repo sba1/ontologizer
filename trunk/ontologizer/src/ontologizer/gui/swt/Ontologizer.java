@@ -12,7 +12,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -22,40 +21,21 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 
-import ontologizer.ByteString;
 import ontologizer.FileCache;
-import ontologizer.GeneFilter;
 import ontologizer.OntologizerCore;
 import ontologizer.PopulationSet;
 import ontologizer.StudySet;
 import ontologizer.StudySetList;
 import ontologizer.FileCache.FileCacheUpdateCallback;
-import ontologizer.FileCache.FileDownload;
-import ontologizer.association.AssociationContainer;
-import ontologizer.association.AssociationParser;
-import ontologizer.association.IAssociationParserProgress;
-import ontologizer.calculation.AbstractGOTermsResult;
 import ontologizer.calculation.CalculationRegistry;
-import ontologizer.calculation.EnrichedGOTermsResult;
-import ontologizer.calculation.ICalculation;
-import ontologizer.calculation.SemanticCalculation;
-import ontologizer.calculation.SemanticResult;
-import ontologizer.go.GOGraph;
-import ontologizer.go.IOBOParserProgress;
-import ontologizer.go.OBOParser;
-import ontologizer.go.TermContainer;
 import ontologizer.gui.swt.MainWindow.Set;
 import ontologizer.gui.swt.images.Images;
 import ontologizer.gui.swt.support.SWTUtil;
 import ontologizer.gui.swt.threads.AnalyseThread;
-import ontologizer.statistics.AbstractResamplingTestCorrection;
-import ontologizer.statistics.AbstractTestCorrection;
-import ontologizer.statistics.IResampling;
-import ontologizer.statistics.IResamplingProgress;
+import ontologizer.gui.swt.threads.SimilarityThread;
 import ontologizer.statistics.TestCorrectionRegistry;
 import ontologizer.worksets.WorkSet;
 import ontologizer.worksets.WorkSetList;
-import ontologizer.worksets.WorkSetLoadThread;
 
 import org.eclipse.swt.graphics.DeviceData;
 import org.eclipse.swt.widgets.Display;
@@ -253,14 +233,24 @@ public class Ontologizer
 				if (mappingFile != null && mappingFile.length() == 0)
 					mappingFile = null;
 
-				Display display = main.getShell().getDisplay();
-				
+				final Display display = main.getShell().getDisplay();
 				final ResultWindow result = new ResultWindow(display);
 				result.setBusyPointer(true);
 				resultWindowList.add(result);
 
+				Runnable calledWhenFinished = new Runnable()
+				{
+					public void run()
+					{
+						display.syncExec(new Runnable(){ public void run()
+						{
+							if (!main.getShell().isDisposed())
+								main.enableAnalyseButton();
+						}});
+					}
+				};
 				/* Now let's start the task...TODO: Refactor! */
-				final Thread newThread = new AnalyseThread(display,main,
+				final Thread newThread = new AnalyseThread(display,calledWhenFinished,
 						result,defintionFile,associationsFile,mappingFile,
 						populationSet,studySetList,methodName,mtcName,
 						GlobalPreferences.getNumberOfPermutations());
@@ -282,51 +272,36 @@ public class Ontologizer
 				List<MainWindow.Set> list = main.getSetEntriesOfCurrentPopulation();
 				if (list.size() > 1)
 				{
+					final Display display = main.getShell().getDisplay();
+
 					final StudySetList studySetList = getStudySetListFromList(list);
 					final WorkSet workSet = main.getSelectedWorkingSet();
-					final ResultWindow result = new ResultWindow(main.getShell().getDisplay());
+					final ResultWindow result = new ResultWindow(display);
+
 					result.open();
-
-					WorkSetLoadThread.obtainDatafiles(workSet, new Runnable()
+					result.setBusyPointer(true);
+					resultWindowList.add(result);
+					
+					Runnable calledWhenFinished = new Runnable()
 					{
-						private Display display;
-
 						public void run()
 						{
-							display = main.getShell().getDisplay(); 
-
-							GOGraph graph = WorkSetLoadThread.getGraph(workSet.getOboPath());
-							AssociationContainer assoc = WorkSetLoadThread.getAssociations(workSet.getAssociationPath());
-
-							SemanticCalculation s = new SemanticCalculation(graph,assoc);
-
-							for (StudySet studySet : studySetList)
+							display.syncExec(new Runnable(){ public void run()
 							{
-								final SemanticResult sr = s.calculate(studySet);
-								double [][] mat = sr.mat;
-								
-								for (int i=0;i<mat.length;i++)
-								{
-									for (int j=0;j<mat.length;j++)
-									{
-										System.out.print(mat[i][j] + "  ");
-									}
-									System.out.println();
-								}
-
-								display.asyncExec(new Runnable()
-								{
-									public void run()
-									{
-										result.addResults(sr);
-									}
-								});
-
-							}
-
-							WorkSetLoadThread.releaseDatafiles(workSet);
+								if (!main.getShell().isDisposed())
+									main.enableAnalyseButton();
+							}});
 						}
-					});
+					};
+
+					final SimilarityThread newThread = new SimilarityThread(display,calledWhenFinished,result,studySetList,workSet);
+					result.addCloseAction(new ISimpleAction(){public void act()
+					{
+						newThread.interrupt();
+						resultWindowList.remove(result);
+						result.dispose();
+					}});
+					newThread.start();
 				}
 			}
 		});
@@ -466,7 +441,7 @@ public class Ontologizer
 		}
 
 		/* Dispose the result windows but they have to be copied into a separate
-		 * array before, as diposing the window implicates removing them from
+		 * array before, as disposing the window implicates removing them from
 		 * the list */
 		ResultWindow [] resultWindowArray = new ResultWindow[resultWindowList.size()];
 		int i=0;
