@@ -76,7 +76,7 @@ import org.eclipse.swt.widgets.Text;
  * @author Sebastian Bauer
  *
  */
-public class EnrichedGOTermsComposite extends AbstractResultComposite
+public class EnrichedGOTermsComposite extends AbstractResultComposite implements IGraphAction
 {
 	private static Logger logger = Logger.getLogger(EnrichedGOTermsComposite.class.getCanonicalName());
 
@@ -1077,22 +1077,22 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite
 		return ggt;
 	}
 
-	public void graphSetScaleToFit(boolean fit)
+	public void setScaleToFit(boolean fit)
 	{
 		graphVisual.setScaleToFit(fit);
 	}
 
-	public void graphZoomIn()
+	public void zoomIn()
 	{
 		graphVisual.zoomIn();
 	}
 
-	public void graphZoomOut()
+	public void zoomOut()
 	{
 		graphVisual.zoomOut();
 	}
 
-	public void graphResetZoom()
+	public void resetZoom()
 	{
 		graphVisual.zoomReset();
 	}
