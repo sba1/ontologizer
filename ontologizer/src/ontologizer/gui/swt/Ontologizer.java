@@ -63,7 +63,6 @@ import org.eclipse.swt.widgets.Shell;
 import tools.Sleak;
 
 
-
 class AbortCalculationException extends RuntimeException
 {
 	private static final long serialVersionUID = 1L;
@@ -686,7 +685,7 @@ public class Ontologizer
 				result.setBusyPointer(true);
 				resultWindowList.add(result);
 
-				/* Now let's start the task...TODO: Refactorize! */
+				/* Now let's start the task...TODO: Refactor! */
 				final Thread newThread = new AnalyseThread(display,main,
 						result,defintionFile,associationsFile,mappingFile,
 						populationSet,studySetList,methodName,mtcName,
@@ -710,11 +709,12 @@ public class Ontologizer
 				if (list.size() > 1)
 				{
 					final StudySetList studySetList = getStudySetListFromList(list);
-
 					final WorkSet workSet = main.getSelectedWorkingSet();
+					final ResultWindow result = new ResultWindow(main.getShell().getDisplay());
+					result.open();
+
 					WorkSetLoadThread.obtainDatafiles(workSet, new Runnable()
 					{
-						private ResultWindow rw;
 						private Display display;
 
 						public void run()
@@ -723,15 +723,6 @@ public class Ontologizer
 
 							GOGraph graph = WorkSetLoadThread.getGraph(workSet.getOboPath());
 							AssociationContainer assoc = WorkSetLoadThread.getAssociations(workSet.getAssociationPath());
-
-							display.asyncExec(new Runnable()
-							{
-								public void run()
-								{
-									rw = new ResultWindow(display);
-									rw.open();
-								}
-							});
 
 							SemanticCalculation s = new SemanticCalculation(graph,assoc);
 
@@ -753,7 +744,7 @@ public class Ontologizer
 								{
 									public void run()
 									{
-										rw.addResults(sr);
+										result.addResults(sr);
 									}
 								});
 
