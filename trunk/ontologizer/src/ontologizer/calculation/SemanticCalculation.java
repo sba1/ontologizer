@@ -88,7 +88,7 @@ public class SemanticCalculation
 	 * @param id
 	 * @return
 	 */
-	private double p(TermID id)
+	public double p(TermID id)
 	{
 		return (double)enumerator.getAnnotatedGenes(id).totalAnnotatedCount() / totalAnnotated;
 	}
@@ -224,6 +224,9 @@ public class SemanticCalculation
 		sr.name = study.getName();
 		sr.assoc = goAssociations;
 		sr.g = graph;
+		sr.calculation = this;
+//		sr.enumerator = enumerator;
+//		sr.totalAnnotated = totalAnnotated;
 		return sr;
 	}
 

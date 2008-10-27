@@ -180,7 +180,7 @@ public class SemanticSimilarityComposite extends Composite implements IGraphActi
 				}
 				attributes.append("\"");
 				
-				double saturation = 1.0f;// - (((float) rank + 1) / significants_count) * 0.8f;
+				double saturation = 1.0f - result.calculation.p(id)*0.9f;// 1.0f;// - (((float) rank + 1) / significants_count) * 0.8f;
 
 				/* Always full brightness */
 				double brightness = 1.0f;
@@ -191,7 +191,7 @@ public class SemanticSimilarityComposite extends Composite implements IGraphActi
 				{
 					if (gene2Set.contains(id))
 						hue = 120.f / 360;
-					else hue = 240.f / 360;
+					else hue = 180.f / 360;
 				} else
 				{
 					if (gene2Set.contains(id)) hue = 60.f / 360;
@@ -207,7 +207,7 @@ public class SemanticSimilarityComposite extends Composite implements IGraphActi
 
 		Gene2Associations g2a1 = result.assoc.get(g1);
 		Gene2Associations g2a2 = result.assoc.get(g2);
-		
+
 		if (g2a1 != null && g2a2 != null)
 		{	
 			for (TermID t : g2a1.getAssociations())
