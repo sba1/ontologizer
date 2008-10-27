@@ -1,7 +1,6 @@
 package ontologizer.gui.swt.result;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
 
