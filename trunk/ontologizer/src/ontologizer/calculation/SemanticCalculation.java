@@ -15,6 +15,12 @@ import ontologizer.go.TermID;
 
 public class SemanticCalculation
 {
+	public static interface ISemanticCalculationProgress
+	{
+		void init(int max);
+		void update(int update);
+	};
+
 	private GOGraph graph;
 	private AssociationContainer goAssociations;
 
@@ -204,10 +210,20 @@ public class SemanticCalculation
 	 */
 	public SemanticResult calculate(StudySet study)
 	{
+		return calculate(study,null);
+	}
+
+	public SemanticResult calculate(StudySet study, ISemanticCalculationProgress progress)
+	{
 		SemanticResult sr = new SemanticResult();
 
 		double [][] mat =  new double[study.getGeneCount()][study.getGeneCount()];
-		int i=0;
+		int i=0,counter=0;
+
+		if (progress != null)
+			progress.init(study.getGeneCount() * study.getGeneCount());
+
+		long millis = System.currentTimeMillis();
 
 		for (ByteString g1 : study)
 		{
@@ -216,6 +232,19 @@ public class SemanticCalculation
 			{
 				mat[i][j]=sim(g1,g2);
 				j++;
+
+				if (progress != null)
+				{
+					if (counter++ % 1000 == 0)
+					{
+						long newMillis = System.currentTimeMillis();
+						if (newMillis - millis > 200)
+						{
+							millis = newMillis;
+							progress.update(counter);
+						}
+					}
+				}
 			}
 			i++;
 		}
@@ -225,8 +254,6 @@ public class SemanticCalculation
 		sr.assoc = goAssociations;
 		sr.g = graph;
 		sr.calculation = this;
-//		sr.enumerator = enumerator;
-//		sr.totalAnnotated = totalAnnotated;
 		return sr;
 	}
 
