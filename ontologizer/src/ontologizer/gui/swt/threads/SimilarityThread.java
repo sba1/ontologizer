@@ -104,7 +104,7 @@ public class SimilarityThread extends AbstractOntologizerThread
 
 				for (StudySet studySet : studySetList)
 				{
-					display.asyncExec(new ResultAppendLogRunnable("Analyzing study set " + studySet.getName()));
+					display.asyncExec(new ResultAppendLogRunnable("Analyzing study set \"" + studySet.getName() + "\""));
 
 					final SemanticResult sr = s.calculate(studySet,new SemanticCalculation.ISemanticCalculationProgress()
 					{
