@@ -105,9 +105,6 @@ public class SemanticSimilarityComposite extends Composite implements IGraphActi
 			natTableLastSelected.x = newNatTableLastSelected.x;
 			natTableLastSelected.y = newNatTableLastSelected.y;
 		}
-			
-//		natTableLastSelected = newNatTableLastSelected;
-//		selectedSimilarityText.setText(Double.toString(getLastSelectedValue()));
 	}
 	
 	public double getLastSelectedValue()
@@ -211,14 +208,17 @@ public class SemanticSimilarityComposite extends Composite implements IGraphActi
 		Gene2Associations g2a1 = result.assoc.get(g1);
 		Gene2Associations g2a2 = result.assoc.get(g2);
 		
-		for (TermID t : g2a1.getAssociations())
-			gene1Set.addAll(result.g.getTermsOfInducedGraph(null, t));
+		if (g2a1 != null && g2a2 != null)
+		{	
+			for (TermID t : g2a1.getAssociations())
+				gene1Set.addAll(result.g.getTermsOfInducedGraph(null, t));
 		
-		for (TermID t : g2a2.getAssociations())
-			gene2Set.addAll(result.g.getTermsOfInducedGraph(null, t));
+			for (TermID t : g2a2.getAssociations())
+				gene2Set.addAll(result.g.getTermsOfInducedGraph(null, t));
 
-		leafTerms.addAll(g2a1.getAssociations());
-		leafTerms.addAll(g2a2.getAssociations());
+			leafTerms.addAll(g2a1.getAssociations());
+			leafTerms.addAll(g2a2.getAssociations());
+		}
 		
 		gggt.setLeafTerms(leafTerms);
 		gggt.start();
