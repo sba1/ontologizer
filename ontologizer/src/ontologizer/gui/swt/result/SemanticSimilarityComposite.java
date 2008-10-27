@@ -1,6 +1,7 @@
 package ontologizer.gui.swt.result;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
 
@@ -124,19 +125,124 @@ public class SemanticSimilarityComposite extends Composite implements IGraphActi
 
 	private void updateBrowser(ByteString g1, ByteString g2)
 	{
+		HashSet<TermID> onlyG1 = new HashSet<TermID>();
+		HashSet<TermID> onlyG2 = new HashSet<TermID>();
+		HashSet<TermID> both = new HashSet<TermID>();
+		
+		Gene2Associations g2a1 = result.assoc.get(g1);
+		Gene2Associations g2a2 = result.assoc.get(g2);
+
+		if (g2a1 != null)
+		{
+			for (TermID t : g2a1.getAssociations())
+				onlyG1.addAll(result.g.getTermsOfInducedGraph(null, t));
+		}
+			
+		if (g2a2 != null)
+		{	
+			for (TermID t : g2a2.getAssociations())
+				onlyG2.addAll(result.g.getTermsOfInducedGraph(null, t));
+		}
+
+		both.addAll(onlyG1);
+		both.retainAll(onlyG2);
+		
+		onlyG1.removeAll(both);
+		onlyG2.removeAll(both);
+
 		StringBuilder str = new StringBuilder();
 		str.append("<html>");
 		str.append("<body>");
 		str.append("<h1>");
 		str.append(g1.toString());
-		str.append(" ");
+		str.append(" vs. ");
 		str.append(g2.toString());
 		str.append("</h1>");
+		
+		str.append("<table border=\"1\">");
+		str.append("<tr>");
+		str.append("<th>" + g1.toString() + "</th>");
+		str.append("<th>" + g2.toString() + "</th>");
+		str.append("</tr>");
+
+		str.append("<tr>");
+		str.append("<td>");
+		for (TermID t:onlyG1)
+		{
+			str.append(t.toString());
+			str.append(" ");
+		}
+		str.append("</td>");
+		str.append("<td>");
+		for (TermID t:onlyG2)
+		{
+			str.append(t.toString());
+			str.append(" ");
+		}
+		str.append("</td>");
+		str.append("</tr>");
+		
+		
+		str.append("<tr>");
+		str.append("<td colspan=\"2\">");
+		for (TermID t:both)
+		{
+			str.append(t.toString());
+			str.append(" ");
+		}
+		str.append("</td>");
+		str.append("</tr>");
+		
+		str.append("</table>");
+		
 		str.append("</body>");
 		str.append("<html/>");
 		
 		browser.setText(str.toString());
 	}
+	
+//	static enum Belonging
+//	{
+//		GENE1,
+//		GENE2,
+//		BOTH
+//	}
+//
+//	private HashMap<TermID,Belonging> buildTermBelonging(ByteString g1, ByteString g2)
+//	{
+//		HashSet<TermID> gene1Set = new HashSet<TermID>();
+//		HashSet<TermID> gene2Set = new HashSet<TermID>();
+//
+//		Gene2Associations g2a1 = result.assoc.get(g1);
+//		Gene2Associations g2a2 = result.assoc.get(g2);
+//
+//		if (g2a1 != null && g2a2 != null)
+//		{	
+//			for (TermID t : g2a1.getAssociations())
+//				gene1Set.addAll(result.g.getTermsOfInducedGraph(null, t));
+//		
+//			for (TermID t : g2a2.getAssociations())
+//				gene2Set.addAll(result.g.getTermsOfInducedGraph(null, t));
+//		}
+//		
+//		HashMap<TermID,Belonging> term2belonging = new HashMap<TermID,Belonging>();
+//		
+//		for (TermID t : gene1Set)
+//		{
+//			if (gene2Set.contains(t))
+//				term2belonging.put(t, Belonging.BOTH);
+//			else 
+//				term2belonging.put(t, Belonging.GENE1);
+//		}
+//
+//		for (TermID t : gene2Set)
+//		{
+//			if (!gene1Set.contains(t))
+//				term2belonging.put(t, Belonging.GENE2);
+//		}
+//		
+//		return term2belonging;
+//	}
 	
 	/**
 	 * 
