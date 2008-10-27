@@ -30,6 +30,19 @@ public abstract class AbstractOntologizerThread extends Thread
 		this.calledWhenFinished = calledWhenFinnished;
 	}
 
+	/**
+	 * Basic runnable which appends a given text to the result window.
+	 *
+	 * @author Sebastian Bauer
+	 *
+	 */
+	class ResultAppendLogRunnable implements Runnable
+	{
+		String log;
+		ResultAppendLogRunnable(String log){this.log = log;}
+		public void run() { result.appendLog(log); }
+	}
+
 	@Override
 	final public void run()
 	{

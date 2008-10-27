@@ -62,19 +62,6 @@ public class AnalyseThread extends AbstractOntologizerThread
 		try
 		{
 			/**
-			 * Basic runnable which appends a given text to the result window.
-			 *
-			 * @author Sebastian Bauer
-			 *
-			 */
-			class ResultAppendLogRunnable implements Runnable
-			{
-				String log;
-				ResultAppendLogRunnable(String log){this.log = log;}
-				public void run() { result.appendLog(log); }
-			}
-
-			/**
 			 * Runnable to be used for adding a new result into the result window
 			 *
 			 * @author Sebastian Bauer
@@ -98,8 +85,8 @@ public class AnalyseThread extends AbstractOntologizerThread
 				}
 			};
 
-			definitionFile = downloadFile(definitionFile,"Download OBO File");
-			associationsFile = downloadFile(associationsFile,"Download Association File");
+			definitionFile = downloadFile(definitionFile,"Download OBO file");
+			associationsFile = downloadFile(associationsFile,"Download association file");
 
 			/* Initial progress stuff */
 			display.asyncExec(new Runnable(){public void run() {

@@ -8,6 +8,7 @@ import net.sourceforge.nattable.NatTable;
 import ontologizer.ByteString;
 import ontologizer.association.Gene2Associations;
 import ontologizer.calculation.SemanticResult;
+import ontologizer.go.GOGraph;
 import ontologizer.go.TermID;
 import ontologizer.gui.swt.GlobalPreferences;
 import ontologizer.gui.swt.support.GraphCanvas;
@@ -24,6 +25,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
 
 /**
@@ -136,92 +138,109 @@ public class SemanticSimilarityComposite extends Composite implements IGraphActi
 		browser.setText(str.toString());
 	}
 
-	private void updateGraph(ByteString g1, ByteString g2)
+	/**
+	 *
+	 *
+	 * @author Sebastian Bauer
+	 */
+	class SemanticGOGraphGenerationThread extends AbstractGOGraphGenerationThread
 	{
-		HashSet<TermID> leafTerms = new HashSet<TermID>();
-		final HashSet<TermID> gene1Set = new HashSet<TermID>();
-		final HashSet<TermID> gene2Set = new HashSet<TermID>();
+		private HashSet<TermID> gene1Set = new HashSet<TermID>();
+		private HashSet<TermID> gene2Set = new HashSet<TermID>();
 
-		AbstractGOGraphGenerationThread gggt = new AbstractGOGraphGenerationThread(getDisplay(),result.g,GlobalPreferences.getDOTPath())
+		public SemanticGOGraphGenerationThread(ByteString g1, ByteString g2, Display display, GOGraph graph, String dotCMDPath)
 		{
-			public void layoutFinished(boolean success, String msg, File pngFile, File dotFile)
+			super(display, graph, dotCMDPath);
+
+			HashSet<TermID> leafTerms = new HashSet<TermID>();
+
+			Gene2Associations g2a1 = result.assoc.get(g1);
+			Gene2Associations g2a2 = result.assoc.get(g2);
+
+			if (g2a1 != null && g2a2 != null)
 			{
-				if (success)
-				{
-					try
-					{
-						graphCanvas.setLayoutedDotFile(dotFile);
-					} catch (Exception e)
-					{
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
+				for (TermID t : g2a1.getAssociations())
+					gene1Set.addAll(result.g.getTermsOfInducedGraph(null, t));
+
+				for (TermID t : g2a2.getAssociations())
+					gene2Set.addAll(result.g.getTermsOfInducedGraph(null, t));
+
+				leafTerms.addAll(g2a1.getAssociations());
+				leafTerms.addAll(g2a2.getAssociations());
 			}
 
-			public String getDotNodeAttributes(TermID id)
-			{
-				StringBuilder attributes = new StringBuilder();
-				attributes.append("label=\"");
-
-				if (result.g.isRootGOTermID(id))
-				{
-					attributes.append("Gene Ontology");
-				} else
-				{
-					attributes.append(id.toString());
-					attributes.append("\\n");
-
-					String label = result.g.getGOTerm(id).getName();
-					if (GlobalPreferences.getWrapColumn() != -1)
-						label = Util.wrapLine(label,"\\n",GlobalPreferences.getWrapColumn());
-
-					attributes.append(label);
-				}
-				attributes.append("\"");
-
-				double saturation = 1.0f - result.calculation.p(id)*0.9f;// 1.0f;// - (((float) rank + 1) / significants_count) * 0.8f;
-
-				/* Always full brightness */
-				double brightness = 1.0f;
-
-				double hue = 0.0;
-				/* Hue depends on namespace */
-				if (gene1Set.contains(id))
-				{
-					if (gene2Set.contains(id))
-						hue = 120.f / 360;
-					else hue = 180.f / 360;
-				} else
-				{
-					if (gene2Set.contains(id)) hue = 60.f / 360;
-				}
-
-				String style = "filled,gradientfill";
-				String fillcolor = String.format(Locale.US, "%f,%f,%f", hue, saturation, brightness);
-				attributes.append(",style=\""+ style + "\",color=\"white\",fillcolor=\"" + fillcolor + "\"");
-
-				return attributes.toString();
-			};
-		};
-
-		Gene2Associations g2a1 = result.assoc.get(g1);
-		Gene2Associations g2a2 = result.assoc.get(g2);
-
-		if (g2a1 != null && g2a2 != null)
-		{
-			for (TermID t : g2a1.getAssociations())
-				gene1Set.addAll(result.g.getTermsOfInducedGraph(null, t));
-
-			for (TermID t : g2a2.getAssociations())
-				gene2Set.addAll(result.g.getTermsOfInducedGraph(null, t));
-
-			leafTerms.addAll(g2a1.getAssociations());
-			leafTerms.addAll(g2a2.getAssociations());
+			setLeafTerms(leafTerms);
 		}
 
-		gggt.setLeafTerms(leafTerms);
-		gggt.start();
+		public void layoutFinished(boolean success, String msg, File pngFile, File dotFile)
+		{
+			if (success)
+			{
+				try
+				{
+					graphCanvas.setLayoutedDotFile(dotFile);
+				} catch (Exception e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+
+		public String getDotNodeAttributes(TermID id)
+		{
+			StringBuilder attributes = new StringBuilder();
+			attributes.append("label=\"");
+
+			if (result.g.isRootGOTermID(id))
+			{
+				attributes.append("Gene Ontology");
+			} else
+			{
+				attributes.append(id.toString());
+				attributes.append("\\n");
+
+				String label = result.g.getGOTerm(id).getName();
+				if (GlobalPreferences.getWrapColumn() != -1)
+					label = Util.wrapLine(label,"\\n",GlobalPreferences.getWrapColumn());
+
+				attributes.append(label);
+			}
+			attributes.append("\\nIC: ");
+			attributes.append(String.format("%g",result.calculation.p(id)));
+			attributes.append("\"");
+
+			double saturation = 1.0f - result.calculation.p(id)*0.9f;// 1.0f;// - (((float) rank + 1) / significants_count) * 0.8f;
+
+			/* Always full brightness */
+			double brightness = 1.0f;
+
+			double hue = 0.0;
+			/* Hue depends on set */
+			if (gene1Set.contains(id))
+			{
+				if (gene2Set.contains(id))
+					hue = 120.f / 360;
+				else hue = 180.f / 360;
+			} else
+			{
+				if (gene2Set.contains(id)) hue = 60.f / 360;
+			}
+
+			String style = "filled,gradientfill";
+			String fillcolor = String.format(Locale.US, "%f,%f,%f", hue, saturation, brightness);
+			attributes.append(",style=\""+ style + "\",color=\"white\",fillcolor=\"" + fillcolor + "\"");
+
+			return attributes.toString();
+		};
+
+	};
+
+	private void updateGraph(ByteString g1, ByteString g2)
+	{
+		SemanticGOGraphGenerationThread sgggt =
+			new SemanticGOGraphGenerationThread(g1,g2,getDisplay(),result.g,GlobalPreferences.getDOTPath());
+		sgggt.start();
 	}
 
 	public void setResult(SemanticResult result)
