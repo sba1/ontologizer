@@ -8,8 +8,8 @@ import ontologizer.association.AssociationContainer;
 import ontologizer.calculation.SemanticCalculation;
 import ontologizer.calculation.SemanticResult;
 import ontologizer.go.GOGraph;
-import ontologizer.gui.swt.Ontologizer;
 import ontologizer.gui.swt.ResultWindow;
+import ontologizer.worksets.IWorkSetProgress;
 import ontologizer.worksets.WorkSet;
 import ontologizer.worksets.WorkSetLoadThread;
 
@@ -29,7 +29,52 @@ public class SimilarityThread extends AbstractOntologizerThread
 	@Override
 	public void perform()
 	{
-		WorkSetLoadThread.obtainDatafiles(workSet, new Runnable()
+		WorkSetLoadThread.obtainDatafiles(workSet, new IWorkSetProgress()
+		{
+			public void message(final String message)
+			{
+				display.asyncExec(new Runnable() {
+					public void run()
+					{
+						if (!result.isDisposed())
+						{
+							result.appendLog(message);
+						}
+					}});
+			}
+
+			public void initGauge(final int maxWork)
+			{
+				display.asyncExec(new Runnable() {
+					public void run()
+					{
+						if (!result.isDisposed())
+						{
+							result.updateProgress(0);
+
+							if (maxWork > 0)
+							{
+								result.initProgress(maxWork);
+								result.showProgressBar();
+							} else
+								result.hideProgressBar();
+						}
+					}});
+			}
+
+			public void updateGauge(final int currentWork)
+			{
+				display.asyncExec(new Runnable() {
+					public void run()
+					{
+						if (!result.isDisposed())
+						{
+							result.updateProgress(currentWork);
+						}
+					}});
+
+			}
+		},new Runnable()
 		{
 			public void run()
 			{

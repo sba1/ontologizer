@@ -14,7 +14,9 @@ import ontologizer.FileCache;
 import ontologizer.FileCache.FileCacheUpdateCallback;
 import ontologizer.association.AssociationContainer;
 import ontologizer.association.AssociationParser;
+import ontologizer.association.IAssociationParserProgress;
 import ontologizer.go.GOGraph;
+import ontologizer.go.IOBOParserProgress;
 import ontologizer.go.OBOParser;
 import ontologizer.go.TermContainer;
 import ontologizer.gui.swt.Ontologizer;
@@ -32,7 +34,7 @@ public class WorkSetLoadThread extends Thread
 
 	private static class Message { }
 	private static class WorkSetMessage extends Message { public WorkSet workset; }
-	private static class ObtainWorkSetMessage extends WorkSetMessage { Runnable callback;}
+	private static class ObtainWorkSetMessage extends WorkSetMessage { Runnable callback; public IWorkSetProgress progress;}
 	private static class ReleaseWorkSetMessage extends WorkSetMessage { }
 	private static class CleanCacheMessage extends Message { }
 	private static class CallbackMessage extends Message { Runnable run;}
@@ -111,9 +113,22 @@ public class WorkSetLoadThread extends Thread
 	 */
 	static public void obtainDatafiles(WorkSet df, Runnable run)
 	{
+		obtainDatafiles(df, null, run);
+	}
+
+	/**
+	 * Obtain the data files for the given WorkSet. Calls run
+	 * (in a context of another thread) on completion.
+	 *
+	 * @param df
+	 * @param run
+	 */
+	static public void obtainDatafiles(WorkSet df, IWorkSetProgress progress, Runnable run)
+	{
 		ObtainWorkSetMessage owsm = new ObtainWorkSetMessage();
 		owsm.workset = df;
 		owsm.callback = run;
+		owsm.progress = progress;
 		wslt.messageQueue.add(owsm);
 	}
 
@@ -199,7 +214,7 @@ public class WorkSetLoadThread extends Thread
 								{
 									if (FileCache.isNonBlocking(t.obo) && FileCache.isNonBlocking(t.assoc))
 									{
-										loadFiles(FileCache.getLocalFileName(t.obo), FileCache.getLocalFileName(t.assoc));
+										loadFiles(FileCache.getLocalFileName(t.obo), FileCache.getLocalFileName(t.assoc), null);
 										t.issueCallbacks();
 										toBeRemoved.add(t);
 									}
@@ -267,7 +282,7 @@ public class WorkSetLoadThread extends Thread
 
 						if (oboName != null && assocName != null)
 						{
-							loadFiles(oboName,assocName);
+							loadFiles(oboName,assocName,owsm.progress);
 							owsm.callback.run();
 							continue again;
 						}
@@ -315,8 +330,9 @@ public class WorkSetLoadThread extends Thread
 	 *
 	 * @param oboName real file names
 	 * @param assocName real file names
+	 * @param workSetProgress
 	 */
-	private void loadFiles(String oboName, String assocName)
+	private void loadFiles(String oboName, String assocName, final IWorkSetProgress workSetProgress)
 	{
 		if (!new File(oboName).exists()) return;
 		if (!new File(assocName).exists()) return;
@@ -327,8 +343,23 @@ public class WorkSetLoadThread extends Thread
 			if (!graphMap.containsKey(oboName))
 			{
 				OBOParser oboParser = new OBOParser(oboName);
-				oboParser.doParse();
+				workSetProgress.message("Parsing OBO file");
+				oboParser.doParse(new IOBOParserProgress()
+				{
+
+					public void init(int max)
+					{
+						workSetProgress.initGauge(max);
+					}
+
+					public void update(int current, int terms)
+					{
+						workSetProgress.message("Parsing OBO file ("+terms+")");
+						workSetProgress.updateGauge(current);
+					}
+				});
 				TermContainer goTerms = new TermContainer(oboParser.getTermMap(), oboParser.getFormatVersion(), oboParser.getDate());
+				workSetProgress.message("Building GO graph");
 				graph = new GOGraph(goTerms);
 				graphMap.put(oboName,graph);
 			} else
@@ -338,9 +369,25 @@ public class WorkSetLoadThread extends Thread
 
 			if (!assocMap.containsKey(assocName))
 			{
-				AssociationParser ap = new AssociationParser(assocName,graph.getGoTermContainer());
+				workSetProgress.message("Parsing association file");
+				workSetProgress.updateGauge(0);
+				AssociationParser ap = new AssociationParser(assocName,graph.getGoTermContainer(),null,new IAssociationParserProgress()
+				{
+					public void init(int max)
+					{
+						workSetProgress.initGauge(max);
+					}
+
+					public void update(int current)
+					{
+						workSetProgress.updateGauge(current);
+					}
+				});
+
 				AssociationContainer ac = new AssociationContainer(ap.getAssociations(), ap.getSynonym2gene(), ap.getDbObject2gene());
 				assocMap.put(assocName, ac);
+				workSetProgress.message("");
+				workSetProgress.initGauge(0);
 			}
 		} catch (Exception e)
 		{
