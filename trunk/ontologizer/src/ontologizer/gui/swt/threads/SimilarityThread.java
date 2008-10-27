@@ -29,73 +29,108 @@ public class SimilarityThread extends AbstractOntologizerThread
 	@Override
 	public void perform()
 	{
-		WorkSetLoadThread.obtainDatafiles(workSet, new IWorkSetProgress()
+		final Object lock = new Object();
+		
+		synchronized (lock)
 		{
-			public void message(final String message)
+			WorkSetLoadThread.obtainDatafiles(workSet, new IWorkSetProgress()
 			{
-				display.asyncExec(new Runnable() {
-					public void run()
-					{
-						if (!result.isDisposed())
+				public void message(final String message)
+				{
+					display.asyncExec(new Runnable() {
+						public void run()
 						{
-							result.appendLog(message);
-						}
-					}});
-			}
-
-			public void initGauge(final int maxWork)
-			{
-				display.asyncExec(new Runnable() {
-					public void run()
-					{
-						if (!result.isDisposed())
-						{
-							result.updateProgress(0);
-							
-							if (maxWork > 0)
+							if (!result.isDisposed())
 							{
-								result.initProgress(maxWork);
-								result.showProgressBar();
-							} else
-								result.hideProgressBar();
-						}
-					}});
-			}
-
-			public void updateGauge(final int currentWork)
-			{
-				display.asyncExec(new Runnable() {
-					public void run()
-					{
-						if (!result.isDisposed())
+								result.appendLog(message);
+							}
+						}});
+				}
+	
+				public void initGauge(final int maxWork)
+				{
+					display.asyncExec(new Runnable() {
+						public void run()
 						{
-							result.updateProgress(currentWork);
-						}
-					}});
-				
-			}
-		},new Runnable()
-		{
-			public void run()
+							if (!result.isDisposed())
+							{
+								result.updateProgress(0);
+								
+								if (maxWork > 0)
+								{
+									result.initProgress(maxWork);
+									result.showProgressBar();
+								} else
+									result.hideProgressBar();
+							}
+						}});
+				}
+	
+				public void updateGauge(final int currentWork)
+				{
+					display.asyncExec(new Runnable() {
+						public void run()
+						{
+							if (!result.isDisposed())
+							{
+								result.updateProgress(currentWork);
+							}
+						}});
+					
+				}
+			},new Runnable()
 			{
+				public void run()
+				{
+					synchronized (lock)
+					{
+						lock.notifyAll();
+					}
+				}
+			});
+
+			try
+			{
+				lock.wait();
+
+				/* Stuff should have been loaded at this point */
+
 				GOGraph graph = WorkSetLoadThread.getGraph(workSet.getOboPath());
 				AssociationContainer assoc = WorkSetLoadThread.getAssociations(workSet.getAssociationPath());
+
+				display.asyncExec(new ResultAppendLogRunnable("Preparing semantic calculation"));
 
 				SemanticCalculation s = new SemanticCalculation(graph,assoc);
 
 				for (StudySet studySet : studySetList)
 				{
-					final SemanticResult sr = s.calculate(studySet);
-					double [][] mat = sr.mat;
-					
-					for (int i=0;i<mat.length;i++)
+					display.asyncExec(new ResultAppendLogRunnable("Analyzing study set " + studySet.getName()));
+
+					final SemanticResult sr = s.calculate(studySet,new SemanticCalculation.ISemanticCalculationProgress()
 					{
-						for (int j=0;j<mat.length;j++)
+						public void init(final int max)
 						{
-							System.out.print(mat[i][j] + "  ");
+							display.asyncExec(new Runnable()
+							{
+								public void run()
+								{
+									result.showProgressBar();
+									result.initProgress(max);
+								}
+							});
 						}
-						System.out.println();
-					}
+						
+						public void update(final int update)
+						{
+							display.asyncExec(new Runnable()
+							{
+								public void run()
+								{
+									result.updateProgress(update);
+								}
+							});
+						}
+					});
 
 					display.asyncExec(new Runnable()
 					{
@@ -106,8 +141,6 @@ public class SimilarityThread extends AbstractOntologizerThread
 					});
 
 				}
-
-				WorkSetLoadThread.releaseDatafiles(workSet);
 				
 				display.asyncExec(new Runnable(){public void run() {
 					if (!result.isDisposed())
@@ -119,8 +152,10 @@ public class SimilarityThread extends AbstractOntologizerThread
 					}
 				};});
 
+				WorkSetLoadThread.releaseDatafiles(workSet);
+			} catch (InterruptedException e)
+			{
 			}
-		});
-
+		}
 	}
 }

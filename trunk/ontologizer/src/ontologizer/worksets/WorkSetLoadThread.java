@@ -50,7 +50,8 @@ public class WorkSetLoadThread extends Thread
 		public String obo;
 		public String assoc;
 
-		private List<Runnable> callbacks = new LinkedList<Runnable>(); 
+		private List<Runnable> callbacks = new LinkedList<Runnable>();
+		private List<IWorkSetProgress> progresses = new LinkedList<IWorkSetProgress>();
 		
 		/**
 		 * Add a new callback.
@@ -277,6 +278,7 @@ public class WorkSetLoadThread extends Thread
 							}
 						}
 
+						/* Check whether files have already been downloaded */ 
 						String oboName = FileCache.open(ws.getOboPath());
 						String assocName = FileCache.open(ws.getAssociationPath());
 
