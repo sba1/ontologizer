@@ -11,5 +11,13 @@ public class SemanticResult
 
 	public ByteString [] names;
 	public double [][] mat;
-	public String name; 
+	public String name;
+
+	public SemanticCalculation calculation;
+	
+	/** The enumerator */
+	//public GOTermEnumerator enumerator;
+	
+	/** Genes that have annotations */
+	//public int totalAnnotated; 
 }
