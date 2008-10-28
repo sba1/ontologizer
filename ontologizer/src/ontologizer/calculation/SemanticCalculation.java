@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import ontologizer.ByteString;
 import ontologizer.GOTermEnumerator;
@@ -13,6 +16,12 @@ import ontologizer.association.AssociationContainer;
 import ontologizer.go.GOGraph;
 import ontologizer.go.TermID;
 
+class ByteStringPair
+{
+	public ByteString t1;
+	public ByteString t2;
+}
+
 public class SemanticCalculation
 {
 	public static interface ISemanticCalculationProgress
@@ -20,6 +29,8 @@ public class SemanticCalculation
 		void init(int max);
 		void update(int update);
 	};
+	
+	private int numberOfProcessors = 1;//Runtime.getRuntime().availableProcessors();
 	
 	private GOGraph graph;
 	private AssociationContainer goAssociations;
@@ -30,6 +41,8 @@ public class SemanticCalculation
 	
 	/** Similarity cache (indexed by term) */
 	private Object [] cache;
+
+	private ReentrantReadWriteLock cacheLock;
 
 	/**
 	 * Non-redundant associations (indexed by genes).
@@ -86,6 +99,9 @@ public class SemanticCalculation
 			associations[i] = terms;
 			i++;
 		}
+
+		if (numberOfProcessors > 1)
+			cacheLock = new ReentrantReadWriteLock();
 	}
 
 	/**
@@ -131,18 +147,41 @@ public class SemanticCalculation
 	 */
 	private double sim(TermID t1, TermID t2)
 	{
+		if (cacheLock != null) cacheLock.readLock().lock();
+
 		HashMap<TermID,Double> map = (HashMap<TermID, Double>) cache[t1.id];
+		if (map != null)
+		{
+			Double val = map.get(t2);
+			if (val != null)
+			{
+				if (cacheLock != null) cacheLock.readLock().unlock();	
+				return val;
+			}
+		}
+
+		if (cacheLock != null)
+		{
+			/* Upgrade lock, must unlock the read lock manually before */
+			cacheLock.readLock().unlock();
+			cacheLock.writeLock().lock();
+		}
+
+		/* Create HashMap when needed, but the value is definitively not there */
 		if (map == null)
 		{
 			map = new HashMap<TermID,Double>();
 			cache[t1.id] = map;
 		}
 
-		Double val = map.get(t2);
-		if (val != null) return val;
-		
 		double p = -Math.log(p(t1,t2));
 		map.put(t2,p);
+		
+		if (cacheLock != null)
+		{
+			cacheLock.writeLock().unlock();
+		}
+
 		return p;
 	}
 
@@ -213,6 +252,93 @@ public class SemanticCalculation
 		return calculate(study,null);
 	}
 
+	class WorkerThread extends Thread
+	{
+		class Message {};
+		class BeginWorkMessage extends Message{};
+
+		/** Where the thread is put in when it is unemployed */
+		private BlockingQueue<WorkerThread> unemployedQueue;
+
+		private BlockingQueue<Message> messageQueue = new LinkedBlockingQueue<Message>();
+
+		private int addPairCount;
+		private int pairsDone;
+		private ByteString [] work;
+		
+		private final static int WORK_LENGTH = 200000;
+
+		public WorkerThread(BlockingQueue<WorkerThread> unemployedQueue)
+		{
+			work = new ByteString[WORK_LENGTH];
+			this.unemployedQueue = unemployedQueue;
+		}
+
+		@Override
+		public void run()
+		{
+			try {
+				unemployedQueue.put(this);
+
+				again:
+				while (true)
+				{
+					Message msg =  messageQueue.take();
+
+					if (msg instanceof BeginWorkMessage)
+					{
+						System.out.println("Thread " + Thread.currentThread().getName() + " starts");
+
+						for (int i=0;i<addPairCount;i+=2)
+						{
+							sim(work[i],work[i+1]);							
+						}
+
+						pairsDone = addPairCount / 2;
+						addPairCount = 0;
+						unemployedQueue.put(this);
+						
+						System.out.println("Thread " + Thread.currentThread().getName() + " ready");
+					}
+				}
+			}
+			catch (InterruptedException e)
+			{
+				e.printStackTrace();
+			}
+		}
+
+		/**
+		 * 
+		 * @param g1
+		 * @param g2
+		 * @return whether there is more place in the queue.
+		 * 
+		 */
+		public boolean addPairForWork(ByteString g1, ByteString g2)
+		{
+			work[addPairCount] = g1;
+			work[addPairCount+1] = g2;
+			addPairCount += 2;
+			return addPairCount < WORK_LENGTH;
+		}
+
+		/**
+		 * Start working on the feeded pairs.
+		 * @param unemployedQueue 
+		 * @throws InterruptedException 
+		 */
+		public void fire() throws InterruptedException
+		{
+			messageQueue.put(new BeginWorkMessage());
+		}
+		
+		public int getPairsDone()
+		{
+			return pairsDone;
+		}
+	}
+
 	public SemanticResult calculate(StudySet study, ISemanticCalculationProgress progress)
 	{
 		SemanticResult sr = new SemanticResult();
@@ -224,29 +350,77 @@ public class SemanticCalculation
 			progress.init(study.getGeneCount() * study.getGeneCount());
 		
 		long millis = System.currentTimeMillis();
-		
-		for (ByteString g1 : study)
+
+		if (numberOfProcessors > 1)
 		{
-			int j=0;
-			for (ByteString g2 : study)
+			try
 			{
-				mat[i][j]=sim(g1,g2);
-				j++;
-				
-				if (progress != null)
+				/* Create and start the worker threads and put them in the queue */
+				WorkerThread [] wt = new WorkerThread[numberOfProcessors];
+				BlockingQueue<WorkerThread> unemployedQueue = new LinkedBlockingQueue<WorkerThread>();		
+				for (int j=0;j<numberOfProcessors;j++)
 				{
-					if (counter++ % 1000 == 0)
+					wt[j] = new WorkerThread(unemployedQueue);
+					wt[j].start();
+				}
+
+				/* Take first unemployed thread */
+				WorkerThread currentWorker = unemployedQueue.take();
+	
+				for (ByteString g1 : study)
+				{
+					for (ByteString g2 : study)
 					{
-						long newMillis = System.currentTimeMillis();
-						if (newMillis - millis > 200)
+						if (!currentWorker.addPairForWork(g1,g2))
 						{
-							millis = newMillis;
-							progress.update(counter);
+							currentWorker.fire();
+							
+							/* Take next unemployed thread (may wait if there is no unemployed thread left) */
+							currentWorker = unemployedQueue.take();
+							counter += currentWorker.pairsDone;
+							currentWorker.pairsDone = 0;
+
+							long newMillis = System.currentTimeMillis();
+							if (newMillis - millis > 200)
+							{
+								millis = newMillis;
+								progress.update(counter);
+							}
 						}
 					}
 				}
+			} catch(InterruptedException e)
+			{
+				e.printStackTrace();
 			}
-			i++;
+			
+		} else
+		{
+			/* Single threaded */
+
+			for (ByteString g1 : study)
+			{
+				int j=0;
+				for (ByteString g2 : study)
+				{
+					mat[i][j]=sim(g1,g2);
+					j++;
+					
+					if (progress != null)
+					{
+						if (counter++ % 1000 == 0)
+						{
+							long newMillis = System.currentTimeMillis();
+							if (newMillis - millis > 200)
+							{
+								millis = newMillis;
+								progress.update(counter);
+							}
+						}
+					}
+				}
+				i++;
+			}
 		}
 		sr.mat = mat;
 		sr.names = study.getGenes();
