@@ -28,4 +28,11 @@ public interface IGraphAction
 	 * Reset zoom.
 	 */
 	public void resetZoom();
+	
+	/**
+	 * Save the current graph to the given file.
+	 * 
+	 * @param file
+	 */
+	public void saveGraph(String file);
 }
