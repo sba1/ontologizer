@@ -1,8 +1,15 @@
 package ontologizer.gui.swt.result;
 
+import java.awt.Color;
+import java.awt.GradientPaint;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Locale;
+
+import javax.imageio.ImageIO;
 
 import net.sourceforge.nattable.NatTable;
 import ontologizer.ByteString;
@@ -49,6 +56,39 @@ public class SemanticSimilarityComposite extends Composite implements IGraphActi
 	private Browser browser;
 	private GraphCanvas graphCanvas;
 
+	private static File geneSet1BackgroundFile;
+	private static File geneSet2BackgroundFile;
+	private static File geneSetBothBackgroundFile;
+
+	static
+	{
+		try
+		{
+			geneSet1BackgroundFile = createBackgroundFile(Color.getHSBColor(180.f / 360.f, 1, 1),new Color(255,255,255));
+			geneSet2BackgroundFile = createBackgroundFile(Color.getHSBColor(60.f / 360.f, 1, 1), new Color(255,255,255));
+			geneSetBothBackgroundFile = createBackgroundFile(Color.getHSBColor(120.f / 360.f, 1, 1),new Color(255,255,255));
+		} catch (IOException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	};
+
+	private static File createBackgroundFile(Color color, Color color2) throws IOException
+	{
+		File tmp = File.createTempFile("onto", ".png");
+		BufferedImage bi = new BufferedImage(20,100,BufferedImage.TYPE_INT_ARGB);
+		Graphics2D ig2 = bi.createGraphics();
+		GradientPaint gp = new GradientPaint(0,0,color,0,100,color2);
+		ig2.setPaint(gp);
+		ig2.fillRect(0,0,20,100);
+		ImageIO.write(bi,"PNG",tmp);
+		return tmp;
+	}
+
+
+
 	public SemanticSimilarityComposite(Composite parent, int style)
 	{
 		super(parent, style);
@@ -89,6 +129,7 @@ public class SemanticSimilarityComposite extends Composite implements IGraphActi
 
 		selectedSimilarityText = new Text(tableComposite,SWT.BORDER);
 		selectedSimilarityText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
 	}
 
 	public void updateSelectedText()
@@ -152,7 +193,9 @@ public class SemanticSimilarityComposite extends Composite implements IGraphActi
 
 		StringBuilder str = new StringBuilder();
 		str.append("<html>");
+
 		str.append("<body>");
+
 		str.append("<h1>");
 		str.append(g1.toString());
 		str.append(" vs. ");
@@ -166,14 +209,15 @@ public class SemanticSimilarityComposite extends Composite implements IGraphActi
 		str.append("</tr>");
 
 		str.append("<tr>");
-		str.append("<td>");
+		str.append("<td " + buildBackgroundAttribute(geneSet1BackgroundFile) + ">");
 		for (TermID t:onlyG1)
 		{
 			str.append(t.toString());
 			str.append(" ");
 		}
 		str.append("</td>");
-		str.append("<td>");
+		str.append("<td " + buildBackgroundAttribute(geneSet2BackgroundFile) + ">");
+//		str.append("<td background=\""+ geneSet2BackgroundFile.getAbsolutePath()+ "\">");
 		for (TermID t:onlyG2)
 		{
 			str.append(t.toString());
@@ -184,7 +228,8 @@ public class SemanticSimilarityComposite extends Composite implements IGraphActi
 
 
 		str.append("<tr>");
-		str.append("<td colspan=\"2\">");
+
+		str.append("<td colspan=\"2\" " + buildBackgroundAttribute(geneSetBothBackgroundFile) + ">");
 		for (TermID t:both)
 		{
 			str.append(t.toString());
@@ -201,48 +246,11 @@ public class SemanticSimilarityComposite extends Composite implements IGraphActi
 		browser.setText(str.toString());
 	}
 
-//	static enum Belonging
-//	{
-//		GENE1,
-//		GENE2,
-//		BOTH
-//	}
-//
-//	private HashMap<TermID,Belonging> buildTermBelonging(ByteString g1, ByteString g2)
-//	{
-//		HashSet<TermID> gene1Set = new HashSet<TermID>();
-//		HashSet<TermID> gene2Set = new HashSet<TermID>();
-//
-//		Gene2Associations g2a1 = result.assoc.get(g1);
-//		Gene2Associations g2a2 = result.assoc.get(g2);
-//
-//		if (g2a1 != null && g2a2 != null)
-//		{
-//			for (TermID t : g2a1.getAssociations())
-//				gene1Set.addAll(result.g.getTermsOfInducedGraph(null, t));
-//
-//			for (TermID t : g2a2.getAssociations())
-//				gene2Set.addAll(result.g.getTermsOfInducedGraph(null, t));
-//		}
-//
-//		HashMap<TermID,Belonging> term2belonging = new HashMap<TermID,Belonging>();
-//
-//		for (TermID t : gene1Set)
-//		{
-//			if (gene2Set.contains(t))
-//				term2belonging.put(t, Belonging.BOTH);
-//			else
-//				term2belonging.put(t, Belonging.GENE1);
-//		}
-//
-//		for (TermID t : gene2Set)
-//		{
-//			if (!gene1Set.contains(t))
-//				term2belonging.put(t, Belonging.GENE2);
-//		}
-//
-//		return term2belonging;
-//	}
+	private String buildBackgroundAttribute(File file)
+	{
+		if (file == null) return "";
+		return "background=\""+ file.getAbsolutePath()+"\" style=\"background-repeat: repeat-x;\"";
+	}
 
 	/**
 	 *
