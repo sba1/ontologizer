@@ -503,7 +503,7 @@ public class ResultWindow extends ApplicationWindow
 
 			private void performAction()
 			{
-				EnrichedGOTermsComposite comp = getSelectedResultCompositeIfEnriched();
+				IGraphAction comp = getSelectedCompositeAsGraphAction();
 				if (comp != null)
 				{
 					if (extension == null)
@@ -522,7 +522,7 @@ public class ResultWindow extends ApplicationWindow
 							if (!path.toLowerCase().endsWith("." + extension))
 								path = path + "." + extension;
 						}
-						comp.tableSaveGraph(path);
+						comp.saveGraph(path);
 					}
 				}
 			}

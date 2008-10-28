@@ -1137,7 +1137,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 	/**
 	 * Stores the result as graph.
 	 */
-	public void tableSaveGraph(String path)
+	public void saveGraph(String path)
 	{
 		EnrichedGraphGenerationThread ggt = createGraphGenerationThread(new IGraphGenerationFinished(){
 			public void finished(boolean success, String message, File pngFile, File dotFile)
