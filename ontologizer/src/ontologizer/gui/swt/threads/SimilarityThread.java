@@ -1,13 +1,17 @@
 package ontologizer.gui.swt.threads;
 
+import java.util.logging.Logger;
+
 import org.eclipse.swt.widgets.Display;
 
 import ontologizer.StudySet;
 import ontologizer.StudySetList;
 import ontologizer.association.AssociationContainer;
+import ontologizer.association.AssociationParser;
 import ontologizer.calculation.SemanticCalculation;
 import ontologizer.calculation.SemanticResult;
 import ontologizer.go.GOGraph;
+import ontologizer.gui.swt.Ontologizer;
 import ontologizer.gui.swt.ResultWindow;
 import ontologizer.worksets.IWorkSetProgress;
 import ontologizer.worksets.WorkSet;
@@ -15,6 +19,8 @@ import ontologizer.worksets.WorkSetLoadThread;
 
 public class SimilarityThread extends AbstractOntologizerThread
 {
+	private static Logger logger = Logger.getLogger(SimilarityThread.class.getCanonicalName());
+
 	private StudySetList studySetList;
 	private WorkSet workSet;
 
@@ -98,6 +104,9 @@ public class SimilarityThread extends AbstractOntologizerThread
 				GOGraph graph = WorkSetLoadThread.getGraph(workSet.getOboPath());
 				AssociationContainer assoc = WorkSetLoadThread.getAssociations(workSet.getAssociationPath());
 
+				if (graph == null) throw new RuntimeException("Error in loading the ontology graph!");
+				if (assoc == null) throw new RuntimeException("Error in loading the associations!");
+
 				display.asyncExec(new ResultAppendLogRunnable("Preparing semantic calculation"));
 
 				SemanticCalculation s = new SemanticCalculation(graph,assoc);
@@ -155,7 +164,18 @@ public class SimilarityThread extends AbstractOntologizerThread
 				WorkSetLoadThread.releaseDatafiles(workSet);
 			} catch (InterruptedException e)
 			{
+
+			} catch (RuntimeException re)
+			{
+				Ontologizer.logException(re);
+				display.asyncExec(new Runnable(){public void run() {
+					if (!result.isDisposed())
+					{
+						result.dispose();
+					}
+				};});
 			}
+
 		}
 	}
 }
