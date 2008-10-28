@@ -26,6 +26,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Text;
 
 /**
@@ -397,5 +398,31 @@ public class SemanticSimilarityComposite extends Composite implements IGraphActi
 	{
 		File tableFile = new File(path);
 		result.writeTable(tableFile);
+	}
+
+	public void saveGraph(String file)
+	{
+		if (natTableLastSelected.x != -1)
+		{
+			ByteString gene1 = result.names[natTableLastSelected.x];
+			ByteString gene2 = result.names[natTableLastSelected.y];
+
+			SemanticGOGraphGenerationThread sgggt = new SemanticGOGraphGenerationThread(gene1,gene2,getDisplay(),result.g,GlobalPreferences.getDOTPath())
+			{
+				@Override
+				public void layoutFinished(boolean success, String message, File pngFile, File dotFile)
+				{
+					if (!success && !isDisposed())
+					{
+						MessageBox mbox = new MessageBox(getShell(), SWT.ICON_ERROR | SWT.OK);
+						mbox.setMessage("Unable to execute the 'dot' tool!\n\n" + message);
+						mbox.setText("Ontologizer - Error");
+						mbox.open();
+					}
+				}
+			};
+			sgggt.setGfxOutFilename(file);
+			sgggt.start();
+		}
 	}
 }
