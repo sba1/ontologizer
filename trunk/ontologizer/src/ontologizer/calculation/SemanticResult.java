@@ -22,12 +22,6 @@ public class SemanticResult
 
 	public SemanticCalculation calculation;
 
-	/** The enumerator */
-	//public GOTermEnumerator enumerator;
-	
-	/** Genes that have annotations */
-	//public int totalAnnotated;
-
 	public void writeTable(File file)
 	{
 		try
