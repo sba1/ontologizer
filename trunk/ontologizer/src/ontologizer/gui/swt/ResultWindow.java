@@ -14,6 +14,7 @@ import ontologizer.gui.swt.images.Images;
 import ontologizer.gui.swt.result.AbstractResultComposite;
 import ontologizer.gui.swt.result.EnrichedGOTermsComposite;
 import ontologizer.gui.swt.result.IGraphAction;
+import ontologizer.gui.swt.result.ITableAction;
 import ontologizer.gui.swt.result.PValuesSVDGOTermsComposite;
 import ontologizer.gui.swt.result.SVDGOTermsComposite;
 import ontologizer.gui.swt.result.SemanticSimilarityComposite;
@@ -189,6 +190,7 @@ public class ResultWindow extends ApplicationWindow
 	}
 
 	/**
+	 * Returns the IGraphAction instance.
 	 * 
 	 * @return
 	 */
@@ -198,6 +200,14 @@ public class ResultWindow extends ApplicationWindow
 		Control c = cTabFolder.getSelection().getControl();
 		
 		if (c instanceof IGraphAction) return (IGraphAction)c;
+		return null;
+	}
+	
+	private ITableAction getSelectedCompositeAsTableAction()
+	{
+		if (cTabFolder.getSelection() == null) return null;
+		Control c = cTabFolder.getSelection().getControl();
+		if (c instanceof ITableAction) return (ITableAction)c;
 		return null;
 	}
 	
@@ -339,7 +349,7 @@ public class ResultWindow extends ApplicationWindow
 		/* Add listener */
 		saveTableItem.addSelectionListener(new DropDownListener(parent.getShell())
 		{
-			private int action;
+			private int tableActionNum;
 
 			public Menu createMenu(Composite parent)
 			{
@@ -351,7 +361,7 @@ public class ResultWindow extends ApplicationWindow
 					@Override
 					public void widgetSelected(SelectionEvent e)
 					{
-						action = 0;
+						tableActionNum = 0;
 						processMenuEvent(saveTableItem,menuItem1);
 						performAction();
 					}
@@ -364,7 +374,7 @@ public class ResultWindow extends ApplicationWindow
 					@Override
 					public void widgetSelected(SelectionEvent e)
 					{
-						action = 1;
+						tableActionNum = 1;
 						processMenuEvent(saveTableItem,menuItem2);
 						performAction();
 					}
@@ -377,7 +387,7 @@ public class ResultWindow extends ApplicationWindow
 					@Override
 					public void widgetSelected(SelectionEvent e)
 					{
-						action = 2;
+						tableActionNum = 2;
 						processMenuEvent(saveTableItem,menuItem3);
 						performAction();
 					}
@@ -393,17 +403,17 @@ public class ResultWindow extends ApplicationWindow
 			
 			private void performAction()
 			{
-				EnrichedGOTermsComposite comp = getSelectedResultCompositeIfEnriched();
-				if (comp != null)
+				ITableAction tblAction = getSelectedCompositeAsTableAction();
+				if (tblAction != null)
 				{
 					String path = tableOutputDialog.open();
 					if (path != null)
 					{
-						switch (action)
+						switch (tableActionNum)
 						{
-							case 0: comp.tableSave(path); break;
-							case 1: comp.htmlSave(path); break;
-							case 2: comp.tableAnnotatedSetSave(path); break;
+							case 0: tblAction.tableSave(path); break;
+							case 1: tblAction.htmlSave(path); break;
+							case 2: tblAction.tableAnnotatedSetSave(path); break;
 						}
 					}
 				}

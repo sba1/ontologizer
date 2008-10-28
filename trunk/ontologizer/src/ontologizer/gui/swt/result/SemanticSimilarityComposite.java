@@ -34,7 +34,7 @@ import org.eclipse.swt.widgets.Text;
  * @author Sebastian Bauer
  *
  */
-public class SemanticSimilarityComposite extends Composite implements IGraphAction
+public class SemanticSimilarityComposite extends Composite implements IGraphAction, ITableAction
 {
 	private SemanticResult result;
 
@@ -379,5 +379,23 @@ public class SemanticSimilarityComposite extends Composite implements IGraphActi
 	public void zoomOut()
 	{
 		graphCanvas.zoomOut();
+	}
+
+	public void htmlSave(String path)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void tableAnnotatedSetSave(String path)
+	{
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void tableSave(String path)
+	{
+		File tableFile = new File(path);
+		result.writeTable(tableFile);
 	}
 }
