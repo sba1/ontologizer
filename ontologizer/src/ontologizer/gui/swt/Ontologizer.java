@@ -159,7 +159,7 @@ public class Ontologizer
 				/* The help folder doesn't exists, so try to copy the files to a
 				 * directory */
 
-				/* TODO: Find out if we there is a possibility to list the files */
+				/* TODO: Find out if there is a possibility to list the files */
 				File file = File.createTempFile("onto","");
 				File imgDir = new File(file,"images");
 				file.delete();
