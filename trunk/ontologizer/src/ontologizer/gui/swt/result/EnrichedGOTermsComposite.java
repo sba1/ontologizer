@@ -76,7 +76,7 @@ import org.eclipse.swt.widgets.Text;
  * @author Sebastian Bauer
  *
  */
-public class EnrichedGOTermsComposite extends AbstractResultComposite implements IGraphAction
+public class EnrichedGOTermsComposite extends AbstractResultComposite implements IGraphAction, ITableAction
 {
 	private static Logger logger = Logger.getLogger(EnrichedGOTermsComposite.class.getCanonicalName());
 
