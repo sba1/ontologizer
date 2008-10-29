@@ -138,7 +138,7 @@ class DownloadThread extends Thread
 			if (proxy != null) urlConnection = u.openConnection(proxy);
 			else urlConnection = u.openConnection();
 
-			urlConnection.setConnectTimeout(15000);
+			urlConnection.setConnectTimeout(30000);
 
 			int cl = urlConnection.getContentLength();
 
