@@ -437,8 +437,13 @@ public class FileCache
 			/* The file could be in the cache as well */
 			if (fileCache.containsKey(url))
 			{
-				logger.fine("URL \"" + url + "\" has already been cached.");
-				return fileCache.get(url).cachedFilename;
+				String cachedFilename = fileCache.get(url).cachedFilename;
+				if (new File(cachedFilename).exists())
+				{
+					logger.fine("URL \"" + url + "\" has already been cached.");
+					return cachedFilename;
+				}
+				fileCache.remove(url);
 			}
 		}
 
