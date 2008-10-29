@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.logging.Logger;
 
 import ontologizer.ByteString;
 import ontologizer.GOTermEnumerator;
@@ -24,6 +25,8 @@ class ByteStringPair
 
 public class SemanticCalculation
 {
+	private static Logger logger = Logger.getLogger(SemanticCalculation.class.getCanonicalName());
+
 	public static interface ISemanticCalculationProgress
 	{
 		void init(int max);
@@ -138,6 +141,11 @@ public class SemanticCalculation
 		return p;
 	}
 
+//	private int queries;
+//	private int misses;
+//	private int lastMisses;
+//	private long millis = System.currentTimeMillis();
+		
 	/**
 	 * Returns the similarity of the two given terms.
 	 * 
@@ -145,8 +153,11 @@ public class SemanticCalculation
 	 * @param t2
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	private double sim(TermID t1, TermID t2)
 	{
+//		queries++;
+
 		if (cacheLock != null) cacheLock.readLock().lock();
 
 		HashMap<TermID,Double> map = (HashMap<TermID, Double>) cache[t1.id];
@@ -159,6 +170,17 @@ public class SemanticCalculation
 				return val;
 			}
 		}
+
+//		long newMillis = System.currentTimeMillis();
+//		lastMisses++;
+//		if (newMillis - millis > 250)
+//		{
+//			millis = newMillis;
+//			misses += lastMisses;
+//			System.out.println(Thread.currentThread().getName() + " lastMisses=" + lastMisses + " misses=" + misses + " queries=" + queries + " ratio=" + ((float)misses / queries));
+//			lastMisses = 0;
+//		}
+
 
 		if (cacheLock != null)
 		{
@@ -195,7 +217,11 @@ public class SemanticCalculation
 	 */
 	private double sim(int g1, int g2)
 	{
-		double sim = 0.0;
+		double sim;
+		
+		if (g1 < 0 || g2 < 0) return 0;
+		
+		sim = 0.0;
 
 		TermID [] tl1 = (TermID[])associations[g1]; 
 		TermID [] tl2 = (TermID[])associations[g2];
@@ -256,6 +282,7 @@ public class SemanticCalculation
 	{
 		class Message {};
 		class BeginWorkMessage extends Message{};
+		class FinishMessage extends Message{};
 
 		/** Where the thread is put in when it is unemployed */
 		private BlockingQueue<WorkerThread> unemployedQueue;
@@ -266,7 +293,7 @@ public class SemanticCalculation
 		private int pairsDone;
 		private ByteString [] work;
 		
-		private final static int WORK_LENGTH = 200000;
+		private final static int WORK_LENGTH = 4000;
 
 		public WorkerThread(BlockingQueue<WorkerThread> unemployedQueue)
 		{
@@ -280,14 +307,13 @@ public class SemanticCalculation
 			try {
 				unemployedQueue.put(this);
 
-				again:
 				while (true)
 				{
 					Message msg =  messageQueue.take();
 
 					if (msg instanceof BeginWorkMessage)
 					{
-						System.out.println("Thread " + Thread.currentThread().getName() + " starts");
+//						System.out.println("Thread " + Thread.currentThread().getName() + " starts");
 
 						for (int i=0;i<addPairCount;i+=2)
 						{
@@ -297,14 +323,15 @@ public class SemanticCalculation
 						pairsDone = addPairCount / 2;
 						addPairCount = 0;
 						unemployedQueue.put(this);
-						
-						System.out.println("Thread " + Thread.currentThread().getName() + " ready");
+					} else
+					{
+						if (msg instanceof FinishMessage)
+							break;
 					}
 				}
 			}
 			catch (InterruptedException e)
 			{
-				e.printStackTrace();
 			}
 		}
 
@@ -337,12 +364,19 @@ public class SemanticCalculation
 		{
 			return pairsDone;
 		}
+
+		public void finish() throws InterruptedException
+		{
+			messageQueue.put(new FinishMessage());
+		}
 	}
 
 	public SemanticResult calculate(StudySet study, ISemanticCalculationProgress progress)
 	{
 		SemanticResult sr = new SemanticResult();
 		
+		long start = System.currentTimeMillis();
+
 		double [][] mat =  new double[study.getGeneCount()][study.getGeneCount()];
 		int i=0,counter=0;
 		
@@ -350,6 +384,16 @@ public class SemanticCalculation
 			progress.init(study.getGeneCount() * study.getGeneCount());
 		
 		long millis = System.currentTimeMillis();
+
+		int [] indices = new int[study.getGeneCount()];
+		int k=0;
+		for (ByteString g : study)
+		{
+			Integer idx = gene2index.get(g);
+			if (idx != null) indices[k] = idx;
+			else indices[k] = -1;
+			k++;
+		}
 
 		if (numberOfProcessors > 1)
 		{
@@ -389,6 +433,13 @@ public class SemanticCalculation
 						}
 					}
 				}
+
+				for (int j=0;j<numberOfProcessors;j++)
+				{
+					wt[j].finish();
+					wt[j].join();
+				}
+
 			} catch(InterruptedException e)
 			{
 				e.printStackTrace();
@@ -397,15 +448,12 @@ public class SemanticCalculation
 		} else
 		{
 			/* Single threaded */
-
-			for (ByteString g1 : study)
+			for (i=0;i<indices.length;i++)
 			{
-				int j=0;
-				for (ByteString g2 : study)
+				for (int j=0;j<indices.length;j++)
 				{
-					mat[i][j]=sim(g1,g2);
-					j++;
-					
+					mat[i][j] = sim(indices[i],indices[j]);
+
 					if (progress != null)
 					{
 						if (counter++ % 1000 == 0)
@@ -419,8 +467,8 @@ public class SemanticCalculation
 						}
 					}
 				}
-				i++;
 			}
+
 		}
 		sr.mat = mat;
 		sr.names = study.getGenes();
@@ -428,6 +476,11 @@ public class SemanticCalculation
 		sr.assoc = goAssociations;
 		sr.g = graph;
 		sr.calculation = this;
+		
+		long end = System.currentTimeMillis();
+
+		logger.info("Took " + ((end - start) / 1000.0f) + "s for the analysis");
+
 		return sr;
 	}
 
