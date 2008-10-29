@@ -291,14 +291,27 @@ public class SemanticCalculation
 
 		private int addPairCount;
 		private int pairsDone;
-		private ByteString [] work;
+
+		/** Array of entries that need to be processed by this thread */
+		private int [] work;
 
 		private final static int WORK_LENGTH = 4000;
 
-		public WorkerThread(BlockingQueue<WorkerThread> unemployedQueue)
+		private double [][] mat;
+		private int [] indices;
+
+		/**
+		 *
+		 * @param unemployedQueue defines the queue in which the threads adds itself when a job has been finished.
+		 * @param mat the result matrix
+		 * @param indices matrix coordinates to coordinates used by the sim() method.
+		 */
+		public WorkerThread(BlockingQueue<WorkerThread> unemployedQueue, double [][] mat, int [] indices)
 		{
-			work = new ByteString[WORK_LENGTH];
+			work = new int[WORK_LENGTH];
 			this.unemployedQueue = unemployedQueue;
+			this.mat = mat;
+			this.indices = indices;
 		}
 
 		@Override
@@ -317,7 +330,11 @@ public class SemanticCalculation
 
 						for (int i=0;i<addPairCount;i+=2)
 						{
-							sim(work[i],work[i+1]);
+							int i1 = indices[work[i]];
+							int i2 = indices[work[i+1]];
+
+							if (i1 >= 0 || i2 >=0)
+								mat[work[i]][work[i+1]] = sim(i1,i2);
 						}
 
 						pairsDone = addPairCount / 2;
@@ -342,7 +359,7 @@ public class SemanticCalculation
 		 * @return whether there is more place in the queue.
 		 *
 		 */
-		public boolean addPairForWork(ByteString g1, ByteString g2)
+		public boolean addPairForWork(int g1, int g2)
 		{
 			work[addPairCount] = g1;
 			work[addPairCount+1] = g2;
@@ -404,18 +421,18 @@ public class SemanticCalculation
 				BlockingQueue<WorkerThread> unemployedQueue = new LinkedBlockingQueue<WorkerThread>();
 				for (int j=0;j<numberOfProcessors;j++)
 				{
-					wt[j] = new WorkerThread(unemployedQueue);
+					wt[j] = new WorkerThread(unemployedQueue,mat,indices);
 					wt[j].start();
 				}
 
 				/* Take first unemployed thread */
 				WorkerThread currentWorker = unemployedQueue.take();
 
-				for (ByteString g1 : study)
+				for (i=0;i<indices.length;i++)
 				{
-					for (ByteString g2 : study)
+					for (int j=0;j<indices.length;j++)
 					{
-						if (!currentWorker.addPairForWork(g1,g2))
+						if (!currentWorker.addPairForWork(i,j))
 						{
 							currentWorker.fire();
 
