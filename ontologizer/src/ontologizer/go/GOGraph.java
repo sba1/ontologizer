@@ -581,12 +581,30 @@ public class GOGraph
 	 * @param t2
 	 * @return
 	 */
-	public Set<TermID> getSharedParents(TermID t1, TermID t2)
+	public Collection<TermID> getSharedParents(TermID t1, TermID t2)
 	{
-		Set<TermID> p1 = getTermsOfInducedGraph(null,t1);
-		Set<TermID> p2 = getTermsOfInducedGraph(null,t2);
-		p1.retainAll(p2);
-		return p1;
+		final Set<TermID> p1 = getTermsOfInducedGraph(null,t1);
+
+		final ArrayList<TermID> sharedParents = new ArrayList<TermID>();
+		walkToSource(t2, new IVisitingGOVertex()
+		{
+			@Override
+			public void visiting(TermID t2)
+			{
+				if (p1.contains(t2))
+					sharedParents.add(t2);
+			}
+		});
+
+		/* The unoptimized algorithm */
+		if (false)
+		{
+			Set<TermID> p2 = getTermsOfInducedGraph(null,t2);
+			p1.retainAll(p2);
+			return p1;
+		}
+		
+		return sharedParents; 
 	}
 	
 	/**
