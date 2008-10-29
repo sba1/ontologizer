@@ -1,6 +1,7 @@
 package ontologizer.calculation;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -8,6 +9,8 @@ import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
 import java.util.logging.Logger;
 
 import ontologizer.ByteString;
@@ -16,12 +19,6 @@ import ontologizer.StudySet;
 import ontologizer.association.AssociationContainer;
 import ontologizer.go.GOGraph;
 import ontologizer.go.TermID;
-
-class ByteStringPair
-{
-	public ByteString t1;
-	public ByteString t2;
-}
 
 public class SemanticCalculation
 {
@@ -46,6 +43,8 @@ public class SemanticCalculation
 	private Object [] cache;
 
 	private ReentrantReadWriteLock cacheLock;
+	private ReadLock readLock;
+	private WriteLock writeLock;
 
 	/**
 	 * Non-redundant associations (indexed by genes).
@@ -104,7 +103,11 @@ public class SemanticCalculation
 		}
 
 		if (numberOfProcessors > 1)
+		{
 			cacheLock = new ReentrantReadWriteLock();
+			readLock = cacheLock.readLock();
+			writeLock = cacheLock.writeLock();
+		}
 	}
 
 	/**
@@ -127,7 +130,7 @@ public class SemanticCalculation
 	 */
 	private double p(TermID t1, TermID t2)
 	{
-		Set<TermID> sharedParents = graph.getSharedParents(t1, t2);
+		Collection<TermID> sharedParents = graph.getSharedParents(t1, t2);
 		double p = 1.0;
 
 		/* The information content of two terms is defined as the minimum of
@@ -142,6 +145,9 @@ public class SemanticCalculation
 	}
 
 //	private int queries;
+//	private int waitsForReading;
+//	private int waitsForWriting;
+
 //	private int misses;
 //	private int lastMisses;
 //	private long millis = System.currentTimeMillis();
@@ -156,9 +162,8 @@ public class SemanticCalculation
 	@SuppressWarnings("unchecked")
 	private double sim(TermID t1, TermID t2)
 	{
-//		queries++;
-
-		if (cacheLock != null) cacheLock.readLock().lock();
+		if (cacheLock != null)
+			readLock.lock();
 
 		HashMap<TermID,Double> map = (HashMap<TermID, Double>) cache[t1.id];
 		if (map != null)
@@ -172,21 +177,22 @@ public class SemanticCalculation
 		}
 
 //		long newMillis = System.currentTimeMillis();
-//		lastMisses++;
+////		lastMisses++;
 //		if (newMillis - millis > 250)
 //		{
 //			millis = newMillis;
-//			misses += lastMisses;
-//			System.out.println(Thread.currentThread().getName() + " lastMisses=" + lastMisses + " misses=" + misses + " queries=" + queries + " ratio=" + ((float)misses / queries));
-//			lastMisses = 0;
+////			misses += lastMisses;
+////			System.out.println(Thread.currentThread().getName() + " lastMisses=" + lastMisses + " misses=" + misses + " queries=" + queries + " ratio=" + ((float)misses / queries));
+////			lastMisses = 0;
+//			System.out.println(Thread.currentThread().getName() + "  " + queries + "  " + waitsForReading + "  " + waitsForWriting);
 //		}
 
 
 		if (cacheLock != null)
 		{
 			/* Upgrade lock, must unlock the read lock manually before */
-			cacheLock.readLock().unlock();
-			cacheLock.writeLock().lock();
+			readLock.unlock();
+			writeLock.lock();
 		}
 
 		/* Create HashMap when needed, but the value is definitively not there */
@@ -200,9 +206,7 @@ public class SemanticCalculation
 		map.put(t2,p);
 
 		if (cacheLock != null)
-		{
-			cacheLock.writeLock().unlock();
-		}
+			writeLock.unlock();
 
 		return p;
 	}
@@ -326,8 +330,6 @@ public class SemanticCalculation
 
 					if (msg instanceof BeginWorkMessage)
 					{
-//						System.out.println("Thread " + Thread.currentThread().getName() + " starts");
-
 						for (int i=0;i<addPairCount;i+=2)
 						{
 							int i1 = indices[work[i]];
@@ -402,6 +404,8 @@ public class SemanticCalculation
 
 		long millis = System.currentTimeMillis();
 
+		/* Create the association mapping, i.e, which gene maps to which entry in the array
+		 * of non-redundant association  */
 		int [] indices = new int[study.getGeneCount()];
 		int k=0;
 		for (ByteString g : study)
@@ -520,20 +524,5 @@ public class SemanticCalculation
 			}
 			gene++;
 		}
-
-/*		for (ByteString g1 : allGenesStudy)
-		{
-			for (ByteString g2 : allGenesStudy)
-			{
-				sim(g1,g2);
-			}
-			long newMillis = System.currentTimeMillis();
-			if (newMillis > millis + 250)
-			{
-				System.out.println(gene * 100.0 / allGenesStudy.getGeneCount() + "%");
-				millis = newMillis;
-			}
-			gene++;
-		}*/
 	}
 }
