@@ -394,17 +394,34 @@ public class GOGraph
 			 * (ontology vertex) we don't need to perform any checks about the
 			 * source node
 			 */
-			Iterator<Edge<Term>> edgeIter = graph.getInEdges(head);
-			while (edgeIter.hasNext())
-			{
-				Edge<Term> edge = edgeIter.next();
-				Term ancestor = edge.getSource();
 
-				if (!visited.contains(ancestor))
+			if (true)
+			{
+				Object [] ancestors = graph.getAncestors(head);
+				for (int i=0;i<ancestors.length;i++)
 				{
-					visited.add(ancestor);
-					queue.offer(ancestor);
-					vistingVertex.visiting(ancestor.getID());
+					Term ancestor = (Term)ancestors[i];
+					if (!visited.contains(ancestor))
+					{
+						visited.add(ancestor);
+						queue.offer(ancestor);
+						vistingVertex.visiting(ancestor.getID());
+					}
+				}
+			} else
+			{
+				Iterator<Edge<Term>> edgeIter = graph.getInEdges(head);
+				while (edgeIter.hasNext())
+				{
+					Edge<Term> edge = edgeIter.next();
+					Term ancestor = edge.getSource();
+
+					if (!visited.contains(ancestor))
+					{
+						visited.add(ancestor);
+						queue.offer(ancestor);
+						vistingVertex.visiting(ancestor.getID());
+					}
 				}
 			}
 		}
