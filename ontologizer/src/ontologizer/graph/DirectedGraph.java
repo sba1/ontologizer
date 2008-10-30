@@ -163,14 +163,14 @@ public class DirectedGraph<VertexType>
 
 	/**
 	 * Performs a breadth-first search onto the graph starting at a given
-	 * set of vertices. Vertices occuring in loops are vistited only once.
+	 * set of vertices. Vertices occurring in loops are visited only once.
 	 *  
 	 * @param vertex defines the vertex to start with.
 	 * 
 	 * @param againstFlow the bfs in done against the direction of the edges.
 	 * 
 	 * @param visitor a object of a class implementing IVisitor. For every 
-	 *        vertex visited by the algorithm the vistitor.visited() method is
+	 *        vertex visited by the algorithm the visitor.visited() method is
 	 *        called. Note that the method is called also for the  vertices
 	 *        specified by initialSet (in arbitrary order)
 	 * 
@@ -185,14 +185,14 @@ public class DirectedGraph<VertexType>
 
 	/**
 	 * Performs a breadth-first search onto the graph starting at a given
-	 * set of vertices. Vertices occuring in loops are vistited only once.
+	 * set of vertices. Vertices occurring in loops are visited only once.
 	 *  
 	 * @param initialSet defines the set of vertices to start with.
 	 * 
 	 * @param againstFlow the bfs in done against the direction of the edges.
 	 * 
 	 * @param visitor a object of a class implementing IVisitor. For every 
-	 *        vertex visited by the algorithm the vistitor.visited() method is
+	 *        vertex visited by the algorithm the visitor.visited() method is
 	 *        called. Note that the method is called also for the  vertices
 	 *        specified by initialSet (in arbitrary order)
 	 * 
