@@ -15,6 +15,9 @@ class VertexAttributes<VertexType>
 	/** All edges where the vertex is appearing as dest */
 	public ArrayList<Edge<VertexType>> inEdges = new ArrayList<Edge<VertexType>>();
 
+	/** Array of ancestors, build on demand and cached for quick access */
+	public Object [] ancestorsArray;
+
 	/** All edges where the vertex is appearing as source */
 	public ArrayList<Edge<VertexType>> outEdges = new ArrayList<Edge<VertexType>>();
 };
@@ -96,7 +99,9 @@ public class DirectedGraph<VertexType>
 			throw new IllegalArgumentException();
 		
 		vaSource.outEdges.add(edge);
+
 		vaDest.inEdges.add(edge);
+		vaDest.ancestorsArray = null;
 	}
 	
 	/**
@@ -113,6 +118,31 @@ public class DirectedGraph<VertexType>
 		VertexAttributes<VertexType> va = vertices.get(t); 
 		assert(va != null);
 		return va.inEdges.iterator();
+	}
+
+
+	/**
+	 * Returns the direct ancestors of the graph as an array.
+	 * 
+	 * This method is fast when called multiple times.
+	 * 
+	 * @param node
+	 * @return
+	 */
+	public Object [] getAncestors(VertexType node)
+	{
+		VertexAttributes<VertexType> va = vertices.get(node); 
+		assert(va != null);
+		if (va.ancestorsArray != null) return va.ancestorsArray;
+		
+		va.ancestorsArray = new Object[va.inEdges.size()];
+
+		int i = 0;
+		
+		for (Edge<VertexType> edge : va.inEdges)
+			va.ancestorsArray[i++] = edge.getSource();
+		
+		return va.ancestorsArray;
 	}
 
 	/**
