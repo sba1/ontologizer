@@ -208,7 +208,8 @@ class IntHashMapForDoubles
 	    int hash = hash(key);
 	    for (Entry e = table[indexFor(hash, table.length)]; e != null; e = e.next)
 	    {
-	        if (e.hash == hash && e.key == key)
+
+	        if (/*e.hash == hash &&*/ e.key == key)
 	            return e.value;
 	    }
 	    return Double.NaN;
@@ -227,7 +228,7 @@ class IntHashMapForDoubles
 		int hash = hash(key);
 	    for (Entry e = table[indexFor(hash, table.length)]; e != null; e = e.next)
 	    {
-	        if (e.hash == hash && e.key == key)
+	        if (/*e.hash == hash && */e.key == key)
 	            return true;
 	    }
 	    return false;
@@ -251,14 +252,16 @@ class IntHashMapForDoubles
 	    int i = indexFor(hash, table.length);
 	    for (Entry e = table[i]; e != null; e = e.next)
 	    {
-	        if (e.hash == hash && e.key == key)
+	        if (/*e.hash == hash && */e.key == key)
+	        {
 	            e.value = value;
+	            return;
+	        }
 	    }
 
 	    modCount++;
 	    addEntry(hash, key, value, i);
 	}
-
 
 	/**
 	 * Rehashes the contents of this map into a new array with a
@@ -323,7 +326,7 @@ class IntHashMapForDoubles
 	    size = 0;
 	}
 
-	static class Entry
+	private static final class Entry
 	{
 	    final int key;
 	    double value;
@@ -369,6 +372,7 @@ class IntHashMapForDoubles
 	void addEntry(int hash, int key, double value, int bucketIndex)
 	{
 		Entry e = table[bucketIndex];
+
 	    table[bucketIndex] = new Entry(hash, key, value, e);
 	    if (size++ >= threshold)
 	        resize(2 * table.length);
@@ -614,8 +618,6 @@ public class SemanticCalculation
 
 		List<TermID> tl1 = goAssociations.get(g1).getAssociations();
 		List<TermID> tl2 = goAssociations.get(g2).getAssociations();
-
-//		System.out.println(tl1.size() + "  " + tl2.size());
 
 		for (TermID t1 : tl1)
 		{
