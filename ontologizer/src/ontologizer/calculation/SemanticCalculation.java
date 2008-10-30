@@ -524,6 +524,14 @@ public class SemanticCalculation
 	 */
 	private double sim(TermID t1, TermID t2)
 	{
+		/* Similarity of terms is symmetric */
+		if (t1.id > t2.id)
+		{
+			TermID s = t2;
+			t2 = t1;
+			t1 = s;
+		}
+
 		if (cacheLock != null)
 			readLock.lock();
 
@@ -559,7 +567,6 @@ public class SemanticCalculation
 			writeLock.unlock();
 
 		return p;
-
 	}
 
 	/**
@@ -746,11 +753,13 @@ public class SemanticCalculation
 
 		long start = System.currentTimeMillis();
 
-		double [][] mat =  new double[study.getGeneCount()][study.getGeneCount()];
+		int entries = study.getGeneCount();
+
+		double [][] mat =  new double[entries][entries];
 		int i=0,counter=0;
 
 		if (progress != null)
-			progress.init(study.getGeneCount() * study.getGeneCount());
+			progress.init(entries * (entries + 1) / 2);
 
 		long millis = System.currentTimeMillis();
 
@@ -821,9 +830,9 @@ public class SemanticCalculation
 			/* Single threaded */
 			for (i=0;i<indices.length;i++)
 			{
-				for (int j=0;j<indices.length;j++)
+				for (int j=i;j<indices.length;j++)
 				{
-					mat[i][j] = sim(indices[i],indices[j]);
+					mat[i][j] = mat[j][i] = sim(indices[i],indices[j]);
 
 					if (progress != null)
 					{
@@ -839,6 +848,9 @@ public class SemanticCalculation
 					}
 				}
 			}
+
+			if (progress != null)
+				progress.update(counter);
 
 		}
 		sr.mat = mat;
