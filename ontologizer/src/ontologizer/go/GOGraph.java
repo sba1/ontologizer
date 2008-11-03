@@ -621,7 +621,6 @@ public class GOGraph
 		final ArrayList<TermID> sharedParents = new ArrayList<TermID>();
 		walkToSource(t2, new IVisitingGOVertex()
 		{
-			@Override
 			public void visiting(TermID t2)
 			{
 				if (p1.contains(t2))
