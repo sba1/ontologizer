@@ -1,6 +1,7 @@
 package ontologizer.graph;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -28,13 +29,13 @@ class VertexAttributes<VertexType>
  * @author Sebastian Bauer
  *
  */
-public class DirectedGraph<VertexType>
+public class DirectedGraph<VertexType> implements Iterable<VertexType>
 {
 	/** Contains the vertices associated to meta information (edges) */
 	private HashMap<VertexType,VertexAttributes<VertexType>> vertices;
 
 	/**
-	 * This interface is used as a callback mechansim by different search
+	 * This interface is used as a callback mechanism by different search
 	 * methods.
 	 *
 	 * @author Sebastian Bauer
@@ -42,7 +43,7 @@ public class DirectedGraph<VertexType>
 	public interface IVisitor<VertexType>
 	{
 		/**
-		 * Called for every vertex vistited by the algorithm.
+		 * Called for every vertex visited by the algorithm.
 		 *
 		 * @param goTermID
 		 *
@@ -178,7 +179,7 @@ public class DirectedGraph<VertexType>
 	 */
 	public void bfs(VertexType vertex, boolean againstFlow, IVisitor<VertexType> visitor)
 	{
-		HashSet<VertexType> set = new HashSet<VertexType>();
+		ArrayList<VertexType> set = new ArrayList<VertexType>(1);
 		set.add(vertex);
 		bfs(set,againstFlow,visitor);
 	}
@@ -198,7 +199,7 @@ public class DirectedGraph<VertexType>
 	 *
 	 * @see IVisitor
 	 */
-	public void bfs(Set<VertexType> initialSet, boolean againstFlow, IVisitor<VertexType> visitor)
+	public void bfs(Collection<VertexType> initialSet, boolean againstFlow, IVisitor<VertexType> visitor)
 	{
 		HashSet<VertexType> visited = new HashSet<VertexType>();
 
@@ -467,4 +468,35 @@ public class DirectedGraph<VertexType>
 		}
 	}
 
+	@Override
+	public Iterator<VertexType> iterator()
+	{
+		return vertices.keySet().iterator();
+	}
+
+	/**
+	 * Get the in-degree of the given vertex.
+	 *
+	 * @param v
+	 * @return
+	 */
+	public int getInDegree(VertexType v)
+	{
+		VertexAttributes<VertexType> va = vertices.get(v);
+		if (va == null) return -1;
+		return va.inEdges.size();
+	}
+
+	/**
+	 * Get the in-degree of the given vertex.
+	 *
+	 * @param v
+	 * @return
+	 */
+	public int getOutDegree(VertexType v)
+	{
+		VertexAttributes<VertexType> va = vertices.get(v);
+		if (va == null) return -1;
+		return va.outEdges.size();
+	}
 }

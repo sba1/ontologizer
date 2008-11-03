@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import ontologizer.graph.DirectedGraph;
 import ontologizer.graph.Edge;
@@ -48,6 +49,8 @@ class GOEdge extends Edge<Term>
  */
 public class GOGraph
 {
+	private static Logger logger = Logger.getLogger(GOGraph.class.getCanonicalName());
+
 	/** The graph */
 	private DirectedGraph<Term> graph;
 
@@ -56,11 +59,6 @@ public class GOGraph
 
 	/** The artificial root term */
 	private Term rootGOTerm;
-
-	/** */
-	private Term bpTerm;
-	private Term mfTerm;
-	private Term ccTerm;
 
 	/**
 	 * Construct the GO Graph.
@@ -77,28 +75,6 @@ public class GOGraph
 		for (Term goTerm : goTermContainer)
 			graph.addVertex(goTerm);
 
-		/*
-		 * TODO: Rather than assuming we have three level 1 terms we should find
-		 * all the strongly connected components and create edges to their
-		 * "master nodes"
-		 */
-
-		/* Create the ontology node and like the three level 1 terms */
-		bpTerm = goTermContainer.get("GO:0008150"); /* biological process */
-		ccTerm = goTermContainer.get("GO:0005575"); /* celluar component */
-		mfTerm = goTermContainer.get("GO:0003674"); /* molecular function */
-
-		assert(bpTerm != null);
-		assert(ccTerm != null);
-		assert(mfTerm != null);
-
-		rootGOTerm = new Term("GO:0000000", "root", null, null);
-		graph.addVertex(rootGOTerm);
-
-		graph.addEdge(new GOEdge(rootGOTerm, goTermContainer.get("GO:0008150"),TermRelation.UNKOWN));
-		graph.addEdge(new GOEdge(rootGOTerm, goTermContainer.get("GO:0005575"),TermRelation.UNKOWN));
-		graph.addEdge(new GOEdge(rootGOTerm, goTermContainer.get("GO:0003674"),TermRelation.UNKOWN));
-
 		/* Now add the edges, i.e. link the terms */
 		for (Term goTerm : goTermContainer)
 		{
@@ -107,6 +83,46 @@ public class GOGraph
 			{
 				ParentTermID parent = goTerm.next();
 				graph.addEdge(new GOEdge(goTermContainer.get(parent.termid), goTerm, parent.relation));
+			}
+		}
+
+		List<Term> level1terms = new ArrayList<Term>();
+
+		/* Find the terms without any ancestors */
+		for (Term goTerm : graph)
+		{
+			if (graph.getInDegree(goTerm) == 0 && !goTerm.isObsolete())
+				level1terms.add(goTerm);
+		}
+
+		if (level1terms.size() > 1)
+		{
+			StringBuilder level1StringBuilder = new StringBuilder();
+			level1StringBuilder.append("\"");
+			level1StringBuilder.append(level1terms.get(0).getName());
+			level1StringBuilder.append("\"");
+			for (int i=1;i<level1terms.size();i++)
+			{
+				level1StringBuilder.append(" ,\"");
+				level1StringBuilder.append(level1terms.get(i).getName());
+				level1StringBuilder.append("\"");
+			}
+
+			logger.info("Ontology contains multiple level-one terms: " + level1StringBuilder.toString() + ". Adding artificial root term.");
+
+			rootGOTerm = new Term("GO:0000000", "root", null, null);
+			graph.addVertex(rootGOTerm);
+
+			for (Term lvl1 : level1terms)
+			{
+				graph.addEdge(new GOEdge(rootGOTerm, lvl1,TermRelation.UNKOWN));
+			}
+		} else
+		{
+			if (level1terms.size() == 1)
+			{
+				logger.info("Ontology contains a single level-one term.");
+				rootGOTerm = level1terms.get(0);
 			}
 		}
 	}
@@ -313,7 +329,7 @@ public class GOGraph
 	}
 
 	/**
-	 * This interface is used as a callback mechansim by the walkToRoot()
+	 * This interface is used as a callback mechanisim by the walkToRoot()
 	 * method.
 	 *
 	 * @see walkToRoot
@@ -640,21 +656,6 @@ public class GOGraph
 		// TODO: Not sure what to implement here...
 
 		return unrelatedTupels;
-	}
-
-	public Term getBpTerm()
-	{
-		return bpTerm;
-	}
-
-	public Term getCcTerm()
-	{
-		return ccTerm;
-	}
-
-	public Term getMfTerm()
-	{
-		return mfTerm;
 	}
 
 	static public class GOLevels
