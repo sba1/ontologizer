@@ -30,13 +30,9 @@ public class Gene2Associations implements Iterable<Association>
 	/** List of GO functional annotations */
 	private ArrayList<Association> associations;
 
-	/* Use to keep a running list of GO ids seen to avoid duplicate entries */
-	private ArrayList<TermID> goIDs;
-
 	public Gene2Associations(ByteString name)
 	{
 		associations = new ArrayList<Association>();
-		goIDs = new ArrayList<TermID>();
 		gene = name;
 	}
 
@@ -47,13 +43,12 @@ public class Gene2Associations implements Iterable<Association>
 	 */
 	public void add(Association a)
 	{
-		/* Only add, if association is really assoicated with the gene */
+		/* Only add, if association is really associated with the gene */
 		if (gene.equals(a.getObjectSymbol()))
 		{
-			/* avoid duplocates */
-			if (goIDs.contains(a.getGoID())) return;
+			if (containsID(a.getGoID()))
+				return;
 
-			goIDs.add(a.getGoID());
 			associations.add(a);
 		}
 	}
@@ -80,8 +75,27 @@ public class Gene2Associations implements Iterable<Association>
 		return a;
 	}
 
+	/**
+	 * Returns the iterator to iterate over all associations.
+	 */
 	public Iterator<Association> iterator()
 	{
 		return associations.iterator();
+	}
+	
+	/**
+	 * Returns whether the given term id is associated.
+	 * 
+	 * @param tid
+	 * @return
+	 */
+	public boolean containsID(TermID tid)
+	{
+		for (Association assoc : associations)
+		{
+			if (assoc.getGoID().equals(tid))
+				return true;
+		}
+		return false;
 	}
 }
