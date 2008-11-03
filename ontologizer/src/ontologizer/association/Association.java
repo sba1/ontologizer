@@ -106,6 +106,7 @@ public class Association
 	/** Use this pattern to split tab-separated fields on a line */
 	private static final Pattern pattern = Pattern.compile(DELIM);
 
+	private static final ByteString emptyString = new ByteString("");
 	/**
 	 * @param line :
 	 *            line from a gene_association file
@@ -113,7 +114,7 @@ public class Association
 	 */
 	public Association(String line) throws Exception
 	{
-		DB_Object = DB_Object_Symbol = synonym = new ByteString("");
+		DB_Object = DB_Object_Symbol = synonym = emptyString;
 		goID = null;
 		parseLine(line);
 	}
