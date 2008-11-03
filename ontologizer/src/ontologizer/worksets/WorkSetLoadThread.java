@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import ontologizer.FileCache;
@@ -105,6 +106,13 @@ public class WorkSetLoadThread extends Thread
 		wslt.start();
 	}
 
+	static private IWorkSetProgress dummyWorkSetProgress = new IWorkSetProgress()
+	{
+		public void initGauge(int maxWork) {}
+		public void message(String message) {}
+		public void updateGauge(int currentWork){}
+	};
+
 	/**
 	 * Obtain the data files for the given WorkSet. Calls run
 	 * (in a context of another thread) on completion.
@@ -129,7 +137,9 @@ public class WorkSetLoadThread extends Thread
 		ObtainWorkSetMessage owsm = new ObtainWorkSetMessage();
 		owsm.workset = df;
 		owsm.callback = run;
-		owsm.progress = progress;
+		if (progress != null) owsm.progress = progress;
+		else owsm.progress = dummyWorkSetProgress;
+
 		wslt.messageQueue.add(owsm);
 	}
 
@@ -215,7 +225,7 @@ public class WorkSetLoadThread extends Thread
 								{
 									if (FileCache.isNonBlocking(t.obo) && FileCache.isNonBlocking(t.assoc))
 									{
-										loadFiles(FileCache.getLocalFileName(t.obo), FileCache.getLocalFileName(t.assoc), null);
+										loadFiles(FileCache.getLocalFileName(t.obo), FileCache.getLocalFileName(t.assoc), dummyWorkSetProgress);
 										t.issueCallbacks();
 										toBeRemoved.add(t);
 									}
@@ -232,7 +242,7 @@ public class WorkSetLoadThread extends Thread
 
 			public void exception(Exception exception, String url)
 			{
-				logger.throwing(this.getClass().getName(), "exception", exception);
+				logger.log(Level.SEVERE, "exception", exception);
 			}
 		};
 
@@ -393,7 +403,7 @@ public class WorkSetLoadThread extends Thread
 			}
 		} catch (Exception e)
 		{
-			logger.throwing(this.getClass().getName(), "loadFiles", e);
+			logger.log(Level.SEVERE, "loadFiles", e);
 		}
 	}
 

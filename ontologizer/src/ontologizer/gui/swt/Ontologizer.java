@@ -141,9 +141,15 @@ public class Ontologizer
 		{
 			public void close() throws SecurityException { }
 			public void flush() { }
-			public void publish(LogRecord arg0)
+			@Override
+			public void publish(LogRecord record)
 			{
-				log(arg0.getLevel().getName(),arg0.getMessage());
+				log(record.getLevel().getName(),record.getMessage());
+			}
+			@Override
+			protected void reportError(String msg, Exception ex, int code)
+			{
+				super.reportError(msg, ex, code);
 			}
 		});
 //		rootLogger.setLevel(Level.FINEST);
