@@ -261,7 +261,7 @@ public class GeneEditor extends Composite
 						{
 							Set<TermID> set = new HashSet<TermID>();
 							for (Association a : gene2Associations)
-								set.add(a.getGoID());
+								set.add(a.getTermID());
 
 							if (set.size() > 0)
 							{
@@ -396,13 +396,13 @@ public class GeneEditor extends Composite
 								{
 									str.append("\n");
 
-									Term t = graph.getGOTerm(ga.getGoID());
+									Term t = graph.getGOTerm(ga.getTermID());
 									if (t != null)
 									{
 										str.append(t.getName());
 										str.append(" (");
 									}
-									str.append(ga.getGoID().toString());
+									str.append(ga.getTermID().toString());
 									if (t != null)
 										str.append(")");
 
