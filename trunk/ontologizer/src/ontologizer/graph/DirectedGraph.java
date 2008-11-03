@@ -39,7 +39,7 @@ public class DirectedGraph<VertexType> implements Iterable<VertexType>
 	 * 
 	 * @author Sebastian Bauer
 	 */
-	public interface IVisitor<VertexType>
+	public static interface IVisitor<VertexType>
 	{
 		/**
 		 * Called for every vertex visited by the algorithm.
@@ -52,7 +52,7 @@ public class DirectedGraph<VertexType> implements Iterable<VertexType>
 		boolean visited(VertexType vertex);
 	}
 
-	public interface IDistanceVisitor<VertexType>
+	public static interface IDistanceVisitor<VertexType>
 	{
 		boolean visit(VertexType vertex, List<VertexType> path, int distance);
 	}
