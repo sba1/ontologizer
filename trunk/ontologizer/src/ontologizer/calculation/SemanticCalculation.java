@@ -15,7 +15,9 @@ import java.util.logging.Logger;
 import ontologizer.ByteString;
 import ontologizer.GOTermEnumerator;
 import ontologizer.StudySet;
+import ontologizer.association.Association;
 import ontologizer.association.AssociationContainer;
+import ontologizer.association.Gene2Associations;
 import ontologizer.go.GOGraph;
 import ontologizer.go.TermID;
 
@@ -772,6 +774,13 @@ public class SemanticCalculation
 		for (ByteString g : study)
 		{
 			Integer idx = gene2index.get(g);
+			if (idx == null)
+			{
+				/* Maybe we can find the gene via a mapping */
+				Gene2Associations o2a = goAssociations.get(g);
+				if (o2a != null)
+					idx = gene2index.get(o2a.name());
+			}
 			if (idx != null) indices[k] = idx;
 			else indices[k] = -1;
 			k++;
