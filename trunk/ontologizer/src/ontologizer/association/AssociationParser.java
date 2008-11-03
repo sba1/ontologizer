@@ -240,7 +240,7 @@ public class AssociationParser
 				try
 				{
 					Association assoc = new Association(buf);	
-					TermID currentGOid = assoc.getGoID();
+					TermID currentGOid = assoc.getTermID();
 					Term currentTerm;
 
 					good++;

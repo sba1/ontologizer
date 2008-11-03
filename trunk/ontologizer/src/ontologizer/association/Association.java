@@ -64,7 +64,7 @@ public class Association
 	private ByteString DB_Object_Symbol;
 
 	/** e.g., GO:0015888 */
-	private TermID goID;
+	private TermID termID;
 
 	/** Has a not qualifier? */
 	private boolean notQualifier;
@@ -115,7 +115,7 @@ public class Association
 	public Association(String line) throws Exception
 	{
 		DB_Object = DB_Object_Symbol = synonym = emptyString;
-		goID = null;
+		termID = null;
 		parseLine(line);
 	}
 
@@ -123,21 +123,21 @@ public class Association
 	{
 		DB_Object = synonym = new ByteString("");
 		DB_Object_Symbol = db_object_symbol;
-		goID = new TermID(goIntID);
+		termID = new TermID(goIntID);
 	}
 
 	public Association(ByteString db_object_symbol, TermID goID)
 	{
 		DB_Object = synonym = new ByteString("");
 		DB_Object_Symbol = db_object_symbol;
-		this.goID = goID;
+		this.termID = goID;
 	}
 
 	public Association(ByteString db_object_symbol, String goTerm)
 	{
 		DB_Object = synonym = new ByteString("");
 		DB_Object_Symbol = db_object_symbol;
-		goID = new TermID(goTerm);
+		termID = new TermID(goTerm);
 	}
 
 	/**
@@ -177,7 +177,7 @@ public class Association
 		
 		/* Find GO:nnnnnnn */
 		fields[GOFIELD] = fields[GOFIELD].trim();
-		this.goID = new TermID(fields[GOFIELD]);
+		this.termID = new TermID(fields[GOFIELD]);
 
 		/* aspect can be P, F or C */
 /*		if (fields[ASPECTFIELD].equals("P") 
@@ -197,11 +197,11 @@ public class Association
 	/**
 	 * Returns the Term ID of this association.
 	 * 
-	 * @return GO ID
+	 * @return the term id.
 	 */
-	public TermID getGoID()
+	public TermID getTermID()
 	{
-		return goID;
+		return termID;
 	}
 
 	/**
