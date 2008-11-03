@@ -654,9 +654,9 @@ public class StudySet implements Iterable<ByteString>
 					{
 						if (first == false) out.write(',');
 						else first = false;
-						out.write(assoc.getGoID().toString());
+						out.write(assoc.getTermID().toString());
 
-						direct.add(assoc.getGoID());
+						direct.add(assoc.getTermID());
 					}
 					out.write("}");
 
