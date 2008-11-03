@@ -8,7 +8,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
-import java.util.Set;
 import java.util.Map.Entry;
 
 class VertexAttributes<VertexType>
@@ -468,7 +467,6 @@ public class DirectedGraph<VertexType> implements Iterable<VertexType>
 		}
 	}
 
-	@Override
 	public Iterator<VertexType> iterator()
 	{
 		return vertices.keySet().iterator();
