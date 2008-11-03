@@ -478,9 +478,11 @@ public class StudySet implements Iterable<ByteString>
 
 			public void visiting(TermID goTermID)
 			{
-				if (goTermID.equals(graph.getBpTerm().getID())) return;
-				if (goTermID.equals(graph.getMfTerm().getID())) return;
-				if (goTermID.equals(graph.getCcTerm().getID())) return;
+
+//	TODO:
+//				if (goTermID.equals(graph.getBpTerm().getID())) return;
+//				if (goTermID.equals(graph.getMfTerm().getID())) return;
+//				if (goTermID.equals(graph.getCcTerm().getID())) return;
 				if (graph.isRootGOTermID(goTermID)) return;
 
 				set.add(goTermID);
