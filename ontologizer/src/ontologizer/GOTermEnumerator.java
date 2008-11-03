@@ -110,7 +110,7 @@ public class GOTermEnumerator implements Iterable<TermID>
 		/* At first add the direct counts */
 		for (Association association : geneAssociations)
 		{
-			TermID goTermID = association.getGoID();
+			TermID goTermID = association.getTermID();
 			GOTermAnnotatedGenes termGenes = map.get(goTermID);
 			
 			/* Create an entry if it doesn't exist */
@@ -126,7 +126,7 @@ public class GOTermEnumerator implements Iterable<TermID>
 		/* Now build goTermSet */
 		HashSet<TermID> goTermSet = new HashSet<TermID>();
 		for (Association association : geneAssociations)
-			goTermSet.add(association.getGoID());
+			goTermSet.add(association.getTermID());
 
 		/* Then add the total counts */
 
