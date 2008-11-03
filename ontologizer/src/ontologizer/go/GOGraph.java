@@ -43,6 +43,104 @@ class GOEdge extends Edge<Term>
 }
 
 /**
+ * This is a implementation of a tiny queue avoiding bloat as much as possible.
+ * It minimizes the allocation of entries as it marks the memory of
+ * dequeued elements as unused. Only use it for temporary queues of which elements
+ * are inserted or removed in high frequency.
+ * 
+ * @author Sebastian Bauer
+ */
+class TinyQueue<Type>
+{
+	/** Structure used for the embedding of the elements */
+	static final private class TinyElement<Type>
+	{
+		TinyElement<Type> next;
+		Type t;
+	}
+
+	/** Head of the queue */
+	TinyElement<Type> head;
+
+	/** Tail of the queue */
+	TinyElement<Type> tail;
+
+	/** Head of the free list */
+	TinyElement<Type> headOfFree;	
+
+	/**
+	 * Internal function to allocate a new element. If there is
+	 * any left it gets it from the free list. Note that t field of
+	 * the returned element is garbage.
+	 * 
+	 * @return the new element.
+	 */
+	private TinyElement<Type> allocateElement()
+	{
+		if (headOfFree != null)
+		{
+			TinyElement<Type> te = headOfFree;
+			headOfFree = te.next;
+			te.next = null;
+			return te;
+		}
+		return new TinyElement<Type>();
+	}
+
+	/**
+	 * Deallocates the given element. In fact, it is pushed
+	 * on top of the free list.
+	 * @param t
+	 */
+	private void deallocateElement(TinyElement<Type> t)
+	{
+		t.next = headOfFree;
+		headOfFree = t;
+	}
+
+	/**
+	 * Offers a new element for the queue (i.e., appends it)
+	 * 
+	 * @param t
+	 */
+	public void offer(Type t)
+	{
+		TinyElement<Type> te = allocateElement();
+		te.t = t;
+		if (head == null)
+		{
+			head = tail = te;
+		} else
+		{
+			tail.next = te;
+			tail = te;
+		}
+	}
+
+	/**
+	 * Polls the first element of the queue (i.e., removes it).
+	 * 
+	 * @return the first element.
+	 */
+	public Type poll()
+	{
+		TinyElement<Type> te = head;
+		head = te.next;
+		if (head == null) tail = null;
+		deallocateElement(te);
+		return te.t;
+	}
+
+	/**
+	 * @return whether queue is empty or not.
+	 */
+	public boolean isEmpty()
+	{
+		return head == null;
+	}
+}
+
+/**
  * Represents the whole GO Graph
  * 
  * @author Sebastian Bauer
@@ -139,7 +237,7 @@ public class GOGraph
 	}
 
 	/**
-	 * Get (possible artifactial) TermID of the root vertex of graph
+	 * Get (possibly artificial) TermID of the root vertex of graph
 	 * 
 	 * @return The term representing to root
 	 */
@@ -358,7 +456,7 @@ public class GOGraph
 	 */
 	public void walkToSource(TermID goTermID, IVisitingGOVertex vistingVertex)
 	{
-		HashSet<TermID> set = new HashSet<TermID>();
+		ArrayList<TermID> set = new ArrayList<TermID>(1);
 		set.add(goTermID);
 		walkToSource(set, vistingVertex);
 	}
@@ -366,7 +464,7 @@ public class GOGraph
 	/**
 	 * Starting at the vertices within the goTermIDSet walk to the source of the
 	 * DAG (ontology vertex) and call the method visiting of given object
-	 * implementimg IVisitingGOVertex.
+	 * Implementing IVisitingGOVertex.
 	 * 
 	 * @param goTermIDSet
 	 *            the set of go TermsIDs to start with (note that visiting() is
@@ -388,7 +486,7 @@ public class GOGraph
 		HashSet<Term> visited = new HashSet<Term>();
 
 		/* Add all terms to the queue */
-		LinkedList<Term> queue = new LinkedList<Term>();
+		TinyQueue<Term> queue = new TinyQueue<Term>();
 		for (TermID id : goTermIDSet)
 		{
 			Term t = goTermContainer.get(id);
