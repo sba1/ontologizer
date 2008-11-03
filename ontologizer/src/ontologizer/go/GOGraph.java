@@ -555,7 +555,7 @@ public class GOGraph
 
 	public void walkToSinks(TermID goTermID, IVisitingGOVertex vistingVertex)
 	{
-		HashSet<TermID> set = new HashSet<TermID>();
+		ArrayList<TermID> set = new ArrayList<TermID>(1);
 		set.add(goTermID);
 		walkToSinks(set, vistingVertex);
 	}
@@ -571,14 +571,14 @@ public class GOGraph
 	 * 
 	 * @param vistingVertex
 	 */
-	public void walkToSinks(Set<TermID> goTermIDSet,
+	public void walkToSinks(Collection<TermID> goTermIDSet,
 			IVisitingGOVertex vistingVertex)
 	{
 		/* Implemented as breadth-first search */
 		HashSet<Term> visited = new HashSet<Term>();
 
 		/* Add all terms to the queue */
-		LinkedList<Term> queue = new LinkedList<Term>();
+		TinyQueue<Term> queue = new TinyQueue<Term>();
 		for (TermID id : goTermIDSet)
 		{
 			Term t = goTermContainer.get(id);
