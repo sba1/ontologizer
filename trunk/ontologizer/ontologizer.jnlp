@@ -13,8 +13,10 @@
       <all-permissions/> 
   </security> 
   <resources> 
-  	<j2se version="1.5+" max-heap-size="512m" />
+    <j2se version="1.5+" max-heap-size="768m" />
     <jar href="ontologizer.jar"/> 
+    <jar href="swt/nattable-core-1.6.2.jar"/>
+    <jar href="log4j-1.2.15.jar"/>
   </resources> 
   <resources os="Windows"> 
     <jar href="swt/win-x86/swt.jar"/>
