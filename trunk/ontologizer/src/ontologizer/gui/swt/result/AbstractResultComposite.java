@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
 
+import ontologizer.GlobalPreferences;
 import ontologizer.IDotNodeAttributesProvider;
 import ontologizer.association.AssociationContainer;
 import ontologizer.calculation.AbstractGOTermProperties;
@@ -13,7 +14,6 @@ import ontologizer.calculation.AbstractGOTermsResult;
 import ontologizer.go.GOGraph;
 import ontologizer.go.Term;
 import ontologizer.go.TermID;
-import ontologizer.gui.swt.GlobalPreferences;
 import ontologizer.gui.swt.ISimpleAction;
 import ontologizer.gui.swt.support.GraphCanvas;
 import ontologizer.gui.swt.support.IGraphGenerationFinished;

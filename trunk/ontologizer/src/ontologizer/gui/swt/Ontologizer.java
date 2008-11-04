@@ -22,6 +22,7 @@ import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 
 import ontologizer.FileCache;
+import ontologizer.GlobalPreferences;
 import ontologizer.OntologizerCore;
 import ontologizer.PopulationSet;
 import ontologizer.StudySet;

@@ -20,13 +20,13 @@ import java.util.logging.Logger;
 
 import ontologizer.ByteString;
 import ontologizer.GOTermEnumerator;
+import ontologizer.GlobalPreferences;
 import ontologizer.GOTermEnumerator.GOTermAnnotatedGenes;
 import ontologizer.association.Gene2Associations;
 import ontologizer.calculation.AbstractGOTermProperties;
 import ontologizer.calculation.EnrichedGOTermsResult;
 import ontologizer.go.Term;
 import ontologizer.go.TermID;
-import ontologizer.gui.swt.GlobalPreferences;
 import ontologizer.gui.swt.Ontologizer;
 import ontologizer.gui.swt.support.GraphCanvas;
 import ontologizer.gui.swt.support.IGraphGenerationFinished;
