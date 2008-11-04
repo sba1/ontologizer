@@ -13,11 +13,11 @@ import javax.imageio.ImageIO;
 
 import net.sourceforge.nattable.NatTable;
 import ontologizer.ByteString;
+import ontologizer.GlobalPreferences;
 import ontologizer.association.Gene2Associations;
 import ontologizer.calculation.SemanticResult;
 import ontologizer.go.GOGraph;
 import ontologizer.go.TermID;
-import ontologizer.gui.swt.GlobalPreferences;
 import ontologizer.gui.swt.support.GraphCanvas;
 import ontologizer.gui.swt.support.IMinimizedAdapter;
 import ontologizer.util.Util;

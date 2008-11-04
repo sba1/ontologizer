@@ -1,4 +1,4 @@
-package ontologizer.gui.swt;
+package ontologizer;
 
 /**
  * Manages the global preferences.

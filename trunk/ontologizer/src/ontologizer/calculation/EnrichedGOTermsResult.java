@@ -8,8 +8,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import ontologizer.GlobalPreferences;
 import ontologizer.IDotNodeAttributesProvider;
 import ontologizer.StudySet;
 import ontologizer.association.AssociationContainer;
@@ -18,12 +20,10 @@ import ontologizer.go.Term;
 import ontologizer.go.TermContainer;
 import ontologizer.go.TermID;
 import ontologizer.go.GOGraph.IVisitingGOVertex;
-import ontologizer.gui.swt.GlobalPreferences;
-import ontologizer.gui.swt.Ontologizer;
 import ontologizer.util.Util;
 
 /**
- * This class is a container for all the results dervived
+ * This class is a container for all the results derived
  * from a term enrichment calculation.
  *
  * @author Sebastian Bauer
@@ -127,7 +127,7 @@ public class EnrichedGOTermsResult extends AbstractGOTermsResult
 			logger.info("\"" + file.getCanonicalPath() + "\"" + " successfully written.");
 		} catch (IOException e)
 		{
-			Ontologizer.logException(e);
+			logger.log(Level.SEVERE, "Exception occured when writing the table.", e);
 		}
 	}
 

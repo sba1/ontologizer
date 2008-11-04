@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Locale;
 import java.util.Set;
 
+import ontologizer.GlobalPreferences;
 import ontologizer.IDotNodeAttributesProvider;
 import ontologizer.go.GOGraph;
 import ontologizer.go.Term;
