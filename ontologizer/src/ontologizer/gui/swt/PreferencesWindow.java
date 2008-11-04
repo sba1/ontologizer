@@ -1,5 +1,6 @@
 package ontologizer.gui.swt;
 
+import ontologizer.GlobalPreferences;
 import ontologizer.gui.swt.support.FileGridCompositeWidgets;
 import ontologizer.gui.swt.support.SWTUtil;
 
