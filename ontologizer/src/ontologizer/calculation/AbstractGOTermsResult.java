@@ -7,8 +7,6 @@
 package ontologizer.calculation;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -18,11 +16,8 @@ import ontologizer.GODOTWriter;
 import ontologizer.IDotNodeAttributesProvider;
 import ontologizer.association.AssociationContainer;
 import ontologizer.go.GOGraph;
-import ontologizer.go.ParentTermID;
 import ontologizer.go.Term;
-import ontologizer.go.TermContainer;
 import ontologizer.go.TermID;
-import ontologizer.go.TermRelation;
 
 /**
  * An abstraction of any result containing GO terms utilizing
@@ -117,6 +112,17 @@ public class AbstractGOTermsResult implements Iterable<AbstractGOTermProperties>
 	public AssociationContainer getAssociations()
 	{
 		return associations;
+	}
+
+	/**
+	 * Returns the size of the result list, i.e., through how many
+	 * elements you can iterate.
+	 *
+	 * @return
+	 */
+	public int getSize()
+	{
+		return list.size();
 	}
 
 	/**

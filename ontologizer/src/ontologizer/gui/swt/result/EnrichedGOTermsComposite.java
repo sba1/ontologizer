@@ -1185,7 +1185,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 					{
 						logger.info("HTML preparation finished with success!");
 						Ontologizer.showWaitPointer();
-						result.writeHTML(htmlFile,dotFile);
+						EnrichedGOTermsResultHTMLWriter.write(result, htmlFile, dotFile);
 						Ontologizer.hideWaitPointer();
 					} else
 					{
