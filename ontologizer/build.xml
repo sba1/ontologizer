@@ -13,6 +13,7 @@
 		<!-- Create the time stamp -->
 		<tstamp/>
 		<!-- set global properties for this build -->
+		<property environment="env" />
 		<property name="src.dir" location="src" />
 		<property name="build.dir" location="build" />
 		<property name="build.classes" location="${build.dir}/classes" />
@@ -27,12 +28,30 @@
 			<pathelement location="./" />
 			<pathelement location="./commons-cli-1.1.jar" />
 		</path>
+		
+	</target>
+	
+	<target name="init.gui" depends="init">
+		<!-- SWT support -->
+		<property name="swt.jar" value="${env.SWT_LIB}" />
+		<fail message="Couldn't find the location of the SWT library. Use SWT_LIB environment variable to give a hint.">
+			<condition>
+			 <equals arg1="${swt.jar}" arg2="$${env.SWT_LIB}"/>
+			</condition>
+		</fail>
+
+		<path id="gui.classpath">
+			<pathelement location="${swt.jar}"/>
+			<pathelement location="./nattable-core-1.6.2.jar" />
+			<pathelement location="./log4j-1.2.15.jar" />
+			<pathelement location="./colt.jar" />
+		</path>
 	</target>
 
 
 	<!-- MAIN TARGET FOR COMPILING ONTOLOGIZER SOURCE -->
 
-	<target name="compile" depends="init" description="compile the source">
+	<target name="compile" depends="init" description="compile the main source">
 		<mkdir dir="${build.classes}" />
 		<javac srcdir="${java.dir}" destdir="${build.classes}" debug="${debug}" verbose="yes">
 			<exclude name="**/ontologizer/tests/*.java" />
@@ -52,6 +71,14 @@
 
 			<classpath refid="classpath" />
 		</javac>
+	</target>
+
+	<target name="compile.gui" depends="compile,init.gui" description="compile the gui sources">
+		<javac srcdir="${java.dir}" destdir="${build.classes}" debug="${debug}" verbose="yes">
+			<include name="**/ontologizer/gui/**" />
+			<classpath refid="classpath"/>
+			<classpath refid="gui.classpath"/>
+		</javac>     
 	</target>
 
 	<!-- We copy the help files to the build directory in order to include them in the jar file -->
