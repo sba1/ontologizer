@@ -1,5 +1,5 @@
 <!-- build.xml file for the Ontologizer -->
-<!-- (c) 2005 Ontologizer Development Team -->
+<!-- (c) 2005-2008 Ontologizer Development Team -->
 
 <project name="Ontologizer" default="compile" basedir=".">
 	<description>Ant file to build the Ontologizer.
@@ -25,8 +25,7 @@
 
 		<path id="classpath">
 			<pathelement location="./" />
-			<pathelement location="./commons-cli-1.0.jar" />
-			<pathelement location="./prefuse.jar" />
+			<pathelement location="./commons-cli-1.1.jar" />
 		</path>
 	</target>
 
@@ -35,12 +34,14 @@
 
 	<target name="compile" depends="init" description="compile the source">
 		<mkdir dir="${build.classes}" />
-		<javac srcdir="${java.dir}" destdir="${build.classes}" debug="${debug}">
+		<javac srcdir="${java.dir}" destdir="${build.classes}" debug="${debug}" verbose="yes">
 			<exclude name="**/ontologizer/tests/*.java" />
+			<exclude name="**/ontologizer/gui/*.java" />
 			<exclude name="**/ontologizer/gui/swt/*.java" />
-			<exclude name="**/ontologizer/gui/swt/images/*.java" />
-			<exclude name="**/ontologizer/gui/swt/result/*.java" />
-			<exclude name="**/ontologizer/gui/swt/support/*.java" />
+			<exclude name="**/ontologizer/gui/swt/images/**" />
+			<exclude name="**/ontologizer/gui/swt/result/**" />
+			<exclude name="**/ontologizer/gui/swt/support/**" />
+			<exclude name="**/ontologizer/gui/swt/threads/**" />
 			<exclude name="**/ontologizer/calculation/svd/*.java" />
 			<exclude name="**/ontologizer/sampling/*Test.java" />
 			<exclude name="**/ontologizer/go/*Test.java" />
@@ -100,10 +101,9 @@
 			<manifest>
 				<attribute name="Built-By" value="${user.name}"/>
 				<attribute name="Main-Class" value="ontologizer.OntologizerCMD" />
-<!--				<attribute name="Class-Path" value="commons-cli-1.0.jar" /> -->
 			</manifest>
 
-			<zipfileset src="commons-cli-1.0.jar" />
+			<zipfileset src="commons-cli-1.1.jar" />
 
 			<fileset dir="${build.classes}">
 				<!-- Exclude class only useful for GUI version -->
