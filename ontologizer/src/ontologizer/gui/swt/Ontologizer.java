@@ -24,6 +24,7 @@ import java.util.prefs.Preferences;
 import ontologizer.FileCache;
 import ontologizer.GlobalPreferences;
 import ontologizer.OntologizerCore;
+import ontologizer.OntologizerThreadGroups;
 import ontologizer.PopulationSet;
 import ontologizer.StudySet;
 import ontologizer.StudySetList;
@@ -65,8 +66,6 @@ public class Ontologizer
 	private static GraphWindow graph;
 	private static LinkedList<ResultWindow> resultWindowList;
 	private static File workspace;
-
-	public static ThreadGroup threadGroup;
 
 	private static WorkSetList workSetList = new WorkSetList();
 
@@ -132,9 +131,6 @@ public class Ontologizer
 				else env.SetEnv.setenv("MOZILLA_FIVE_HOME","/usr/lib/mozilla");
 			}
 		}
-
-		/* Prepare threads */
-		threadGroup = new ThreadGroup("Worker");
 
 		/* Prepare logging */
 		Logger rootLogger = Logger.getLogger("");
@@ -478,7 +474,7 @@ public class Ontologizer
 
 		/* Ensure that all threads are finished before the main thread
 		 * disposes the device. */
-		ThreadGroup group = threadGroup;
+		ThreadGroup group = OntologizerThreadGroups.workerThreadGroup;
 		group.interrupt();
 
 		try
