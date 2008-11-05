@@ -12,6 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import ontologizer.FileCache;
+import ontologizer.OntologizerThreadGroups;
 import ontologizer.FileCache.FileCacheUpdateCallback;
 import ontologizer.association.AssociationContainer;
 import ontologizer.association.AssociationParser;
@@ -20,7 +21,6 @@ import ontologizer.go.GOGraph;
 import ontologizer.go.IOBOParserProgress;
 import ontologizer.go.OBOParser;
 import ontologizer.go.TermContainer;
-import ontologizer.gui.swt.Ontologizer;
 import ontologizer.util.MemoryWarningSystem;
 
 /**
@@ -186,7 +186,7 @@ public class WorkSetLoadThread extends Thread
 
 	public WorkSetLoadThread()
 	{
-		super(Ontologizer.threadGroup,"Work Set Loader Thread");
+		super(OntologizerThreadGroups.workerThreadGroup,"Work Set Loader Thread");
 	}
 
 	@Override
