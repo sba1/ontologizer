@@ -3,8 +3,8 @@ package ontologizer.gui.swt.threads;
 import java.io.IOException;
 
 import ontologizer.FileCache;
+import ontologizer.OntologizerThreadGroups;
 import ontologizer.FileCache.FileDownload;
-import ontologizer.gui.swt.Ontologizer;
 import ontologizer.gui.swt.ResultWindow;
 
 import org.eclipse.swt.widgets.Display;
@@ -23,7 +23,7 @@ public abstract class AbstractOntologizerThread extends Thread
 
 	public AbstractOntologizerThread(String threadName, Runnable calledWhenFinnished, Display d, ResultWindow r)
 	{
-		super(Ontologizer.threadGroup, threadName);
+		super(OntologizerThreadGroups.workerThreadGroup, threadName);
 		
 		this.display = d;
 		this.result = r;
