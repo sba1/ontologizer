@@ -116,7 +116,11 @@ public class AssociationParser
 
 			in.mark(2000);
 
-			String line = in.readLine();
+			/* Skip affy coments */
+			String line;
+			while ((line = in.readLine()) != null)
+				if (!line.startsWith("#")) break;
+
 			if (line != null)
 			{
 				in.reset();
@@ -125,8 +129,7 @@ public class AssociationParser
 				{
 					importAffyFile(in,fis,names,terms,progress);
 					fileType = Type.AFFYMETRIX;
-				}
-				else
+				} else
 				{
 					importAssociationFile(in,fis,names,terms,progress);
 					fileType = Type.GOA;
@@ -422,8 +425,6 @@ public class AssociationParser
 			"Annotation Notes",
 		};
 
-
-
 		FileChannel fc = fis.getChannel();
 
 		if (progress != null)
@@ -432,9 +433,16 @@ public class AssociationParser
 		int skipped = 0;
 		long millis = 0;
 
+		String line;
+
+		/* Skip comments */
+		do
+		{
+			line = in.readLine();
+		} while (line.startsWith("#"));
+
 		/* Check header */
 		boolean headerFailure = false;
-		String line = in.readLine();
 		String fields[];
 		String delim = ",";
 		fields = line.split(delim);
@@ -445,9 +453,10 @@ public class AssociationParser
 			y = item.lastIndexOf('"');
 			if (x == 0 && y == (item.length() - 1)) System.out.print("OK");
 			item = item.substring(x,y);
+
 			if (!item.equals(annot[i]))
 			{
-				System.out.println("Found header " + item + "  expected " + annot[i]);
+				logger.severe("Found column header \"" + item + "\" but expected \"" + annot[i] + "\"");
 				headerFailure = true;
 				break;
 			}
