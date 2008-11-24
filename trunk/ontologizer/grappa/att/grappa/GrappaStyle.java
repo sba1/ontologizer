@@ -111,6 +111,11 @@ public class GrappaStyle
      */
     public final static int STYLE_INVIS         = 18;
 
+    /**
+     * Integer value for indicating gradient fill. Added by sba.
+     */
+    public final static int STYLE_GRADIENT_FILL = 19;
+
     // for compatibility with dot (Grappa uses fontstyle)
     /**
      * Integer value for indicating bold font info (should use fontstyle)
@@ -170,6 +175,10 @@ public class GrappaStyle
      */
     public final static boolean STYLE_FILLED_DEFAULT = false;
     /**
+     * Gradient fill default. Added by sba.
+     */
+    public final static boolean STYLE_GRADIENT_FILL_DEFAULT = false;
+    /**
      * Invisibility default.
      */
     public final static boolean STYLE_INVIS_DEFAULT = false;
@@ -220,6 +229,8 @@ public class GrappaStyle
 	styleTypes.put("miter_limit",new Integer(STYLE_MITER_LIMIT));
 	styleTypes.put("fixedsize",new Integer(STYLE_FIXED_SIZE));
 	styleTypes.put("fixed_size",new Integer(STYLE_FIXED_SIZE));
+	styleTypes.put("gradientfill", new Integer(STYLE_GRADIENT_FILL));
+	styleTypes.put("gradient_fill", new Integer(STYLE_GRADIENT_FILL));
 
 	// for compatibility with dot (these should be fontstyle for Grappa)
 	styleTypes.put("bold",new Integer(STYLE_OLD_BOLD));
@@ -241,6 +252,7 @@ public class GrappaStyle
     boolean rounded = STYLE_ROUNDED_DEFAULT;
     boolean diagonals = STYLE_DIAGONALS_DEFAULT;
     boolean filled = STYLE_FILLED_DEFAULT;
+    boolean gradient_fill = STYLE_GRADIENT_FILL_DEFAULT;
     boolean invis = STYLE_INVIS_DEFAULT;
     boolean fixed_size = STYLE_FIXED_SIZE_DEFAULT;
     Integer font_style = null;
@@ -294,6 +306,7 @@ public class GrappaStyle
 	rounded = STYLE_ROUNDED_DEFAULT;
 	diagonals = STYLE_DIAGONALS_DEFAULT;
 	filled = STYLE_FILLED_DEFAULT;
+	gradient_fill = STYLE_GRADIENT_FILL_DEFAULT;
 	invis = STYLE_INVIS_DEFAULT;
 	fixed_size = STYLE_FIXED_SIZE_DEFAULT;
 	font_style = null;
@@ -455,6 +468,10 @@ public class GrappaStyle
 			last_option = option;
 			filled = true;
 			break;
+		    case STYLE_GRADIENT_FILL:
+		    last_option = option;
+		    gradient_fill = true;
+		    break;
 		    case STYLE_INVIS:
 			last_option = option;
 			invis = true;
@@ -1019,6 +1036,14 @@ public class GrappaStyle
 	return filled;
     }
 
+    /**
+     * Get the gradient fill specification.
+     * 
+     * @return the gradient fill specification (true indicates gradient filling should occur).
+     */
+    public boolean getGradientFill() {
+    return gradient_fill;
+    }
     /**
      * Get the invisibility specification.
      *
