@@ -32,7 +32,6 @@ public class WestfallYoungStepDownCachedSecondVersion extends AbstractTestCorrec
 	 */
 	private class Entry implements Comparable<Entry>
 	{
-		public String goTermID;
 		public double value;
 		public int index;
 
