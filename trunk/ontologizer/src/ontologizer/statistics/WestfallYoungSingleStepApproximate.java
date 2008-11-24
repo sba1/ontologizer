@@ -28,7 +28,6 @@ public class WestfallYoungSingleStepApproximate extends AbstractResamplingTestCo
 	 */
 	private class Entry implements Comparable<Entry>
 	{
-		public String goTermID;
 		public double value;
 		public int index;
 
