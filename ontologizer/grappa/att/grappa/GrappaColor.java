@@ -767,7 +767,7 @@ public abstract class GrappaColor
 	allDigits = false;
       } else if(Character.isDigit(array[i])) {
 	array[len++] = array[i];
-      } else if(array[i] == ',') {
+      } else if(array[i] == ',' || array[i] ==' ') {
 	if(commas < 2) {
 	  commaSpots[commas] = i;
 	}
