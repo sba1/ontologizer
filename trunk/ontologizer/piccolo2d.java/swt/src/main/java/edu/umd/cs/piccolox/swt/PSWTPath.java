@@ -264,7 +264,7 @@ public class PSWTPath extends PNode {
                         shapePts[3] - lineWidth, shapePts[4], shapePts[5]);
             }
             else {
-                g2.fillPolygon(shapePts);
+            	g2.fill(shape);
             }
         }
 
@@ -290,8 +290,8 @@ public class PSWTPath extends PNode {
             }
             else {
                 // TODO The bounds may be incorrect for polylines at the moment
-                // - resulting in graphics turds at some scales
-                g2.drawPolyline(shapePts);
+                // - resulting in graphics turds at some scales. Still valid?
+            	g2.draw(shape);
             }
         }
 
@@ -383,7 +383,6 @@ public class PSWTPath extends PNode {
             return new Line2D.Double(l2.getP1(), l2.getP2());
         }
         else {
-            new Exception().printStackTrace();
             GeneralPath aPath = new GeneralPath();
             aPath.append(aShape, false);
             return aPath;
