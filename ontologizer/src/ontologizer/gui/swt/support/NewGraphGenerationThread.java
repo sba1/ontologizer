@@ -2,6 +2,7 @@ package ontologizer.gui.swt.support;
 
 import java.io.BufferedInputStream;
 import java.io.File;
+import java.util.logging.Logger;
 
 import org.eclipse.swt.widgets.Display;
 
@@ -14,6 +15,8 @@ import org.eclipse.swt.widgets.Display;
  */
 public class NewGraphGenerationThread extends Thread
 {
+	private static Logger logger = Logger.getLogger(NewGraphGenerationThread.class.getCanonicalName());
+
 	protected Display display;
 	private String dotCMDPath;
 	private String gfxOutFilename;
@@ -106,15 +109,17 @@ public class NewGraphGenerationThread extends Thread
 			dotProcess.waitFor();
 
 			final boolean success = dotProcess.exitValue() == 0;
-
-			System.err.println(errStr.toString());
+			if (!success)
+				logger.severe(errStr.toString());
 
 			/* Create the result window. Runs within the application's context */
 			display.syncExec(new Runnable()
 			{
 				public void run()
 				{
-					support.layoutFinished(success,"Dot returned a failure!",gfxFile,layoutedDotTmpFile);
+					support.layoutFinished(success,
+							"Dot returned a failure!\nPlease consult the error log for more details.",
+							gfxFile,layoutedDotTmpFile);
 				}
 			});
 		} catch (final Exception e)
