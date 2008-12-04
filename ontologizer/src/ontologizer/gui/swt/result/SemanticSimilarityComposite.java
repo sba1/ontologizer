@@ -19,6 +19,7 @@ import ontologizer.calculation.SemanticResult;
 import ontologizer.go.GOGraph;
 import ontologizer.go.TermID;
 import ontologizer.gui.swt.support.GraphCanvas;
+import ontologizer.gui.swt.support.IGraphCanvas;
 import ontologizer.gui.swt.support.IMinimizedAdapter;
 import ontologizer.util.Util;
 
@@ -54,7 +55,7 @@ public class SemanticSimilarityComposite extends Composite implements IGraphActi
 
 	private ResultControls resultControls;
 	private Browser browser;
-	private GraphCanvas graphCanvas;
+	private IGraphCanvas graphCanvas;
 
 	private static File geneSet1BackgroundFile;
 	private static File geneSet2BackgroundFile;

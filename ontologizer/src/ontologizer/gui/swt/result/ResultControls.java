@@ -3,8 +3,10 @@ package ontologizer.gui.swt.result;
 import ontologizer.gui.swt.ISimpleAction;
 import ontologizer.gui.swt.support.FolderComposite;
 import ontologizer.gui.swt.support.GraphCanvas;
+import ontologizer.gui.swt.support.IGraphCanvas;
 import ontologizer.gui.swt.support.IMinimizedAdapter;
 import ontologizer.gui.swt.support.IRestoredAdapter;
+import ontologizer.gui.swt.support.PGraphCanvas;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
@@ -27,7 +29,7 @@ public class ResultControls extends Composite
 	private FolderComposite graphComposite;
 	private FolderComposite browserComposite;
 
-	private GraphCanvas graphCanvas;
+	private IGraphCanvas graphCanvas;
 	private Browser browser;
 
 	private IMinimizedAdapter minimizedAdapter;
@@ -170,7 +172,7 @@ public class ResultControls extends Composite
 		browser.addLocationListener(ll);
 	}
 
-	public GraphCanvas getGraphCanvas()
+	public IGraphCanvas getGraphCanvas()
 	{
 		return graphCanvas;
 	}
