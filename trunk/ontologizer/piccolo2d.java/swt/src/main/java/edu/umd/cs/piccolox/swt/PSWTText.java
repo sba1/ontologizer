@@ -73,6 +73,11 @@ public class PSWTText extends PNode {
      * Default text when new text area is created.
      */
     static protected final String DEFAULT_TEXT = "";
+    
+    /**
+     * Default transparent state
+     */
+    static protected final boolean DEFAULT_IS_TRANSPARENT = false;
 
     /**
      * Default padding
@@ -103,6 +108,11 @@ public class PSWTText extends PNode {
      * The amount of padding on each side of the text
      */
     protected int padding = DEFAULT_PADDING;
+
+    /**
+     * Should text be draws with transparent mode?
+     */
+    private boolean isTransparent = DEFAULT_IS_TRANSPARENT;
 
     /**
      * Each vector element is one line of text.
@@ -204,6 +214,29 @@ public class PSWTText extends PNode {
     public void setBackgroundColor(Color color) {
         super.setPaint(color);
     }
+
+    /**
+     * Sets whether the text should be drawn in transparent
+     * mode, i.e., whether the background should be drawn
+     * or not.
+     * 
+     * @param isTransparent
+     */
+    public void setTransparent(boolean isTransparent) {
+		this.isTransparent = isTransparent;
+	}
+    
+
+    /**
+     * Returns whether the text should be drawn using the
+     * transparent mode, i.e., whether the background should
+     * be drawn or not.
+     * 
+     * @return
+     */
+    public boolean isTransparent() {
+		return isTransparent;
+	}
 
     /**
      * Returns the current greek threshold. Below this magnification text is
@@ -441,16 +474,6 @@ public class PSWTText extends PNode {
 
         sg2.translate(padding, padding);
 
-        double scale = Math.min(sg2.getTransform().getScaleX(), sg2.getTransform().getScaleY());
-        double dSize = scale * font.getSize();
-        double fixupScale = Math.floor(dSize) / dSize;
-
-        // This moves the text size down to the next closest integer size - to
-        // help it stay in
-        // it's alloted bounds. This is because SWT only supports integer font
-        // metrics
-        sg2.scale(fixupScale, fixupScale);
-
         // Render each line of text
         // Note that the entire text gets rendered so that it's upper left
         // corner
@@ -473,12 +496,10 @@ public class PSWTText extends PNode {
 
             y = (lineNum * metrics.getHeight());
 
-            sg2.drawString(line, (double) 0, (double) y);
+            sg2.drawString(line, 0, y, isTransparent);
 
             lineNum++;
         }
-
-        sg2.scale(1 / fixupScale, 1 / fixupScale);
 
         sg2.translate(-padding, -padding);
     }
