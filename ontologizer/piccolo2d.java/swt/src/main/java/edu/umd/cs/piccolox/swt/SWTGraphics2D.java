@@ -48,6 +48,7 @@ import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.PathIterator;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
@@ -64,6 +65,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Path;
+import org.eclipse.swt.graphics.Transform;
 
 /**
  * An extension to Graphics2D to support an SWT Piccolo Canvas with little
@@ -80,11 +83,15 @@ import org.eclipse.swt.graphics.GC;
  */
 public class SWTGraphics2D extends Graphics2D {
 
-    protected static int CACHE_COUNT = 0;
-    protected static HashMap FONT_CACHE = new HashMap();
-    protected static HashMap COLOR_CACHE = new HashMap();
-    protected static HashMap SHAPE_CACHE = new HashMap();
-    protected static BufferedImage BUFFER = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+    private static int CACHE_COUNT = 0;
+
+    /* FIXME: Making the hashMaps a static attribute doesn't really work as the objects
+     * which are placed into them depends on the device object attribute. */
+    private static HashMap FONT_CACHE = new HashMap();
+    private static HashMap COLOR_CACHE = new HashMap();
+    private static HashMap SHAPE_CACHE = new HashMap()
+;
+    private static BufferedImage BUFFER = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
 
     static Point PT = new Point();
     static Rectangle2D RECT = new Rectangle2D.Double();
@@ -94,6 +101,7 @@ public class SWTGraphics2D extends Graphics2D {
     protected GC gc;
     protected Device device;
     protected AffineTransform transform = new AffineTransform();
+    private Transform swtTransform;
     protected org.eclipse.swt.graphics.Font curFont;
     protected double lineWidth = 1.0;
 
@@ -105,6 +113,9 @@ public class SWTGraphics2D extends Graphics2D {
 
         this.gc = gc;
         this.device = device;
+
+        swtTransform = new Transform(device);
+        gc.setAntialias(SWT.ON);
     }
 
     // //////////////////
@@ -273,7 +284,7 @@ public class SWTGraphics2D extends Graphics2D {
                     style = style | SWT.ITALIC;
                 }
 
-                return new Font(fd[0].getName(), style, fd[0].height);
+                return new Font(fd[0].getName(), style, (int)(fd[0].height + 0.5));
             }
             return null;
         }
@@ -321,60 +332,113 @@ public class SWTGraphics2D extends Graphics2D {
         return cachedFont;
     }
 
-    protected org.eclipse.swt.graphics.Font getTransformedFont() {
-        if (curFont != null) {
-            FontData fontData = curFont.getFontData()[0];
-            int height = fontData.getHeight();
-            RECT.setRect(0, 0, height, height);
-            SWTShapeManager.transform(RECT, transform);
-            height = (int) (RECT.getHeight() + 0.5);
-
-            String fontString = "name=" + fontData.getName() + ";bold=" + ((fontData.getStyle() & SWT.BOLD) != 0)
-                    + ";italic=" + ((fontData.getStyle() & SWT.ITALIC) != 0) + ";size=" + height;
-            return getFont(fontString);
-        }
-        return null;
-    }
-
     // /////////////////////////
     // AFFINE TRANSFORM METHODS
     // /////////////////////////
 
     public void translate(int x, int y) {
         transform.translate(x, y);
+        updateSWTTransform();
     }
 
     public void translate(double tx, double ty) {
         transform.translate(tx, ty);
+        updateSWTTransform();
     }
 
     public void rotate(double theta) {
         transform.rotate(theta);
+        updateSWTTransform();
     }
 
     public void rotate(double theta, double x, double y) {
         transform.rotate(theta, x, y);
+        updateSWTTransform();
     }
 
     public void scale(double sx, double sy) {
         transform.scale(sx, sy);
+        updateSWTTransform();
     }
 
     public void shear(double shx, double shy) {
         transform.shear(shx, shy);
+        updateSWTTransform();
     }
 
     public void transform(AffineTransform Tx) {
         transform.concatenate(Tx);
+        updateSWTTransform();
     }
 
     public void setTransform(AffineTransform Tx) {
         transform = (AffineTransform) Tx.clone();
+        updateSWTTransform();
     }
 
     public AffineTransform getTransform() {
         return (AffineTransform) transform.clone();
     }
+
+    // /////////////////////////////
+    // SUPPORT METHODS
+    // /////////////////////////////
+
+    /**
+     * Updates the SWT transform instance such that it matches
+     * AWTs counterpart.
+     */
+    private void updateSWTTransform()
+    {
+    	double [] m = new double[6];
+    	transform.getMatrix(m);
+    	swtTransform.setElements((float)m[0], (float)m[1], (float)m[2], (float)m[3], (float)m[4], (float)m[5]);
+    }
+
+	/**
+	 * Converts a java 2d path iterator to a SWT path.
+	 *
+	 * @param iter specifies the iterator to be converted.
+	 * @return the corresponding path object. Must be disposed() when no longer used.
+	 */
+
+	private Path pathIterator2Path(PathIterator iter)
+	{
+		float [] coords = new float[6];
+
+		Path path = new Path(device);
+
+		while (!iter.isDone())
+		{
+			int type = iter.currentSegment(coords);
+
+			switch (type)
+			{
+				case	PathIterator.SEG_MOVETO:
+						path.moveTo(coords[0], coords[1]);
+						break;
+
+				case	PathIterator.SEG_LINETO:
+						path.lineTo(coords[0],coords[1]);
+						break;
+
+				case	PathIterator.SEG_CLOSE:
+						path.close();
+						break;
+
+				case	PathIterator.SEG_QUADTO:
+						path.quadTo(coords[0],coords[1],coords[2],coords[3]);
+						break;
+
+				case	PathIterator.SEG_CUBICTO:
+						path.cubicTo(coords[0], coords[1],coords[2],coords[3],coords[4],coords[5]);
+						break;
+			}
+
+			iter.next();
+		}
+		return path;
+	}
 
     // /////////////////////////////
     // DRAWING AND FILLING METHODS
@@ -402,14 +466,13 @@ public class SWTGraphics2D extends Graphics2D {
             drawArc(a2.getX(), a2.getY(), a2.getWidth(), a2.getHeight(), a2.getAngleStart(), a2.getAngleExtent());
         }
         else {
-            double[] pts = (double[]) SHAPE_CACHE.get(s);
-
-            if (pts == null) {
-                pts = SWTShapeManager.shapeToPolyline(s);
-                SHAPE_CACHE.put(s, pts);
-            }
-
-            drawPolyline(pts);
+        	Path p = (Path)SHAPE_CACHE.get(s);
+        	if (p == null)
+        	{
+        		p = pathIterator2Path(s.getPathIterator(null));
+        		SHAPE_CACHE.put(s,p);
+        	}
+        	drawPath(p);
         }
     }
 
@@ -431,14 +494,13 @@ public class SWTGraphics2D extends Graphics2D {
             fillArc(a2.getX(), a2.getY(), a2.getWidth(), a2.getHeight(), a2.getAngleStart(), a2.getAngleExtent());
         }
         else {
-            double[] pts = (double[]) SHAPE_CACHE.get(s);
-
-            if (pts == null) {
-                pts = SWTShapeManager.shapeToPolyline(s);
-                SHAPE_CACHE.put(s, pts);
-            }
-
-            fillPolygon(pts);
+        	Path p = (Path)SHAPE_CACHE.get(s);
+        	if (p == null)
+        	{
+        		p = pathIterator2Path(s.getPathIterator(null));
+        		SHAPE_CACHE.put(s,p);
+        	}
+        	drawPath(p);
         }
     }
 
@@ -530,34 +592,41 @@ public class SWTGraphics2D extends Graphics2D {
                 .getX(), (int) PT.getY());
     }
 
-    public void drawString(String str, double x, double y) {
-        PT.setLocation(x, y);
-        transform.transform(PT, PT);
-        gc.setFont(getTransformedFont());
-        gc.drawString(str, (int) (PT.getX() + 0.5), (int) (PT.getY() + 0.5), true);
+    public void drawString(String str, int x, int y, boolean isTransparent) {
+    	gc.setTransform(swtTransform);
+    	gc.drawString(str, x, y, isTransparent);
+    	gc.setTransform(null);
     }
 
     public void drawString(String str, int x, int y) {
-        drawString(str, (double) x, (double) y);
+    	drawString(str,x,y,false);
+    }
+
+    public void drawString(String str, double x, double y) {
+    	drawString(str,(int)(x + 0.5), (int)(y + 0.5));
+    }
+
+    public void drawString(String str, double x, double y, boolean isTransparent) {
+    	drawString(str,(int)(x + 0.5), (int)(y + 0.5), isTransparent);
     }
 
     public void drawString(String str, float x, float y) {
-        drawString(str, (double) x, (double) y);
+    	drawString(str,(int)(x + 0.5), (int)(y + 0.5));
     }
 
     public void drawText(String s, double x, double y) {
-        PT.setLocation(x, y);
-        transform.transform(PT, PT);
-        gc.setFont(getTransformedFont());
-        gc.drawText(s, (int) (PT.getX() + 0.5), (int) (PT.getY() + 0.5), true);
+    	drawString(s,(int)(x + 0.5), (int)(y + 0.5));
     }
 
+    public void drawText(String s, int x, int y, int flags) {
+    	gc.setTransform(swtTransform);
+    	gc.drawText(s, x, y, flags);
+    	gc.setTransform(null);
+  }
+
     public void drawText(String s, double x, double y, int flags) {
-        PT.setLocation(x, y);
-        transform.transform(PT, PT);
-        gc.setFont(getTransformedFont());
-        gc.drawText(s, (int) (PT.getX() + 0.5), (int) (PT.getY() + 0.5), flags);
-    }
+    	drawText(s,(int)(x+0.5),(int)(y+0.5),flags);
+   }
 
     public void drawRect(int x, int y, int width, int height) {
         drawRect((double) x, (double) y, (double) width, (double) height);
@@ -676,6 +745,18 @@ public class SWTGraphics2D extends Graphics2D {
 
         gc.drawArc((int) (RECT.getX() + 0.5), (int) (RECT.getY() + 0.5), (int) (RECT.getWidth() + 0.5), (int) (RECT
                 .getHeight() + 0.5), (int) (startAngle + 0.5), (int) (startAngle + extent + 0.5));
+    }
+
+    public void drawPath(Path p) {
+    	gc.setTransform(swtTransform);
+    	gc.drawPath(p);
+    	gc.setTransform(null);
+    }
+
+    public void fillPath(Path p) {
+    	gc.setTransform(swtTransform);
+    	gc.fillPath(p);
+    	gc.setTransform(null);
     }
 
     // ////////////////////////
@@ -984,6 +1065,11 @@ public class SWTGraphics2D extends Graphics2D {
                 org.eclipse.swt.graphics.Color color = (org.eclipse.swt.graphics.Color) i.next();
                 color.dispose();
             }
+            for (Iterator i = SHAPE_CACHE.values().iterator(); i.hasNext();) {
+                Path path = (Path) i.next();
+                path.dispose();
+            }
         }
     }
+
 }
