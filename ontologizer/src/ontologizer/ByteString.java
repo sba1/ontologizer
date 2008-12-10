@@ -70,6 +70,24 @@ public class ByteString
 		return true;
 	}
 
+	/**
+	 * Returns whether this string is a prefix of the given string.
+	 *
+	 * @param string
+	 * @return
+	 */
+	public boolean isPrefixOf(String string)
+	{
+		if (bytes.length > string.length())
+			return false;
+
+		for (int i=0;i<bytes.length;i++)
+		{
+			if (bytes[i] != string.charAt(i))
+				return false;
+		}
+		return true;
+	}
 
 	public boolean contains(String string)
 	{
