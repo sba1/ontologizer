@@ -39,7 +39,7 @@ public class OntologizerCMD
 {
 	/**
 	 * The required argument stuff of the jakarta cli didn't work
-	 * as expeced, so we have to do this manually. If specifed
+	 * as expected, so we have to do this manually. If the specified
 	 * argument is not found an appropriate error message is written
 	 * the program exited.
      *
@@ -67,7 +67,6 @@ public class OntologizerCMD
 	 * @see myCommandLine
 	 * @see OntologizerCore
 	 */
-	@SuppressWarnings("static-access")
 	public static void main(String[] args)
 	{
 		OntologizerCore.Arguments arguments = new OntologizerCore.Arguments();
