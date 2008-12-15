@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -259,13 +260,26 @@ public class GOTermEnumerator implements Iterable<TermID>
 	
 	
 	/**
-	 * Returns the currently annotated terms.
+	 * Returns the currently annotated terms as a set.
 	 * 
 	 * @return
 	 */
-	public Set<TermID> getAllAnnotatedTerms()
+	public Set<TermID> getAllAnnotatedTermsAsSet()
 	{
-		HashSet<TermID> at = new HashSet<TermID>();
+		LinkedHashSet<TermID> at = new LinkedHashSet<TermID>();
+		for (TermID t : this)
+			at.add(t);
+		return at;
+	}
+	
+	/**
+	 * Returns the currently annotated terms as a list.
+	 * 
+	 * @return
+	 */
+	public List<TermID> getAllAnnotatedTermsAsList()
+	{
+		ArrayList<TermID> at = new ArrayList<TermID>();
 		for (TermID t : this)
 			at.add(t);
 		return at;
