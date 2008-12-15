@@ -135,7 +135,7 @@ public class TopCalculation extends AbstractHypergeometricCalculation
 
 		GOTermEnumerator studyTermEnumerator = studySet.enumerateGOTerms(graph,goAssociations);
 		GOTermEnumerator populationTermEnumerator = populationSet.enumerateGOTerms(graph,goAssociations);
-		Set<TermID> allAnnotatedTerms = populationTermEnumerator.getAllAnnotatedTerms();
+		Set<TermID> allAnnotatedTerms = populationTermEnumerator.getAllAnnotatedTermsAsSet();
 		GOLevels levels = graph.getGOLevels(allAnnotatedTerms);
 
 		for (int i=levels.getMaxLevel();i>=0;i--)
