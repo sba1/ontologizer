@@ -18,7 +18,7 @@ public class TermContainerTest extends TestCase
 	@Override
 	protected void setUp() throws Exception
 	{
-		root = new Term("GO:0000000", "root", null, null);
+		root = new Term("GO:0000000", "root", null);
 		ArrayList<ParentTermID> rootlist = new ArrayList<ParentTermID>();
 		rootlist.add(new ParentTermID(root.getID(),TermRelation.PART_OF_A));
 		bioproc = new Term("GO:0008150", "biological process", "B", rootlist);
@@ -60,7 +60,7 @@ public class TermContainerTest extends TestCase
 		Assert.assertTrue(container.get(molfunc.getID()).equals(molfunc));
 
 		Assert.assertTrue(container.get("GO:0000815") == null);
-		Term anotherTerm = new Term("GO:0000815", "dummy", null, null);
+		Term anotherTerm = new Term("GO:0000815", "dummy", null);
 		Assert.assertTrue(container.get(anotherTerm.getID()) == null);
 	}
 }
