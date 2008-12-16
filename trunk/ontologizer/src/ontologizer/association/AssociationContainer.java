@@ -55,24 +55,45 @@ public class AssociationContainer
 		totalAnnotations = 0;
 		gene2assocs = new HashMap<ByteString, Gene2Associations>();
 
-		Iterator<Association> it = assocs.iterator();
-		while (it.hasNext())
+		for (Association a : assocs)
+			addAssociation(a);
+	}
+
+	/**
+	 * Constructor for an empty container.
+	 *
+	 * @see addAssociation
+	 */
+	public AssociationContainer()
+	{
+		synonym2gene = new HashMap<ByteString,ByteString>();
+		dbObject2gene = new HashMap<ByteString, ByteString>();
+		gene2assocs = new HashMap<ByteString, Gene2Associations>();
+
+		totalAnnotations = 0;
+	}
+
+
+	/**
+	 * Adds a new association.
+	 *
+	 * @param a
+	 */
+	public void addAssociation(Association a)
+	{
+		totalAnnotations++;
+		Gene2Associations g2a = null;
+		if (gene2assocs.containsKey(a.getObjectSymbol()))
 		{
-			totalAnnotations++;
-			Association a = it.next();
-			Gene2Associations g2a = null;
-			if (gene2assocs.containsKey(a.getObjectSymbol()))
-			{
-				g2a = gene2assocs.get(a.getObjectSymbol());
-				g2a.add(a); // Add the Association to existing g2a
-			} else
-			{
-				// Otherwise create new Gene2Associations object
-				// for this gene.
-				g2a = new Gene2Associations(a.getObjectSymbol());
-				g2a.add(a);
-				gene2assocs.put(a.getObjectSymbol(), g2a);
-			}
+			g2a = gene2assocs.get(a.getObjectSymbol());
+			g2a.add(a); // Add the Association to existing g2a
+		} else
+		{
+			// Otherwise create new Gene2Associations object
+			// for this gene.
+			g2a = new Gene2Associations(a.getObjectSymbol());
+			g2a.add(a);
+			gene2assocs.put(a.getObjectSymbol(), g2a);
 		}
 	}
 
