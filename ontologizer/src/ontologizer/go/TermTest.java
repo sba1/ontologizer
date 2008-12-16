@@ -12,7 +12,7 @@ public class TermTest extends TestCase
 {
 	public void test()
 	{
-		Term root = new Term("GO:0000000", "root", null, null);
+		Term root = new Term("GO:0000000", "root", null);
 		ArrayList<ParentTermID> rootlist = new ArrayList<ParentTermID>();
 		rootlist.add(new ParentTermID(root.getID(),TermRelation.PART_OF_A));
 		Term bioproc = new Term("GO:0008150", "biological process", "B", rootlist);
