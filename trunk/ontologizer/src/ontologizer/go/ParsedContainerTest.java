@@ -11,9 +11,9 @@ public class ParsedContainerTest extends TestCase
 	// internal fields
 	private OBOParser oboParser;
 	
-	private Term bioproc = new Term("GO:0008150", "biological_process", "B", null);
-	private Term cellcomp = new Term("GO:0005575", "cellular_component", "C", null);
-	private Term molfunc = new Term("GO:0003674", "molecular_function", "F", null);
+	private Term bioproc = new Term("GO:0008150", "biological_process", "B");
+	private Term cellcomp = new Term("GO:0005575", "cellular_component", "C");
+	private Term molfunc = new Term("GO:0003674", "molecular_function", "F");
 
 	@Override
 	protected void setUp() throws Exception
@@ -48,7 +48,7 @@ public class ParsedContainerTest extends TestCase
 		Assert.assertTrue(container.get(molfunc.getID()).equals(molfunc));
 		
 		Assert.assertTrue(container.get("GO:0000815") == null);
-		Term anotherTerm = new Term("GO:0000815", "dummy", null, null);
+		Term anotherTerm = new Term("GO:0000815", "dummy", null);
 		Assert.assertTrue(container.get(anotherTerm.getID()) == null);
 	}
 	

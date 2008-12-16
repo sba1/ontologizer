@@ -208,7 +208,7 @@ public class GOGraph
 
 			logger.info("Ontology contains multiple level-one terms: " + level1StringBuilder.toString() + ". Adding artificial root term.");
 
-			rootGOTerm = new Term("GO:0000000", "root", null, null);
+			rootGOTerm = new Term("GO:0000000", "root", null);
 			graph.addVertex(rootGOTerm);
 
 			for (Term lvl1 : level1terms)

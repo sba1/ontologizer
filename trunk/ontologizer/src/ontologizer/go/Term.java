@@ -65,14 +65,48 @@ public class Term
 	 *            An identifier such as GO:0045174.
 	 * @param name
 	 *            A string such as glutathione dehydrogenase.
-	 * @param parents
-	 *            A Java.util.ArrayList containing a list of Strings with the
-	 *            accession numbers of the parents of this GO term.
 	 * @param namespace
 	 *            A character representing biological_process,
 	 *            cellular_component, or molecular_function or null.
+	 * @param parents
+	 *            A Java.util.ArrayList containing a list of Strings with the
+	 *            accession numbers of the parents of this GO term.
 	 */
-	Term(String strId, String name, String namespace, ArrayList<ParentTermID> parents)
+	public Term(String strId, String name, String namespace, ArrayList<ParentTermID> parents)
+	{
+		init(strId,name,namespace,parents);
+	}
+
+	/**
+	 * @param id
+	 *            An identifier such as GO:0045174.
+	 * @param name
+	 *            A string such as glutathione dehydrogenase.
+	 * @param namespace
+	 *            A character representing biological_process,
+	 *            cellular_component, or molecular_function or null.
+	 * @param parents
+	 *            A Java.util.ArrayList containing a list of Strings with the
+	 *            accession numbers of the parents of this GO term.
+	 */
+	public Term(String strID, String name, String namespace, ParentTermID...parents)
+	{
+		ArrayList<ParentTermID> al = new ArrayList<ParentTermID>(parents.length);
+		for (ParentTermID ptid : parents)
+			al.add(ptid);
+		
+		init(strID,name,namespace,al);
+	}
+
+	/**
+	 * Constructor helper.
+	 * 
+	 * @param strId
+	 * @param name
+	 * @param namespace
+	 * @param parents
+	 */
+	private void init(String strId, String name, String namespace, ArrayList<ParentTermID> parents)
 	{
 		if (namespace == null) this.namespace = Namespace.UNSPECIFIED;
 		else if (namespace.startsWith("B")) this.namespace = Namespace.BIOLOGICAL_PROCESS;
@@ -85,6 +119,7 @@ public class Term
 		this.parents = parents;
 	}
 
+	
 	/**
 	 * Clients can obtain a list of parents of this term by means of an
 	 * iterator-like interface by first calling this function and then calling
