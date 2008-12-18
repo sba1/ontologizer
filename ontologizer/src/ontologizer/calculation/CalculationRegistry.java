@@ -86,6 +86,7 @@ public class CalculationRegistry
 		registerCalculation(new ParentChildCutCalculation());
 		registerCalculation(new TopCalculation());
 		registerCalculation(new TopologyWeightedCalculation());
+		registerCalculation(new ProbabilisticCalculation());
 //		registerCalculation(new NewApproachCalculation());
 //		registerCalculation(new ChiSquareQCalculation());
 	}
