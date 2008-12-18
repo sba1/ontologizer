@@ -4,6 +4,7 @@ import java.io.*;
 import java.util.*; /* HashMap */
 import java.util.logging.Logger;
 
+import ontologizer.ByteString;
 import ontologizer.myException;
 
 /*
@@ -92,6 +93,9 @@ public class OBOParser
 	/** Statistics */
 	private int numberOfRelations;
 	
+	/** Contains all the ontology prefixes */
+	private HashSet <Prefix> prefixes = new HashSet<Prefix>();
+
 	/* Used for parsing */
 	private String line;
 	private int linenum = 0;
@@ -109,7 +113,7 @@ public class OBOParser
 	/** The namespace of the stanza currently being parsed */
 	private String currentNamespace;
 
-	/** The defintion of the stanza currently being parsed */
+	/** The definition of the stanza currently being parsed */
 	private String currentDefintion;
 
 	/** Is current term obsolete? */
