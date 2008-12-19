@@ -220,140 +220,121 @@ public class OBOParser
 	 */
 	public String doParse(IOBOParserProgress progress) throws IOException, myException
 	{
-//		try
+		int currentTerm = 0;
+		long millis = 0;
+
+		File file = new File(filename);
+		BufferedReader reader = new BufferedReader(new FileReader(file));
+
+		if (progress != null)
+			progress.init((int)file.length());
+
+		for (linenum = 1; (line = reader.readLine()) != null; linenum++)
 		{
-			int currentTerm = 0;
-			long millis = 0;
-
-			File file = new File(filename);
-			BufferedReader reader = new BufferedReader(new FileReader(file));
-
+			/* Progress support, call only every quarter second */
 			if (progress != null)
-				progress.init((int)file.length());
-
-			for (linenum = 1; (line = reader.readLine()) != null; linenum++)
 			{
-				/* Progress support, call only every quarter second */
-				if (progress != null)
+				long newMillis = System.currentTimeMillis();
+				if (newMillis - millis > 250)
 				{
-					long newMillis = System.currentTimeMillis();
-					if (newMillis - millis > 250)
-					{
-						progress.update(bytesRead,currentTerm);
-						millis = newMillis;
-					}
+					progress.update(bytesRead,currentTerm);
+					millis = newMillis;
 				}
+			}
 
-				bytesRead += line.length();
+			bytesRead += line.length();
 
-				line = stripSpecialCharacters(line);
-				if (line.length() == 0)
-					continue;
-				/*
-				 * The following takes care of multiline entries (lines
-				 * terminated with "\")
-				 */
-				while (line.charAt(line.length() - 1) == '\\'
-						&& line.charAt(line.length() - 2) != '\\')
+			line = stripSpecialCharacters(line);
+			if (line.length() == 0)
+				continue;
+			/*
+			 * The following takes care of multiline entries (lines
+			 * terminated with "\")
+			 */
+			while (line.charAt(line.length() - 1) == '\\'
+					&& line.charAt(line.length() - 2) != '\\')
+			{
+				String str = reader.readLine();
+				linenum++;
+				if (str == null)
+					throw new myException("Unexpected end of file", line, linenum);
+				line = line.substring(0, line.length() - 1) + str;
+			}
+			// When we get here we have one complete tag : value pair
+			if (line.charAt(0) == '!')
+				continue; /* skip "!" comments */
+			// If the line starts with "[", we are at a new [Term] or
+			// [Typedef]
+			if (line.charAt(0) == '[')
+			{
+				// If we get here, all info for a term from the previous
+				// stanza should be ready to be entered.
+
+				enterNewTerm();
+				currentTerm++;
+				if (line.charAt(line.length() - 1) != ']')
+					throw new myException("Unclosed stanza \"" + line
+							+ "\"", line, linenum);
+
+				String stanzaname = line.substring(1, line.length() - 1);
+				if (stanzaname.length() < 1)
+					throw new myException("Empty stanza", line, linenum);
+
+				if (stanzaname.equalsIgnoreCase("term"))
+					currentStanza = Stanza.TERM;
+				else if (stanzaname.equalsIgnoreCase("typedef"))
+					currentStanza = Stanza.TYPEDEF;
+				else throw new IllegalArgumentException("Unknown stanza type: \""+stanzaname+"\" at line " + linenum);
+			} else
+			{
+				try
 				{
-					String str = reader.readLine();
-					linenum++;
-					if (str == null)
-						throw new myException("Unexpected end of file", line, linenum);
-					line = line.substring(0, line.length() - 1) + str;
-				}
-				// When we get here we have one complete tag : value pair
-				if (line.charAt(0) == '!')
-					continue; /* skip "!" comments */
-				// If the line starts with "[", we are at a new [Term] or
-				// [Typedef]
-				if (line.charAt(0) == '[')
-				{
-					// If we get here, all info for a term from the previous
-					// stanza should be ready to be entered.
-
-					enterNewTerm();
-					currentTerm++;
-					if (line.charAt(line.length() - 1) != ']')
-						throw new myException("Unclosed stanza \"" + line
-								+ "\"", line, linenum);
-
-					String stanzaname = line.substring(1, line.length() - 1);
-					if (stanzaname.length() < 1)
-						throw new myException("Empty stanza", line, linenum);
-
-					if (stanzaname.equalsIgnoreCase("term"))
-						currentStanza = Stanza.TERM;
-					else if (stanzaname.equalsIgnoreCase("typedef"))
-						currentStanza = Stanza.TYPEDEF;
-					else throw new IllegalArgumentException("Unknown stanza type: \""+stanzaname+"\" at line " + linenum);
-				} else
-				{
+					SOPair pair;
 					try
 					{
-						SOPair pair;
-						try
-						{
-							pair = unescape(line, ':', 0, true);
-						} catch (myException ex)
-						{
-							System.err.println("ERROR FIX ME");
-							break;
-						}
-
-						String name = pair.str;
-						int lineEnd = findUnescaped(line, '!', 0, line.length());
-						if (lineEnd == -1)
-							lineEnd = line.length();
-						int trailingStartIndex = -1;
-						for (int i = lineEnd - 1; i >= 0; i--)
-						{
-							if (Character.isWhitespace(line.charAt(i)))
-								continue;
-							else
-								break;
-						}
-						int stopIndex = trailingStartIndex;
-						if (stopIndex == -1)
-							stopIndex = lineEnd;
-						String value = line.substring(pair.index + 1, stopIndex);
-						if (value.length() == 0)
-							throw new myException("Tag found with no value", line, linenum);
-
-						if (currentStanza == null)
-							readHeaderValue(name, value);
-						else
-							readTagValue(name, value);
-					} catch (IllegalArgumentException iae)
+						pair = unescape(line, ':', 0, true);
+					} catch (myException ex)
 					{
-						logger.severe("Unable to parse line at " + linenum + " " + line);
-						throw iae;
+						System.err.println("ERROR FIX ME");
+						break;
 					}
+
+					String name = pair.str;
+					int lineEnd = findUnescaped(line, '!', 0, line.length());
+					if (lineEnd == -1)
+						lineEnd = line.length();
+					int trailingStartIndex = -1;
+					for (int i = lineEnd - 1; i >= 0; i--)
+					{
+						if (Character.isWhitespace(line.charAt(i)))
+							continue;
+						else
+							break;
+					}
+					int stopIndex = trailingStartIndex;
+					if (stopIndex == -1)
+						stopIndex = lineEnd;
+					String value = line.substring(pair.index + 1, stopIndex);
+					if (value.length() == 0)
+						throw new myException("Tag found with no value", line, linenum);
+
+					if (currentStanza == null)
+						readHeaderValue(name, value);
+					else
+						readTagValue(name, value);
+				} catch (IllegalArgumentException iae)
+				{
+					logger.severe("Unable to parse line at " + linenum + " " + line);
+					throw iae;
 				}
-			} // for
-			enterNewTerm(); // Get very last stanza after loop!
-			reader.close();
-			if (progress != null)
-				progress.update((int)file.length(),currentTerm);
+			}
+		} // for
+		enterNewTerm(); // Get very last stanza after loop!
+		reader.close();
+		if (progress != null)
+			progress.update((int)file.length(),currentTerm);
 
-
-			logger.info("Got " + terms.size() + " terms and " + numberOfRelations + " relations");
-		}/* catch (FileNotFoundException ex)
-		{
-			System.err.println("Could not find file " + filename);
-			System.err.println(ex.getStackTrace());
-		} catch (IOException ex)
-		{
-			System.err.println("IOException:");
-			System.err.println(ex.getStackTrace());
-		} catch (myException ontex)
-		{
-			System.err.println("Parse Exception: " + ontex.toString());
-			System.err.println("This should never happen with a well-formed"
-					+ " gene_ontology.obo file. Please check you "
-					+ " are using the correct file.");
-		}*/
-
+		logger.info("Got " + terms.size() + " terms and " + numberOfRelations + " relations");
 		return this.getParseDiagnostics();
 	}
 
