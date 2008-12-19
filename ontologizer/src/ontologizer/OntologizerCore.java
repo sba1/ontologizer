@@ -10,6 +10,7 @@ import ontologizer.calculation.EnrichedGOTermsResult;
 import ontologizer.calculation.ICalculation;
 import ontologizer.go.GOGraph;
 import ontologizer.go.OBOParser;
+import ontologizer.go.OBOParserException;
 import ontologizer.go.TermContainer;
 import ontologizer.statistics.AbstractTestCorrection;
 import ontologizer.statistics.IResampling;
@@ -112,7 +113,7 @@ public class OntologizerCore
 	 * @throws FileNotFoundException
 	 * @throws myException
 	 */
-	public OntologizerCore(Arguments args) throws FileNotFoundException, IOException, myException
+	public OntologizerCore(Arguments args) throws FileNotFoundException, IOException, OBOParserException
 	{
 		/* Set the desired calculation method or the default */
 		calculation = CalculationRegistry.getCalculationByName(args.calculationName);

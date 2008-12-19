@@ -12,7 +12,6 @@ import ontologizer.PopulationSet;
 import ontologizer.StudySet;
 import ontologizer.StudySetList;
 import ontologizer.StudySetResultList;
-import ontologizer.myException;
 import ontologizer.association.AssociationContainer;
 import ontologizer.association.AssociationParser;
 import ontologizer.calculation.AbstractGOTermProperties;
@@ -21,6 +20,7 @@ import ontologizer.calculation.ICalculation;
 import ontologizer.calculation.ParentChildCalculation;
 import ontologizer.go.GOGraph;
 import ontologizer.go.OBOParser;
+import ontologizer.go.OBOParserException;
 import ontologizer.go.TermContainer;
 import ontologizer.statistics.TestCorrectionRegistry;
 
@@ -185,7 +185,7 @@ public class SteffenExec
 		outFileWriter.close();
 */
 		System.out.println("Done!");
-		} catch (myException e)
+		} catch (OBOParserException e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
