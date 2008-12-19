@@ -174,13 +174,11 @@ public class GOGraph
 			graph.addVertex(goTerm);
 
 		/* Now add the edges, i.e. link the terms */
-		for (Term goTerm : goTermContainer)
+		for (Term term : goTermContainer)
 		{
-			goTerm.setParentIterator();
-			while (goTerm.hasNext())
+			for (ParentTermID parent : term.getParents())
 			{
-				ParentTermID parent = goTerm.next();
-				graph.addEdge(new GOEdge(goTermContainer.get(parent.termid), goTerm, parent.relation));
+				graph.addEdge(new GOEdge(goTermContainer.get(parent.termid), term, parent.relation));
 			}
 		}
 
