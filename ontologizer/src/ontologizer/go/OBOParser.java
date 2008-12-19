@@ -84,10 +84,7 @@ public class OBOParser
 	private HashSet<Term> terms = new HashSet<Term>();
 
 	/** Collection of subsets */
-	private HashMap<String,Integer> subsets = new HashMap<String, Integer>();
-
-	/** This is the id of the next subset */
-	private int nextSubsetId;
+	private HashMap<String,Subset> subsets = new HashMap<String, Subset>();
 
 	/** Statistics */
 	private int numberOfRelations;
@@ -123,6 +120,9 @@ public class OBOParser
 
 	/** The alternative ids of the term */
 	private ArrayList<TermID> currentAlternatives = new ArrayList<TermID>();
+
+	/** The subsets */
+	private ArrayList<Subset> currentSubsets = new ArrayList<Subset>();
 
 	/**
 	 * @param filename
@@ -173,12 +173,16 @@ public class OBOParser
 				throw new IllegalArgumentException("Missing ID, Name or Namespace of for current stanza!");
 
 			}
+
 			/* Create a Term object and put it in the HashMap terms. */
 			Term t = new Term(currentID, currentName, currentNamespace, currentParents);
 			t.setObsolete(currentObsolete);
 			t.setDefinition(currentDefintion);
 			t.setAlternatives(currentAlternatives);
+			t.setSubsets(currentSubsets);
 			terms.add(t);
+
+			/* Statistics */
 			numberOfRelations += currentParents.size();
 		}
 
@@ -190,6 +194,7 @@ public class OBOParser
 		currentObsolete = false;
 		currentParents.clear();
 		currentAlternatives.clear();
+		currentSubsets.clear();
 	}
 
 
@@ -417,10 +422,10 @@ public class OBOParser
 			this.date = value;
 		} else if (name.equals("subsetdef"))
 		{
-			if (!subsets.containsKey(name))
+			Subset s = Subset.createFromString(value);
+			if (!subsets.containsKey(s.getName()))
 			{
-				subsets.put(new String(name.toCharArray()), nextSubsetId);
-				nextSubsetId++;
+				subsets.put(s.getName(),s);
 			}
 		}
 	}
@@ -476,6 +481,9 @@ public class OBOParser
 		} else if (name.equals("alt_id"))
 		{
 			readAlternative(value);
+		} else if (name.equals("subset"))
+		{
+			readSubset(value);
 		}
 		else if ((options & PARSE_DEFINITIONS) != 0)
 		{
@@ -512,6 +520,15 @@ public class OBOParser
 			logger.warning("Unable to parse alternative ID: \""+value+"\"");
 		}
 
+	}
+
+	private void readSubset(String value)
+	{
+		Subset subset = subsets.get(value);
+		if (subset != null)
+			currentSubsets.add(subset);
+		else
+			logger.warning("Subset \"" + value + "\" wasn't defined in the header of the file. Ignored.");
 	}
 
 	private static String unescape(String str) throws myException
