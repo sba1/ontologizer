@@ -12,6 +12,7 @@ import ontologizer.ByteString;
  */
 public class Prefix
 {
+	/** The prefix as byte string */
 	private ByteString prefix;
 
 	/**
@@ -23,6 +24,19 @@ public class Prefix
 	{
 		prefix = new ByteString(newPrefix);
 	}
+
+	/**
+	 * Constructs a new prefix from a string which
+	 * can be limited in length.
+	 *
+	 * @param newPrefix
+	 * @param length
+	 */
+	public Prefix(String newPrefix, int length)
+	{
+		prefix = new ByteString(newPrefix,length);
+	}
+
 
 	/**
 	 * Constructs a new prefix from a byte string.
@@ -63,5 +77,11 @@ public class Prefix
 	public int hashCode()
 	{
 		return prefix.hashCode();
+	}
+
+	@Override
+	public String toString()
+	{
+		return prefix.toString();
 	}
 }
