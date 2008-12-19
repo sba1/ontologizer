@@ -55,6 +55,9 @@ public class Term
 	/** The term's alternatives */
 	private TermID [] alternatives;
 
+	/** The term's subsets */
+	private Subset [] subsets;
+
 	/** The term's name space */
 	private Namespace namespace;
 
@@ -302,5 +305,28 @@ public class Term
 	{
 		return alternatives;
 	}
+
+
+	/**
+	 * Sets the subsets.
+	 * 
+	 * @param newSubsets
+	 */
+	public void setSubsets(ArrayList<Subset> newSubsets)
+	{
+		subsets = new Subset[newSubsets.size()];
+		newSubsets.toArray(subsets);
+	}
+	
+	/**
+	 * Returns the subsets.
+	 * 
+	 * @return
+	 */
+	public Subset[] getSubsets()
+	{
+		return subsets;
+	}
+
 }
 
