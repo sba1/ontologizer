@@ -63,7 +63,7 @@ public class Term
 
 	/**
 	 * @param id
-	 *            An identifier such as GO:0045174.
+	 *            A term id.
 	 * @param name
 	 *            A string such as glutathione dehydrogenase.
 	 * @param namespace
@@ -74,16 +74,39 @@ public class Term
 	 *            type. The supplied list can be reused after the object
 	 *            have been constructed.
 	 */
+	public Term(TermID id, String name, String namespace, ArrayList<ParentTermID> parentList)
+	{
+		parents = new ParentTermID[parentList.size()];
+		parentList.toArray(parents);
+		init(id,name,namespace,parents);
+	}
+
+	
+	/**
+	 * @param strId
+	 *            An identifier such as GO:0045174.
+	 * @param name
+	 *            A string such as glutathione dehydrogenase.
+	 * @param namespace
+	 *            A character representing biological_process,
+	 *            cellular_component, or molecular_function or null.
+	 * @param parentList
+	 *            The parent terms of this term including the relation
+	 *            type. The supplied list can be reused after the object
+	 *            have been constructed.
+	 *            
+	 * @throws IllegalArgumentException if strId is malformatted.
+	 */
 	public Term(String strId, String name, String namespace, ArrayList<ParentTermID> parentList)
 	{
 		parents = new ParentTermID[parentList.size()];
 		parentList.toArray(parents);
-		init(strId,name,namespace,parents);
+		init(new TermID(strId),name,namespace,parents);
 	}
 
 	/**
 	 * @param id
-	 *            An identifier such as GO:0045174.
+	 *            A term id.
 	 * @param name
 	 *            A string such as glutathione dehydrogenase.
 	 * @param namespace
@@ -93,9 +116,27 @@ public class Term
 	 *            The parent terms of this term including the relation
 	 *            type.
 	 */
-	public Term(String strID, String name, String namespace, ParentTermID...parents)
+	public Term(TermID id, String name, String namespace, ParentTermID...parents)
 	{
-		init(strID,name,namespace,parents);
+		init(id,name,namespace,parents);
+	}
+
+	/**
+	 * @param strId
+	 *            An identifier such as GO:0045174.
+	 * @param name
+	 *            A string such as glutathione dehydrogenase.
+	 * @param namespace
+	 *            A character representing biological_process,
+	 *            cellular_component, or molecular_function or null.
+	 * @param parents
+	 *            The parent terms of this term including the relation
+	 *            type.
+	 * @throws IllegalArgumentException if strId is malformatted.
+	 */
+	public Term(String strId, String name, String namespace, ParentTermID...parents)
+	{
+		init(new TermID(strId),name,namespace,parents);
 	}
 
 	/**
@@ -106,7 +147,7 @@ public class Term
 	 * @param namespace
 	 * @param parents
 	 */
-	private void init(String strId, String name, String namespace, ParentTermID [] parents)
+	private void init(TermID id, String name, String namespace, ParentTermID [] parents)
 	{
 		if (namespace == null) this.namespace = Namespace.UNSPECIFIED;
 		else if (namespace.startsWith("B")) this.namespace = Namespace.BIOLOGICAL_PROCESS;
@@ -114,7 +155,7 @@ public class Term
 		else if (namespace.startsWith("C")) this.namespace = Namespace.CELLULAR_COMPONENT;
 		else throw new IllegalArgumentException("The namespace '" + namespace + "' is unknown");
 
-		this.id = new TermID(strId);
+		this.id = id;
 		this.name = name;
 		this.parents = parents;
 	}
