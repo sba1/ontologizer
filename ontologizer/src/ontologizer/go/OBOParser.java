@@ -188,7 +188,7 @@ public class OBOParser
 		currentNamespace = null;
 		currentDefintion = null;
 		currentObsolete = false;
-		currentParents = new ArrayList<ParentTermID>();
+		currentParents.clear();
 		currentAlternatives.clear();
 	}
 

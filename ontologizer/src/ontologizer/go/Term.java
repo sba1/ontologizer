@@ -50,13 +50,10 @@ public class Term
 	private String definition;
 
 	/** The parents of the this term */
-	private ArrayList<ParentTermID> parents;
+	private ParentTermID [] parents;
 
 	/** The term's alternatives */
 	private TermID [] alternatives;
-
-	/** Used for the iterator stuff */
-	private int index, size;
 
 	/** The term's name space */
 	private Namespace namespace;
@@ -72,12 +69,15 @@ public class Term
 	 * @param namespace
 	 *            A character representing biological_process,
 	 *            cellular_component, or molecular_function or null.
-	 * @param parents
-	 *            A Java.util.ArrayList containing a list of Strings with the
-	 *            accession numbers of the parents of this GO term.
+	 * @param parentList
+	 *            The parent terms of this term including the relation
+	 *            type. The supplied list can be reused after the object
+	 *            have been constructed.
 	 */
-	public Term(String strId, String name, String namespace, ArrayList<ParentTermID> parents)
+	public Term(String strId, String name, String namespace, ArrayList<ParentTermID> parentList)
 	{
+		parents = new ParentTermID[parentList.size()];
+		parentList.toArray(parents);
 		init(strId,name,namespace,parents);
 	}
 
@@ -90,16 +90,12 @@ public class Term
 	 *            A character representing biological_process,
 	 *            cellular_component, or molecular_function or null.
 	 * @param parents
-	 *            A Java.util.ArrayList containing a list of Strings with the
-	 *            accession numbers of the parents of this GO term.
+	 *            The parent terms of this term including the relation
+	 *            type.
 	 */
 	public Term(String strID, String name, String namespace, ParentTermID...parents)
 	{
-		ArrayList<ParentTermID> al = new ArrayList<ParentTermID>(parents.length);
-		for (ParentTermID ptid : parents)
-			al.add(ptid);
-
-		init(strID,name,namespace,al);
+		init(strID,name,namespace,parents);
 	}
 
 	/**
@@ -110,7 +106,7 @@ public class Term
 	 * @param namespace
 	 * @param parents
 	 */
-	private void init(String strId, String name, String namespace, ArrayList<ParentTermID> parents)
+	private void init(String strId, String name, String namespace, ParentTermID [] parents)
 	{
 		if (namespace == null) this.namespace = Namespace.UNSPECIFIED;
 		else if (namespace.startsWith("B")) this.namespace = Namespace.BIOLOGICAL_PROCESS;
@@ -121,34 +117,6 @@ public class Term
 		this.id = new TermID(strId);
 		this.name = name;
 		this.parents = parents;
-	}
-
-
-	/**
-	 * Clients can obtain a list of parents of this term by means of an
-	 * iterator-like interface by first calling this function and then calling
-	 * hasNext() and next()
-	 */
-	public void setParentIterator()
-	{
-		this.index = 0;
-		this.size = parents.size();
-	}
-
-	public boolean hasNext()
-	{
-		return index < size;
-	}
-
-	/**
-	 * Note that this does not correspond to the Iterator interface because we
-	 * are returning a String rather than an Object
-	 */
-	public ParentTermID next()
-	{
-		if (index >= size)
-			throw new IndexOutOfBoundsException("Only " + size + " elements");
-		return parents.get(index++);
 	}
 
 	/**
@@ -203,6 +171,16 @@ public class Term
 			case CELLULAR_COMPONENT:	return "C";
 			default: return "-";
 		}
+	}
+
+	/**
+	 * Returns the parent terms including the relation.
+	 *
+	 * @return
+	 */
+	public ParentTermID[] getParents()
+	{
+		return parents;
 	}
 
 	@Override
