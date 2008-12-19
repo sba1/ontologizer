@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import ontologizer.calculation.CalculationRegistry;
 import ontologizer.calculation.EnrichedGOTermsResult;
+import ontologizer.go.OBOParserException;
 import ontologizer.go.TermID;
 import ontologizer.statistics.IResampling;
 import ontologizer.statistics.TestCorrectionRegistry;
@@ -31,8 +32,7 @@ import org.apache.commons.cli.Parser;
  * class.
  * </P>
  *
- * @author Peter Robinson
- * @version 0.22 2005-07-11
+ * @author Peter Robinson and Sebastian Bauer
  */
 @SuppressWarnings("unused")
 public class OntologizerCMD
@@ -372,7 +372,7 @@ public class OntologizerCMD
 		{
 			System.err.println(e.getMessage());
 			System.exit(-1);
-		} catch (myException e)
+		} catch (OBOParserException e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
