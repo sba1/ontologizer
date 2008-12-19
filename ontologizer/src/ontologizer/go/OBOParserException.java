@@ -3,17 +3,25 @@
  *
  */
 
-package ontologizer;
+package ontologizer.go;
 
-@SuppressWarnings("serial")
-public class myException extends Exception
+
+/**
+ * An exception which may be thrown by the OBOParser class.
+ * 
+ * @see OBOParser
+ * @author Sebastian Bauer
+ *
+ */
+public class OBOParserException extends Exception
 {
+	/** Serial UID */
+	private static final long serialVersionUID = 1L;
 
 	protected int linenum;
-
 	protected String line;
 
-	public myException(String message, String line, int linenum)
+	public OBOParserException(String message, String line, int linenum)
 	{
 		super(message);
 		this.line = line;

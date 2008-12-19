@@ -7,12 +7,12 @@ import java.util.Set;
 import ontologizer.ByteString;
 import ontologizer.GOTermEnumerator;
 import ontologizer.PopulationSet;
-import ontologizer.myException;
 import ontologizer.GOTermEnumerator.GOTermAnnotatedGenes;
 import ontologizer.association.AssociationContainer;
 import ontologizer.association.AssociationParser;
 import ontologizer.go.GOGraph;
 import ontologizer.go.OBOParser;
+import ontologizer.go.OBOParserException;
 import ontologizer.go.TermContainer;
 import ontologizer.go.TermID;
 
@@ -138,7 +138,7 @@ public class GeneLister
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch (myException e)
+		} catch (OBOParserException e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();

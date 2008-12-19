@@ -10,22 +10,20 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 import ontologizer.ByteString;
 import ontologizer.GOTermEnumerator;
 import ontologizer.PopulationSet;
-import ontologizer.myException;
 import ontologizer.GOTermEnumerator.GOTermAnnotatedGenes;
 import ontologizer.association.AssociationContainer;
 import ontologizer.association.AssociationParser;
 import ontologizer.go.GOGraph;
 import ontologizer.go.OBOParser;
+import ontologizer.go.OBOParserException;
 import ontologizer.go.Term;
 import ontologizer.go.TermContainer;
-import ontologizer.go.TermID;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.GnuParser;
@@ -167,7 +165,7 @@ public class OverlapLister
 		} catch (IOException e)
 		{
 			e.printStackTrace();
-		} catch (myException e)
+		} catch (OBOParserException e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
