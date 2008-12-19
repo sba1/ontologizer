@@ -1,6 +1,7 @@
 package ontologizer.go;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -51,10 +52,13 @@ public class Term
 	/** The parents of the this term */
 	private ArrayList<ParentTermID> parents;
 
+	/** The term's alternatives */
+	private TermID [] alternatives;
+
 	/** Used for the iterator stuff */
 	private int index, size;
 
-	/** The terms name space */
+	/** The term's name space */
 	private Namespace namespace;
 
 	/** Whether term is declared as obsolete */
@@ -250,10 +254,34 @@ public class Term
 	/**
 	 * Sets the definition of this term.
 	 * 
-	 * @param definition defines the defintion ;)
+	 * @param definition defines the definition ;)
 	 */
 	protected void setDefinition(String definition)
 	{
 		this.definition = definition;
 	}
+
+	/**
+	 * This sets the alternatives of the term.
+	 * 
+	 * @param altList
+	 */
+	public void setAlternatives(List<TermID> altList)
+	{
+		alternatives = new TermID[altList.size()];
+		int i = 0;
+		for (TermID t : altList)
+			alternatives[i++] = t;
+	}
+
+	/**
+	 * Returns the alternatives of this term.
+	 * 
+	 * @return
+	 */
+	public TermID [] getAlternatives()
+	{
+		return alternatives;
+	}
 }
+
