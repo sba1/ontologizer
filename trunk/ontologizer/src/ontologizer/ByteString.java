@@ -7,6 +7,8 @@ import java.util.ArrayList;
  * java String class but stores the string using bytes rather
  * than chars and so require less memory.
  * 
+ * Note that the supplied strings should be ascii-7 only.
+ * 
  * Like java's String class objects of this class are immutable.
  * 
  * @author Sebastian Bauer
@@ -18,6 +20,13 @@ public class ByteString
 	public ByteString(String str)
 	{
 		bytes = str.getBytes();
+	}
+
+	public ByteString(String str, int length)
+	{
+		bytes = new byte[length];
+		for (int i=0;i<length;i++)
+			bytes[i] = (byte)str.charAt(i);
 	}
 
 	public ByteString(byte [] bytes)
