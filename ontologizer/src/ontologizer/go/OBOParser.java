@@ -4,7 +4,6 @@ import java.io.*;
 import java.util.*; /* HashMap */
 import java.util.logging.Logger;
 
-import ontologizer.ByteString;
 import ontologizer.myException;
 
 /*
@@ -120,7 +119,10 @@ public class OBOParser
 	private boolean currentObsolete;
 
 	/** The parents of the term of the stanza currently being parsed */
-	private ArrayList<ParentTermID> currentParents;
+	private ArrayList<ParentTermID> currentParents = new ArrayList<ParentTermID>();
+
+	/** The alternative ids of the term */
+	private ArrayList<TermID> currentAlternatives = new ArrayList<TermID>();
 
 	/**
 	 * @param filename
@@ -175,6 +177,7 @@ public class OBOParser
 			Term t = new Term(currentID, currentName, currentNamespace, currentParents);
 			t.setObsolete(currentObsolete);
 			t.setDefinition(currentDefintion);
+			t.setAlternatives(currentAlternatives);
 			terms.add(t);
 			numberOfRelations += currentParents.size();
 		}
@@ -186,6 +189,7 @@ public class OBOParser
 		currentDefintion = null;
 		currentObsolete = false;
 		currentParents = new ArrayList<ParentTermID>();
+		currentAlternatives.clear();
 	}
 
 
@@ -224,7 +228,7 @@ public class OBOParser
 
 			for (linenum = 1; (line = reader.readLine()) != null; linenum++)
 			{
-				/* Progress support, call only every 0.25 second */
+				/* Progress support, call only every quarter second */
 				if (progress != null)
 				{
 					long newMillis = System.currentTimeMillis();
@@ -434,7 +438,6 @@ public class OBOParser
 						+ "in the header", line, linenum);
 			}
 			return;
-
 		} else if (name.equals("id"))
 		{
 			readID(value);
@@ -470,7 +473,11 @@ public class OBOParser
 		} else if (name.equals("namespace"))
 		{
 			readNamespace(value);
-		} else if ((options & PARSE_DEFINITIONS) != 0)
+		} else if (name.equals("alt_id"))
+		{
+			readAlternative(value);
+		}
+		else if ((options & PARSE_DEFINITIONS) != 0)
 		{
 			if (name.equals("def"))
 			{
@@ -478,7 +485,8 @@ public class OBOParser
 					currentDefintion = unescape(value, '\"', 1, value.length(),
 							false).str;
 			}
-		} /*
+		}
+		/*
 			 * else if (name.equals("comment")) { return; } else if
 			 * (name.equals("domain")) { return; } else if
 			 * (name.equals("range")) { return; } else if
@@ -492,6 +500,18 @@ public class OBOParser
 			 *  } else if (name.equals("broad_synonym")) { return; } else if
 			 * (name.equals("relationship")) { return; }
 			 */
+	}
+
+	private void readAlternative(String value)
+	{
+		try
+		{
+			currentAlternatives.add(new TermID(value));
+		} catch (IllegalArgumentException e)
+		{
+			logger.warning("Unable to parse alternative ID: \""+value+"\"");
+		}
+
 	}
 
 	private static String unescape(String str) throws myException
