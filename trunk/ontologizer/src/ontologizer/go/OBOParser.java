@@ -4,8 +4,6 @@ import java.io.*;
 import java.util.*; /* HashMap */
 import java.util.logging.Logger;
 
-import ontologizer.myException;
-
 /*
  * I gratefully acknowledge the help of John Richter Day, who provided the
  * source of DAGEdit on which I based this parser for the Ontologizer and also
@@ -202,10 +200,10 @@ public class OBOParser
 	 * The main parsing routine for the gene_ontology.obo file
 	 * 
 	 * @return A string giving details about the parsed obo file
-	 * @throws myException 
+	 * @throws OBOParserException 
 	 * @throws IOException 
 	 */
-	public String doParse() throws IOException, myException
+	public String doParse() throws IOException, OBOParserException
 	{
 		return doParse(null);
 	}
@@ -215,10 +213,10 @@ public class OBOParser
 	 *
 	 * @param progress
 	 * @return A string giving details about the parsed obo file
-	 * @throws myException 
+	 * @throws OBOParserException 
 	 * @throws IOException 
 	 */
-	public String doParse(IOBOParserProgress progress) throws IOException, myException
+	public String doParse(IOBOParserProgress progress) throws IOException, OBOParserException
 	{
 		int currentTerm = 0;
 		long millis = 0;
@@ -257,7 +255,7 @@ public class OBOParser
 				String str = reader.readLine();
 				linenum++;
 				if (str == null)
-					throw new myException("Unexpected end of file", line, linenum);
+					throw new OBOParserException("Unexpected end of file", line, linenum);
 				line = line.substring(0, line.length() - 1) + str;
 			}
 			// When we get here we have one complete tag : value pair
@@ -273,12 +271,12 @@ public class OBOParser
 				enterNewTerm();
 				currentTerm++;
 				if (line.charAt(line.length() - 1) != ']')
-					throw new myException("Unclosed stanza \"" + line
+					throw new OBOParserException("Unclosed stanza \"" + line
 							+ "\"", line, linenum);
 
 				String stanzaname = line.substring(1, line.length() - 1);
 				if (stanzaname.length() < 1)
-					throw new myException("Empty stanza", line, linenum);
+					throw new OBOParserException("Empty stanza", line, linenum);
 				
 				if (stanzaname.equalsIgnoreCase("term"))
 					currentStanza = Stanza.TERM;
@@ -293,7 +291,7 @@ public class OBOParser
 					try
 					{
 						pair = unescape(line, ':', 0, true);
-					} catch (myException ex)
+					} catch (OBOParserException ex)
 					{
 						System.err.println("ERROR FIX ME");
 						break;
@@ -316,7 +314,7 @@ public class OBOParser
 						stopIndex = lineEnd;
 					String value = line.substring(pair.index + 1, stopIndex);
 					if (value.length() == 0)
-						throw new myException("Tag found with no value", line, linenum);
+						throw new OBOParserException("Tag found with no value", line, linenum);
 
 					if (currentStanza == null)
 						readHeaderValue(name, value);
@@ -391,7 +389,7 @@ public class OBOParser
 	 *            version and date of the gene_ontology.obo file.
 	 */
 
-	private void readHeaderValue(String name, String value) throws myException
+	private void readHeaderValue(String name, String value) throws OBOParserException
 	{
 		value = value.trim();
 		if (name.equals("format-version"))
@@ -411,7 +409,7 @@ public class OBOParser
 		}
 	}
 
-	protected void readTagValue(String name, String value) throws myException,
+	protected void readTagValue(String name, String value) throws OBOParserException,
 			IOException
 	{
 		value = value.trim();
@@ -420,7 +418,7 @@ public class OBOParser
 		{
 			if (currentStanza != null)
 			{
-				throw new myException("import tags may only occur "
+				throw new OBOParserException("import tags may only occur "
 						+ "in the header", line, linenum);
 			}
 			return;
@@ -438,7 +436,7 @@ public class OBOParser
 			int typeIndex = findUnescaped(value, ' ', 0, value.length());
 			String type = value.substring(0, typeIndex).trim();
 			if (typeIndex == -1)
-				throw new myException("No id specified for" + " relationship.", line, linenum);
+				throw new OBOParserException("No id specified for" + " relationship.", line, linenum);
 			int endoffset = findUnescaped(value, '[',
 					typeIndex + type.length(), value.length());
 			String id;
@@ -450,7 +448,7 @@ public class OBOParser
 			}
 
 			if (id.length() == 0)
-				throw new myException("Empty id specified for"
+				throw new OBOParserException("Empty id specified for"
 						+ " relationship.", line, linenum);
 			readRelationship(type,id);
 		} else if (name.equals("is_obsolete"))
@@ -512,19 +510,19 @@ public class OBOParser
 			logger.warning("Subset \"" + value + "\" wasn't defined in the header of the file. Ignored.");
 	}
 
-	private static String unescape(String str) throws myException
+	private static String unescape(String str) throws OBOParserException
 	{
 		return unescape(str, '\0', 0, str.length(), false).str;
 	}
 
 	private static SOPair unescape(String str, char toChar, int startindex,
-			boolean mustFindChar) throws myException
+			boolean mustFindChar) throws OBOParserException
 	{
 		return unescape(str, toChar, startindex, str.length(), mustFindChar);
 	}
 
 	private static SOPair unescape(String str, char toChar, int startindex,
-			int endindex, boolean mustFindChar) throws myException
+			int endindex, boolean mustFindChar) throws OBOParserException
 	{
 		StringBuilder out = new StringBuilder();
 		int endValue = -1;
@@ -537,7 +535,7 @@ public class OBOParser
 				c = str.charAt(i);
 				Character mapchar = (Character) escapeChars.get(new Character(c));
 				if (mapchar == null)
-					throw new myException("Unrecognized escape" + " character "
+					throw new OBOParserException("Unrecognized escape" + " character "
 							+ c + " found.", null, -1);
 				out.append(mapchar);
 			} else if (c == toChar)
@@ -551,7 +549,7 @@ public class OBOParser
 		}
 		if (endValue == -1 && mustFindChar)
 		{
-			throw new myException("Expected " + toChar + ".", str, -1);
+			throw new OBOParserException("Expected " + toChar + ".", str, -1);
 		}
 		return new SOPair(out.toString(), endValue);
 	}

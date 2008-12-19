@@ -9,6 +9,7 @@ import java.util.Iterator;
 import ontologizer.calculation.EnrichedGOTermsResult;
 import ontologizer.go.GOGraph;
 import ontologizer.go.OBOParser;
+import ontologizer.go.OBOParserException;
 import ontologizer.go.TermContainer;
 
 import org.apache.commons.cli.CommandLine;
@@ -196,7 +197,7 @@ public class OntologizerMethodCompareCMD
 		{
 			System.err.println(e.getMessage());
 			System.exit(-1);
-		} catch (myException e)
+		} catch (OBOParserException e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();

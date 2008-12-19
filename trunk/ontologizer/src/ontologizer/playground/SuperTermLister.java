@@ -11,9 +11,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import ontologizer.myException;
 import ontologizer.go.GOGraph;
 import ontologizer.go.OBOParser;
+import ontologizer.go.OBOParserException;
 import ontologizer.go.Term;
 import ontologizer.go.TermContainer;
 import ontologizer.go.TermID;
@@ -141,7 +141,7 @@ public class SuperTermLister
 		} catch (IOException e)
 		{
 			e.printStackTrace();
-		} catch (myException e)
+		} catch (OBOParserException e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
