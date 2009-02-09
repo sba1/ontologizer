@@ -593,6 +593,9 @@ public class SemanticCalculation
 		TermID [] tl1 = (TermID[])associations[g1];
 		TermID [] tl2 = (TermID[])associations[g2];
 
+		/* TODO: Research if we can employ sorting omit some or many of
+		 * the pairs.
+		 */
 		for (TermID t1 : tl1)
 		{
 			for (TermID t2 : tl2)
