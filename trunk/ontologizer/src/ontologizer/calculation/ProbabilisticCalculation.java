@@ -174,7 +174,6 @@ public class ProbabilisticCalculation implements ICalculation
 }
 
 
-	@Override
 	public EnrichedGOTermsResult calculateStudySet(GOGraph graph,
 			AssociationContainer goAssociations, PopulationSet populationSet,
 			StudySet studySet, AbstractTestCorrection testCorrection)
@@ -236,14 +235,12 @@ public class ProbabilisticCalculation implements ICalculation
 	}
 
 
-	@Override
 	public String getDescription()
 	{
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
 	public String getName()
 	{
 		return "Probabilistic";
