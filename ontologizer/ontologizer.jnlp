@@ -21,9 +21,11 @@
   <resources os="Windows"> 
     <jar href="swt/win-x86/swt.jar"/>
   </resources>
-  <resources os="Linux">
+  <resources os="Linux" arch="i386">
     <jar href="swt/linux-x86/swt.jar"/>
-    <nativelib href="setenv_linux.jar"/>
+  </resources>
+  <resources os="Linux" arch="amd64">
+    <jar href="swt/linux-x86_64/swt.jar"/>
   </resources>
   <application-desc main-class="ontologizer.gui.swt.Ontologizer"/> 
 </jnlp> 
