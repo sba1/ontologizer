@@ -156,25 +156,24 @@ public class AssociationParser
 				{
 					String [] fields = line.split("\t",2);
 
-					if (fields[1] != null && fields[1].length() > 1)
+					if (fields.length != 2) continue;
+
+					String [] annotatedTerms = fields[1].split(",");
+
+					for (int i = 0; i <annotatedTerms.length; i++)
 					{
-						String [] annotatedTerms = fields[1].split(",");
+						int id = new Integer(annotatedTerms[i]);
+						String goID = String.format("GO:%07d",id);
 
-						for (int i = 0; i <annotatedTerms.length; i++)
+						/* TODO: There exists also a possibility for alternative IDs
+						 * which isn't taken into account yet */
+						if (terms.get(goID) != null)
 						{
-							int id = new Integer(annotatedTerms[i]);
-							String goID = String.format("GO:%07d",id);
-
-							/* TODO: There exists also a possiblity for alternative IDs
-							 * which isn't taken into account yet */
-							if (terms.get(goID) != null)
-							{
-								Association assoc = new Association(new ByteString(fields[0]),goID);
-								associations.add(assoc);
-							} else
-							{
-								logger.warning(goID + " which annotates " + fields[0] + " not found");
-							}
+							Association assoc = new Association(new ByteString(fields[0]),goID);
+							associations.add(assoc);
+						} else
+						{
+							logger.warning(goID + " which annotates " + fields[0] + " not found");
 						}
 					}
 				}
