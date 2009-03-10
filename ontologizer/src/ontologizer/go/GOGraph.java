@@ -756,6 +756,7 @@ public class GOGraph
 	static public class GOLevels
 	{
 		private HashMap<Integer,HashSet<TermID>> level2terms = new HashMap<Integer,HashSet<TermID>>();
+		private HashMap<TermID,Integer> terms2level = new HashMap<TermID,Integer>();
 
 		private int maxLevel = -1;
 
@@ -768,8 +769,22 @@ public class GOGraph
 				level2terms.put(distance, levelTerms);
 			}
 			levelTerms.add(tid);
+			terms2level.put(tid,distance);
 
 			if (distance > maxLevel) maxLevel = distance;
+		}
+
+		/**
+		 * Returns the level of the given term.
+		 *
+		 * @param tid
+		 * @return the level or -1 if the term is not included.
+		 */
+		public int getTermLevel(TermID tid)
+		{
+			Integer level = terms2level.get(tid);
+			if (level == null) return -1;
+			return level;
 		}
 
 		public Set<TermID> getLevelTermSet(int level)
@@ -793,9 +808,8 @@ public class GOGraph
 	{
 		final GOLevels levels = new GOLevels();
 
-		graph.singleSourceLongestPath(rootGOTerm, false, new IDistanceVisitor<Term>()
+		graph.singleSourceLongestPath(rootGOTerm, new IDistanceVisitor<Term>()
 				{
-
 					public boolean visit(Term vertex, List<Term> path,
 							int distance)
 					{
@@ -803,7 +817,6 @@ public class GOGraph
 							levels.putLevel(vertex.getID(),distance);
 						return true;
 					}});
-
 		return levels;
 	}
 
