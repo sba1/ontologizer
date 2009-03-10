@@ -228,6 +228,18 @@ public class Term
 	}
 
 	@Override
+	public String toString()
+	{
+		String parents = "";
+		for (ParentTermID ptid : getParents())
+		{
+			parents += ptid.termid.toString() + " ";
+		}
+
+		return id.toString() + ": " + parents;
+	}
+
+	@Override
 	public int hashCode()
 	{
 		/* We take the hash code of the id */
