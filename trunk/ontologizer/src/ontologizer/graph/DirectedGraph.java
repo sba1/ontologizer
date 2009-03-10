@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
+import java.util.Set;
 import java.util.Map.Entry;
 
 class VertexAttributes<VertexType>
@@ -356,16 +357,22 @@ public class DirectedGraph<VertexType> implements Iterable<VertexType>
 		}
 	}
 
+	public ArrayList<VertexType> topologicalOrder()
+	{
+		ArrayList<VertexType> list = new ArrayList<VertexType>(vertices.size());
+
+		return list;
+	}
+
+
 	/**
-	 * Calculates the longest path from the given vertex to all vertices. Note that
-	 * negative weights are not supported!
+	 * The bellmen-ford algorithm,
 	 *
-	 * @param source defines the source
-	 * @param againstFlow if specified the path is walked against the direction of the graph
-	 * @param visitor object implementing IDistanceVisitor which can be used to process the
-	 *        results
+	 * @param source
+	 * @param weightMultiplier multiplies the weights by the given factor.
+	 * @param visitor
 	 */
-	public void singleSourceLongestPath(VertexType source, boolean againstFlow, IDistanceVisitor<VertexType> visitor)
+	public void bf(VertexType source, int weightMultiplier, IDistanceVisitor<VertexType> visitor)
 	{
 		/**
 		 * This class implements some meta information needed by Dijkstra's
@@ -398,54 +405,48 @@ public class DirectedGraph<VertexType> implements Iterable<VertexType>
 			}
 		}
 
-		/* This is the implementation of the Dijkstra algorithm */
-
-		/* TODO: Get rid of PriorityQueue by using a better suited data structure */
-		PriorityQueue<VertexExtension> queue = new PriorityQueue<VertexExtension>();
 		HashMap<VertexType,VertexExtension> map = new HashMap<VertexType,VertexExtension>();
+		map.put(source, new VertexExtension(source,0,null));
 
-		/* place the first node into the priority queue */
-		VertexExtension ve = new VertexExtension(source,0,null);
-		queue.offer(ve);
-		map.put((VertexType)ve.vertex,ve); /* FIXME: (VertexType) is for the java compiler */
-
-		while (!queue.isEmpty())
+		/* Vertices loop */
+		for (int i=0;i<vertices.size();i++)
 		{
-			VertexExtension next = queue.poll();
+			boolean changed = false;
 
-			Iterator<Edge<VertexType>> edgeIter;
-
-			if (againstFlow) edgeIter = getInEdges((VertexType)(next.vertex));
-			else edgeIter = getOutEdges((VertexType)next.vertex);
-
-			while (edgeIter.hasNext())
+			/* Edge loop */
+			for (Entry<VertexType, VertexAttributes<VertexType>> ent : vertices.entrySet())
 			{
-				Edge<VertexType> edge = edgeIter.next();
-				VertexType neighbour;
+				VertexType u = ent.getKey();
 
-				if (againstFlow) neighbour = edge.getSource();
-				else neighbour = edge.getDest();
+				VertexExtension uExt = map.get(u);
+				if (uExt == null) continue;
 
-				/* Relax the neighbour (or add it if it is not available) */
-				VertexExtension neighbourExt = map.get(neighbour);
-				if (neighbourExt == null)
+				for (Edge<VertexType> edge : ent.getValue().outEdges)
 				{
-					neighbourExt = new VertexExtension(neighbour, next.distance + edge.getWeight(), next.vertex);
-					map.put(neighbour,neighbourExt);
-					queue.offer(neighbourExt);
-				} else
-				{
-					/* Would the edge from the current vertex to the neighbour
-					 * make the path to the neighbour longer? */
-					if (neighbourExt.distance < next.distance + edge.getWeight())
+					VertexType v = edge.getDest();
+
+
+					VertexExtension vExt = map.get(v);
+					if (vExt == null)
 					{
-						queue.remove(neighbourExt);
-						neighbourExt.distance = next.distance + edge.getWeight();
-						neighbourExt.parent = next.vertex;
-						queue.offer(neighbourExt);
+						vExt = new VertexExtension(v, uExt.distance + edge.getWeight()*weightMultiplier, u);
+						map.put(v,vExt);
+						changed = true;
+					} else
+					{
+						if (vExt.distance > uExt.distance + edge.getWeight() * weightMultiplier)
+						{
+							vExt.distance = uExt.distance + edge.getWeight() * weightMultiplier;
+							vExt.parent = u;
+							changed = true;
+						}
 					}
 				}
 			}
+
+			/* If this iteration doesn't affect a change, the next own won't change anything either */
+			if (!changed)
+				break;
 		}
 
 		/* Now throw out the results */
@@ -465,6 +466,37 @@ public class DirectedGraph<VertexType> implements Iterable<VertexType>
 			if (!visitor.visit((VertexType)v.getValue().vertex,ll,v.getValue().distance))  /* FIXME: (VertexType) is for the java compiler */
 				return;
 		}
+	}
+
+	/**
+	 * Calculates the shortest path from the given vertex to all vertices. Supports negative weights.
+	 *
+	 * @param source defines the source
+	 * @param visitor object implementing IDistanceVisitor which can be used to process the
+	 *        results
+	 */
+	public void singleSourceShortestPathBF(VertexType source, IDistanceVisitor<VertexType> visitor)
+	{
+		bf(source,1,visitor);
+	}
+
+	/**
+	 * Calculates the longest path from the given vertex to all vertices.
+	 *
+	 * @param source defines the source
+	 * @param againstFlow if specified the path is walked against the direction of the graph
+	 * @param visitor object implementing IDistanceVisitor which can be used to process the
+	 *        results
+	 */
+	public void singleSourceLongestPath(VertexType source, final IDistanceVisitor<VertexType> visitor)
+	{
+		bf(source,-1,new IDistanceVisitor<VertexType>()
+				{
+					public boolean visit(VertexType vertex, java.util.List<VertexType> path, int distance)
+					{
+						return visitor.visit(vertex, path, distance * -1);
+					};
+				});
 	}
 
 	public Iterator<VertexType> iterator()
