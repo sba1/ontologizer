@@ -366,7 +366,7 @@ public class DirectedGraph<VertexType> implements Iterable<VertexType>
 
 	
 	/**
-	 * The bellmen-ford algorithm,
+	 * The bellman-ford algorithm,
 	 * 
 	 * @param source
 	 * @param weightMultiplier multiplies the weights by the given factor.
@@ -375,8 +375,7 @@ public class DirectedGraph<VertexType> implements Iterable<VertexType>
 	public void bf(VertexType source, int weightMultiplier, IDistanceVisitor<VertexType> visitor)
 	{
 		/**
-		 * This class implements some meta information needed by Dijkstra's
-		 * algorithm.
+		 * This class implements some meta information needed by the BF algorithm.
 		 *
 		 * @author Sebastian Bauer
 		 */
