@@ -97,6 +97,7 @@ public class CalculationRegistry
 		{
 			System.err.println("Enabled experimental calculations");
 			registerCalculation(new ProbabilisticCalculation());
+			registerCalculation(new Bayes2GOCalculation());
 		}
 //		registerCalculation(new NewApproachCalculation());
 //		registerCalculation(new ChiSquareQCalculation());
