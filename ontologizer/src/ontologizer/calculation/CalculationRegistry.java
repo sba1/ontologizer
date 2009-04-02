@@ -13,6 +13,7 @@ import java.util.Iterator;
  */
 public class CalculationRegistry
 {
+
 	/** The default calculation method */
 	private static ICalculation def;
 
@@ -86,7 +87,17 @@ public class CalculationRegistry
 		registerCalculation(new ParentChildCutCalculation());
 		registerCalculation(new TopCalculation());
 		registerCalculation(new TopologyWeightedCalculation());
-//		registerCalculation(new ProbabilisticCalculation());
+
+
+		boolean debug = false;
+		String enable = System.getenv("ONTOLOGIZER_ENABLE_EXPERIMENTAL");
+		if (enable != null && enable.equals("yes")) debug = true;
+
+		if (debug)
+		{
+			System.err.println("Enabled experimental calculations");
+			registerCalculation(new ProbabilisticCalculation());
+		}
 //		registerCalculation(new NewApproachCalculation());
 //		registerCalculation(new ChiSquareQCalculation());
 	}
