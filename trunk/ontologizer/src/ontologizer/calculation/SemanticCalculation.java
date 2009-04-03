@@ -920,17 +920,17 @@ public class SemanticCalculation
 	{
 		/* Go Graph */
 		HashSet<Term> terms = new HashSet<Term>();
-		Term c1 = new Term("GO:0000001", "C1", null);
-		Term c2 = new Term("GO:0000002", "C2", null,new ParentTermID(c1.getID(),TermRelation.IS_A));
-		Term c3 = new Term("GO:0000003", "C3", null,new ParentTermID(c1.getID(),TermRelation.IS_A));
-		Term c4 = new Term("GO:0000004", "C4", null,new ParentTermID(c2.getID(),TermRelation.IS_A));
-		Term c5 = new Term("GO:0000005", "C5", null,new ParentTermID(c2.getID(),TermRelation.IS_A));
-		Term c6 = new Term("GO:0000006", "C6", null,new ParentTermID(c3.getID(),TermRelation.IS_A),new ParentTermID(c2.getID(),TermRelation.IS_A));
-		Term c7 = new Term("GO:0000007", "C7", null,new ParentTermID(c5.getID(),TermRelation.IS_A),new ParentTermID(c6.getID(),TermRelation.IS_A));
-		Term c8 = new Term("GO:0000008", "C8", null,new ParentTermID(c7.getID(),TermRelation.IS_A));
-		Term c9 = new Term("GO:0000009", "C9", null,new ParentTermID(c7.getID(),TermRelation.IS_A));
-		Term c10 = new Term("GO:0000010", "C10", null,new ParentTermID(c9.getID(),TermRelation.IS_A));
-		Term c11 = new Term("GO:0000011", "C11", null,new ParentTermID(c9.getID(),TermRelation.IS_A));
+		Term c1 = new Term("GO:0000001", "C1");
+		Term c2 = new Term("GO:0000002", "C2",new ParentTermID(c1.getID(),TermRelation.IS_A));
+		Term c3 = new Term("GO:0000003", "C3",new ParentTermID(c1.getID(),TermRelation.IS_A));
+		Term c4 = new Term("GO:0000004", "C4",new ParentTermID(c2.getID(),TermRelation.IS_A));
+		Term c5 = new Term("GO:0000005", "C5",new ParentTermID(c2.getID(),TermRelation.IS_A));
+		Term c6 = new Term("GO:0000006", "C6", new ParentTermID(c3.getID(),TermRelation.IS_A),new ParentTermID(c2.getID(),TermRelation.IS_A));
+		Term c7 = new Term("GO:0000007", "C7", new ParentTermID(c5.getID(),TermRelation.IS_A),new ParentTermID(c6.getID(),TermRelation.IS_A));
+		Term c8 = new Term("GO:0000008", "C8", new ParentTermID(c7.getID(),TermRelation.IS_A));
+		Term c9 = new Term("GO:0000009", "C9", new ParentTermID(c7.getID(),TermRelation.IS_A));
+		Term c10 = new Term("GO:0000010", "C10", new ParentTermID(c9.getID(),TermRelation.IS_A));
+		Term c11 = new Term("GO:0000011", "C11", new ParentTermID(c9.getID(),TermRelation.IS_A));
 
 		terms.add(c1);
 		terms.add(c2);

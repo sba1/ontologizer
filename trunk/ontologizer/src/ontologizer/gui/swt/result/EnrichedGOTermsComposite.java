@@ -25,6 +25,7 @@ import ontologizer.GOTermEnumerator.GOTermAnnotatedGenes;
 import ontologizer.association.Gene2Associations;
 import ontologizer.calculation.AbstractGOTermProperties;
 import ontologizer.calculation.EnrichedGOTermsResult;
+import ontologizer.go.Namespace;
 import ontologizer.go.Term;
 import ontologizer.go.TermID;
 import ontologizer.gui.swt.Ontologizer;
@@ -538,7 +539,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 				brightness = 1.0f;
 
 				/* Hue depends on namespace */
-				switch (prop.goTerm.getNamespace())
+				switch (Namespace.getNamespaceEnum(prop.goTerm.getNamespace()))
 				{
 					case BIOLOGICAL_PROCESS: hue = 120.f;break;
 					case MOLECULAR_FUNCTION: hue = 60.f;break;
