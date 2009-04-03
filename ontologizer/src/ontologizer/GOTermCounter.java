@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.logging.Logger;
 
 import ontologizer.go.GOGraph;
+import ontologizer.go.Namespace;
 import ontologizer.go.Term;
 import ontologizer.go.TermID;
 import ontologizer.go.GOGraph.IVisitingGOVertex;
@@ -99,7 +100,8 @@ public class GOTermCounter implements Iterable<TermID>
 					+ " Could not find " + id);
 			System.exit(1);
 		}
-		switch (gt.getNamespace())
+
+		switch (Namespace.getNamespaceEnum(gt.getNamespace()))
 		{
 			case	BIOLOGICAL_PROCESS:
 					if (processHashMap.containsKey(id))
@@ -154,7 +156,7 @@ public class GOTermCounter implements Iterable<TermID>
 			System.exit(1);
 		}
 
-		switch (gt.getNamespace())
+		switch (Namespace.getNamespaceEnum(gt.getNamespace()))
 		{
 			case	BIOLOGICAL_PROCESS:
 					if (processHashMap.containsKey(id))

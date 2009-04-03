@@ -22,10 +22,10 @@ public class ProbabilisticCalculationTest extends TestCase {
 	{
 		/* Go Graph */
 		HashSet<Term> terms = new HashSet<Term>();
-		Term c1 = new Term("GO:0000001", "C1", null);
-		Term c2 = new Term("GO:0000002", "C2", null,new ParentTermID(c1.getID(),TermRelation.IS_A));
-		Term c3 = new Term("GO:0000003", "C3", null,new ParentTermID(c1.getID(),TermRelation.IS_A));
-		Term c4 = new Term("GO:0000004", "C4", null,new ParentTermID(c1.getID(),TermRelation.IS_A));
+		Term c1 = new Term("GO:0000001", "C1");
+		Term c2 = new Term("GO:0000002", "C2",new ParentTermID(c1.getID(),TermRelation.IS_A));
+		Term c3 = new Term("GO:0000003", "C3",new ParentTermID(c1.getID(),TermRelation.IS_A));
+		Term c4 = new Term("GO:0000004", "C4",new ParentTermID(c1.getID(),TermRelation.IS_A));
 		terms.add(c1);
 		terms.add(c2);
 		terms.add(c3);
