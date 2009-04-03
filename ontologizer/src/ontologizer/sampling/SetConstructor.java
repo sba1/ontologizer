@@ -28,7 +28,8 @@ import ontologizer.go.GOGraph;
 import ontologizer.go.OBOParser;
 import ontologizer.go.TermContainer;
 import ontologizer.go.TermID;
-import ontologizer.go.Term.Namespace;
+import ontologizer.go.Namespace;
+import ontologizer.go.Namespace.NamespaceEnum;
 import ontologizer.statistics.AbstractTestCorrection;
 import ontologizer.statistics.PValue;
 import ontologizer.statistics.TestCorrectionRegistry;
@@ -442,10 +443,10 @@ public class SetConstructor
 					{ bioproc, cellcomp, molfunc };
 					for (TermID tid : mainTerms)
 					{
-						Namespace ns = graph.getGOTerm(tid).getNamespace();
+						NamespaceEnum ns = Namespace.getNamespaceEnum(graph.getGOTerm(tid).getNamespace());
 						HashSet<TermID> thisGoodTerms = new HashSet<TermID>();
 						for (TermID gtid : goodTerms) {
-							Namespace gns = graph.getGOTerm(gtid).getNamespace();
+							NamespaceEnum gns = Namespace.getNamespaceEnum(graph.getGOTerm(gtid).getNamespace());
 							if (ns == gns)
 								thisGoodTerms.add(gtid);
 						}

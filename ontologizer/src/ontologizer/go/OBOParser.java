@@ -1,8 +1,16 @@
 package ontologizer.go;
 
-import java.io.*;
-import java.util.*; /* HashMap */
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 import java.util.logging.Logger;
+
 
 /*
  * I gratefully acknowledge the help of John Richter Day, who provided the
@@ -88,7 +96,10 @@ public class OBOParser
 	private int numberOfRelations;
 	
 	/** Contains all the ontology prefixes */
-	private HashSet <Prefix> prefixes = new HashSet<Prefix>();
+	private HashSet<Prefix> prefixes = new HashSet<Prefix>();
+
+	/** All parsed namespaces */
+	private HashMap<String,Namespace> namespaces = new HashMap<String,Namespace>(); 
 
 	/* Used for parsing */
 	private String line;
@@ -105,7 +116,7 @@ public class OBOParser
 	private String currentName;
 
 	/** The namespace of the stanza currently being parsed */
-	private String currentNamespace;
+	private Namespace currentNamespace;
 
 	/** The definition of the stanza currently being parsed */
 	private String currentDefintion;
@@ -615,20 +626,15 @@ public class OBOParser
 
 	private void readNamespace(String value)
 	{
-		if (value.equalsIgnoreCase("cellular_component"))
+		/* Check if we know the namespace. If not create one */
+		Namespace namespace = namespaces.get(value);
+		if (namespace == null)
 		{
-			currentNamespace = "C";
-		} else if (value.equalsIgnoreCase("molecular_function"))
-		{
-			currentNamespace = "F";
-		} else if (value.equalsIgnoreCase("biological_process"))
-		{
-			currentNamespace = "B";
-		} else
-		{
-			throw new IllegalArgumentException("Encountered an unknown namespace: "
-					+ value);
+			namespace = new Namespace(value);
+			namespaces.put(value,namespace);
 		}
+		
+		currentNamespace = namespace;
 	}
 
 	public String getFormatVersion()

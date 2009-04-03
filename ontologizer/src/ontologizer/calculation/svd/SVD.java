@@ -13,6 +13,7 @@ import ontologizer.association.AssociationContainer;
 import ontologizer.calculation.AbstractGOTermProperties;
 import ontologizer.calculation.EnrichedGOTermsResult;
 import ontologizer.go.GOGraph;
+import ontologizer.go.Namespace;
 import ontologizer.go.Term;
 import ontologizer.go.TermContainer;
 import ontologizer.go.TermID;
@@ -365,12 +366,12 @@ public class SVD
 				if (t != null)
 				{
 					double v = ddm.get(i,j);
-					Term.Namespace nsp = t.getNamespace();
-					if (nsp == Term.Namespace.BIOLOGICAL_PROCESS) 
+					Namespace.NamespaceEnum nsp = Namespace.getNamespaceEnum(t.getNamespace());
+					if (nsp == Namespace.NamespaceEnum.BIOLOGICAL_PROCESS) 
 						ddm.set(i,j,v*factor_BP[j]);
-					else if (nsp == Term.Namespace.MOLECULAR_FUNCTION)
+					else if (nsp == Namespace.NamespaceEnum.MOLECULAR_FUNCTION)
 						ddm.set(i,j,v*factor_MF[j]);
-					else if (nsp == Term.Namespace.CELLULAR_COMPONENT)
+					else if (nsp == Namespace.NamespaceEnum.CELLULAR_COMPONENT)
 						ddm.set(i,j,v*factor_CC[j]);
 
 				}
