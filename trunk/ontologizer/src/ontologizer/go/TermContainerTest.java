@@ -21,9 +21,9 @@ public class TermContainerTest extends TestCase
 		root = new Term("GO:0000000", "root", null);
 		ArrayList<ParentTermID> rootlist = new ArrayList<ParentTermID>();
 		rootlist.add(new ParentTermID(root.getID(),TermRelation.PART_OF_A));
-		bioproc = new Term("GO:0008150", "biological process", "B", rootlist);
-		cellcomp = new Term("GO:0005575", "cellular component", "C", rootlist);
-		molfunc = new Term("GO:0003674", "molecular function", "F", rootlist);
+		bioproc = new Term("GO:0008150", "biological process", new Namespace("B"), rootlist);
+		cellcomp = new Term("GO:0005575", "cellular component", new Namespace("C"), rootlist);
+		molfunc = new Term("GO:0003674", "molecular function", new Namespace("F"), rootlist);
 
 		HashSet<Term> termsConstructed = new HashSet<Term>();
 		termsConstructed.add(root);

@@ -16,6 +16,7 @@ import ontologizer.IDotNodeAttributesProvider;
 import ontologizer.StudySet;
 import ontologizer.association.AssociationContainer;
 import ontologizer.go.GOGraph;
+import ontologizer.go.Namespace;
 import ontologizer.go.Term;
 import ontologizer.go.TermContainer;
 import ontologizer.go.TermID;
@@ -273,7 +274,7 @@ public class EnrichedGOTermsResult extends AbstractGOTermsResult
 					brightness = 1.0f;
 
 					/* Hue depends on namespace */
-					switch (prop.goTerm.getNamespace())
+					switch (Namespace.getNamespaceEnum(prop.goTerm.getNamespace()))
 					{
 						case BIOLOGICAL_PROCESS: hue = 120.f / 360; break;
 						case MOLECULAR_FUNCTION: hue = 60.f / 360; break;

@@ -7,6 +7,7 @@ import java.util.Set;
 import ontologizer.GlobalPreferences;
 import ontologizer.IDotNodeAttributesProvider;
 import ontologizer.go.GOGraph;
+import ontologizer.go.Namespace;
 import ontologizer.go.Term;
 import ontologizer.go.TermID;
 import ontologizer.gui.swt.result.GraphGenerationThread;
@@ -97,7 +98,7 @@ class GraphWindow extends ApplicationWindow
 					float hue;
 					float saturation = 1.f;
 
-					switch (t.getNamespace())
+					switch (Namespace.getNamespaceEnum(t.getNamespace()))
 					{
 						case BIOLOGICAL_PROCESS: hue = 120.f / 360; break;
 						case MOLECULAR_FUNCTION: hue = 60.f / 360; break;

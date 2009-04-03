@@ -2,9 +2,6 @@ package ontologizer.go;
 
 import java.util.ArrayList;
 
-import ontologizer.go.Term.Namespace;
-
-
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
@@ -12,12 +9,16 @@ public class TermTest extends TestCase
 {
 	public void test()
 	{
-		Term root = new Term("GO:0000000", "root", null);
+		Namespace bNamespace = new Namespace("B");
+		Namespace cNamespace = new Namespace("C");
+		Namespace fNamespace = new Namespace("F");
+
+		Term root = new Term("GO:0000000", "root");
 		ArrayList<ParentTermID> rootlist = new ArrayList<ParentTermID>();
 		rootlist.add(new ParentTermID(root.getID(),TermRelation.PART_OF_A));
-		Term bioproc = new Term("GO:0008150", "biological process", "B", rootlist);
-		Term cellcomp = new Term("GO:0005575", "cellular component", "C", rootlist);
-		Term molfunc = new Term("GO:0003674", "molecular function", "F", rootlist);
+		Term bioproc = new Term("GO:0008150", "biological process", bNamespace, rootlist);
+		Term cellcomp = new Term("GO:0005575", "cellular component", cNamespace, rootlist);
+		Term molfunc = new Term("GO:0003674", "molecular function", fNamespace, rootlist);
 
 		/*
 		 * Testing getIDAsString
@@ -50,9 +51,9 @@ public class TermTest extends TestCase
 		/*
 		 * Testing getNamespace
 		 */
-		Assert.assertTrue(root.getNamespace().equals(Namespace.UNSPECIFIED));
-		Assert.assertTrue(bioproc.getNamespace().equals(Namespace.BIOLOGICAL_PROCESS));
-		Assert.assertTrue(cellcomp.getNamespace().equals(Namespace.CELLULAR_COMPONENT));
-		Assert.assertTrue(molfunc.getNamespace().equals(Namespace.MOLECULAR_FUNCTION));
+		Assert.assertTrue(root.getNamespace().equals(Namespace.UNKOWN_NAMESPACE));
+		Assert.assertTrue(bioproc.getNamespace().equals(bNamespace));
+		Assert.assertTrue(cellcomp.getNamespace().equals(cNamespace));
+		Assert.assertTrue(molfunc.getNamespace().equals(fNamespace));
 	}
 }

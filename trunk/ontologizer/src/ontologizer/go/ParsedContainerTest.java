@@ -11,9 +11,9 @@ public class ParsedContainerTest extends TestCase
 	// internal fields
 	private OBOParser oboParser;
 
-	private Term bioproc = new Term("GO:0008150", "biological_process", "B");
-	private Term cellcomp = new Term("GO:0005575", "cellular_component", "C");
-	private Term molfunc = new Term("GO:0003674", "molecular_function", "F");
+	private Term bioproc = new Term("GO:0008150", "biological_process");
+	private Term cellcomp = new Term("GO:0005575", "cellular_component");
+	private Term molfunc = new Term("GO:0003674", "molecular_function");
 
 	@Override
 	protected void setUp() throws Exception
