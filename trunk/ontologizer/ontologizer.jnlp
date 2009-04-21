@@ -27,5 +27,10 @@
   <resources os="Linux" arch="amd64">
     <jar href="swt/linux-x86_64/swt.jar"/>
   </resources>
+  <resources os="Mac OS X">
+    <j2se version="1.5*" java-vm-args="-XstartOnFirstThread"/>
+    <jar href="swt/macosx/swt.jar" />
+  </resources>
+
   <application-desc main-class="ontologizer.gui.swt.Ontologizer"/> 
 </jnlp> 
