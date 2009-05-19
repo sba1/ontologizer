@@ -53,7 +53,7 @@
 
 	<target name="compile" depends="init" description="compile the main source">
 		<mkdir dir="${build.classes}" />
-		<javac srcdir="${java.dir}" destdir="${build.classes}" debug="${debug}" verbose="yes">
+		<javac srcdir="${java.dir}" destdir="${build.classes}" debug="${debug}" verbose="no">
 			<exclude name="**/ontologizer/tests/*.java" />
 			<exclude name="**/ontologizer/gui/*.java" />
 			<exclude name="**/ontologizer/gui/swt/*.java" />
@@ -65,6 +65,7 @@
 			<exclude name="**/ontologizer/sampling/*Test.java" />
 			<exclude name="**/ontologizer/go/*Test.java" />
 			<exclude name="**/ontologizer/go/ParsedContainerTest.java" />
+			<exclude name="**/ontologizer/calculation/ProbabilisticCalculationTest.java" />
 			<exclude name="**/ontologizer/graph/*Test.java" />
 			<exclude name="**/ontologizer/tests/*.java" />
 			<exclude name="**/tools/*.java" />
