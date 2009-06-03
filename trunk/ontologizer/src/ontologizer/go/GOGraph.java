@@ -145,7 +145,7 @@ class TinyQueue<Type>
  *
  * @author Sebastian Bauer
  */
-public class GOGraph
+public class GOGraph implements Iterable<Term>
 {
 	private static Logger logger = Logger.getLogger(GOGraph.class.getCanonicalName());
 
@@ -843,6 +843,14 @@ public class GOGraph
 		}
 
 		return id;
+	}
+
+	/**
+	 * Returns an iterator to iterate over all terms
+	 */
+	public Iterator<Term> iterator()
+	{
+		return goTermContainer.iterator();
 	}
 
 }
