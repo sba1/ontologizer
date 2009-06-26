@@ -35,6 +35,7 @@ public class ProbabilisticCalculation implements ICalculation
 
 		public int sg;
 		public int sn;
+		public int st; /* total */
 		public int ag;
 		public int an;
 		public int inactive;
@@ -58,6 +59,9 @@ public class ProbabilisticCalculation implements ICalculation
 			else activeTerms.add(t);
 		}
 
+		long timeSpent;
+
+
 		/**
 		 * The function which should be optimized.
 		 *  
@@ -66,7 +70,13 @@ public class ProbabilisticCalculation implements ICalculation
 		 */
 		public double objective()
 		{
-			calculateParamters(); 
+//			long now = System.currentTimeMillis();
+
+			calculateParamters();
+			
+//			long diff = System.currentTimeMillis() - now;
+//			timeSpent += diff;
+//			System.out.println(timeSpent);
 
 			double obj;
 
@@ -83,7 +93,7 @@ public class ProbabilisticCalculation implements ICalculation
 		{
 			/* Active gene nodes connected to at least one active term */
 			Set<ByteString> Ag = new HashSet<ByteString>();
-
+			
 			/* I inactive gene nodes */
 			/* Number of edges connecting nodes in I with active term nodes */
 			sg = 0;
@@ -105,28 +115,32 @@ public class ProbabilisticCalculation implements ICalculation
 				}
 			}
 
-			for (TermID t : popEnumerator.getAllAnnotatedTermsAsSet())
-			{
-				if (activeTerms.contains(t))
-					continue;
-
-				/* Inactive terms */
-				for (ByteString g : popEnumerator.getAnnotatedGenes(t).totalAnnotated)
-				{
-					if (!activeGenes.contains(g))
-					{
-						/* Gene is inactive as terms are inactive */
-						sn++;
-					}
-				}
-			}
+//			for (TermID t : allTerms)
+//			{
+//				if (activeTerms.contains(t))
+//					continue;
+//
+//				/* Inactive terms */
+//				for (ByteString g : popEnumerator.getAnnotatedGenes(t).totalAnnotated)
+//				{
+//					if (!activeGenes.contains(g))
+//					{
+//						/* Gene is inactive as terms are inactive */
+//						sn++;
+//					}
+//				}
+//			}
 
 			/* Active gene nodes connected to at least one active term */
 			ag = Ag.size();
 			
 			/* Active gene nodes not connected to any active term */
 			an = activeGenes.size() - ag;
+
 			inactive = allGenes.size() - activeGenes.size();
+			sn = st - sg;
+
+//			System.out.println("ag=" + ag + " an="+ an + " sg="+sg + " sn=" + sn + " total=" + (sg+sn) + "  " + st);
 		}
 		
 		/**
@@ -139,10 +153,14 @@ public class ProbabilisticCalculation implements ICalculation
 		{
 			double obj = objective();
 
+			System.out.println("Optimi");
+
 			do
 			{
 				double best = Double.NEGATIVE_INFINITY;
 				TermID bestTerm = null;
+				
+				System.out.println(obj + "  " + best + "  " + activeTerms.size());
 				
 				for (TermID t : allTerms)
 				{
@@ -155,6 +173,8 @@ public class ProbabilisticCalculation implements ICalculation
 						bestTerm = t;
 					}
 					
+//					System.out.println(o);
+
 					switchTerm(t);
 				}
 
@@ -184,6 +204,18 @@ public class ProbabilisticCalculation implements ICalculation
 		data.allGenes = populationSet.getAllGeneNames();
 		data.activeGenes = studySet.getAllGeneNames();
 		
+		int total = 0;
+		for (TermID t : data.allTerms)
+		{
+			/* Inactive terms */
+			for (ByteString g : data.popEnumerator.getAnnotatedGenes(t).totalAnnotated)
+			{
+				if (!data.activeGenes.contains(g))
+					total++;
+			}
+		}
+		data.st = total;
+		
 		data.p = 0.5;
 		data.q = ((double)data.activeGenes.size())/data.allGenes.size();
 
@@ -212,7 +244,9 @@ public class ProbabilisticCalculation implements ICalculation
 
 			if (Math.abs(qNext - data.q) < eps) break;
 			if (Math.abs(pNext - data.p) < eps) break;
-			
+
+			System.out.println("p=" + data.p + " q=" + data.q);
+
 			data.p = pNext;
 			data.q = qNext;
 		} 
