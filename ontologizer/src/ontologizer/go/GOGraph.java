@@ -178,6 +178,12 @@ public class GOGraph implements Iterable<Term>
 		{
 			for (ParentTermID parent : term.getParents())
 			{
+				/* Ignore loops */
+				if (term.getID().equals(parent.termid))
+				{
+					logger.info("Detected self-loop in the definition of the ontology (term "+ term.getIDAsString()+"). This link has been ignored.");
+					continue;
+				}
 				graph.addEdge(new GOEdge(goTermContainer.get(parent.termid), term, parent.relation));
 			}
 		}
