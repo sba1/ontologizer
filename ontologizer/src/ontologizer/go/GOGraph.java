@@ -804,15 +804,19 @@ public class GOGraph implements Iterable<Term>
 		}
 	};
 	
+	private GOLevels cachedLevels;
+	
 	/**
 	 * Returns the levels of the given terms starting from the root.
 	 * 
 	 * @param termids
 	 * @return
 	 */
-	public GOLevels getGOLevels(final Set<TermID> termids)
+	synchronized public GOLevels getGOLevels(final Set<TermID> termids)
 	{
-		final GOLevels levels = new GOLevels();
+		if (cachedLevels != null) return cachedLevels;
+		
+		cachedLevels = new GOLevels();
 		
 		graph.singleSourceLongestPath(rootGOTerm, new IDistanceVisitor<Term>()
 				{
@@ -820,10 +824,10 @@ public class GOGraph implements Iterable<Term>
 							int distance)
 					{
 						if (termids.contains(vertex.getID()))
-							levels.putLevel(vertex.getID(),distance);
+							cachedLevels.putLevel(vertex.getID(),distance);
 						return true;
 					}});
-		return levels;
+		return cachedLevels;
 	}
 
 	/** Returns the number of terms in this ontology */
