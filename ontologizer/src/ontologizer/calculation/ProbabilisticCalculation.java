@@ -1,5 +1,6 @@
 package ontologizer.calculation;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -38,13 +39,19 @@ public class ProbabilisticCalculation implements ICalculation
 		public int st; /* total */
 		public int ag;
 		public int an;
-		public int inactive;
+
+		public int nsg;
 
 		public Set<TermID> activeTerms = new LinkedHashSet<TermID>();
 
+		
+		/** Active gene nodes connected to at least one active term */
+		private HashMap<ByteString,Integer> Ag = new HashMap<ByteString,Integer>();
+
+
 		/* Fixed (initialized from outside) */
 		private GOTermEnumerator popEnumerator;
-		private HashSet<ByteString> activeGenes;
+		private HashSet<ByteString> activeGenes; /* Study genes */
 		private HashSet<ByteString> allGenes;
 		private List<TermID> allTerms;
 
@@ -55,12 +62,44 @@ public class ProbabilisticCalculation implements ICalculation
 		 */
 		public void switchTerm(TermID t)
 		{
-			if (activeTerms.contains(t)) activeTerms.remove(t);
-			else activeTerms.add(t);
+			if (activeTerms.contains(t))
+			{
+				activeTerms.remove(t);
+
+				for (ByteString g : popEnumerator.getAnnotatedGenes(t).totalAnnotated)
+				{
+					if (activeGenes.contains(g))
+					{
+						Integer cnt = Ag.get(g);
+						if (cnt == 1) Ag.remove(g);
+						else Ag.put(g,cnt-1);
+					}
+					else
+					{
+						/* Gene is inactive but term active */
+						nsg--;
+					}
+				}
+			} else
+			{
+				activeTerms.add(t);
+
+				for (ByteString g : popEnumerator.getAnnotatedGenes(t).totalAnnotated)
+				{
+					if (activeGenes.contains(g))
+					{
+						Integer cnt = Ag.get(g);
+						if (cnt == null) Ag.put(g,1);
+						else Ag.put(g,cnt+1);
+					}
+					else
+					{
+						/* Gene is inactive but term active */
+						nsg++;
+					}
+				}
+			}
 		}
-
-		long timeSpent;
-
 
 		/**
 		 * The function which should be optimized.
@@ -70,14 +109,8 @@ public class ProbabilisticCalculation implements ICalculation
 		 */
 		public double objective()
 		{
-//			long now = System.currentTimeMillis();
-
 			calculateParamters();
 			
-//			long diff = System.currentTimeMillis() - now;
-//			timeSpent += diff;
-//			System.out.println(timeSpent);
-
 			double obj;
 
 			obj = ag*Math.log(p) + an * Math.log(q) + sg * Math.log(1-p) + sn * Math.log(1-q) - alpha*activeTerms.size();
@@ -85,14 +118,16 @@ public class ProbabilisticCalculation implements ICalculation
 			return obj;
 		}
 
+		
 		/**
 		 * Recalculate all parameters based upon the active terms from
-		 * scatch. 
+		 * scratch. 
 		 */
-		public void calculateParamters()
+		public void calculateParamtersOld()
 		{
 			/* Active gene nodes connected to at least one active term */
-			Set<ByteString> Ag = new HashSet<ByteString>();
+//			Set<ByteString> Ag = new HashSet<ByteString>();
+			HashMap<ByteString,Integer> Ag = new HashMap<ByteString,Integer>();
 			
 			/* I inactive gene nodes */
 			/* Number of edges connecting nodes in I with active term nodes */
@@ -101,12 +136,19 @@ public class ProbabilisticCalculation implements ICalculation
 			/* Number of edges connecting nodes in I with inactive term nodes */
 			sn = 0;
 
+			Ag.clear();
+
 			for (TermID t : activeTerms)
 			{
 				for (ByteString g : popEnumerator.getAnnotatedGenes(t).totalAnnotated)
 				{
 					if (activeGenes.contains(g))
-						Ag.add(g);
+					{
+//						Ag.add(g);
+						Integer cnt = Ag.get(g);
+						if (cnt == null) Ag.put(g,1);
+						else Ag.put(g,cnt+1);
+					}
 					else
 					{
 						/* Gene is inactive but term active */
@@ -137,10 +179,27 @@ public class ProbabilisticCalculation implements ICalculation
 			/* Active gene nodes not connected to any active term */
 			an = activeGenes.size() - ag;
 
-			inactive = allGenes.size() - activeGenes.size();
+			sn = st - sg;
+		}
+
+		/**
+		 * Recalculate all parameters based upon the active terms from
+		 * scratch. 
+		 */
+		public void calculateParamters()
+		{
+			/* I inactive gene nodes */
+			/* Number of edges connecting nodes in I with active term nodes */
+			sg = nsg;
+			
+			/* Number of edges connecting nodes in I with inactive term nodes */
 			sn = st - sg;
 
-//			System.out.println("ag=" + ag + " an="+ an + " sg="+sg + " sn=" + sn + " total=" + (sg+sn) + "  " + st);
+			/* Active gene nodes connected to at least one active term */
+			ag = Ag.size();
+			
+			/* Active gene nodes not connected to any active term */
+			an = activeGenes.size() - ag;
 		}
 		
 		/**
@@ -151,6 +210,12 @@ public class ProbabilisticCalculation implements ICalculation
 		 */
 		private double optimizeForTerms(GOGraph graph)
 		{
+			/* No active terms in the init phase. */
+			activeTerms.clear();
+			Ag.clear();
+			sg = 0;
+			nsg = 0;
+
 			double obj = objective();
 
 			System.out.println("Optimi");
@@ -172,8 +237,6 @@ public class ProbabilisticCalculation implements ICalculation
 						best = o;
 						bestTerm = t;
 					}
-					
-//					System.out.println(o);
 
 					switchTerm(t);
 				}
@@ -203,7 +266,7 @@ public class ProbabilisticCalculation implements ICalculation
 		data.allTerms = data.popEnumerator.getAllAnnotatedTermsAsList();
 		data.allGenes = populationSet.getAllGeneNames();
 		data.activeGenes = studySet.getAllGeneNames();
-		
+
 		int total = 0;
 		for (TermID t : data.allTerms)
 		{
@@ -215,7 +278,7 @@ public class ProbabilisticCalculation implements ICalculation
 			}
 		}
 		data.st = total;
-		
+
 		data.p = 0.5;
 		data.q = ((double)data.activeGenes.size())/data.allGenes.size();
 
@@ -228,8 +291,6 @@ public class ProbabilisticCalculation implements ICalculation
 			double pNext = (double)(data.ag) / (data.ag + data.sg);
 			double qNext = (double)(data.an) / (data.an + data.sn);
 
-			/* No active terms in the init phase */
-			data.activeTerms.clear();
 			data.optimizeForTerms(graph);
 
 			data.calculateParamters();
@@ -245,7 +306,7 @@ public class ProbabilisticCalculation implements ICalculation
 			if (Math.abs(qNext - data.q) < eps) break;
 			if (Math.abs(pNext - data.p) < eps) break;
 
-			System.out.println("p=" + data.p + " q=" + data.q);
+			System.out.println("p=" + data.p + " q=" + data.q + "  pNext="+pNext + " qNext="+qNext);
 
 			data.p = pNext;
 			data.q = qNext;
