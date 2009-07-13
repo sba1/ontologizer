@@ -5,6 +5,7 @@ package ontologizer.sampling;
 
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map.Entry;
 
 import ontologizer.go.TermID;
 
@@ -90,5 +91,19 @@ public class PercentageEnrichmentRule implements Iterable<TermID>
 	public int getPercForTerm(TermID term)
 	{
 		return termPercentages.get(term);
+	}
+
+	@Override
+	public String toString()
+	{
+		String str = "";
+
+		for (Entry<TermID, Integer> e : termPercentages.entrySet())
+		{
+			str += e.getKey() + "/" + e.getValue() + " ";
+		}
+		str += "noise/" + noisePercentage;
+
+		return str;
 	}
 }

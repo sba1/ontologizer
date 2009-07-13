@@ -2,6 +2,7 @@ package ontologizer.sampling;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Random;
 
 import ontologizer.ByteString;
 import ontologizer.GOTermEnumerator;
@@ -18,6 +19,7 @@ import ontologizer.go.TermID;
 public class StudySetSampler
 {
 	private StudySet baseStudySet;
+	private Random rnd;
 
 	/**
 	 * Adds a sample of a desired size from a list of genes to an existing sutdy
@@ -63,7 +65,7 @@ public class StudySetSampler
 			return;
 		}
 		cleanedRepository.removeAll(weHave);
-		KSubsetSampler<ByteString> sampler = new KSubsetSampler<ByteString>(cleanedRepository);
+		KSubsetSampler<ByteString> sampler = new KSubsetSampler<ByteString>(cleanedRepository,rnd);
 		ArrayList<ByteString> sample = sampler.sampleOneOrdered(desiredSize);
 
 		for (ByteString gene : sample)
@@ -78,8 +80,19 @@ public class StudySetSampler
 	 */
 	public StudySetSampler(StudySet baseStudySet)
 	{
-		super();
 		this.baseStudySet = baseStudySet;
+		this.rnd = new Random();
+	}
+
+	/**
+	 *
+	 * @param baseStudySet
+	 * @param rnd
+	 */
+	public StudySetSampler(StudySet baseStudySet, Random rnd)
+	{
+		this.baseStudySet = baseStudySet;
+		this.rnd = rnd;
 	}
 
 	/**
@@ -109,7 +122,7 @@ public class StudySetSampler
 		int desiredSize;
 
 		/* Determine the desired size of the study set randomly */
-		desiredSize = (int) Math.floor(Math.random()
+		desiredSize = (int) Math.floor(rnd.nextDouble()
 				* baseStudySet.getGeneCount());
 
 		return sampleRandomStudySet(desiredSize);
@@ -160,7 +173,8 @@ public class StudySetSampler
 			GOTermAnnotatedGenes annoGenes = termEnum.getAnnotatedGenes(id);
 			seenGenes.addAll(annoGenes.totalAnnotated);
 			int sampleSize = (int) (0.01 * annoGenes.totalAnnotatedCount() * enrichRule.getPercForTerm(id));
-			if (sampleSize == 0) return null;
+			if (sampleSize == 0)
+				return null;
 			addSampleToStudySet(sampleSize, sampledStudySet,
 					annoGenes.totalAnnotated);
 		}
