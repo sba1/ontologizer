@@ -178,13 +178,14 @@ public class TopologyWeightedCalculation extends AbstractHypergeometricCalculati
 
 		GOTermEnumerator studyTermEnumerator = studySet.enumerateGOTerms(graph,goAssociations);
 		GOTermEnumerator populationTermEnumerator = populationSet.enumerateGOTerms(graph,goAssociations);
-		Set<TermID> allAnnotatedTerms = populationTermEnumerator.getAllAnnotatedTermsAsSet();
+
+		Set<TermID> allAnnotatedTerms = studyTermEnumerator.getAllAnnotatedTermsAsSet();
 		GOLevels levels = graph.getGOLevels(allAnnotatedTerms);
-		
+
 		for (int i=levels.getMaxLevel();i>=0;i--)
 		{
 			Set<TermID> terms = levels.getLevelTermSet(i);
-			
+
 			for (TermID t : terms)
 			{
 				Set<TermID> descs = graph.getTermsDescendants(t);
@@ -198,7 +199,6 @@ public class TopologyWeightedCalculation extends AbstractHypergeometricCalculati
 				computeTermSig(populationSet, studySet, graph, t, annotatedDescs, studySetResult, studyTermEnumerator, populationTermEnumerator);
 			}
 		}
-		
 
 		return studySetResult;
 	}
