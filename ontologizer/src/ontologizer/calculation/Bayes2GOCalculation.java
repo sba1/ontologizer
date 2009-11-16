@@ -24,7 +24,6 @@ import ontologizer.PopulationSet;
 import ontologizer.StudySet;
 import ontologizer.association.Association;
 import ontologizer.association.AssociationContainer;
-import ontologizer.calculation.B2GParam.Type;
 import ontologizer.go.GOGraph;
 import ontologizer.go.ParentTermID;
 import ontologizer.go.Term;
@@ -40,7 +39,7 @@ class B2GTestParameter
 {
 	static double ALPHA = 0.10;
 	static double BETA = 0.10;
-	static int MCMC_STEPS = 500000;
+	static int MCMC_STEPS = 1000000;
 }
 
 /**
@@ -235,6 +234,7 @@ abstract class Bayes2GOScore
 	 */
 	protected HashMap<TermID,Integer> term2InactiveTermsIdx = new HashMap<TermID,Integer>();
 
+	protected boolean usePrior = true;
 	protected double p = Double.NaN;
 
 	public Bayes2GOScore(List<TermID> termList, GOTermEnumerator populationEnumerator, Set<ByteString> observedActiveGenes)
@@ -272,6 +272,16 @@ abstract class Bayes2GOScore
 
 		population = populationEnumerator.getGenes();
 		this.observedActiveGenes = observedActiveGenes;
+	}
+
+	public void setUsePrior(boolean usePrior)
+	{
+		this.usePrior = usePrior;
+	}
+
+	public boolean getUsePrior()
+	{
+		return usePrior;
 	}
 
 	public void setExpectedNumberOfTerms(double terms)
@@ -531,6 +541,12 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 	protected int totalBeta[] = new int[BETA.length];
 	private boolean doBetaMCMC = true;
 
+	protected final int [] EXPECTED_NUMBER_OF_TERMS = new int[]{1,2,3,4,5,6,7,8,9,10,12,15,17,20,25};
+	private int expIdx = 0;
+	private int oldExpIdx;
+	protected int totalExp[] = new int[EXPECTED_NUMBER_OF_TERMS.length];
+	private boolean doExpMCMC = true;
+
 	protected double alpha = Double.NaN;
 	protected double beta = Double.NaN;
 
@@ -548,14 +564,12 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 	public void setAlpha(double alpha)
 	{
 		this.alpha = alpha;
-
 		doAlphaMCMC = Double.isNaN(alpha);
 	}
 
 	public void setBeta(double beta)
 	{
 		this.beta = beta;
-
 		doBetaMCMC = Double.isNaN(beta);
 	}
 
@@ -563,6 +577,7 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 	public void setExpectedNumberOfTerms(double terms)
 	{
 		super.setExpectedNumberOfTerms(terms);
+		doExpMCMC = Double.isNaN(terms);
 	}
 
 	public FixedAlphaBetaScore(Random rnd, List<TermID> termList, GOTermEnumerator populationEnumerator, Set<ByteString> observedActiveGenes)
@@ -612,7 +627,7 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 		oldAlphaIdx = -1;
 		oldBetaIdx = -1;
 
-		if ((!doAlphaMCMC && !doBetaMCMC) || rnd.nextBoolean())
+		if ((!doAlphaMCMC && !doBetaMCMC && !doExpMCMC)|| rnd.nextBoolean())
 		{
 			long choose = Math.abs(rand) % oldPossibilities;
 
@@ -640,20 +655,37 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 
 			if (doAlphaMCMC) max += ALPHA.length;
 			if (doBetaMCMC) max += BETA.length;
+			if (doExpMCMC) max += EXPECTED_NUMBER_OF_TERMS.length;
 
 			int choose = Math.abs((int)rand) % max;
 
-			if (doAlphaMCMC && choose < ALPHA.length)
+			if (doAlphaMCMC)
 			{
-				oldAlphaIdx = alphaIdx;
-				alphaIdx = choose;
-			} else
-			{
+				if (choose < ALPHA.length)
+				{
+					oldAlphaIdx = alphaIdx;
+					alphaIdx = choose;
+					return;
+				}
 				choose -= ALPHA.length;
-
-				oldBetaIdx = betaIdx;
-				betaIdx = choose;
 			}
+
+			if (doBetaMCMC)
+			{
+				if (choose < BETA.length)
+				{
+					oldBetaIdx = betaIdx;
+					betaIdx = choose;
+					return;
+				}
+				choose -= BETA.length;
+			}
+
+			if (!doExpMCMC)
+				throw new RuntimeException("MCMC requested but no proposal possible");
+
+			oldExpIdx = expIdx;
+			expIdx = choose;
 		}
 	}
 
@@ -662,6 +694,7 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 	{
 		double alpha;
 		double beta;
+		double p;
 
 		if (Double.isNaN(this.alpha))
 			alpha = ALPHA[alphaIdx];
@@ -671,9 +704,13 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 			beta = BETA[betaIdx];
 		else beta = this.beta;
 
+		if (Double.isNaN(this.p))
+			p = (double)EXPECTED_NUMBER_OF_TERMS[expIdx] / termsArray.length;
+		else p = this.p;
+
 		double newScore2 = Math.log(alpha) * n10 + Math.log(1-alpha)*n00 + Math.log(1-beta)*n11 + Math.log(beta)*n01;
 
-		if (!Double.isNaN(p))
+		if (usePrior)
 			newScore2 += Math.log(p)*activeTerms.size() + Math.log(1-p)*(termsArray.length - activeTerms.size());
 
 //		newScore2 -= Math.log(alpha) * observedActiveGenes.size() + Math.log(1-beta)* (population.size() - observedActiveGenes.size());
@@ -686,6 +723,7 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 		else if (proposalT1 != null) exchange(proposalT2, proposalT1);
 		else if (oldAlphaIdx != -1) alphaIdx = oldAlphaIdx;
 		else if (oldBetaIdx != -1) betaIdx = oldBetaIdx;
+		else if (oldExpIdx != -1) expIdx = oldExpIdx;
 		else throw new RuntimeException("Wanted to undo a proposal that wasn't proposed");
 	}
 
@@ -707,6 +745,7 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 
 		totalAlpha[alphaIdx]++;
 		totalBeta[betaIdx]++;
+		totalExp[expIdx]++;
 
 		totalT = totalT.add(new BigInteger(new String(activeTerms.size() + "")));
 	}
@@ -770,20 +809,18 @@ class Bayes2GOEnrichedGOTermsResult extends EnrichedGOTermsResult
  */
 public class Bayes2GOCalculation implements ICalculation
 {
-	private boolean noPrior = false;
+	private long seed = 0;
 
-	DoubleParam alpha = new DoubleParam(B2GParam.Type.EM);
-	DoubleParam beta = new DoubleParam(B2GParam.Type.EM);
-	IntegerParam expectedNumberOfTerms = new IntegerParam(B2GParam.Type.EM);
+	private boolean usePrior = true;
 
-	public boolean takePopulationAsReference = false;
+	private DoubleParam alpha = new DoubleParam(B2GParam.Type.EM);
+	private DoubleParam beta = new DoubleParam(B2GParam.Type.EM);
+	private IntegerParam expectedNumberOfTerms = new IntegerParam(B2GParam.Type.EM);
 
-	public long seed = 0;
+	private boolean takePopulationAsReference = false;
+	private ICalculationProgress calculationProgress;
 
-	/** Indicates whether a full MCMC should be performed */
-//	private boolean doFullMCMC = false;
-
-	public ICalculationProgress calculationProgress;
+	private int mcmcSteps = B2GTestParameter.MCMC_STEPS;
 
 	public Bayes2GOCalculation()
 	{
@@ -791,13 +828,14 @@ public class Bayes2GOCalculation implements ICalculation
 
 	public Bayes2GOCalculation(Bayes2GOCalculation calc)
 	{
-		this.noPrior = calc.noPrior;
+		this.usePrior = calc.usePrior;
 		this.expectedNumberOfTerms = new IntegerParam(calc.expectedNumberOfTerms);
 		this.alpha = new DoubleParam(calc.alpha);
 		this.beta = new DoubleParam(calc.beta);
 		this.seed = calc.seed;
 		this.calculationProgress = calc.calculationProgress;
 		this.takePopulationAsReference = calc.takePopulationAsReference;
+		this.mcmcSteps = calc.mcmcSteps;
 	}
 
 	/**
@@ -810,39 +848,85 @@ public class Bayes2GOCalculation implements ICalculation
 		this.seed = seed;
 	}
 
+	/**
+	 * Sets a fixed value for the alpha parameter.
+	 *
+	 * @param alpha
+	 */
 	public void setAlpha(double alpha)
 	{
 		this.alpha.setValue(alpha);
 	}
 
+	/**
+	 * Sets a fixed value for the beta parameter.
+	 *
+	 * @param beta
+	 */
 	public void setBeta(double beta)
 	{
 		this.beta.setValue(beta);
 	}
 
+	/**
+	 * Sets the type of the alpha parameter.
+	 *
+	 * @param alpha
+	 */
 	public void setAlpha(B2GParam.Type alpha)
 	{
 		this.alpha.setType(alpha);
 	}
 
+	/**
+	 * Sets the type of the beta parameter.
+	 *
+	 * @param beta
+	 */
 	public void setBeta(B2GParam.Type beta)
 	{
 		this.beta.setType(beta);
 	}
 
+	/**
+	 * Sets the expected number of terms.
+	 *
+	 * @param expectedNumber
+	 */
 	public void setExpectedNumber(int expectedNumber)
 	{
 		this.expectedNumberOfTerms.setValue(expectedNumber);
 	}
 
-	public void setExpectedNumber(B2GParam.Type expectedNumber)
+	/**
+	 * Sets the type of expected number variable.
+	 *
+	 * @param expectedNumber
+	 */
+	public void setExpectedNumber(B2GParam.Type type)
 	{
-		this.expectedNumberOfTerms.setType(expectedNumber);
+		this.expectedNumberOfTerms.setType(type);
 	}
 
+	/**
+	 * Sets whether all terms that are annotated to the population set should be
+	 * considered.
+	 *
+	 * @param takePopulationAsReference
+	 */
 	public void setTakePopulationAsReference(boolean takePopulationAsReference)
 	{
 		this.takePopulationAsReference = takePopulationAsReference;
+	}
+
+	/**
+	 * Sets the number of mcmc steps that are performed in the following runs.
+	 *
+	 * @param mcmcSteps
+	 */
+	public void setMcmcSteps(int mcmcSteps)
+	{
+		this.mcmcSteps = mcmcSteps;
 	}
 
 	public EnrichedGOTermsResult calculateStudySet(GOGraph graph,
@@ -905,7 +989,7 @@ public class Bayes2GOCalculation implements ICalculation
 
 	public void setNoPrior(boolean noPrior)
 	{
-		this.noPrior = noPrior;
+		this.usePrior = noPrior;
 	}
 
 	private void calculateByMCMC(GOGraph graph,
@@ -965,32 +1049,9 @@ public class Bayes2GOCalculation implements ICalculation
 			default: expectedNumberOfTerms = this.expectedNumberOfTerms.getValue(); break;
 		}
 
-//		System.out.println(doAlphaEm + "  " + doBetaEm + " " + doPEm);
 		boolean doEm = doAlphaEm || doBetaEm || doPEm;
 
-//		if (!doFullMCMC)
-//		{
-//			if (Double.isNaN(alpha))
-//			{
-//				alpha = 0.4;
-//				doAlphaEm = true;
-//				doEm = true;
-//			}
-//			if (Double.isNaN(beta))
-//			{
-//				beta = 0.4;
-//				doBetaEm = true;
-//				doEm = true;
-//			}
-//		}
-//		if (Double.isNaN(p))
-//		{
-//			p = (double)1 / allTerms.size();
-//			doPEm = true;
-//			doEm = true;
-//		}
-
-		if (doEm) maxIter = 10;
+		if (doEm) maxIter = 12;
 		else maxIter = 1;
 
 		for (int i=0;i<maxIter;i++)
@@ -1009,7 +1070,8 @@ public class Bayes2GOCalculation implements ICalculation
 
 			bayesScore.setAlpha(alpha);
 			bayesScore.setBeta(beta);
-			if (!noPrior) bayesScore.setExpectedNumberOfTerms(expectedNumberOfTerms);
+			bayesScore.setExpectedNumberOfTerms(expectedNumberOfTerms);
+			bayesScore.setUsePrior(!usePrior);
 
 			result.setScore(bayesScore);
 
@@ -1018,7 +1080,7 @@ public class Bayes2GOCalculation implements ICalculation
 			int numAccepts = 0;
 			int numRejects = 0;
 
-			if (noPrior) maxSteps = maxSteps * 3 / 2;
+			if (usePrior) maxSteps = maxSteps * 3 / 2;
 
 			if (calculationProgress != null)
 				calculationProgress.init(maxSteps);
@@ -1047,7 +1109,7 @@ public class Bayes2GOCalculation implements ICalculation
 					System.out.println((t*100/maxSteps) + "% (score=" + score +" maxScore=" + maxScore + " #terms="+bayesScore.activeTerms.size()+
 										" accept/reject=" + String.format("%g",(double)numAccepts / (double)numRejects) +
 										" accept/steps=" + String.format("%g",(double)numAccepts / (double)t) +
-										" exp=" + expectedNumberOfTerms + " noPrior=" + noPrior + ")");
+										" exp=" + expectedNumberOfTerms + " noPrior=" + usePrior + ")");
 					start = now;
 
 					if (calculationProgress != null)
@@ -1145,7 +1207,12 @@ public class Bayes2GOCalculation implements ICalculation
 					System.out.println("beta(" + bayesScore.BETA[j] + ")=" + (double)bayesScore.totalBeta[j] / bayesScore.numRecords);
 			}
 
+			if (Double.isNaN(expectedNumberOfTerms))
+			{
+				for (int j=0;j<bayesScore.totalExp.length;j++)
+					System.out.println("exp(" + bayesScore.EXPECTED_NUMBER_OF_TERMS[j] + ")=" + (double)bayesScore.totalExp[j] / bayesScore.numRecords);
 
+			}
 		}
 	}
 
@@ -1404,14 +1471,18 @@ public class Bayes2GOCalculation implements ICalculation
 //		ParentChildCalculation calc = new ParentChildCalculation();
 		Bayes2GOCalculation calc = new Bayes2GOCalculation();
 		calc.setSeed(1);
+
 //		calc.setAlpha(realAlpha);
 //		calc.setBeta(realBeta);
 //		calc.setExpectedNumber(4);
-//		calc.setAlpha(B2GParam.Type.MCMC);
-//		calc.setBeta(B2GParam.Type.MCMC);
-		calc.setAlpha(B2GParam.Type.EM);
-		calc.setBeta(B2GParam.Type.EM);
-		calc.setExpectedNumber(B2GParam.Type.EM);
+
+		calc.setAlpha(B2GParam.Type.MCMC);
+		calc.setBeta(B2GParam.Type.MCMC);
+		calc.setExpectedNumber(B2GParam.Type.MCMC);
+
+//		calc.setAlpha(B2GParam.Type.EM);
+//		calc.setBeta(B2GParam.Type.EM);
+//		calc.setExpectedNumber(B2GParam.Type.EM);
 
 ////	calc.setNoPrior(true);
 //		calc.setAlpha(alphaStudySet);
