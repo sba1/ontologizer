@@ -83,6 +83,7 @@ class Settings
 	public String ontologyFileName;
 	public String annotationsFileName;
 	public String mappingFileName;
+	public String subontology;
 	public boolean isClosed;
 
 	public Properties getSettingsAsProperty()
@@ -92,6 +93,7 @@ class Settings
 		prop.setProperty("ontologyFileName",ontologyFileName);
 		prop.setProperty("mappingFileName",mappingFileName);
 		prop.setProperty("isClosed", Boolean.toString(isClosed));
+		prop.setProperty("subontology",subontology);
 		
 		return prop;
 	}
@@ -142,6 +144,9 @@ public class MainWindow extends ApplicationWindow
 	private Menu submenu1 = null;
 
 	private ProjectSettingsComposite settingsComposite;
+
+	/** Subontology that should be considered. Forwared to  settingsComposite when ontology has been loaded */
+	private String subontology;
 
 	private Text statusText = null;
 	private ProgressBar statusProgressBar = null;
@@ -230,6 +235,7 @@ public class MainWindow extends ApplicationWindow
 					tid.settings.annotationsFileName = prop.getProperty("annotationsFileName",getAssociationsFileString());
 					tid.settings.ontologyFileName = prop.getProperty("ontologyFileName",getDefinitionFileString());
 					tid.settings.mappingFileName = prop.getProperty("mappingFileName",getMappingFileString());
+					tid.settings.subontology = prop.getProperty("subontology", getSubontologyString());
 					tid.settings.isClosed = Boolean.parseBoolean(prop.getProperty("isClosed","false"));
 				} catch (InvalidPropertiesFormatException e)
 				{
@@ -266,6 +272,7 @@ public class MainWindow extends ApplicationWindow
 		newItemData.settings = new Settings();
 		newItemData.settings.annotationsFileName = getAssociationsFileString();
 		newItemData.settings.ontologyFileName = getDefinitionFileString();
+		newItemData.settings.subontology = getSubontologyString();
 
 		TreeItem newItem = new TreeItem(workspaceTree,0);
 		newItem.setData(newItemData);
@@ -502,6 +509,7 @@ public class MainWindow extends ApplicationWindow
 				tid.settings.ontologyFileName = getDefinitionFileString();
 				tid.settings.mappingFileName = getMappingFileString();
 				tid.settings.isClosed = !currentSelectedItem.getExpanded();
+				tid.settings.subontology = getSubontologyString();
 				storeProjectSettings(tid);
 				return;
 			}
@@ -603,6 +611,7 @@ public class MainWindow extends ApplicationWindow
 				setAssociationsFileString(settings.annotationsFileName);
 				setDefinitonFileString(settings.ontologyFileName);
 				setMappingFileString(settings.mappingFileName);
+				setSubontology(settings.subontology);
 
 				if (currentWorkSet != null) WorkSetLoadThread.releaseDatafiles(currentWorkSet);
 				currentWorkSet = settingsComposite.getSelectedWorkset();				
@@ -632,6 +641,7 @@ public class MainWindow extends ApplicationWindow
 											for (Term t : graph.getLevel1Terms())
 												subontologyChoices[i++] = t.getName();
 											settingsComposite.setConsiderChoices(subontologyChoices);
+											settingsComposite.setConsider(subontology);
 										} else
 										{
 											settingsComposite.setRestrictionChoices(new String[]{});
@@ -1844,6 +1854,11 @@ public class MainWindow extends ApplicationWindow
 	public String getSubontologyString()
 	{
 		return settingsComposite.getSubontologyString();
+	}
+
+	public void setSubontology(String subontology)
+	{
+		this.subontology = subontology;
 	}
 
 	public String getSubsetString()
