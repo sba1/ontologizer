@@ -216,7 +216,9 @@ public class PreferencesWindow extends ApplicationWindow
 			mcmcStepsLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 			mcmcStepsSpinner = new Spinner(composite,SWT.BORDER);
 			mcmcStepsSpinner.setLayoutData(new GridData(SWT.FILL,0,true,false,1,1));
-			mcmcStepsSpinner.setMaximum(2000000);
+			mcmcStepsSpinner.setMaximum(10000000);
+			mcmcStepsSpinner.setIncrement(50000);
+			mcmcStepsSpinner.setPageIncrement(100000);
 			mcmcStepsSpinner.setSelection(500000);
 			new Label(composite,0);
 		}
@@ -261,6 +263,7 @@ public class PreferencesWindow extends ApplicationWindow
 			portSpinner.setSelection(GlobalPreferences.getProxyPort());
 			upperAlphaSpinner.setSelection((int)(GlobalPreferences.getUpperAlpha() * Math.pow(10, ALPHA_BETA_DIGITS) * 100));
 			upperBetaSpinner.setSelection((int)(GlobalPreferences.getUpperBeta() * Math.pow(10, ALPHA_BETA_DIGITS) * 100 ));
+			mcmcStepsSpinner.setSelection(GlobalPreferences.getMcmcSteps());
 
 			int wc = GlobalPreferences.getWrapColumn();
 			if (wc == -1)
