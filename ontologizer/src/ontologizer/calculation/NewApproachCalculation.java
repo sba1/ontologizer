@@ -292,4 +292,7 @@ public class NewApproachCalculation extends AbstractHypergeometricCalculation
 
 		return studySetResult;
 	}
+	public boolean supportsTestCorrection() {
+		return true;
+	}
 }

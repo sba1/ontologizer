@@ -1130,4 +1130,9 @@ public class Bayes2GOCalculation implements ICalculation
 	{
 		this.calculationProgress = calculationProgress;
 	}
+	
+	public boolean supportsTestCorrection() {
+		return false;
+	}
+
 }

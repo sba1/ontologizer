@@ -228,5 +228,10 @@ public class ParentChildCutCalculation extends
 		return studySetResult;
 
 	}
+	
+	public boolean supportsTestCorrection() {
+		return true;
+	}
+
 
 }

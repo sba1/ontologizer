@@ -45,4 +45,11 @@ public interface ICalculation
 			PopulationSet populationSet,
 			StudySet studySet,
 			AbstractTestCorrection testCorrection);
+
+	/**
+	 * Returns whether the calculation method supports multiple
+	 * test correction.
+	 * @return
+	 */
+	public boolean supportsTestCorrection();
 }
