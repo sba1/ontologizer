@@ -12,11 +12,11 @@ v<-matrix(ncol=2,byrow=T,
           c("p.tft","TfT",
 		    "p.pcu", "PCU",
 		    "p.tweight","TopW",
-			"p.gg", "GenGO",
-			"p.b2g.ideal.pop", expression(B2G^"*"),
+			"p.gg", "GenGO'",
+			"p.b2g.ideal.pop", "B2G'",
 			"p.b2g.mcmc.pop", "B2G"
            ))
-
+#as.character(expression(B2G^"*")
 
 # Libraries that we need
 library(ROCR)
@@ -69,7 +69,7 @@ decode.parameter.setting<-function(name)
 #
 # Draw some performance plots
 #
-plot.roc<-function(d,alpha=NA,beta=NA,calc.auc=F,y.axis="tpr",x.axis="fpr",xlim=c(0,1),ylim=c(0,1),legend.place="bottomright",rocn=NA)
+plot.roc<-function(d,main="Comparision",alpha=NA,beta=NA,calc.auc=F,y.axis="tpr",x.axis="fpr",xlim=c(0,1),ylim=c(0,1),legend.place="bottomright",rocn=NA,downsampling=300)
 {
 	nruns<-length(unique(d$run))
 	
@@ -123,7 +123,7 @@ plot.roc<-function(d,alpha=NA,beta=NA,calc.auc=F,y.axis="tpr",x.axis="fpr",xlim=
 		{
 			auc.perf<-performance(pred, measure = "auc")
 			auc<-auc.perf@y.values[[1]]
-			l<-append(l,sprintf("%s (%g)",name,auc))
+			l<-append(l,sprintf("%s (%.3g)",name,auc))
 		} else
 		{
 			l<-append(l,sprintf("%s",name))
@@ -131,17 +131,66 @@ plot.roc<-function(d,alpha=NA,beta=NA,calc.auc=F,y.axis="tpr",x.axis="fpr",xlim=
 
 		if (i==1)
 		{
-			plot(perf, col=colors[i],pch=pchs[i],downsampling=300, type="l", ylim=ylim,xlim=xlim,main=sprintf("Comparison (alpha=%g,beta=%g)",alpha,beta))
+			plot(perf, col=colors[i],pch=pchs[i],downsampling=downsampling, type="l", ylim=ylim,xlim=xlim,main=sprintf("%s (alpha=%g,beta=%g)",main,alpha,beta))
 			plot(perf, col=colors[i],pch=pchs[i],downsampling=25, type="p", add=TRUE)
 		} else
 		{
-			plot(perf, col=colors[i],pch=pchs[i],downsampling=300, type="l", add=TRUE)
+			plot(perf, col=colors[i],pch=pchs[i],downsampling=downsampling, type="l", add=TRUE)
 			plot(perf, col=colors[i],pch=pchs[i],downsampling=25, type="p", add=TRUE)
 		}		
 	}
 
 	legend(legend.place, col=colors, pch=pchs, legend = unlist(l))
 }
+
+
+#
+# Draw some performance plots
+#
+plot.pr<-function(d,main="Comparision",alpha=NA,beta=NA,xlim=c(0,1),ylim=c(0,1),legend.place="bottomright",downsampling=300)
+{
+	nruns<-length(unique(d$run))
+	
+	if (nrow(d)==0)
+	{
+		return()
+	}
+	
+	l<-list();
+
+	colnames(v)<-c("short","full")
+	colors<-rainbow(nrow(v))
+	pchs<-1:nrow(v)
+	
+	for (i in (1:nrow(v)))
+	{
+		ord<-order(d[,v[i,1]])
+		values<-d[ord,v[i,1]]
+		labels<-d[ord,]$label
+		tps<-cumsum(labels)
+
+		prec<-tps/1:length(values) # number of true positives / (number of all positives = (true positives + false negatives))
+		recall<-tps/sum(labels)    # number of true positives / (true positives + false negatives = all positive samples)
+		
+		name<-v[i,2]
+		l<-append(l,sprintf("%s",name))
+
+		idx.dots<-cumsum(h<-hist(recall,plot=F,breaks=25)$counts)
+		idx.lines<-cumsum(h<-hist(recall,plot=F,breaks=300)$counts)
+
+		if (i==1)
+		{
+			plot(recall[idx.lines], xlab="Recall", prec[idx.lines], ylab="Precision", col=colors[i],pch=pchs[i],type="l", ylim=ylim,xlim=xlim,main=sprintf("%s (alpha=%g,beta=%g)",main,alpha,beta))
+		} else
+		{
+			lines(recall[idx.lines], prec[idx.lines], col=colors[i],pch=pchs[i],type="l", ylim=ylim,xlim=xlim,main=sprintf("%s (alpha=%g,beta=%g)",main,alpha,beta))
+		}
+		points(recall[idx.dots],  prec[idx.dots], col=colors[i],pch=pchs[i],type="p")
+	}
+
+	legend(legend.place, col=colors, pch=pchs, legend = unlist(l))
+}
+
 
 s<-split(d,list(d$alpha,d$beta))
 
@@ -157,13 +206,13 @@ lapply(s,function(d) {
 	filename<-sprintf("result-roc-a%d-b%d.pdf",alpha*100,beta*100)
 	pdf(file=filename,height=8,width=8)
 	par(cex=1.3,cex.main=1.2,lwd=2)
-	plot.roc(subset(d,d$senseful==0),alpha,beta,calc.auc=T,rocn=10)
+	plot.roc(subset(d,d$senseful==0),alpha,beta,calc.auc=T,rocn=10,main="ROC")
 	dev.off()
 
 	filename<-sprintf("result-roc-a%d-b%d-senseful.pdf",alpha*100,beta*100)
 	pdf(file=filename,height=8,width=8)
 	par(cex=1.3,cex.main=1.2,lwd=2)
-	plot.roc(subset(d,d$senseful==1),alpha,beta,calc.auc=T,rocn=10)
+	plot.roc(subset(d,d$senseful==1),alpha,beta,calc.auc=T,rocn=10,main="ROC")
 	dev.off()
 });
 
@@ -178,15 +227,25 @@ lapply(s,function(d) {
 	filename<-sprintf("result-precall-a%d-b%d.pdf",alpha*100,beta*100)
 	pdf(file=filename,height=8,width=8)
 	par(cex=1.3,cex.main=1.2,lwd=2)
-	plot.roc(subset(d,d$senseful==0),alpha,beta,y.axis="prec",x.axis="rec",legend.place="topright")
-	dev.off()
-
-	filename<-sprintf("result-precall-a%d-b%d-senseful.pdf",alpha*100,beta*100)
-	pdf(file=filename,height=8,width=8)
-	par(cex=1.3,cex.main=1.2,lwd=2)
-	plot.roc(subset(d,d$senseful==1),alpha,beta,y.axis="prec",x.axis="rec",legend.place="topright")
+	plot.pr(subset(d,d$senseful==0),alpha,beta,legend.place="topright",main="Precision/Recall")
 	dev.off()
 });
+
+# F/Cutoff
+#
+
+lapply(s,function(d) {
+	alpha<-unique(d$alpha)
+	beta<-unique(d$beta)
+
+	filename<-sprintf("result-fcutoff-a%d-b%d.pdf",alpha*100,beta*100)
+	pdf(file=filename,height=8,width=8)
+	par(cex=1.3,cex.main=1.2,lwd=2)
+	plot.roc(subset(d,d$senseful==0),alpha,beta,y.axis="f",x.axis="cutoff",legend.place="bottomright",main="F/Cutoff")
+	dev.off()
+
+});
+
 
 
 #
