@@ -1,8 +1,12 @@
 package ontologizer.calculation.b2g;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -18,6 +22,8 @@ import ontologizer.IDotNodeAttributesProvider;
 import ontologizer.OntologizerThreadGroups;
 import ontologizer.PopulationSet;
 import ontologizer.StudySet;
+import ontologizer.GOTermEnumerator.GOTermAnnotatedGenes;
+import ontologizer.GOTermEnumerator.GOTermOftenAnnotatedCount;
 import ontologizer.association.Association;
 import ontologizer.association.AssociationContainer;
 import ontologizer.calculation.AbstractGOTermProperties;
@@ -43,11 +49,13 @@ import ontologizer.statistics.None;
 import ontologizer.util.Util;
 import ontologizer.worksets.WorkSet;
 import ontologizer.worksets.WorkSetLoadThread;
+import sonumina.math.combinatorics.SubsetGenerator;
+import sonumina.math.combinatorics.SubsetGenerator.Subset;
 
 class B2GTestParameter
 {
 	static double ALPHA = 0.25;
-	static double BETA = 0.10;
+	static double BETA = 0.60;
 	static double BETA2 = 0.10;
 	static int MCMC_STEPS = 1020000;
 }
@@ -75,6 +83,8 @@ class Bayes2GOEnrichedGOTermsResult extends EnrichedGOTermsResult
 }
 
 /**
+ * This class implements an model-based analysis.
+ * The description of this method can be found at XXXX.
  *
  * @author Sebastian Bauer
  */
@@ -309,33 +319,8 @@ public class Bayes2GOCalculation implements ICalculation
 		calculateByMCMC(graph, result, populationEnumerator, studyEnumerator, populationSet, studySet);//, llr);
 		long end = System.currentTimeMillis();
 		System.out.println((end - start) + "ms");
-//		calculateByOptimization(graph, result, populationEnumerator, studyEnumerator, llr);
-
-		/** Print out the results **/
-//		{
-//			ArrayList<AbstractGOTermProperties> al = new ArrayList<AbstractGOTermProperties>(result.list.size());
-//			al.addAll(result.list);
-//			Collections.sort(al);
-//			for (AbstractGOTermProperties prop : al)
-//				System.out.println(prop.goTerm.getName() + " " + prop.p);
-//			System.out.println("A total of " + al.size() + " entries");
-//		}
-
 		return result;
 	}
-
-//	public HashMap<ByteString, Double> calcLLR(PopulationSet populationSet, StudySet studySet)
-//	{
-//		HashMap<ByteString,Double> llr = new HashMap<ByteString,Double>();
-//		for (ByteString g : populationSet)
-//		{
-//			if (studySet.contains(g))
-//				llr.put(g, Math.log(1-beta) - Math.log(alpha)); // P(oi=1|h=1) - P(oi=1|h=0)
-//			else
-//				llr.put(g, Math.log(beta) - Math.log(1-alpha)); // P(oi=0|h=1) - P(oi=0|h=0)
-//		}
-//		return llr;
-//	}
 
 	public EnrichedGOTermsResult calculateStudySet(GOGraph graph,
 			AssociationContainer goAssociations, PopulationSet populationSet,
@@ -365,10 +350,9 @@ public class Bayes2GOCalculation implements ICalculation
 		if (seed != 0)
 		{
 			rnd = new Random(seed);
-			System.err.println("Created random number generator with seed of " + seed);
+			logger.info("Use a random seed of: " + seed);
 		} else
 		{
-//			long newSeed = 1742611262340832737l;
 			long newSeed = new Random().nextLong();
 			logger.info("Use a random seed of: " + newSeed);
 			rnd = new Random(newSeed);
@@ -413,7 +397,6 @@ public class Bayes2GOCalculation implements ICalculation
 
 		for (int i=0;i<maxIter;i++)
 		{
-//			VariableAlphaBetaScore bayesScore = new VariableAlphaBetaScore(rnd, allTerms, populationEnumerator, studySet.getAllGeneNames(), alpha, beta);
 			FixedAlphaBetaScore bayesScore = new FixedAlphaBetaScore(rnd, allTerms, populationEnumerator,  studyEnumerator.getGenes());
 
 			if (doEm)
@@ -470,8 +453,6 @@ public class Bayes2GOCalculation implements ICalculation
 			double maxScoredP = Double.NaN;
 			int maxWhenSeen = -1;
 
-
-
 			long start = System.currentTimeMillis();
 
 			for (int t=0;t<maxSteps;t++)
@@ -521,17 +502,6 @@ public class Bayes2GOCalculation implements ICalculation
 				{
 					score = newScore;
 					numAccepts++;
-
-
-//					System.out.println("accept after " + t + " steps.");
-//
-//					try {
-//						Thread.sleep(1000);
-//					} catch (InterruptedException e) {
-//						// TODO Auto-generated catch block
-//						e.printStackTrace();
-//					}
-
 				}
 				if (DEBUG) System.out.println();
 
@@ -563,10 +533,6 @@ public class Bayes2GOCalculation implements ICalculation
 				if (newExpectedNumberOfTerms < 0.0000001) newExpectedNumberOfTerms = 0.0000001;
 				System.out.println("expectedNumberOfTerms=" + expectedNumberOfTerms + "  newExpectedNumberOfTerms=" + newExpectedNumberOfTerms);
 				expectedNumberOfTerms = newExpectedNumberOfTerms;
-
-//				double newP = (double)bayesScore.getAvgT() / bayesScore.termsArray.length;
-//				System.out.println("p=" + p + "  newP=" + newP);
-//				p = newP;
 			}
 
 			if (i==maxIter - 1)
@@ -617,79 +583,14 @@ public class Bayes2GOCalculation implements ICalculation
 		}
 	}
 
-//	private void calculateByOptimization(GOGraph graph,
-//			EnrichedGOTermsResult result,
-//			GOTermEnumerator populationEnumerator,
-//			GOTermEnumerator studyEnumerator, HashMap<ByteString, Double> llr, double p)
-//	{
-//		List<TermID> allTerms = populationEnumerator.getAllAnnotatedTermsAsList();
-//		LinkedHashSet<TermID> activeTerms = new LinkedHashSet<TermID>();
-//
-//		double totalBestScore = score(llr, activeTerms, populationEnumerator, p);
-//
-//		System.out.println("Initial cost: " + totalBestScore);
-//
-//		TermID bestTerm;
-//		do
-//		{
-//			double currentBestCost = totalBestScore;
-//			bestTerm = null;
-//
-//			/* Find the best term */
-//			for (TermID t : allTerms)
-//			{
-//				if (activeTerms.contains(t))
-//					continue;
-//
-//				activeTerms.add(t);
-//				double newCost = score(llr,activeTerms,populationEnumerator,p);
-//				if (newCost > currentBestCost)
-//				{
-//					bestTerm = t;
-//					currentBestCost = newCost;
-//				}
-//				activeTerms.remove(t);
-//			}
-//
-//			if (bestTerm == null)
-//				break;
-//
-//			activeTerms.add(bestTerm);
-//			totalBestScore = score(llr,activeTerms,populationEnumerator,p);
-//
-//			System.out.println("Adding term " + bestTerm + "  " + graph.getGOTerm(bestTerm).getName() + "  " + graph.getGOTerm(bestTerm).getNamespaceAsString() + "  " + currentBestCost);
-//		} while(bestTerm != null);
-//
-//		for (TermID t : allTerms)
-//		{
-//			TermForTermGOTermProperties prop = new TermForTermGOTermProperties();
-//			prop.ignoreAtMTC = true;
-//			prop.goTerm = graph.getGOTerm(t);
-//			prop.annotatedStudyGenes = studyEnumerator.getAnnotatedGenes(t).totalAnnotatedCount();
-//			prop.annotatedPopulationGenes = populationEnumerator.getAnnotatedGenes(t).totalAnnotatedCount();
-//
-//			if (activeTerms.contains(t))
-//			{
-//				prop.p = 0.005;
-//				prop.p_adjusted = 0.005;
-//				prop.p_min = 0.001;
-//			} else
-//			{
-//				prop.p = 0.99;
-//				prop.p_adjusted = 0.99;
-//				prop.p_min = 0.001;
-//			}
-//			result.addGOTermProperties(prop);
-//		}
-//	}
-
 	public String getDescription()
 	{
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public String getName() {
+	public String getName()
+	{
 		return "Bayes2GO";
 	}
 
@@ -748,22 +649,30 @@ public class Bayes2GOCalculation implements ICalculation
 		}
 	}
 
+	/**
+	 * A test procedure.
+	 *
+	 * @param args
+	 * @throws InterruptedException
+	 */
 	public static void main(String[] args) throws InterruptedException
 	{
 		final HashMap<TermID,Double> wantedActiveTerms = new HashMap<TermID,Double>(); /* Terms that are active */
 
 		/* ***************************************************************** */
 		loadOntology();
-		wantedActiveTerms.put(new TermID("GO:0007049"), B2GTestParameter.BETA2); /* cell cycle */
-		wantedActiveTerms.put(new TermID("GO:0043473"), B2GTestParameter.BETA2); /* pigmentation */
-		wantedActiveTerms.put(new TermID("GO:0001505"), B2GTestParameter.BETA); /* regulation of neuro transmitter levels */
-////		wantedActiveTerms.put(new TermID("GO:0008078"), B2GTestParameter.BETA); /* mesodermal cell migration */
-////		wantedActiveTerms.put(new TermID("GO:0051208"), B2GTestParameter.BETA); /* sequestering of calcium ion */
-		wantedActiveTerms.put(new TermID("GO:0030011"), B2GTestParameter.BETA); /* maintenace of cell polarity */
-////		wantedActiveTerms.put(new TermID("GO:0035237"), B2GTestParameter.BETA); /* corazonin receptor activity */
-//		wantedActiveTerms.put(new TermID("GO:0015280"), B2GTestParameter.BETA);
+//		wantedActiveTerms.put(new TermID("GO:0007049"), B2GTestParameter.BETA2); /* cell cycle */
+//		wantedActiveTerms.put(new TermID("GO:0043473"), B2GTestParameter.BETA2); /* pigmentation */
+//		wantedActiveTerms.put(new TermID("GO:0001505"), B2GTestParameter.BETA); /* regulation of neuro transmitter levels */
+//////		wantedActiveTerms.put(new TermID("GO:0008078"), B2GTestParameter.BETA); /* mesodermal cell migration */
+//////		wantedActiveTerms.put(new TermID("GO:0051208"), B2GTestParameter.BETA); /* sequestering of calcium ion */
+//		wantedActiveTerms.put(new TermID("GO:0030011"), B2GTestParameter.BETA); /* maintenace of cell polarity */
+//////		wantedActiveTerms.put(new TermID("GO:0035237"), B2GTestParameter.BETA); /* corazonin receptor activity */
 
-//		wantedActiveTerms.add(new TermID("GO:0006797"));
+		wantedActiveTerms.put(new TermID("GO:0035282"),B2GTestParameter.BETA); /* segmentation */
+		wantedActiveTerms.put(new TermID("GO:0009880"),B2GTestParameter.BETA);
+
+
 
 //		createInternalOntology(1);
 //		wantedActiveTerms.add(new TermID("GO:0000010"));
@@ -771,7 +680,9 @@ public class Bayes2GOCalculation implements ICalculation
 
 		/* ***************************************************************** */
 
-		Random rnd = new Random(10);
+//		Random rnd = new Random(10);
+//		Random rnd = new Random(11); /* Produces a set */
+		Random rnd = new Random(11);
 
 		/* Simulation */
 
@@ -783,7 +694,11 @@ public class Bayes2GOCalculation implements ICalculation
 
 		HashMap<TermID,StudySet> wantedActiveTerm2StudySet = new HashMap<TermID,StudySet>();
 
+//		graph.setRelevantSubontology("biological_process");
 		final GOTermEnumerator allEnumerator = allGenes.enumerateGOTerms(graph, assoc);
+
+		System.out.println("Considering a total of " + allEnumerator.getAllAnnotatedTermsAsList().size() + " terms");
+
 		for (TermID t : wantedActiveTerms.keySet())
 		{
 			StudySet termStudySet = new StudySet("study");
@@ -831,6 +746,9 @@ public class Bayes2GOCalculation implements ICalculation
 			}
 		} else
 		{
+			/* If this path is enabled, we support more than one
+			 * term.
+			 */
 			for (TermID t : wantedActiveTerms.keySet())
 			{
 				double beta = wantedActiveTerms.get(t);
@@ -843,6 +761,8 @@ public class Bayes2GOCalculation implements ICalculation
 		}
 		newStudyGenes.addGenes(fp);
 		newStudyGenes.removeGenes(fn);
+
+
 
 		double realAlpha = ((double)fp.size())/tn;
 		double realBeta = ((double)fn.size())/tp;
@@ -1205,7 +1125,6 @@ public class Bayes2GOCalculation implements ICalculation
 		final WorkSet ws = new WorkSet("Test");
 		ws.setOboPath("http://www.geneontology.org/ontology/gene_ontology_edit.obo");
 		ws.setAssociationPath("http://cvsweb.geneontology.org/cgi-bin/cvsweb.cgi/go/gene-associations/gene_association.fb.gz?rev=HEAD");
-//		ws.setAssociationPath("http://cvsweb.geneontology.org/cgi-bin/cvsweb.cgi/go/gene-associations/gene_association.sgd.gz?rev=HEAD");
 
 		final Object notify = new Object();
 
