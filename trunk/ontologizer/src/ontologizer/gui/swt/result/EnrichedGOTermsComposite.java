@@ -538,6 +538,8 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 				/* Always full brightness */
 				brightness = 1.0f;
 
+				System.out.println(prop.goTerm.getNamespace());
+
 				/* Hue depends on namespace */
 				switch (Namespace.getNamespaceEnum(prop.goTerm.getNamespace()))
 				{
@@ -719,7 +721,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 					AbstractGOTermProperties prop = props[index];
 					item.setText(GOID, prop.goTerm.getIDAsString());
 					item.setText(NAME, prop.goTerm.getName());
-					item.setText(NAMESPACE,prop.goTerm.getNamespaceAsString());
+					item.setText(NAMESPACE,prop.goTerm.getNamespaceAsAbbrevString());
 					item.setText(PVAL,String.format("%.3g",prop.p));
 					item.setText(ADJPVAL,String.format("%.3g",prop.p_adjusted));
 					item.setText(POP,Integer.toString(prop.annotatedPopulationGenes));
