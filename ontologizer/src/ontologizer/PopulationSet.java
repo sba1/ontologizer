@@ -34,10 +34,10 @@ public class PopulationSet extends StudySet
 	 * @throws IOException 
 	 * @throws FileNotFoundException 
 	 */
-	public PopulationSet(File file) throws FileNotFoundException, IOException
-	{
-		super(file);
-	}
+//	public PopulationSet(File file) throws FileNotFoundException, IOException
+//	{
+//		super(file);
+//	}
 
 	/**
 	 * Constructs the population set.
@@ -55,11 +55,13 @@ public class PopulationSet extends StudySet
 	
 	public PopulationSet(String name)
 	{
-		super(name);
+		super();
+		
+		setName(name);
 	}
 	
-	public PopulationSet(String name, String [] names)
-	{
-		super(name, names);
-	}
+//	public PopulationSet(String name, String [] names)
+//	{
+//		super(name, names);
+//	}
 }

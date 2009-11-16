@@ -86,7 +86,7 @@ public class StudySetList implements Iterable<StudySet>
 			/* Construct the study set */
 			try
 			{
-				StudySet study = new StudySet(myfile);
+				StudySet study = StudySetFactory.createFromFile(myfile,false);
 
 				/* Enqueue the study set into the array list */
 				list.add(study);

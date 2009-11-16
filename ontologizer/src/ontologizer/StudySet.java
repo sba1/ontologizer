@@ -2,7 +2,6 @@ package ontologizer;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -13,21 +12,15 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import ontologizer.GOTermEnumerator.GOTermAnnotatedGenes;
 import ontologizer.association.Association;
 import ontologizer.association.AssociationContainer;
 import ontologizer.association.Gene2Associations;
 import ontologizer.go.GOGraph;
-import ontologizer.go.TermContainer;
 import ontologizer.go.TermID;
 import ontologizer.go.GOGraph.IVisitingGOVertex;
-import ontologizer.parser.AbstractItemParser;
 import ontologizer.parser.ItemAttribute;
-import ontologizer.parser.OneOnALineParser;
-import ontologizer.parser.ParserFactory;
 import ontologizer.sampling.StudySetSampler;
 
 /**
@@ -48,7 +41,7 @@ public class StudySet implements Iterable<ByteString>
 	 * HashMap containing the names of genes (or gene products) of the study
 	 * and their optional description.
 	 */
-	private HashMap<ByteString, ItemAttribute> gene2Attribute;
+	private HashMap<ByteString, ItemAttribute> gene2Attribute = new HashMap<ByteString,ItemAttribute>();
 
 	/**
 	 * List containing genes which are not annotated
@@ -75,21 +68,21 @@ public class StudySet implements Iterable<ByteString>
 	 *  specifies the file (a simple list of strings or FASTA format)
 	 *  where the names are extracted from.
 	 */
-	public StudySet(File file) throws FileNotFoundException, IOException
-	{
-		/* We use the fileName as the name of the study set with path components
-		 * removed */
-		name = file.getName();
-		
-		// Removing suffix from filename
-		Pattern suffixPat = Pattern.compile("\\.[a-zA-Z0-9]+$");
-		Matcher m = suffixPat.matcher(name);
-		name = m.replaceAll("");
-
-		AbstractItemParser parser = ParserFactory.getNewInstance(file);
-		logger.info("Processing studyset " + file.toString());
-		parseAndRetrieveGenesAndAttributes(parser);
-	}
+//	public StudySet(File file) throws FileNotFoundException, IOException
+//	{
+//		/* We use the fileName as the name of the study set with path components
+//		 * removed */
+//		name = file.getName();
+//		
+//		// Removing suffix from filename
+//		Pattern suffixPat = Pattern.compile("\\.[a-zA-Z0-9]+$");
+//		Matcher m = suffixPat.matcher(name);
+//		name = m.replaceAll("");
+//
+//		AbstractItemParser parser = ParserFactory.getNewInstance(file);
+//		logger.info("Processing studyset " + file.toString());
+//		parseAndRetrieveGenesAndAttributes(parser);
+//	}
 
 	/**
 	 * Retrieves the genes and its attributes from the parser.
@@ -97,11 +90,11 @@ public class StudySet implements Iterable<ByteString>
 	 * @param parser
 	 * @throws IOException 
 	 */
-	private void parseAndRetrieveGenesAndAttributes(AbstractItemParser parser) throws IOException
-	{
-		parser.parse();
-		gene2Attribute = parser.getItem2Attributes();
-	}
+//	private void parseAndRetrieveGenesAndAttributes(AbstractItemParser parser) throws IOException
+//	{
+//		parser.parse();
+//		gene2Attribute = parser.getItem2Attributes();
+//	}
 
 	/**
 	 * Construct an empty study set with the given name.
@@ -112,7 +105,6 @@ public class StudySet implements Iterable<ByteString>
 	public StudySet(String name)
 	{
 		this.name = name;
-		gene2Attribute = new HashMap<ByteString,ItemAttribute>();
 	}
 
 
@@ -121,10 +113,10 @@ public class StudySet implements Iterable<ByteString>
 	 */
 	public StudySet()
 	{
-		this.name = generateUniqueName();
-		gene2Attribute = new HashMap<ByteString,ItemAttribute>();
+		name = generateUniqueName();
 	}
-	
+
+	/*
 	public StudySet(String name, String [] entries)
 	{
 		this.name = name;
@@ -140,7 +132,7 @@ public class StudySet implements Iterable<ByteString>
 		{
 			logger.warning(ex.getLocalizedMessage());
 		}
-	}
+	}*/
 
 	/**
 	 * Obtain the number of genes or gene products within this studyset.
@@ -494,7 +486,9 @@ public class StudySet implements Iterable<ByteString>
 		/* Build new studysets */
 		for (i=0,j=0;i<studySetArray.length;i++)
 		{
-			StudySet newStudySet = new StudySet(studySetArray[i].generateUniqueName()); 
+			String newStudySetName = studySetArray[i].generateUniqueName();
+			StudySet newStudySet = new StudySet();
+			newStudySet.setName(newStudySetName);
 			for (k=0;k<studySetArray[i].getGeneCount();k++,j++)
 				newStudySet.addGene(genesArray[j],descriptionArray[j]);
 			array[i] = newStudySet; 
@@ -506,6 +500,11 @@ public class StudySet implements Iterable<ByteString>
 		 * have to be distinct or we allow duplicates of genes within the studyset
 		 */
 		return array;
+	}
+
+	public void setName(String newStudySetName)
+	{
+		name = newStudySetName;
 	}
 
 	/**
