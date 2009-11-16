@@ -267,7 +267,9 @@ public class Ontologizer
 						populationSet,studySetList,methodName,mtcName,
 						subsetName,subontologyName,
 						GlobalPreferences.getNumberOfPermutations(),
-						prefs.getAlpha(),prefs.getBeta(),prefs.getExpectedNumberOfTerms(), prefs.getNumberOfMCMCSteps());
+						prefs.getAlpha(),GlobalPreferences.getUpperAlpha(),
+						prefs.getBeta(),GlobalPreferences.getUpperBeta(),
+						prefs.getExpectedNumberOfTerms(), prefs.getNumberOfMCMCSteps());
 				result.addCloseAction(new ISimpleAction(){public void act()
 				{
 					newThread.interrupt();
@@ -374,6 +376,8 @@ public class Ontologizer
 			p.put("dotCMD",GlobalPreferences.getDOTPath());
 			p.put("numberOfPermutations",Integer.toString(GlobalPreferences.getNumberOfPermutations()));
 			p.put("wrapColumn", Integer.toString(GlobalPreferences.getWrapColumn()));
+			p.put("upperAlpha", Double.toString(GlobalPreferences.getUpperAlpha()));
+			p.put("upperBeta", Double.toString(GlobalPreferences.getUpperBeta()));
 			if (GlobalPreferences.getProxyHost() != null)
 			{
 				p.put("proxyHost",GlobalPreferences.getProxyHost());
@@ -412,6 +416,8 @@ public class Ontologizer
 				GlobalPreferences.setProxyHost(prefs.getProxyHost());
 				GlobalPreferences.setProxyPort(prefs.getProxyPort());
 				GlobalPreferences.setWrapColumn(prefs.getWrapColumn());
+				GlobalPreferences.setUpperAlpha(prefs.getUpperAlpha());
+				GlobalPreferences.setUpperBeta(prefs.getUpperBeta());
 			}
 		});
 
@@ -426,6 +432,8 @@ public class Ontologizer
 		GlobalPreferences.setProxyPort(p.get("proxyPort", "8888"));
 		GlobalPreferences.setProxyHost(p.get("proxyHost", ""));
 		GlobalPreferences.setWrapColumn(p.getInt("wrapColumn", 30));
+		GlobalPreferences.setUpperAlpha(p.getDouble("upperAlpha", 1));
+		GlobalPreferences.setUpperBeta(p.getDouble("upperBeta", 1));
 
 		/* Prepare workspace */
 		workspace = new File(ontologizer.util.Util.getAppDataDirectory("ontologizer"),"workspace");
