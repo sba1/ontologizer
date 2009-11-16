@@ -122,7 +122,7 @@ public class NewProjectWizard extends WizardWindow
 		populationEditor = new GeneEditor(third,0);
 		populationEditor.setLayoutData(new GridData(GridData.FILL_BOTH));
 		
-		addPage(new SinglePage(third, "Here you are asked to specify the population set of the analyis. "+
+		addPage(new SinglePage(third, "Here you are asked to specify the population set of the analysis. "+
 				                      "The population set specifies the identifiers for all instances that are the selectable canditates in an experiment. " +
 				                      "For instance, an appropriate population set for a downstream microarray analysis consists of all the genes on the microarray."));
 		
