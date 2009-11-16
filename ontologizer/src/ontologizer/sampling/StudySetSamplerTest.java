@@ -6,6 +6,7 @@ import junit.framework.Assert;
 import junit.framework.TestCase;
 import ontologizer.ByteString;
 import ontologizer.StudySet;
+import ontologizer.StudySetFactory;
 import ontologizer.association.AssociationContainer;
 import ontologizer.tests.AssociationParserTest;
 
@@ -30,9 +31,9 @@ public class StudySetSamplerTest extends TestCase
 		for (ByteString gene : allAnnotatedGenes)
 			allAnnotatedGenesArray[i++] = gene.toString();
 
-		baseStudySet = new StudySet("baseStudy", allAnnotatedGenesArray);
+		baseStudySet = StudySetFactory.createFromArray(allAnnotatedGenesArray, false);
+		baseStudySet.setName("baseStudy");
 		baseStudySetsize = baseStudySet.getGeneCount();
-
 		studySetSampler = new StudySetSampler(baseStudySet);
 	}
 

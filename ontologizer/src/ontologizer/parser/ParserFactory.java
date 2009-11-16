@@ -61,8 +61,11 @@ public final class ParserFactory
 			String [] splitted = entries[0].split("\\s+");
 			try
 			{
-				Double.parseDouble(splitted[1]);
-				return new OneOnALineValueParser(entries);
+				if (splitted.length > 1)
+				{
+					Double.parseDouble(splitted[1]);
+					return new OneOnALineValueParser(entries);
+				}
 			} catch (NumberFormatException ex) {}
 		}
 		return new OneOnALineParser(entries);

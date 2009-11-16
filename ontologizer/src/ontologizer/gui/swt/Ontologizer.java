@@ -27,6 +27,7 @@ import ontologizer.OntologizerCore;
 import ontologizer.OntologizerThreadGroups;
 import ontologizer.PopulationSet;
 import ontologizer.StudySet;
+import ontologizer.StudySetFactory;
 import ontologizer.StudySetList;
 import ontologizer.FileCache.FileCacheUpdateCallback;
 import ontologizer.calculation.CalculationRegistry;
@@ -497,7 +498,17 @@ public class Ontologizer
 	private static PopulationSet getPopulationSetFromList(List<Set> list)
 	{
 		if (list == null) return null;
-		return new PopulationSet(list.get(0).name,list.get(0).entries);
+		try
+		{
+			PopulationSet popSet = (PopulationSet)StudySetFactory.createFromArray(list.get(0).entries, true);
+			popSet.setName(list.get(0).name);
+			return popSet;
+		} catch(IOException exp)
+		{
+			Ontologizer.logException(exp);
+		}
+		return new PopulationSet(list.get(0).name);
+
 	}
 
 	private static StudySetList getStudySetListFromList(List<Set> list)
@@ -511,9 +522,17 @@ public class Ontologizer
 
 		while (iter.hasNext())
 		{
-			MainWindow.Set sSet = iter.next();
-			StudySet studySet = new StudySet(sSet.name, sSet.entries);
-			studySetList.addStudySet(studySet);
+			try {
+				MainWindow.Set sSet = iter.next();
+				StudySet studySet;
+
+				studySet = StudySetFactory.createFromArray(sSet.entries,false);
+				studySet.setName(sSet.name);
+				studySetList.addStudySet(studySet);
+			} catch (IOException e)
+			{
+				Ontologizer.logException(e);
+			}
 		}
 		return studySetList;
 	}

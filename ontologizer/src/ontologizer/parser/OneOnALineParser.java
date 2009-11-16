@@ -89,14 +89,16 @@ public class OneOnALineParser extends AbstractItemParser
 	{
 		if (ignoreLine(line)) return;
 
-		String [] fields = new String[]{ "", ""};
+//		String [] fields = new String[]{ "", ""};
 		String [] sfields = line.split("\\s+", 2);
 		for (int i = 0; i < sfields.length; i++)
 			if (sfields[i] == null) sfields[i] = "";
 
-		ByteString itemName = new ByteString(fields[0]);
+		ByteString itemName = new ByteString(sfields[0]);
 		ItemAttribute itemAttribute = new ItemAttribute();
-		itemAttribute.description = new StringBuilder(fields[1]).toString();
+		if (sfields.length > 1)
+			itemAttribute.description = new StringBuilder(sfields[1]).toString();
+		else itemAttribute.description = "";
 		callback.newEntry(itemName, itemAttribute);
 	}
 }
