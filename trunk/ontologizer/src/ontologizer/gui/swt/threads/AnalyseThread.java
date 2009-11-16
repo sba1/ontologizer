@@ -137,12 +137,12 @@ public class AnalyseThread extends AbstractOntologizerThread
 					b2g.setAlpha(B2GParam.Type.MCMC);
 					b2g.setAlphaBounds(0,upperAlpha);
 				}
-				if (!Double.isNaN(beta))
+				if (!Double.isNaN(beta)) b2g.setBeta(beta);
+				else
 				{
-					b2g.setBeta(beta);
+					b2g.setBeta(B2GParam.Type.MCMC);
 					b2g.setBetaBounds(0,upperBeta);
 				}
-				else b2g.setBeta(B2GParam.Type.MCMC);
 				if (expectedNumber != -1) b2g.setExpectedNumber(expectedNumber);
 				else b2g.setExpectedNumber(B2GParam.Type.MCMC);
 
