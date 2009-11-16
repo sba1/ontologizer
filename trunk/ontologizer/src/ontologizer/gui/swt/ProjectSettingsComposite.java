@@ -295,6 +295,32 @@ public class ProjectSettingsComposite extends Composite
 	}
 
 	/**
+	 * Returns the currently selected subset.
+	 * 
+	 * @return
+	 */
+	public String getSubsetString()
+	{
+		int idx = subsetCombo.getSelectionIndex();
+		if (idx >= 0)
+			return subsetCombo.getItems()[idx];
+		return "";
+	}
+	
+	/**
+	 * Returns the currently selected subontology.
+	 * @return
+	 */
+	public String getSubontologyString()
+	{
+		int idx = considerCombo.getSelectionIndex();
+		if (idx >= 0)
+			return considerCombo.getItems()[idx];
+		return "";
+		
+	}
+
+	/**
 	 * Returns the association file string.
 	 * 
 	 * @return
