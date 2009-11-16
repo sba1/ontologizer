@@ -52,6 +52,7 @@ import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.events.TreeEvent;
 import org.eclipse.swt.events.TreeListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -122,6 +123,8 @@ public class MainWindow extends ApplicationWindow
 	private TreeItem currentSelectedItem = null;
 	private String currentImportFileName = null;
 	private String currentExportFileName = null;
+
+	private TreeItem treeItemWhenWorkSetIsChanged;
 
 	private Menu menuBar = null;
 	private Menu submenu = null;
@@ -369,6 +372,8 @@ public class MainWindow extends ApplicationWindow
 			item.setText(tid.projectDirectory.getName());
 		} else
 		{
+			/* Workaround to ensure that the item is really redrawn */
+			item.setText(tid.filename + " ");
 			item.setText(tid.filename);
 		}
 	}
@@ -492,7 +497,7 @@ public class MainWindow extends ApplicationWindow
 				tid.settings.annotationsFileName = getAssociationsFileString();
 				tid.settings.ontologyFileName = getDefinitionFileString();
 				tid.settings.mappingFileName = getMappingFileString();
-				tid.settings.isClosed = currentSelectedItem.getExpanded();
+				tid.settings.isClosed = !currentSelectedItem.getExpanded();
 				storeProjectSettings(tid);
 				return;
 			}
@@ -611,6 +616,7 @@ public class MainWindow extends ApplicationWindow
 				else setTextArea.setToolTipText(studyTip);
 
 				setTextArea.setText(genes);
+				treeItemWhenWorkSetIsChanged = currentSelectedItem;
 				setTextArea.setWorkSet(settingsComposite.getSelectedWorkset());
 
 				if (rightStackedLayout.topControl != rightComposite)
@@ -1463,6 +1469,28 @@ public class MainWindow extends ApplicationWindow
 				}
 			}
 		});
+		setTextArea.addDatafilesLoadedListener(new ISimpleAction()
+		{
+			public void act()
+			{
+				/* Update the number of known entries of the current selection, if
+				 * the current selection is still the same as when the workset was changed.
+				 */
+				if (currentSelectedItem != null && currentSelectedItem == treeItemWhenWorkSetIsChanged)
+				{
+					TreeItemData tid = getTreeItemData(currentSelectedItem);
+					if (!tid.isProjectFolder)
+					{
+						if (tid.numKnownEntries == -1)
+						{
+							tid.numKnownEntries = setTextArea.getNumberOfKnownEntries();
+							updateTextOfItem(currentSelectedItem);
+						}
+					}
+				}
+			}
+		});
+
 
 		/* Second details page */
 		GridData gridData10 = new org.eclipse.swt.layout.GridData();
@@ -1550,17 +1578,18 @@ public class MainWindow extends ApplicationWindow
 			public void handleEvent(Event event) {
 				TreeItem item = (TreeItem)event.item;
 				TreeItemData tid = getTreeItemData(item);
-				
+
 				if (!tid.isProjectFolder)
 				{
-					int x = event.x;
 					int itemHeight = workspaceTree.getItemHeight();
+					int x = event.x;
 					int y = event.y + (itemHeight - event.gc.getFontMetrics().getHeight())/2;
 
+					event.gc.setForeground(workspaceTree.getDisplay().getSystemColor(SWT.COLOR_DARK_GRAY));
 					if (tid.numKnownEntries != -1)
 					{
-						event.gc.drawText(tid.numKnownEntries + "/" + tid.numEntries, x + event.width + 5, y);
-					} else event.gc.drawText(tid.numEntries + "", x + event.width + 5, y);
+						event.gc.drawText(tid.numKnownEntries + "/" + tid.numEntries, x + event.width + 5, y, true);
+					} else event.gc.drawText(tid.numEntries + "", x + event.width + 5, y, true);
 				}
 			}
 		});
