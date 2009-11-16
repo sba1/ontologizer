@@ -205,11 +205,11 @@ public class EnrichedGOTermsResultHTMLWriter
 				out.println("</td>");
 
 				out.println("<td>");
-				out.printf("%.4f", props.p);
+				out.printf("%g", props.p);
 				out.println("</td>");
 
 				out.println("<td>");
-				out.printf("%.4f", props.p_adjusted);
+				out.printf("%g", props.p_adjusted);
 				out.println("</td>");
 
 				out.println("<td>");
