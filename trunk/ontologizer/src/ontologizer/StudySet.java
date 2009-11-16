@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -138,7 +139,7 @@ public class StudySet implements Iterable<ByteString>
 	/* for debugging */
 	public String toString()
 	{
-		String str = name + " (n=" + (getGeneCount()) + ")\n";
+		String str = name + " (n=" + (getGeneCount()) + ")";
 		return str;
 	}
 
@@ -312,7 +313,7 @@ public class StudySet implements Iterable<ByteString>
 	 * @param goTerms
      * @param associationContainer
 	 */
-	public GOTermCounter countGOTerms(GOGraph graph, AssociationContainer associationContainer)
+	public synchronized GOTermCounter countGOTerms(GOGraph graph, AssociationContainer associationContainer)
 	{
 		/* Return cached enumerator if available */
 		if (goTermCounter != null) return goTermCounter;
@@ -338,7 +339,7 @@ public class StudySet implements Iterable<ByteString>
 	 * @param goTerms
      * @param associationContainer
 	 */
-	public GOTermEnumerator enumerateGOTerms(GOGraph graph, AssociationContainer associationContainer)
+	public synchronized GOTermEnumerator enumerateGOTerms(GOGraph graph, AssociationContainer associationContainer)
 	{
 		/* Return cached enumerator if available */
 		if (goTermEnumerator != null) return goTermEnumerator;
@@ -745,5 +746,17 @@ public class StudySet implements Iterable<ByteString>
 					+ discaredGenes + " were discarded");
 
 		geneNames = newGeneNames; 
+	}
+
+	public void removeGenes(Collection<ByteString> toBeRemoved)
+	{
+		for (ByteString g : toBeRemoved)
+			geneNames.remove(g);
+	}
+
+	public void addGenes(Collection<ByteString> toBeAdded)
+	{
+		for (ByteString g : toBeAdded)
+			geneNames.put(g,"");
 	}
 }

@@ -1,6 +1,7 @@
 package ontologizer.gui.swt;
 
 import ontologizer.GlobalPreferences;
+import ontologizer.calculation.CalculationRegistry;
 import ontologizer.gui.swt.support.FileGridCompositeWidgets;
 import ontologizer.gui.swt.support.SWTUtil;
 
@@ -35,6 +36,10 @@ public class PreferencesWindow extends ApplicationWindow
 	private Spinner permutationSpinner;
 	private Button wrapColumnCheckbox;
 	private Spinner wrapColumnSpinner;
+	
+	private Spinner alphaSpinner;
+	private Spinner betaSpinner;
+	private Spinner expectedNumberSpinner;
 
 	/**
 	 * Constructor.
@@ -107,6 +112,34 @@ public class PreferencesWindow extends ApplicationWindow
 		portSpinner = new Spinner(composite,SWT.BORDER);
 		portSpinner.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 		portSpinner.setMaximum(65535);
+
+		if (CalculationRegistry.experimentalActivated())
+		{
+			Label alphaLabel = new Label(composite,0);
+			alphaLabel.setText("Alpha (in percent)");
+			alphaSpinner = new Spinner(composite,SWT.BORDER);
+			alphaSpinner.setLayoutData(new GridData(SWT.FILL,0,true,false,2,1));
+			alphaSpinner.setMinimum(1);
+			alphaSpinner.setMaximum(50);
+			alphaSpinner.setSelection(10);
+
+			Label betaLabel = new Label(composite,0);
+			betaLabel.setText("Beta (in percent)");
+			betaSpinner = new Spinner(composite,SWT.BORDER);
+			betaSpinner.setLayoutData(new GridData(SWT.FILL,0,true,false,2,1));
+			betaSpinner.setMinimum(1);
+			betaSpinner.setMaximum(50);
+			betaSpinner.setSelection(25);
+
+			Label priorLabel = new Label(composite,0);
+			priorLabel.setText("Expected number of terms");
+			expectedNumberSpinner = new Spinner(composite,SWT.BORDER);
+			expectedNumberSpinner.setLayoutData(new GridData(SWT.FILL,0,true,false,2,1));
+			expectedNumberSpinner.setMinimum(1);
+			expectedNumberSpinner.setMaximum(50);
+			expectedNumberSpinner.setSelection(5);
+			
+		}
 
 		/* Button composite */
 		SelectionAdapter closeWindowAdapter = new SelectionAdapter(){
@@ -247,5 +280,20 @@ public class PreferencesWindow extends ApplicationWindow
 	private void updateWrapEnableState()
 	{
 		wrapColumnSpinner.setEnabled(wrapColumnCheckbox.getSelection());
+	}
+
+	public double getAlpha()
+	{
+		return alphaSpinner.getSelection() / 100.0; 
+	}
+	
+	public double getBeta()
+	{
+		return betaSpinner.getSelection() / 100.0;
+	}
+	
+	public int getExpectedNumberOfTerms()
+	{
+		return expectedNumberSpinner.getSelection();
 	}
 }

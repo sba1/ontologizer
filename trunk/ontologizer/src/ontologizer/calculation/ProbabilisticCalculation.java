@@ -218,14 +218,12 @@ public class ProbabilisticCalculation implements ICalculation
 
 			double obj = objective();
 
-			System.out.println("Optimi");
-
 			do
 			{
 				double best = Double.NEGATIVE_INFINITY;
 				TermID bestTerm = null;
 				
-				System.out.println(obj + "  " + best + "  " + activeTerms.size());
+//				System.out.println(obj + "  " + best + "  " + activeTerms.size());
 				
 				for (TermID t : allTerms)
 				{
@@ -306,7 +304,7 @@ public class ProbabilisticCalculation implements ICalculation
 			if (Math.abs(qNext - data.q) < eps) break;
 			if (Math.abs(pNext - data.p) < eps) break;
 
-			System.out.println("p=" + data.p + " q=" + data.q + "  pNext="+pNext + " qNext="+qNext);
+//			System.out.println("p=" + data.p + " q=" + data.q + "  pNext="+pNext + " qNext="+qNext);
 
 			data.p = pNext;
 			data.q = qNext;
