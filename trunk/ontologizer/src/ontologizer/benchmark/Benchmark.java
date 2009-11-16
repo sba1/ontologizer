@@ -3,6 +3,7 @@ package ontologizer.benchmark;
 import java.io.File;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Random;
@@ -88,6 +89,13 @@ public class Benchmark
 	 */
 	private static int SENSEFUL_TERMS_PER_RUN = 35;
 
+	/**
+	 * Defines how many terms are taken when beta is varied.
+	 */
+	private static int TERMS_WHEN_VARING_BETA = 2;
+	private static double VARING_BETA [] = new double[]{0.2,0.4,0.6,0.8};
+
+
 	private static AbstractTestCorrection testCorrection = new None();
 
 	static class Method
@@ -135,52 +143,72 @@ public class Benchmark
 		Method m;
 
 		calcMethods = new ArrayList<Method>();
+
+		/* Bayes2GO Ideal */
 		calcMethods.add(new Method("Bayes2GO","b2g.ideal"));
+
+		/* Bayes2GO Ideal, with pop as ref */
 		m = new Method("Bayes2GO","b2g.ideal.pop");
 		m.takePopulationAsReference = true;
 		calcMethods.add(m);
 
-		for (double a : calcAlpha)
-		{
-			for (double b : calcBeta)
-			{
-				for (int cdt : calcDesiredTerms)
-				{
-					String colName = String.format("b2g.a%.2g.b%.2g.d%d", a,b,cdt);
-					calcMethods.add(new Method("Bayes2GO",colName,a,b,cdt));
-				}
-			}
-		}
+//		/* Tests for alpha/beta sensitivity */
+//		for (double a : calcAlpha)
+//		{
+//			for (double b : calcBeta)
+//			{
+//				for (int cdt : calcDesiredTerms)
+//				{
+//					String colName = String.format("b2g.a%.2g.b%.2g.d%d", a,b,cdt);
+//					calcMethods.add(new Method("Bayes2GO",colName,a,b,cdt));
+//				}
+//			}
+//		}
 		calcMethods.add(new Method("Term-For-Term","tft"));
-		m = new Method("Term-For-Term","tft.bf");
-		m.testCorrection = new Bonferroni();
-		calcMethods.add(m);
+//		m = new Method("Term-For-Term","tft.bf");
+//		m.testCorrection = new Bonferroni();
+//		calcMethods.add(m);
 		calcMethods.add(new Method("Parent-Child-Union","pcu"));
 		calcMethods.add(new Method("Probabilistic","pb"));
 		calcMethods.add(new Method("Topology-Weighted","tweight"));
 
-		m = new Method("Bayes2GO","b2g.em");
-		m.em = true;
-		calcMethods.add(m);
+//		m = new Method("Bayes2GO","b2g.em");
+//		m.em = true;
+//		calcMethods.add(m);
 
 		m = new Method("Bayes2GO", "b2g.mcmc");
 		m.mcmc = true;
 		calcMethods.add(m);
 
-		m = new Method("Bayes2GO", "b2g.mcmc.cexpt");
-		m.mcmc = true;
-		m.useCorrectExpectedTerms = true;
-		calcMethods.add(m);
-
-		m = new Method("Bayes2GO","b2g.ideal.nop");
-		m.usePrior = false;
-		calcMethods.add(m);
-
-		m = new Method("Bayes2GO","b2g.mcmc.nop");
-		m.usePrior = false;
+		m = new Method("Bayes2GO", "b2g.mcmc.pop");
+		m.takePopulationAsReference = true;
 		m.mcmc = true;
 		calcMethods.add(m);
 
+//		m = new Method("Bayes2GO", "b2g.mcmc.cexpt");
+//		m.mcmc = true;
+//		m.useCorrectExpectedTerms = true;
+//		calcMethods.add(m);
+
+//		m = new Method("Bayes2GO","b2g.ideal.nop");
+//		m.usePrior = false;
+//		calcMethods.add(m);
+
+//		m = new Method("Bayes2GO","b2g.mcmc.nop");
+//		m.usePrior = false;
+//		m.mcmc = true;
+//		calcMethods.add(m);
+
+//		m = new Method("Bayes2GO","b2g.mcmc.pop.nop");
+//		m.usePrior = false;
+//		m.mcmc = true;
+//		m.takePopulationAsReference = true;
+//		calcMethods.add(m);
+
+		m = new Method("Bayes2GO","b2g.ideal.pop.nop");
+		m.usePrior = false;
+		m.takePopulationAsReference = true;
+		calcMethods.add(m);
 	}
 
 	public static void main(String[] args) throws Exception
@@ -266,6 +294,7 @@ GlobalPreferences.setProxyHost("realproxy.charite.de");
 		out.print("study.genes\t");
 		out.print("run\t");
 		out.print("senseful\t");
+		out.print("varying.beta\t");
 		out.print("alpha\t");
 		out.println("beta");
 
@@ -274,6 +303,7 @@ GlobalPreferences.setProxyHost("realproxy.charite.de");
 		{
 			ArrayList<TermID> termCombi;
 			boolean isSenseful;
+			boolean hasVaryingBeta;
 		}
 
 		KSubsetSampler<TermID> kSubsetSampler = new KSubsetSampler<TermID>(goodTerms,rnd);
@@ -285,8 +315,18 @@ GlobalPreferences.setProxyHost("realproxy.charite.de");
 				Combination comb = new Combination();
 				comb.termCombi = termCombi;
 				comb.isSenseful = false;
+				comb.hasVaryingBeta = false;
 				combinationList.add(comb);
 			}
+		}
+
+		for (ArrayList<TermID> termCombi : kSubsetSampler.sampleManyOrderedWithoutReplacement(TERMS_WHEN_VARING_BETA,TERMS_PER_RUN))
+		{
+			Combination comb = new Combination();
+			comb.termCombi = termCombi;
+			comb.isSenseful = false;
+			comb.hasVaryingBeta = true;
+			combinationList.add(comb);
 		}
 
 		KSubsetSampler<TermID> kSensefulSubsetSampler = new KSubsetSampler<TermID>(sensefulTerms,rnd);
@@ -297,9 +337,12 @@ GlobalPreferences.setProxyHost("realproxy.charite.de");
 				Combination comb = new Combination();
 				comb.termCombi = termCombi;
 				comb.isSenseful = true;
+				comb.hasVaryingBeta = false;
 				combinationList.add(comb);
 			}
 		}
+
+
 
 		ExecutorService es = Executors.newFixedThreadPool(numProcessors);
 
@@ -328,9 +371,18 @@ GlobalPreferences.setProxyHost("realproxy.charite.de");
 							{
 								System.out.println("***** " + currentRun + "/" + max + ": " + termCombi.size() + " terms" + " *****");
 
+								HashMap<TermID,Double> wantedActiveTerms = new HashMap<TermID,Double>();
+								for (TermID tid : termCombi)
+								{
+									if (combi.hasVaryingBeta)
+										wantedActiveTerms.put(tid, VARING_BETA[studyRnd.nextInt(VARING_BETA.length)]);
+									else
+										wantedActiveTerms.put(tid, null);
+								}
+
 								StudySet newStudySet = generateStudySet(studyRnd, assoc, graph,
 										completePopEnumerator, allGenesArray, sampler,
-										termCombi,ALPHA,BETA);
+										wantedActiveTerms,ALPHA,BETA);
 
 								if (newStudySet != null)
 								{
@@ -488,6 +540,7 @@ GlobalPreferences.setProxyHost("realproxy.charite.de");
 										builder.append(studyEnumerator.getAnnotatedGenes(tid).totalAnnotatedCount() + "\t");
 										builder.append(currentRun + "\t");
 										builder.append((combi.isSenseful?"1":"0") + "\t");
+										builder.append((combi.hasVaryingBeta?"1":"0") + "\t");
 										builder.append(ALPHA+ "\t");
 										builder.append(BETA);
 										builder.append('\n');
@@ -531,13 +584,15 @@ GlobalPreferences.setProxyHost("realproxy.charite.de");
 	 * @param allGenesArray an array of all genes.
 	 * @param sampler
 	 * @param termCombi term combinations to sample from
+	 * @param ALPHA
+	 * @param BETA
 	 * @return
 	 */
 	private static StudySet generateStudySet(Random rnd,
 			AssociationContainer assoc, GOGraph graph,
 			GOTermEnumerator completePopEnumerator,
 			ByteString[] allGenesArray, StudySetSampler sampler,
-			ArrayList<TermID> termCombi, double ALPHA, double BETA)
+			HashMap<TermID,Double> wantedActiveTerms, double ALPHA, double BETA)
 	{
 		/* Original variant */
 		if (ORIGINAL_SAMPLING)
@@ -546,7 +601,7 @@ GlobalPreferences.setProxyHost("realproxy.charite.de");
 
 			PercentageEnrichmentRule rule = new PercentageEnrichmentRule();
 			rule.setNoisePercentage(NOISE_PERCENTAGE);
-			for (TermID t : termCombi)
+			for (TermID t : wantedActiveTerms.keySet())
 				rule.addTerm(t, TERM_PERCENTAGE);
 
 			newStudySet = sampler.sampleRandomStudySet(graph, assoc, rule, true);
@@ -559,14 +614,43 @@ GlobalPreferences.setProxyHost("realproxy.charite.de");
 			double realAlpha;
 			double realBeta;
 
-			GeneratedStudySet newStudySet = new GeneratedStudySet("study");
-
-			for (TermID t : termCombi)
+			boolean perTermBeta = false;
+			for (Double d : wantedActiveTerms.values())
 			{
-				for (ByteString g : completePopEnumerator.getAnnotatedGenes(t).totalAnnotated)
-					newStudySet.addGene(g, "");
+				if (d != null)
+					perTermBeta = true;
 			}
+
+			/* Find out which genes are annotated to the term (genes are put into a study set) */
+			HashMap<TermID,StudySet> wantedActiveTerm2StudySet = new HashMap<TermID,StudySet>();
+			for (TermID t : wantedActiveTerms.keySet())
+			{
+				StudySet termStudySet = new StudySet("study");
+				for (ByteString g : completePopEnumerator.getAnnotatedGenes(t).totalAnnotated)
+					termStudySet.addGene(g, "");
+				termStudySet.filterOutDuplicateGenes(assoc);
+				wantedActiveTerm2StudySet.put(t, termStudySet);
+			}
+
+			/* Construct an overall study set */
+			GeneratedStudySet newStudySet = new GeneratedStudySet("study");
+			for (TermID t : wantedActiveTerms.keySet())
+			{
+				System.out.println(t.toString() + " genes=" + wantedActiveTerm2StudySet.get(t).getGeneCount() + " beta=" + wantedActiveTerms.get(t));
+				newStudySet.addGenes(wantedActiveTerm2StudySet.get(t));
+			}
+
 			newStudySet.filterOutDuplicateGenes(assoc);
+
+
+//			GeneratedStudySet newStudySet = new GeneratedStudySet("study");
+//
+//			for (TermID t : termCombi)
+//			{
+//				for (ByteString g : completePopEnumerator.getAnnotatedGenes(t).totalAnnotated)
+//					newStudySet.addGene(g, "");
+//			}
+//			newStudySet.filterOutDuplicateGenes(assoc);
 
 			int tp = newStudySet.getGeneCount();
 			int tn = allGenesArray.length - tp;
@@ -583,9 +667,23 @@ GlobalPreferences.setProxyHost("realproxy.charite.de");
 
 			/* true -> false (beta, false negative) */
 			HashSet<ByteString>  fn = new HashSet<ByteString>();
-			for (ByteString gene : newStudySet)
+			if (!perTermBeta)
 			{
-				if (rnd.nextDouble() < BETA) fn.add(gene);
+				for (ByteString gene : newStudySet)
+				{
+					if (rnd.nextDouble() < BETA) fn.add(gene);
+				}
+			} else
+			{
+				for (TermID t : wantedActiveTerms.keySet())
+				{
+					double beta = wantedActiveTerms.get(t);
+					StudySet termStudySet = wantedActiveTerm2StudySet.get(t);
+					for (ByteString g : termStudySet)
+					{
+						if (rnd.nextDouble() < beta) fn.add(g);
+					}
+				}
 			}
 
 			newStudySet.addGenes(fp);
@@ -594,7 +692,7 @@ GlobalPreferences.setProxyHost("realproxy.charite.de");
 			realAlpha = ((double)fp.size())/tn;
 			realBeta = ((double)fn.size())/tp;
 
-			System.out.println("Number of genes in study set " + newStudySet.getGeneCount() + " " + termCombi.size() + " terms enriched");
+			System.out.println("Number of genes in study set " + newStudySet.getGeneCount() + " " + wantedActiveTerms.size() + " terms enriched");
 			System.out.println("Study set has " + fp.size() + " false positives (alpha=" + realAlpha +")");
 			System.out.println("Study set misses " + fn.size() + " genes (beta=" + realBeta +")");
 
