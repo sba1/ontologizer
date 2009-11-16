@@ -64,6 +64,7 @@ public class ProbabilisticCalculation implements ICalculation
 		{
 			if (activeTerms.contains(t))
 			{
+				/* Term is going to be deactivated */
 				activeTerms.remove(t);
 
 				for (ByteString g : popEnumerator.getAnnotatedGenes(t).totalAnnotated)
@@ -82,6 +83,7 @@ public class ProbabilisticCalculation implements ICalculation
 				}
 			} else
 			{
+				/* Term is going to be activated */
 				activeTerms.add(t);
 
 				for (ByteString g : popEnumerator.getAnnotatedGenes(t).totalAnnotated)
@@ -252,8 +254,32 @@ public class ProbabilisticCalculation implements ICalculation
 			return obj;
 		}
 
-}
+	}
 
+	private double defaultP = Double.NaN;
+	private double defaultQ = Double.NaN;
+
+	public ProbabilisticCalculation()
+	{
+	}
+
+
+	public ProbabilisticCalculation(ProbabilisticCalculation calc)
+	{
+		defaultP = calc.defaultP;
+		defaultQ = calc.defaultQ;
+	}
+
+
+	public void setDefaultP(double defaultP)
+	{
+		this.defaultP = defaultP;
+	}
+
+	public void setDefaultQ(double defaultQ)
+	{
+		this.defaultQ = defaultQ;
+	}
 
 	public EnrichedGOTermsResult calculateStudySet(GOGraph graph,
 			AssociationContainer goAssociations, PopulationSet populationSet,
@@ -277,8 +303,14 @@ public class ProbabilisticCalculation implements ICalculation
 		}
 		data.st = total;
 
-		data.p = 0.5;
-		data.q = ((double)data.activeGenes.size())/data.allGenes.size();
+
+		if (Double.isNaN(defaultP))
+			data.p = 0.5;
+		else data.p = defaultP;
+
+		if (Double.isNaN(defaultQ))
+			data.q = ((double)data.activeGenes.size())/data.allGenes.size();
+		else data.q = defaultQ;
 
 		double eps = 0.0001;
 
@@ -286,14 +318,11 @@ public class ProbabilisticCalculation implements ICalculation
 
 		while (true)
 		{
-			double pNext = (double)(data.ag) / (data.ag + data.sg);
-			double qNext = (double)(data.an) / (data.an + data.sn);
-
 			data.optimizeForTerms(graph);
 
 			data.calculateParamters();
-			pNext = (double)(data.ag) / (data.ag + data.sg);
-			qNext = (double)(data.an) / (data.an + data.sn);
+			double pNext = (double)(data.ag) / (data.ag + data.sg);
+			double qNext = (double)(data.an) / (data.an + data.sn);
 
 			if (Double.isNaN(pNext) || Double.isNaN(qNext))
 			{
@@ -301,10 +330,13 @@ public class ProbabilisticCalculation implements ICalculation
 				break;
 			}
 
-			if (Math.abs(qNext - data.q) < eps) break;
-			if (Math.abs(pNext - data.p) < eps) break;
+			if (!Double.isNaN(defaultP) && !Double.isNaN(defaultQ))
+				break;
 
 //			System.out.println("p=" + data.p + " q=" + data.q + "  pNext="+pNext + " qNext="+qNext);
+
+			if (Math.abs(qNext - data.q) < eps) break;
+			if (Math.abs(pNext - data.p) < eps) break;
 
 			data.p = pNext;
 			data.q = qNext;
@@ -322,6 +354,7 @@ public class ProbabilisticCalculation implements ICalculation
 			{
 				prop.p = prop.p_adjusted = 1;
 			}
+//			System.out.println(prop.goTerm.toString() + "  " + prop.p_adjusted);
 		}
 
 		return results;
