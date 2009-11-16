@@ -19,16 +19,16 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 	private TermID proposalT1;
 	private TermID proposalT2;
 
-	protected  double [] ALPHA;// = new double[] {0.0000001,0.05, 0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5, 0.55,0.6,0.65,0.7,0.75,0.8,0.85,0.9,0.95};
+	protected  double [] ALPHA = new double[] {0.0000001,0.05, 0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5, 0.55,0.6,0.65,0.7,0.75,0.8,0.85,0.9,0.95};
 	private int alphaIdx = 0;
 	private int oldAlphaIdx;
-	protected int [] totalAlpha;// = new int[ALPHA.length];
+	protected int [] totalAlpha = new int[ALPHA.length];
 	private boolean doAlphaMCMC = true;
 	
-	protected double [] BETA;// = ALPHA;
+	protected double [] BETA = ALPHA;
 	private int betaIdx = 0;
 	private int oldBetaIdx;
-	protected int totalBeta[];// = new int[BETA.length];
+	protected int totalBeta[] = new int[BETA.length];
 	private boolean doBetaMCMC = true;
 	
 	protected final int [] EXPECTED_NUMBER_OF_TERMS = new int[]{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20};
