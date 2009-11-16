@@ -486,6 +486,48 @@ public class GeneEditor extends Composite
 		});
 	}
 
+	/**
+	 * Returns the total number of entries.
+	 *
+	 * @return
+	 */
+	public int getNumberOfEntries()
+	{
+		int chars = text.getCharCount();
+		int lineCount = text.getLineCount();
+		if (chars > 0)
+		{
+			String last = text.getText(chars-1,chars-1);
+			if (last.equals("\n"))
+				lineCount--;
+		}
+		return lineCount;
+	}
+
+	/**
+	 * Returns the number of known entries.
+	 *
+	 * @return
+	 */
+	public int getNumberOfKnownEntries()
+	{
+		int known = -1;
+
+		if (assoc != null)
+		{
+			known = 0;
+			for (String l : getLines())
+			{
+				String gene = getGeneName(l);
+				Gene2Associations gene2Associations = assoc.get(new ByteString(gene));
+				if (gene2Associations != null)
+					known++;
+			}
+		}
+
+		return known;
+	}
+
 	public String getText()
 	{
 		return text.getText();
