@@ -1201,6 +1201,14 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 	}
 
 	/**
+	 * Store the result as a latex file.
+	 */
+	public void latexSave(String path)
+	{
+		EnrichedGOTermsResultLatexWriter.write(result,new File(path));
+	}
+
+	/**
 	 * Store the result as html site.
 	 *
 	 * @param path defines the path where the files should be written to.

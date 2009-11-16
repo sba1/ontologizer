@@ -409,6 +409,15 @@ public class SemanticSimilarityComposite extends Composite implements IGraphActi
 		result.writeTable(tableFile);
 	}
 
+	public void latexSave(String path)
+	{
+		MessageBox mbox = new MessageBox(getShell(), SWT.ICON_ERROR | SWT.OK);
+		mbox.setMessage("Storing results of a semantic similarity\nanalsis is not supported");
+		mbox.setText("Ontologizer - Error");
+		mbox.open();
+
+	}
+
 	public void saveGraph(String file)
 	{
 		if (natTableLastSelected.x != -1)
