@@ -293,10 +293,10 @@ public class Bayes2GOCalculation implements ICalculation
 
 		System.out.println("Starting calculation: expectedNumberOfTerms=" + expectedNumberOfTerms + " alpha=" + alpha + " beta=" + beta + "  numberOfPop=" + populationEnumerator.getGenes().size() + " numberOfStudy=" + studyEnumerator.getGenes().size());
 
-		long start = System.nanoTime();
+		long start = System.currentTimeMillis();
 		calculateByMCMC(graph, result, populationEnumerator, studyEnumerator, populationSet, studySet);//, llr);
-		long end = System.nanoTime();
-		System.out.println(((end - start)/1000) + "ms");
+		long end = System.currentTimeMillis();
+		System.out.println((end - start) + "ms");
 //		calculateByOptimization(graph, result, populationEnumerator, studyEnumerator, llr);
 
 		/** Print out the results **/
@@ -356,12 +356,10 @@ public class Bayes2GOCalculation implements ICalculation
 			System.err.println("Created random number generator with seed of " + seed);
 		} else
 		{
-			long newSeed;
-			rnd = new Random();
-			newSeed = rnd.nextLong();
-
+//			long newSeed = 1742611262340832737l;
+			long newSeed = new Random().nextLong();
 			logger.info("Use a random seed of: " + newSeed);
-			rnd = new Random(seed);
+			rnd = new Random(newSeed);
 		}
 
 		boolean doAlphaEm = false;
@@ -416,7 +414,9 @@ public class Bayes2GOCalculation implements ICalculation
 			}
 
 			bayesScore.setAlpha(alpha);
+			bayesScore.setMaxAlpha(this.alpha.getMax());
 			bayesScore.setBeta(beta);
+			bayesScore.setMaxBeta(this.beta.getMax());
 			bayesScore.setExpectedNumberOfTerms(expectedNumberOfTerms);
 			bayesScore.setUsePrior(usePrior);
 
@@ -434,18 +434,19 @@ public class Bayes2GOCalculation implements ICalculation
 
 			logger.info("Score of empty set: " + score);
 
-			/* Provide a starting point */
+//			/* Provide a starting point */
 //			{
-//				double pForStart = (double)bayesScore.EXPECTED_NUMBER_OF_TERMS[rnd.nextInt(bayesScore.EXPECTED_NUMBER_OF_TERMS.length)] / bayesScore.populationEnumerator.getTotalNumberOfAnnotatedTerms();
+//				int numberOfTerms = bayesScore.EXPECTED_NUMBER_OF_TERMS[rnd.nextInt(bayesScore.EXPECTED_NUMBER_OF_TERMS.length)];
+//				double pForStart = ((double)numberOfTerms) / allTerms.size();
+//
+//				System.out.println("Number of Terms=" + numberOfTerms);
 //
 //				for (int j=0;j<allTerms.size();j++)
-//					if (Math.random() < pForStart) bayesScore.switchState(j);
+//					if (rnd.nextDouble() < pForStart) bayesScore.switchState(j);
 //
 //				logger.info("Starting with " + bayesScore.activeTerms.size() + " terms (p=" + pForStart + ")");
 //			}
-
-
-			logger.info("Score of initial set: " + score);
+//			logger.info("Score of initial set: " + score);
 
 			double maxScore = Double.NEGATIVE_INFINITY;
 			ArrayList<TermID> maxScoredTerms = new ArrayList<TermID>();
