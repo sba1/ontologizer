@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.HashMap;
 
 import ontologizer.ByteString;
 
@@ -72,6 +71,11 @@ public class OneOnALineParser extends AbstractItemParser
 		}
 	}
 
+	protected boolean ignoreLine(String line)
+	{
+		return line.length() == 0 || line.startsWith(";") || line.startsWith("#");
+	}
+
 	/**
 	 * Processes the given line. The line should start with a genename followed by
 	 * an optional descriptions (separated by a space sign). If the line starts
@@ -81,22 +85,18 @@ public class OneOnALineParser extends AbstractItemParser
 	 *            a single line of the input gene list file.
 	 */
 
-	private void processLine(final String line, IParserCallback callback)
+	protected void processLine(final String line, IParserCallback callback)
 	{
-		/* Ignore comments */
-		if (line.length() == 0 || line.startsWith(";") || line.startsWith("#"))
-			return;
+		if (ignoreLine(line)) return;
 
 		String [] fields = new String[]{ "", ""};
-
 		String [] sfields = line.split("\\s+", 2);
-		for (int i = 0; i < sfields.length; ++i)
-			fields[i] = sfields[i];
+		for (int i = 0; i < sfields.length; i++)
+			if (sfields[i] == null) sfields[i] = "";
 
 		ByteString itemName = new ByteString(fields[0]);
 		ItemAttribute itemAttribute = new ItemAttribute();
 		itemAttribute.description = new StringBuilder(fields[1]).toString();
 		callback.newEntry(itemName, itemAttribute);
 	}
-
 }

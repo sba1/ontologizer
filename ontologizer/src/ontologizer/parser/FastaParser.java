@@ -22,18 +22,6 @@ import ontologizer.ByteString;
 
 public final class FastaParser extends AbstractItemParser
 {
-	/**
-	 * <P>
-	 * Note that by using a HashMap to store gene names, duplicates will be
-	 * automatically discarded. The ontologizer is not desgined for analysis of
-	 * duplicate entries.
-	 * </P>
-	 * <P>
-	 * Key: The gene name, Value: A description (optional)
-	 * </P>
-	 */
-//	private HashMap<ByteString, String> genes = new HashMap<ByteString, String>();
-
 	private File file;
 
 	/**
@@ -49,7 +37,7 @@ public final class FastaParser extends AbstractItemParser
 	 * @throws IOException
 	 *           On every io error.
 	 */
-	public FastaParser(final File file) // throws IOException
+	public FastaParser(final File file)
 	{
 		this.file = file;
 	}
@@ -67,12 +55,6 @@ public final class FastaParser extends AbstractItemParser
 		}
 		is.close();
 	}
-
-
-//	public HashMap<ByteString, String> getNames()
-//	{
-//		return genes;
-//	}
 
 	/**
 	 * @param line
@@ -113,4 +95,3 @@ public final class FastaParser extends AbstractItemParser
 	}
 
 }
-// eof FastaParser.java
