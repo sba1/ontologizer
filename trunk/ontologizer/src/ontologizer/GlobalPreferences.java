@@ -13,6 +13,7 @@ public final class GlobalPreferences
 	private static String proxyHost;
 	private static int proxyPort;
 	private static int wrapColumn = 30;
+	private static int mcmcSteps = 500000;
 
 	private static double b2gAlpha = Double.NaN;
 	private static double b2gBeta =Double.NaN;
@@ -167,5 +168,14 @@ public final class GlobalPreferences
 	public static void setUpperBeta(double upperBeta)
 	{
 		GlobalPreferences.upperBeta = upperBeta;
+	}
+
+	public static void setMcmcSteps(int mcmcSteps)
+	{
+		GlobalPreferences.mcmcSteps = mcmcSteps;
+	}
+
+	public static int getMcmcSteps() {
+		return mcmcSteps;
 	}
 }
