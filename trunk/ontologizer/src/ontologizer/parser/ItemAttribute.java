@@ -3,7 +3,7 @@ package ontologizer.parser;
 public class ItemAttribute
 {
 	public String description;
-	
+
 	public ItemAttribute(ItemAttribute attr)
 	{
 		this.description = attr.description;
