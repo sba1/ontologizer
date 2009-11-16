@@ -1,7 +1,5 @@
 library(ROCR)
 
-#dir<-"/home/sba/remote/solexa.sshfs/sba/b2go"
-#dir<-"/home/sba/workspace/ontologizer-sf/"
 dir<-"."
 filename<-"result-fp.txt"
 
@@ -9,44 +7,6 @@ filename<-"result-fp.txt"
 full.filename<-file.path(dir,filename)
 d<-read.table(full.filename,h=T)
 d<-subset(d,d$term!=0)
-
-#result.files<-c("result-Term-For-Term-fp.txt",
-#		        "result-Parent-Child-Union-fp.txt",
-#				"result-Bayes2GO-fp.txt")
-#for (filename in result.files)
-#{
-#	is.bayes<-length(grep("Bayes",filename))
-#filename<-"result-Term-For-Term.txt"
-#filename<-"result-Bayes2GO.txt"
-
-#	if (is.bayes)
-#	{
-#		
-#	}
-
-#el<-s[[1]]
-#pos<-which(el$pred==T)
-#tp<-intersect(which(el$label==T),pos)
-#fp<-setdiff(pos,tp)
-
-#a<-t(sapply(s,function(el){
-#			pos<-which(el$pred==T)
-#			neg<-which(el$pred==F)
-#			tp<-intersect(which(el$label==T),pos)
-#			tn<-intersect(which(el$label==F),neg)
-#			fp<-setdiff(pos,tp)
-#			fn<-setdiff(neg,tn)
-#			return(data.frame(tp=length(tp),fp=length(fp),tn=length(tn),fn=length(fn),pos=length(tp)+length(fn),neg=length(tn)+length(fp)))
-#		}))
-#
-#for (b in  split(as.data.frame(a),as.numeric(a[,"pos"])))
-#{
-#	tpr<-sum(as.numeric(b[,"tp"]))/sum(as.numeric(b[,"pos"]))
-#	tnr<-sum(as.numeric(b[,"tn"]))/sum(as.numeric(b[,"neg"]))
-#	
-#	print(paste("terms=",unique(b$pos)," tpr=",tpr," tnr=",tnr,sep=""))	
-#}
-#}
 
 
 #
@@ -100,50 +60,14 @@ plot.roc<-function(d,alpha=NA,beta=NA,calc.auc=F,y.axis="tpr",x.axis="fpr",xlim=
 		return()
 	}
 	
-#	column.indices<-grep("^p\\.",colnames(d),perl=T)
-#	sapply(colnames(d)[column.indices],decode.parameter.setting)
-#	result.list<-list();
-#	for (ci in column.indices)
-#	{
-#		cn<-colnames(d)[ci]
-#
-#		pred<-prediction(1-d[,ci],d$label)
-#		perf<-performance(pred, measure = "tpr", x.measure = "fpr")
-#		auc.perf<-performance(pred, measure = "auc")
-#		auc<-auc.perf@y.values[[1]]
-#
-#		entry<-decode.parameter.setting(cn)
-#		entry<-append(entry,list(auc=auc))
-#		result.list<-append(result.list,list(entry))
-#
-#		print(paste(decode.name(cn)," auc=", auc, sep=""))		
-#	}
-#	# Convert the list of lists to a data frame
-#	result.frame<-do.call(rbind,lapply(result.list,data.frame))
-
 	l<-list();
 
-#	v<-matrix(ncol=2,byrow=T,
-#	              c("p.tft","Term for Term",
-#                    "p.tft.bf","Term for Term: BF",
-#				    "p.pcu", "Parent Child",
-#				    "p.tweight","Topology Weighted",
-#					"p.pb", "GenGO",
-#					"p.b2g.ideal", "B2G: Ideal",
-#					"p.b2g.ideal.pop", "B2G: Ideal, PaR",
-#					"p.b2g.em", "B2G: EM",
-#					"p.b2g.mcmc", "B2G: Full MCMC",
-#					"p.b2g.mcmc.cexpt", "B2G: Full MCMC (p known)",
-#					"p.b2g.ideal.nop", "B2G: No Prior"
-#	               ))
 	v<-matrix(ncol=2,byrow=T,
 	              c("p.tft","Term for Term",
 				    "p.pcu", "Parent Child",
 				    "p.tweight","Topology Weighted",
 					"p.pb", "GenGO",
-#					"p.b2g.ideal", "B2G: Ideal",
 					"p.b2g.ideal.pop", "B2G: Known Parameter",
-#					"p.b2g.mcmc", "B2G: MCMC",
 					"p.b2g.mcmc.pop", "B2G: Unknown Parameter",
 					"p.b2g.ideal.pop.nop", "B2G: No Prior, Known Parameter"
 	               ))
@@ -180,25 +104,8 @@ plot.roc<-function(d,alpha=NA,beta=NA,calc.auc=F,y.axis="tpr",x.axis="fpr",xlim=
 				return (roc.value)
 			}))
 
-			d.new<-lapply(d.by.run,function(d2)
-			{
-				values2<-d2[,v[i,1]]
-			
-				o<-order(values2,decreasing=F)				
-#
-#				AFAIU that would be the true rocn
-#               But it is unfair, as the number of entries would differ
-#
-#				cut.of<-which(d2[o,]$label==0)[rocn]
-				cut.of<-rocn
-				return(d2[o,][1:cut.of,])
-			})
 			d.new<-do.call(rbind,d.new) # merge the lists
-			print(sprintf("%s: %d %f (alpha=%f, beta=%f)",v[i,2],nrow(d.new) - length(d.by.run)*rocn,avg.rocn,alpha,beta))
-
-## We don't want to plot these "ROCs"
-#			values<-d.new[,v[i,1]]
-#			labels<-d.new$label
+			print(sprintf("%s: %f (alpha=%f, beta=%f)",v[i,2],avg.rocn,alpha,beta))
 		}
 	
 		pred<-prediction(1-values,labels)
@@ -212,8 +119,6 @@ plot.roc<-function(d,alpha=NA,beta=NA,calc.auc=F,y.axis="tpr",x.axis="fpr",xlim=
 			l<-append(l,sprintf("%s (%g)",name,auc))
 		} else
 		{
-#			f.perf<-performance(pred, measure = "f")
-#			f<-f.perf@y.values[[1]]
 			l<-append(l,sprintf("%s",name))
 		}
 
@@ -232,18 +137,6 @@ plot.roc<-function(d,alpha=NA,beta=NA,calc.auc=F,y.axis="tpr",x.axis="fpr",xlim=
 }
 
 s<-split(d,list(d$alpha,d$beta))
-#
-#	filename<-sprintf("result-roc-a%d-b%d.pdf",alpha*100,beta*100)
-#	pdf(file="huhuh.pdf",height=9,width=9)
-#	par(cex=1.3,cex.main=1.2,lwd=2)
-#	plot.roc(d,alpha,beta)
-#	dev.off()
-
-
-#q<-s[[4]]
-#subset(q,q$run %in% c(3001,3002))
-#plot.roc(subset(q,q$run %in% c(3001:3020)),alpha,beta,calc.auc=T)
-## 3004
 
 #
 # ROC
@@ -265,12 +158,6 @@ lapply(s,function(d) {
 	par(cex=1.3,cex.main=1.2,lwd=2)
 	plot.roc(subset(d,d$senseful==1),alpha,beta,calc.auc=T,rocn=10)
 	dev.off()
-
-#	filename<-sprintf("result-roc-a%d-b%d-no-restriction.pdf",alpha*100,beta*100)
-#	pdf(file=filename,height=9,width=9)
-#	par(cex=1.3,cex.main=1.2,lwd=2)
-#	plot.roc(subset(d,d$senseful==0),alpha,beta,calc.auc=T)
-#	dev.off()
 });
 
 #
@@ -292,12 +179,6 @@ lapply(s,function(d) {
 	par(cex=1.3,cex.main=1.2,lwd=2)
 	plot.roc(subset(d,d$senseful==1),alpha,beta,y.axis="prec",x.axis="rec",legend.place="topright")
 	dev.off()
-
-#	filename<-sprintf("result-precall-a%d-b%d-no-restriction.pdf",alpha*100,beta*100)
-#	pdf(file=filename,height=9,width=9)
-#	par(cex=1.3,cex.main=1.2,lwd=2)
-#	plot.roc(subset(d,d$senseful==0),alpha,beta,y.axis="prec",x.axis="rec",legend.place="topright")
-#	dev.off()
 });
 
 
