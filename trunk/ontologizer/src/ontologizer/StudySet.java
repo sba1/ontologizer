@@ -227,6 +227,17 @@ public class StudySet implements Iterable<ByteString>
 	}
 
 	/**
+	 * Returns the associated attribute (i.e., description) of a gene within
+	 * a study set.
+	 * 
+	 * @param name
+	 * @return
+	 */
+	public Attribute getGeneAttribute(ByteString name)
+	{
+		return gene2Attribute.get(name);
+	}
+	/**
 	 * Returns the gene description of the specified gene.
 	 * 
 	 * @return the gene description or null if the gene is not contained.
