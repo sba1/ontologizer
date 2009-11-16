@@ -208,8 +208,8 @@ public class GOTermEnumerator implements Iterable<TermID>
 	};
 
 	/**
-	 * Returns the terms to which genes of the given term
-	 * are often annotated with.
+	 * Returns the terms which shares genes with the given term and neither a ascendant nor
+	 * descendant.
 	 *
 	 * @param goTermID
 	 * @return
@@ -225,6 +225,7 @@ public class GOTermEnumerator implements Iterable<TermID>
 		for (TermID curTerm : map.keySet())
 		{
 			/* Ignore terms on the same path */
+			if (graph.isRootGOTermID(curTerm)) continue;
 			if (curTerm.equals(goTermID)) continue;
 			if (graph.existsPath(curTerm,goTermID) || graph.existsPath(goTermID,curTerm))
 				continue;
@@ -238,10 +239,13 @@ public class GOTermEnumerator implements Iterable<TermID>
 					count++;
 			}
 
-			GOTermOftenAnnotatedCount tc = new GOTermOftenAnnotatedCount();
-			tc.term = curTerm;
-			tc.counts = count;
-			list.add(tc);
+			if (count != 0)
+			{
+				GOTermOftenAnnotatedCount tc = new GOTermOftenAnnotatedCount();
+				tc.term = curTerm;
+				tc.counts = count;
+				list.add(tc);
+			}
 		}
 
 		GOTermOftenAnnotatedCount [] termArray = new GOTermOftenAnnotatedCount[list.size()];
