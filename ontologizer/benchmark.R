@@ -117,93 +117,39 @@ plot.roc<-function(d,alpha=NA,beta=NA)
 	colors<-c(rainbow(12))
 	l<-list();
 
-	pred<-prediction(1-d$p.tft,d$label)
-	perf<-performance(pred, measure = "tpr", x.measure = "fpr") 
-	auc.perf<-performance(pred, measure = "auc")
-	auc<-auc.perf@y.values[[1]]
-	name<-"Term for Term"
-	l<-append(l,sprintf("%s (%g)",name,auc))
-	plot(perf, col=colors[1],main=sprintf("Comparison (alpha=%g,beta=%g)",alpha,beta),downsampling=100)
 
-	pred<-prediction(1-d$p.tft.bf,d$label)
-	perf<-performance(pred, measure = "tpr", x.measure = "fpr") 
-	auc.perf<-performance(pred, measure = "auc")
-	auc<-auc.perf@y.values[[1]]
-	name<-"Term for Term: BF"
-	l<-append(l,sprintf("%s (%g)",name,auc))
-	plot(perf, col=colors[2],downsampling=100, add=TRUE)
+	v<-matrix(ncol=2,byrow=T,
+	              c("p.tft","Term for Term",
+                    "p.tft.bf","Term for Term: BF",
+				    "p.pcu", "Parent Child",
+				    "p.tweight","Topology Weighted",
+					"p.pb", "Probabilistic (Lu et al.)",
+					"p.b2g.ideal", "B2G: Ideal",
+					"p.b2g.ideal.pop", "B2G: Ideal, PaR",
+					"p.b2g.em", "B2G: EM",
+					"p.b2g.mcmc", "B2G: Full MCMC",
+					"p.b2g.mcmc.cexpt", "B2G: Full MCMC (p known)",
+					"p.b2g.ideal.nop", "B2G: No Prior"
+	               ))
+	colnames(v)<-c("short","full")
 
-	pred<-prediction(1-d$p.pcu,d$label)
-	perf<-performance(pred, measure = "tpr", x.measure = "fpr") 
-	auc.perf<-performance(pred, measure = "auc")
-	auc<-auc.perf@y.values[[1]]
-	name<-"Parent Child"
-	l<-append(l,sprintf("%s (%g)",name,auc))
-	plot(perf, col=colors[3],downsampling=100, add=TRUE)
-	
-	pred<-prediction(1-d$p.tweight,d$label)
-	perf<-performance(pred, measure = "tpr", x.measure = "fpr") 
-	auc.perf<-performance(pred, measure = "auc")
-	auc<-auc.perf@y.values[[1]]
-	name<-"Topology Weighted"
-	l<-append(l,sprintf("%s (%g)",name,auc))
-	plot(perf, col=colors[4],downsampling=100, add=TRUE)
+	for (i in (1:nrow(v)))
+	{
+		pred<-prediction(1-d[,v[i,1]],d$label)
+		perf<-performance(pred, measure = "tpr", x.measure = "fpr") 
+		auc.perf<-performance(pred, measure = "auc")
+		auc<-auc.perf@y.values[[1]]
+		name<-v[i,2]
+		l<-append(l,sprintf("%s (%g)",name,auc))
 
-	pred<-prediction(1-d$p.pb,d$label)
-	perf<-performance(pred, measure = "tpr", x.measure = "fpr") 
-	auc.perf<-performance(pred, measure = "auc")
-	auc<-auc.perf@y.values[[1]]
-	name<-"Probabilistic"
-	l<-append(l,sprintf("%s (%g)",name,auc))
-	plot(perf, col=colors[5],downsampling=100, add=TRUE)
-
-	pred<-prediction(1-d$p.b2g.ideal,d$label)
-	perf<-performance(pred, measure = "tpr", x.measure = "fpr") 
-	auc.perf<-performance(pred, measure = "auc")
-	auc<-auc.perf@y.values[[1]]
-	name<-"B2G: Ideal"
-	l<-append(l,sprintf("%s (%g)",name,auc))
-	plot(perf, col=colors[6],downsampling=100, add=TRUE)
-
-	pred<-prediction(1-d$p.b2g.ideal.pop,d$label)
-	perf<-performance(pred, measure = "tpr", x.measure = "fpr") 
-	auc.perf<-performance(pred, measure = "auc")
-	auc<-auc.perf@y.values[[1]]
-	name<-"B2G: Ideal, PaR"
-	l<-append(l,sprintf("%s (%g)",name,auc))
-	plot(perf, col=colors[7],downsampling=100, add=TRUE)
-
-	pred<-prediction(1-d$p.b2g.em,d$label)
-	perf<-performance(pred, measure = "tpr", x.measure = "fpr") 
-	auc.perf<-performance(pred, measure = "auc")
-	auc<-auc.perf@y.values[[1]]
-	name<-"B2G: EM"
-	l<-append(l,sprintf("%s (%g)",name,auc))
-	plot(perf, col=colors[8],downsampling=100, add=TRUE)
-
-	pred<-prediction(1-d$p.b2g.mcmc,d$label)
-	perf<-performance(pred, measure = "tpr", x.measure = "fpr") 
-	auc.perf<-performance(pred, measure = "auc")
-	auc<-auc.perf@y.values[[1]]
-	name<-"B2G: Full MCMC"
-	l<-append(l,sprintf("%s (%g)",name,auc))
-	plot(perf, col=colors[9],downsampling=100, add=TRUE)
-
-	pred<-prediction(1-d$p.b2g.mcmc.cexpt,d$label)
-	perf<-performance(pred, measure = "tpr", x.measure = "fpr") 
-	auc.perf<-performance(pred, measure = "auc")
-	auc<-auc.perf@y.values[[1]]
-	name<-"B2G: Full MCMC (but p known)"
-	l<-append(l,sprintf("%s (%g)",name,auc))
-	plot(perf, col=colors[10],downsampling=100, add=TRUE)
-
-	pred<-prediction(1-d$p.b2g.ideal.nop,d$label)
-	perf<-performance(pred, measure = "tpr", x.measure = "fpr") 
-	auc.perf<-performance(pred, measure = "auc")
-	auc<-auc.perf@y.values[[1]]
-	name<-"B2G: No Prior"
-	l<-append(l,sprintf("%s (%g)",name,auc))
-	plot(perf, col=colors[11],downsampling=100, add=TRUE)
+		if (i==1)
+		{
+			plot(perf, col=colors[i],downsampling=100, main=sprintf("Comparison (alpha=%g,beta=%g)",alpha,beta))
+		} else
+		{
+			plot(perf, col=colors[i],downsampling=100, add=TRUE)
+		}		
+	}
 
 	legend("bottomright", col=colors, legend = unlist(l), fill=colors)
 }
