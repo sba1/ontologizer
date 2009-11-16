@@ -39,7 +39,7 @@ class B2GTestParameter
 {
 	static double ALPHA = 0.10;
 	static double BETA = 0.10;
-	static int MCMC_STEPS = 1000000;
+	static int MCMC_STEPS = 320000;
 }
 
 /**
@@ -987,9 +987,9 @@ public class Bayes2GOCalculation implements ICalculation
 		return calculateStudySet(graph, goAssociations, populationSet, studySet);
 	}
 
-	public void setNoPrior(boolean noPrior)
+	public void setUsePrior(boolean usePrior)
 	{
-		this.usePrior = noPrior;
+		this.usePrior = usePrior;
 	}
 
 	private void calculateByMCMC(GOGraph graph,
@@ -1071,16 +1071,14 @@ public class Bayes2GOCalculation implements ICalculation
 			bayesScore.setAlpha(alpha);
 			bayesScore.setBeta(beta);
 			bayesScore.setExpectedNumberOfTerms(expectedNumberOfTerms);
-			bayesScore.setUsePrior(!usePrior);
+			bayesScore.setUsePrior(usePrior);
 
 			result.setScore(bayesScore);
 
-			int maxSteps = B2GTestParameter.MCMC_STEPS;
+			int maxSteps = mcmcSteps;
 			int burnin = 20000;
 			int numAccepts = 0;
 			int numRejects = 0;
-
-			if (usePrior) maxSteps = maxSteps * 3 / 2;
 
 			if (calculationProgress != null)
 				calculationProgress.init(maxSteps);
@@ -1109,7 +1107,7 @@ public class Bayes2GOCalculation implements ICalculation
 					System.out.println((t*100/maxSteps) + "% (score=" + score +" maxScore=" + maxScore + " #terms="+bayesScore.activeTerms.size()+
 										" accept/reject=" + String.format("%g",(double)numAccepts / (double)numRejects) +
 										" accept/steps=" + String.format("%g",(double)numAccepts / (double)t) +
-										" exp=" + expectedNumberOfTerms + " noPrior=" + usePrior + ")");
+										" exp=" + expectedNumberOfTerms + " usePrior=" + usePrior + ")");
 					start = now;
 
 					if (calculationProgress != null)
@@ -1484,7 +1482,7 @@ public class Bayes2GOCalculation implements ICalculation
 //		calc.setBeta(B2GParam.Type.EM);
 //		calc.setExpectedNumber(B2GParam.Type.EM);
 
-////	calc.setNoPrior(true);
+////	calc.setUsePrior(false);
 //		calc.setAlpha(alphaStudySet);
 //		calc.setBeta(betaStudySet);
 

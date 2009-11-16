@@ -92,7 +92,7 @@ public class Benchmark
 		public String abbrev;
 		public double alpha;
 		public double beta;
-		public boolean noPrior;
+		public boolean usePrior = true;
 		public boolean takePopulationAsReference;
 		public AbstractTestCorrection testCorrection;
 
@@ -100,6 +100,7 @@ public class Benchmark
 		public int dt;
 
 		public boolean em;
+		public boolean mcmc;
 
 		public Method(String m, String a)
 		{
@@ -116,7 +117,6 @@ public class Benchmark
 			this.beta = beta;
 			this.dt = dt;
 		}
-
 	}
 
 	static ArrayList<Method> calcMethods;
@@ -157,7 +157,7 @@ public class Benchmark
 		m.em = true;
 		calcMethods.add(m);
 		m = new Method("Bayes2GO","b2g.ideal.nop");
-		m.noPrior = true;
+		m.usePrior = false;
 		calcMethods.add(m);
 	}
 
@@ -332,7 +332,7 @@ GlobalPreferences.setProxyHost("realproxy.charite.de");
 											calc = b2g = new Bayes2GOCalculation(b2g);
 
 											b2g.setSeed(rnd.nextLong());
-											b2g.setNoPrior(m.noPrior);
+											b2g.setUsePrior(m.usePrior);
 											b2g.setTakePopulationAsReference(m.takePopulationAsReference);
 
 											double p;
