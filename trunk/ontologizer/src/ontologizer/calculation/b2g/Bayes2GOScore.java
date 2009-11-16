@@ -58,7 +58,7 @@ abstract class Bayes2GOScore
 	
 	protected GOTermEnumerator populationEnumerator;
 	protected Set<ByteString> population;
-	protected Set<ByteString> observedActiveGenes;
+	//protected Set<ByteString> observedActiveGenes;
 	
 	/** Array of terms */
 	protected TermID [] termsArray;
@@ -69,11 +69,17 @@ abstract class Bayes2GOScore
 	/** Contains active terms */
 	protected LinkedHashSet<TermID> activeTerms = new LinkedHashSet<TermID>();
 
-	/** Contains genes that are active according to the active terms */
-	protected LinkedHashMap<ByteString,MutableInteger> activeHiddenGenes = new LinkedHashMap<ByteString,MutableInteger>();
+	/** Array indicating the genes that have been observed */
+	public boolean [] observedGenes;
+	
+	/** Array that indicate the activation counts of the genes */
+	public int [] activeHiddenGenes;
+	public int numActiveHiddenGenes;
 	
 	/** Maps genes to an unique gene index */
 	protected HashMap<ByteString,Integer> gene2GenesIdx = new HashMap<ByteString,Integer>();
+	
+	protected ByteString [] genes;
 	
 	/** Maps the term to the index in allTermsArray */
 	protected HashMap<TermID,Integer> term2TermsIdx = new HashMap<TermID,Integer>();
@@ -117,14 +123,17 @@ abstract class Bayes2GOScore
 
 		/* Initialize basics of genes */
 		population = populationEnumerator.getGenes();
+		genes = new ByteString[population.size()];
+		observedGenes = new boolean[genes.length];
 		i=0;
 		for (ByteString g : population)
 		{
 			gene2GenesIdx.put(g,i);
+			genes[i] = g;
+			observedGenes[i] = observedActiveGenes.contains(g);
 			i++;
 		}
-		this.observedActiveGenes = observedActiveGenes;
-
+		activeHiddenGenes = new int[population.size()];
 
 		/* Initialize basics of terms */
 		isActive = new boolean[termList.size()];
@@ -158,7 +167,6 @@ abstract class Bayes2GOScore
 		this.populationEnumerator = populationEnumerator;
 
 		activeTerms = new LinkedHashSet<TermID>();
-		activeHiddenGenes = new LinkedHashMap<ByteString,MutableInteger>();
 	}
 
 	public void setUsePrior(boolean usePrior)
@@ -222,8 +230,18 @@ abstract class Bayes2GOScore
 		proposeNewState(rnd.nextLong());
 	}
 
-	public abstract void hiddenGeneActivated(ByteString gene);
-	public abstract void hiddenGeneDeactivated(ByteString gene);
+	public void hiddenGeneActivated(ByteString gene)
+	{
+		hiddenGeneActivated(gene2GenesIdx.get(gene));
+	}
+
+	public void hiddenGeneDeactivated(ByteString gene)
+	{
+		hiddenGeneDeactivated(gene2GenesIdx.get(gene));
+	}
+	
+	public abstract void hiddenGeneActivated(int gid);
+	public abstract void hiddenGeneDeactivated(int gid);
 	
 //	public long currentTime;
 	
@@ -232,23 +250,23 @@ abstract class Bayes2GOScore
 //		long enterTime = System.nanoTime();
 
 		TermID t = termsArray[toSwitch];
+		int [] geneIDs = termLinks[toSwitch].gid;
+
 		isActive[toSwitch] = !isActive[toSwitch];
 		if (isActive[toSwitch])
 		{
 			/* A term is added */
 			activeTerms.add(t);
 
-			/* Update hiddenActiveGenes */
-			for (ByteString gene : populationEnumerator.getAnnotatedGenes(t).totalAnnotated)
+			for (int gid : geneIDs)
 			{
-				MutableInteger cnt = activeHiddenGenes.get(gene);
-				if (cnt == null)
+				if (activeHiddenGenes[gid] == 0)
 				{
-					hiddenGeneActivated(gene);
-					activeHiddenGenes.put(gene, new MutableInteger(1));
+					activeHiddenGenes[gid] = 1;
+					hiddenGeneActivated(gid);
 				} else
 				{
-					cnt.value++;
+					activeHiddenGenes[gid]++;
 				}
 			}
 
@@ -268,14 +286,16 @@ abstract class Bayes2GOScore
 			activeTerms.remove(t);
 
 			/* Update hiddenActiveGenes */
-			for (ByteString gene : populationEnumerator.getAnnotatedGenes(t).totalAnnotated)
+			for (int gid : geneIDs)
 			{
-				MutableInteger cnt = activeHiddenGenes.get(gene);
-				if (--cnt.value == 0)
+				if (activeHiddenGenes[gid] == 1)
 				{
-					activeHiddenGenes.remove(gene);
-					hiddenGeneDeactivated(gene);
-				} else activeHiddenGenes.put(gene, cnt);
+					activeHiddenGenes[gid] = 0;
+					hiddenGeneDeactivated(gid);
+				} else
+				{
+					activeHiddenGenes[gid]--;
+				}
 			}
 
 			/* Append the new term at the end of the index list */

@@ -85,9 +85,9 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 	}
 
 	@Override
-	public void hiddenGeneActivated(ByteString gene)
+	public void hiddenGeneActivated(int gid)
 	{
-		if (observedActiveGenes.contains(gene))
+		if (observedGenes[gid])
 		{
 			n11++;
 			n10--;
@@ -99,9 +99,9 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 	}
 
 	@Override
-	public void hiddenGeneDeactivated(ByteString gene)
+	public void hiddenGeneDeactivated(int gid)
 	{
-		if (observedActiveGenes.contains(gene))
+		if (observedGenes[gid])
 		{
 			n11--;
 			n10++;
@@ -185,24 +185,48 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 		}
 	}
 	
+	public final double getAlpha()
+	{
+		double alpha;
+
+		if (Double.isNaN(this.alpha))
+			alpha = ALPHA[alphaIdx];
+		else alpha = this.alpha;
+
+		return alpha;
+	}
+	
+	public final double getBeta()
+	{
+		double beta;
+
+		if (Double.isNaN(this.beta))
+			beta = BETA[betaIdx];
+		else beta = this.beta;
+
+		return beta;
+	}
+	
+	public final double getP()
+	{
+		double p;
+		if (Double.isNaN(this.p))
+			p = (double)EXPECTED_NUMBER_OF_TERMS[expIdx] / termsArray.length;
+		else p = this.p;
+
+		return p;
+	}
+	
 	@Override
 	public double getScore()
 	{
 		double alpha;
 		double beta;
 		double p;
-		
-		if (Double.isNaN(this.alpha))
-			alpha = ALPHA[alphaIdx];
-		else alpha = this.alpha;
-
-		if (Double.isNaN(this.beta))
-			beta = BETA[betaIdx];
-		else beta = this.beta;
-		
-		if (Double.isNaN(this.p))
-			p = (double)EXPECTED_NUMBER_OF_TERMS[expIdx] / termsArray.length;
-		else p = this.p;
+	
+		alpha = getAlpha();
+		beta = getBeta();
+		p = getP();
 
 		double newScore2 = Math.log(alpha) * n10 + Math.log(1-alpha)*n00 + Math.log(1-beta)*n11 + Math.log(beta)*n01;
 
