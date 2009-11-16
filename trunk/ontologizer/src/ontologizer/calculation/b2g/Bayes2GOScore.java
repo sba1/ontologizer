@@ -14,22 +14,6 @@ import ontologizer.GOTermEnumerator;
 import ontologizer.go.TermID;
 
 /**
- * Basic class containing a mutable interger. Used as a replacement
- * for Integer in HashMaps.
- * 
- * @author Sebastian Bauer
- */
-class MutableInteger
-{
-	public int value;
-	
-	public MutableInteger(int value)
-	{
-		this.value = value;
-	}
-}
-
-/**
  * A basic container representing a set of genes 
  * 
  * @author Sebastian Bauer
@@ -243,11 +227,11 @@ abstract class Bayes2GOScore
 	public abstract void hiddenGeneActivated(int gid);
 	public abstract void hiddenGeneDeactivated(int gid);
 	
-//	public long currentTime;
+	public long currentTime;
 	
 	public void switchState(int toSwitch)
 	{
-//		long enterTime = System.nanoTime();
+		long enterTime = System.nanoTime();
 
 		TermID t = termsArray[toSwitch];
 		int [] geneIDs = termLinks[toSwitch].gid;
@@ -304,12 +288,12 @@ abstract class Bayes2GOScore
 			numInactiveTerms++;
 		}
 		
-//		{
-//			long ds = currentTime / 100000000;
-//			currentTime += System.nanoTime() - enterTime;
-//			if (currentTime / 100000000 != ds)
-//				System.out.println(currentTime / 1000000);
-//		}
+		{
+			long ds = currentTime / 100000000;
+			currentTime += System.nanoTime() - enterTime;
+			if (currentTime / 100000000 != ds)
+				System.out.println(currentTime / 1000000);
+		}
 	}
 
 	public void exchange(TermID t1, TermID t2)
