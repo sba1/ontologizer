@@ -42,59 +42,6 @@ class B2GTestParameter
 	static int MCMC_STEPS = 320000;
 }
 
-/**
- * A basic class to represent different settings parameter.
- *
- * @author sba
- *
- */
-abstract class B2GParam
-{
-	static public enum Type
-	{
-		FIXED,
-		EM,
-		MCMC
-	}
-
-	private Type type;
-
-	B2GParam(Type type)
-	{
-		this.type = type;
-	}
-
-	B2GParam(B2GParam p)
-	{
-		this.type = p.type;
-	}
-
-	public Type getType()
-	{
-		return type;
-	}
-
-	public boolean isFixed()
-	{
-		return type == Type.FIXED;
-	}
-
-	public boolean isMCMC()
-	{
-		return type == Type.MCMC;
-	}
-
-	public boolean isEM()
-	{
-		return type == Type.EM;
-	}
-
-	public void setType(Type type)
-	{
-		this.type = type;
-	}
-}
-
 class DoubleParam extends B2GParam
 {
 	private double val;
@@ -1001,13 +948,8 @@ public class Bayes2GOCalculation implements ICalculation
 	{
 		List<TermID> allTerms;
 
-		if (takePopulationAsReference)
-		{
-			allTerms = populationEnumerator.getAllAnnotatedTermsAsList();
-		} else
-		{
-			allTerms = studyEnumerator.getAllAnnotatedTermsAsList();
-		}
+		if (takePopulationAsReference) allTerms = populationEnumerator.getAllAnnotatedTermsAsList();
+		else allTerms = studyEnumerator.getAllAnnotatedTermsAsList();
 
 		Random rnd;
 		if (seed != 0)
@@ -1469,14 +1411,16 @@ public class Bayes2GOCalculation implements ICalculation
 //		ParentChildCalculation calc = new ParentChildCalculation();
 		Bayes2GOCalculation calc = new Bayes2GOCalculation();
 		calc.setSeed(1);
+		calc.setMcmcSteps(500000);
 
-//		calc.setAlpha(realAlpha);
-//		calc.setBeta(realBeta);
-//		calc.setExpectedNumber(4);
+		calc.setAlpha(realAlpha);
+		calc.setBeta(realBeta);
+		calc.setExpectedNumber(4);
 
-		calc.setAlpha(B2GParam.Type.MCMC);
-		calc.setBeta(B2GParam.Type.MCMC);
-		calc.setExpectedNumber(B2GParam.Type.MCMC);
+//		calc.setMcmcSteps(500000);
+//		calc.setAlpha(B2GParam.Type.MCMC);
+//		calc.setBeta(B2GParam.Type.MCMC);
+//		calc.setExpectedNumber(B2GParam.Type.MCMC);
 
 //		calc.setAlpha(B2GParam.Type.EM);
 //		calc.setBeta(B2GParam.Type.EM);
