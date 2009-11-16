@@ -155,9 +155,11 @@ public class GOGraph implements Iterable<Term>
 	/** We also pack a TermContainer */
 	private TermContainer goTermContainer;
 
-	/** The artificial root term */
+	/** The (possibly) artificial root term */
 	private Term rootGOTerm;
 
+	/** Level 1 terms */
+	private List<Term> level1terms = new ArrayList<Term>();
 
 	/** Available subsets */
 	private HashSet <Subset> availableSubsets = new HashSet<Subset>();
@@ -195,7 +197,7 @@ public class GOGraph implements Iterable<Term>
 			}
 		}
 
-		List<Term> level1terms = new ArrayList<Term>();
+		level1terms = new ArrayList<Term>();
 
 		/* Find the terms without any ancestors */
 		for (Term goTerm : graph)
@@ -724,6 +726,16 @@ public class GOGraph implements Iterable<Term>
 			walkToSource(term, visitor);
 		}
 		return nodeSet;
+	}
+
+	/**
+	 * Returns all level 1 terms.
+	 *
+	 * @return
+	 */
+	public Collection<Term> getLevel1Terms()
+	{
+		return level1terms;
 	}
 
 	/**
