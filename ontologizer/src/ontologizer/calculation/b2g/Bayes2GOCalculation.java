@@ -570,7 +570,7 @@ public class Bayes2GOCalculation implements ICalculation
 
 	public String getName()
 	{
-		return "Bayes2GO";
+		return "MGSA";
 	}
 
 	public static GOGraph graph;
