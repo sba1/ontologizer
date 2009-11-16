@@ -51,11 +51,11 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 	private int n10;
 	private int n11;
 
-	private BigInteger totalN00 = new BigInteger("0");
-	private BigInteger totalN01 = new BigInteger("0");
-	private BigInteger totalN10 = new BigInteger("0");
-	private BigInteger totalN11 = new BigInteger("0");
-	private BigInteger totalT = new BigInteger("0");
+	private long totalN00;
+	private long totalN01;
+	private long totalN10;
+	private long totalN11;
+	private long totalT;
 
 	public void setAlpha(double alpha)
 	{
@@ -258,46 +258,40 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 	{
 		super.record();
 
-		totalN00 = totalN00.add(new BigInteger(new String(n00 +"")));
-		totalN01 = totalN01.add(new BigInteger(new String(n01 +"")));
-		totalN10 = totalN10.add(new BigInteger(new String(n10 +"")));
-		totalN11 = totalN11.add(new BigInteger(new String(n11 +"")));
+		totalN00 += n00;
+		totalN01 += n01;
+		totalN10 += n10;
+		totalN11 += n11;
 
 		totalAlpha[alphaIdx]++;
 		totalBeta[betaIdx]++;
 		totalExp[expIdx]++;
-
-		totalT = totalT.add(new BigInteger(new String(activeTerms.size() + "")));
+		totalT += activeTerms.size();
 	}
 
 	public double getAvgN00()
 	{
-		BigDecimal avgN00 = new BigDecimal(totalN00.toString());
-		return avgN00.divide(new BigDecimal(Integer.toString(numRecords)),15,BigDecimal.ROUND_HALF_EVEN).doubleValue();
+		return (double)totalN00 / numRecords;
 	}
 
 	public double getAvgN01()
 	{
-		BigDecimal avgN01 = new BigDecimal(totalN01.toString());
-		return avgN01.divide(new BigDecimal(Integer.toString(numRecords)),15,BigDecimal.ROUND_HALF_EVEN).doubleValue();
+		return (double)totalN01 / numRecords;
 	}
 
 	public double getAvgN10()
 	{
-		BigDecimal avgN10 = new BigDecimal(totalN10.toString());
-		return avgN10.divide(new BigDecimal(Integer.toString(numRecords)),15,BigDecimal.ROUND_HALF_EVEN).doubleValue();
+		return (double)totalN10 / numRecords;
 	}
 
 	public double getAvgN11()
 	{
-		BigDecimal avgN11 = new BigDecimal(totalN11.toString());
-		return avgN11.divide(new BigDecimal(Integer.toString(numRecords)),15,BigDecimal.ROUND_HALF_EVEN).doubleValue();
+		return (double)totalN11 / numRecords;
 	}
 	
 	public double getAvgT()
 	{
-		BigDecimal avgT = new BigDecimal(totalT.toString());
-		return avgT.divide(new BigDecimal(Integer.toString(numRecords)),15,BigDecimal.ROUND_HALF_EVEN).doubleValue();
+		return (double)totalT / numRecords;
 	}
 }
 
