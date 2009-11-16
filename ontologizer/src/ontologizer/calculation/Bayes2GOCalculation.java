@@ -85,18 +85,17 @@ abstract class Bayes2GOScore
 	protected HashMap<TermID,Integer> term2InactiveTermsIdx = new HashMap<TermID,Integer>();
 
 
-	public Bayes2GOScore(GOTermEnumerator populationEnumerator, Set<ByteString> observedActiveGenes)
+	public Bayes2GOScore(List<TermID> termList, GOTermEnumerator populationEnumerator, Set<ByteString> observedActiveGenes)
 	{
-		this(null,populationEnumerator, observedActiveGenes);
+		this(null,termList, populationEnumerator, observedActiveGenes);
 	}
 	
-	public Bayes2GOScore(Random rnd, GOTermEnumerator populationEnumerator, Set<ByteString> observedActiveGenes)
+	public Bayes2GOScore(Random rnd, List<TermID> termList, GOTermEnumerator populationEnumerator, Set<ByteString> observedActiveGenes)
 	{
 		int i;
 
 		this.rnd = rnd;
 		
-		List<TermID> termList = populationEnumerator.getAllAnnotatedTermsAsList();
 		isActive = new boolean[termList.size()];
 		termsArray = new TermID[termList.size()];
 		inactiveTermsArray = new TermID[termList.size()];
@@ -159,9 +158,9 @@ class VariableAlphaBetaScore extends Bayes2GOScore
 	private double alpha;
 	private double beta;
 
-	public VariableAlphaBetaScore(Random rnd, GOTermEnumerator populationEnumerator, Set<ByteString> observedActiveGenes, double alpha, double beta)
+	public VariableAlphaBetaScore(Random rnd, List<TermID> termList, GOTermEnumerator populationEnumerator, Set<ByteString> observedActiveGenes, double alpha, double beta)
 	{
-		super(rnd, populationEnumerator, observedActiveGenes);
+		super(rnd, termList, populationEnumerator, observedActiveGenes);
 		
 		this.alpha = alpha;
 		this.beta = beta;
@@ -301,9 +300,9 @@ class VariableAlphaBetaScore extends Bayes2GOScore
  */
 class FixedAlphaBetaScore extends Bayes2GOScore
 {
-	public FixedAlphaBetaScore(Random rnd, GOTermEnumerator populationEnumerator, Set<ByteString> observedActiveGenes)
+	public FixedAlphaBetaScore(Random rnd, List<TermID> termList, GOTermEnumerator populationEnumerator, Set<ByteString> observedActiveGenes)
 	{
-		super(rnd, populationEnumerator, observedActiveGenes);
+		super(rnd, termList, populationEnumerator, observedActiveGenes);
 	}
 }
 
@@ -647,7 +646,7 @@ public class Bayes2GOCalculation implements ICalculation
 			HashMap<ByteString, Double> llr,
 			double p)
 	{
-		List<TermID> allTerms = populationEnumerator.getAllAnnotatedTermsAsList();
+		List<TermID> allTerms = studyEnumerator.getAllAnnotatedTermsAsList();
 
 		Random rnd;
 		if (seed != 0)
@@ -657,7 +656,7 @@ public class Bayes2GOCalculation implements ICalculation
 		}
 		else rnd = new Random();
 
-		VariableAlphaBetaScore bayesScore = new VariableAlphaBetaScore(rnd, populationEnumerator, studySet.getAllGeneNames(), alpha, beta);
+		VariableAlphaBetaScore bayesScore = new VariableAlphaBetaScore(rnd, allTerms, populationEnumerator, studySet.getAllGeneNames(), alpha, beta);
 
 
 //		score.
