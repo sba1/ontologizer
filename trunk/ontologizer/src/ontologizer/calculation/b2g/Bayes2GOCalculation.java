@@ -24,9 +24,11 @@ import ontologizer.calculation.AbstractGOTermProperties;
 import ontologizer.calculation.EnrichedGOTermsResult;
 import ontologizer.calculation.ICalculation;
 import ontologizer.calculation.ICalculationProgress;
+import ontologizer.calculation.ParentChildCalculation;
 import ontologizer.calculation.ProbabilisticCalculation;
 import ontologizer.calculation.TermForTermCalculation;
 import ontologizer.calculation.TermForTermGOTermProperties;
+import ontologizer.calculation.TopologyWeightedCalculation;
 import ontologizer.go.GOGraph;
 import ontologizer.go.ParentTermID;
 import ontologizer.go.Term;
@@ -38,6 +40,7 @@ import ontologizer.parser.ValuedItemAttribute;
 import ontologizer.statistics.AbstractTestCorrection;
 import ontologizer.statistics.Bonferroni;
 import ontologizer.statistics.None;
+import ontologizer.util.Util;
 import ontologizer.worksets.WorkSet;
 import ontologizer.worksets.WorkSetLoadThread;
 
@@ -81,7 +84,7 @@ public class Bayes2GOCalculation implements ICalculation
 	private static Logger logger = Logger.getLogger(Bayes2GOCalculation.class.getCanonicalName());
 
 	private long seed = 0;
-
+	
 	private boolean usePrior = true;
 
 	private DoubleParam alpha = new DoubleParam(B2GParam.Type.EM);
@@ -130,7 +133,6 @@ public class Bayes2GOCalculation implements ICalculation
 		if (alpha < 0.000001) alpha = 0.000001;
 		if (alpha > 0.999999) alpha = 0.999999;
 		this.alpha.setValue(alpha);
-//		this.alpha =  new DoubleParam(B2GParam.Type.MCMC); 
 	}
 	
 	/**
@@ -143,7 +145,6 @@ public class Bayes2GOCalculation implements ICalculation
 		if (beta < 0.000001) beta = 0.000001;
 		if (beta > 0.999999) beta = 0.999999;
 		this.beta.setValue(beta);
-//		this.beta =  new DoubleParam(B2GParam.Type.MCMC);
 	}
 	
 	/**
@@ -157,6 +158,18 @@ public class Bayes2GOCalculation implements ICalculation
 	}
 
 	/**
+	 * Sets the bounds of the alpha parameter.
+	 * 
+	 * @param min
+	 * @param max
+	 */
+	public void setAlphaBounds(double min, double max)
+	{
+		this.alpha.setMin(min);
+		this.alpha.setMax(max);
+	}
+
+	/**
 	 * Sets the type of the beta parameter.
 	 * 
 	 * @param beta
@@ -164,6 +177,18 @@ public class Bayes2GOCalculation implements ICalculation
 	public void setBeta(B2GParam.Type beta)
 	{
 		this.beta.setType(beta);
+	}
+
+	/**
+	 * Sets the bounds of the beta parameter.
+	 * 
+	 * @param min
+	 * @param max
+	 */
+	public void setBetaBounds(double min, double max)
+	{
+		this.beta.setMin(min);
+		this.beta.setMax(max);
 	}
 
 	/**
@@ -399,12 +424,29 @@ public class Bayes2GOCalculation implements ICalculation
 				calculationProgress.init(maxSteps);
 	
 			double score = bayesScore.getScore();
-			
+
+			logger.info("Score of empty set: " + score);
+
+			/* Provide a starting point */
+			{
+				double pForStart = (double)bayesScore.EXPECTED_NUMBER_OF_TERMS[rnd.nextInt(bayesScore.EXPECTED_NUMBER_OF_TERMS.length)] / bayesScore.populationEnumerator.getTotalNumberOfAnnotatedTerms();
+				
+				for (int j=0;j<allTerms.size();j++)
+					if (Math.random() < pForStart) bayesScore.switchState(j);
+				
+				logger.info("Starting with " + bayesScore.activeTerms.size() + " terms (p=" + pForStart + ")");
+			}
+
+
+			logger.info("Score of initial set: " + score);
+
 			double maxScore = Double.NEGATIVE_INFINITY;
 			ArrayList<TermID> maxScoredTerms = new ArrayList<TermID>();
 			
-			System.out.println("Initial score: " + score);
 			
+//			bayesScore.EXPECTED_NUMBER_OF_TERMS
+
+
 			long start = System.currentTimeMillis();
 			
 			for (int t=0;t<maxSteps;t++)
@@ -450,6 +492,17 @@ public class Bayes2GOCalculation implements ICalculation
 				{
 					score = newScore;
 					numAccepts++;
+					
+					
+//					System.out.println("accept after " + t + " steps.");
+//					
+//					try {
+//						Thread.sleep(1000);
+//					} catch (InterruptedException e) {
+//						// TODO Auto-generated catch block
+//						e.printStackTrace();
+//					}
+					
 				}
 				if (DEBUG) System.out.println();
 	
@@ -689,7 +742,7 @@ public class Bayes2GOCalculation implements ICalculation
 
 		/* ***************************************************************** */
 
-		Random rnd = new Random(6);
+		Random rnd = new Random(8);
 		
 		/* Simulation */
 
@@ -815,8 +868,8 @@ public class Bayes2GOCalculation implements ICalculation
 
 		//}
 
-		double p = (double)wantedActiveTerms.size() / allEnumerator.getTotalNumberOfAnnotatedTerms();
-
+//		double p = (double)wantedActiveTerms.size() / allEnumerator.getTotalNumberOfAnnotatedTerms();
+//
 //		ProbabilisticCalculation calc = new ProbabilisticCalculation();
 //		calc.setDefaultP(1- realBeta);
 //		calc.setDefaultQ(realAlpha);
@@ -825,20 +878,22 @@ public class Bayes2GOCalculation implements ICalculation
 //		TermForTermCalculation calc = new TermForTermCalculation();
 //		ParentChildCalculation calc = new ParentChildCalculation();
 		Bayes2GOCalculation calc = new Bayes2GOCalculation();
-//		calc.setSeed(2); /* Finds optimum */
-		calc.setSeed(68587); /* Finds a suboptimum */
-//		calc.setMcmcSteps(1000000);
-//		calc.setAlpha(B2GParam.Type.MCMC);
-//		calc.setBeta(B2GParam.Type.MCMC);
-//		calc.setExpectedNumber(B2GParam.Type.MCMC);
+//		calc.setSeed(1); /* Finds a optimum */
+//		calc.setSeed(14); /* Finds a sub optimum (score 6845.27)*/
+
+//		calc.setSeed(121);
+//		calc.setMcmcSteps(50000);
+////		calc.setAlpha(B2GParam.Type.MCMC);
+////		calc.setBeta(B2GParam.Type.MCMC);
+////		calc.setExpectedNumber(B2GParam.Type.MCMC);
 		calc.setAlpha(realAlpha);
 		calc.setBeta(realBeta);
 		calc.setExpectedNumber(wantedActiveTerms.size());
 
 //		calc.setMcmcSteps(500000);
-//		calc.setAlpha(B2GParam.Type.MCMC);
-//		calc.setBeta(B2GParam.Type.MCMC);
-//		calc.setExpectedNumber(B2GParam.Type.MCMC);
+		calc.setAlpha(B2GParam.Type.MCMC);
+		calc.setBeta(B2GParam.Type.MCMC);
+		calc.setExpectedNumber(B2GParam.Type.MCMC);
 
 //		calc.setAlpha(B2GParam.Type.EM);
 //		calc.setBeta(B2GParam.Type.EM);
@@ -850,6 +905,95 @@ public class Bayes2GOCalculation implements ICalculation
 		
 		
 		evaluate(wantedActiveTerms, allGenes, newStudyGenes, allEnumerator, studySetEnumerator, calc);
+		
+		/* Draw the basic example figure */
+		final int MAX_ITER = 20;
+		
+		long rank_sum = 0;
+		double marg_sum = 0;
+
+		double [] marg = new double[MAX_ITER];
+		int [] rank = new int[MAX_ITER];
+		long [] seed = new long[MAX_ITER];
+	
+		final HashMap<TermID,Double> t2marg = new HashMap<TermID,Double>();
+//		int [][] allMargs = null;
+		
+		Random seedRandom = new Random();
+		
+		for (int i=0;i<MAX_ITER;i++)
+		{
+			seed[i] = seedRandom.nextLong();
+
+			Bayes2GOCalculation calc2 = new Bayes2GOCalculation();
+			calc2.setSeed(seed[i]);
+			calc2.setAlpha(realAlpha);
+			calc2.setBeta(realBeta);
+			calc2.setExpectedNumber(wantedActiveTerms.size());
+
+			EnrichedGOTermsResult result = calc2.calculateStudySet(graph, assoc, allGenes, newStudyGenes, new None());
+			
+			ArrayList<AbstractGOTermProperties> resultList = new ArrayList<AbstractGOTermProperties>();
+
+			for (AbstractGOTermProperties prop : result)
+			{
+				double tMarg = 1 - prop.p;
+				Double cMarg = t2marg.get(prop.goTerm.getID());
+				if (cMarg != null)
+					tMarg += cMarg;
+				t2marg.put(prop.goTerm.getID(), tMarg);
+				
+				resultList.add(prop);
+			}
+			Collections.sort(resultList);
+
+			/* Determine the rank of a special term */
+			int r = 1;
+			for (AbstractGOTermProperties prop : resultList)
+			{
+				if (prop.goTerm.getID().id == 30011)
+				{
+					marg[i] = (1 - prop.p);
+					rank[i] = r;
+					break;
+				}
+				r++;
+			}
+		}
+		
+		System.out.println("rank\tmarg\tseed");
+		for (int i=0;i<MAX_ITER;i++)
+			System.out.println(rank[i] + "\t" + marg[i] + "\t" + seed[i]);
+
+		GODOTWriter.writeDOT(graph, new File("toy-result-avg.dot"), null, wantedActiveTerms.keySet(), new IDotNodeAttributesProvider()
+		{
+			public String getDotNodeAttributes(TermID id)
+			{
+				StringBuilder str = new StringBuilder(200);
+				str.append("label=\"");
+				
+				str.append(Util.wrapLine(graph.getGOTerm(id).getName(),"\\n",20));
+				
+				str.append("\\n");
+				str.append(studySetEnumerator.getAnnotatedGenes(id).totalAnnotatedCount() + "/" + allEnumerator.getAnnotatedGenes(id).totalAnnotatedCount());
+				str.append("\\n");
+				if (t2marg.get(id) != null)
+					str.append(String.format("P(T=1)=%g", ((Double)t2marg.get(id)/ MAX_ITER)));
+
+				str.append("\"");
+				if (wantedActiveTerms.containsKey(id))
+				{
+					str.append("style=\"filled\" color=\"gray\"");
+				}
+
+//				if (result.getGOTermProperties(id) != null && result.getGOTermProperties(id).p_adjusted < 0.999)
+//				{
+//					str.append(" penwidth=\"2\"");
+//				}
+				return str.toString();
+			}
+		});
+
 	}
 
 	private static void evaluate(final HashMap<TermID,Double> wantedActiveTerms,
