@@ -89,7 +89,7 @@ decode.parameter.setting<-function(name)
 	}
 }
 
-plot.roc<-function(d)
+plot.roc<-function(d,alpha=NA,beta=NA)
 {
 	nruns<-length(unique(d$run))
 
@@ -125,7 +125,7 @@ plot.roc<-function(d)
 #plot(perf, col="red",main=sprintf("comparison for %d runs (AUC=%g)",nruns,auc),downsampling=100)
 	name<-"Term for Term"
 	l<-append(l,sprintf("%s (%g)",name,auc))
-	plot(perf, col=colors[1],main="Comparison",downsampling=100)
+	plot(perf, col=colors[1],main=sprintf("Comparison (alpha=%g,beta=%g)",alpha,beta),downsampling=100)
 
 	pred<-prediction(1-d$p.pcu,d$label)
 	perf<-performance(pred, measure = "tpr", x.measure = "fpr") 
@@ -176,16 +176,58 @@ plot.roc<-function(d)
 	l<-append(l,sprintf("%s (%g)",name,auc))
 	plot(perf, col=colors[7],downsampling=100, add=TRUE)
 
-	legend("right",	col=colors, legend = unlist(l), fill=colors)
+	legend("bottomright",	col=colors, legend = unlist(l), fill=colors)
 }
 
-pdf(file="result.pdf",height=6,width=6)
-par(mfrow=c(1,1))
-plot.roc(d)
-dev.off()
-system("evince result.pdf")
+s<-split(d,list(d$alpha,d$beta))
+
+lapply(s,function(d) {
+	alpha<-unique(d$alpha)
+	beta<-unique(d$beta)
+
+	filename<-sprintf("result-roc-a%g-b%g.pdf",alpha,beta)
+	pdf(file=filename,height=5.5,width=5.5)
+	par(cex=1.5)
+	par(mfrow=c(1,1))
+	plot.roc(d)
+	dev.off()
+
+	filename<-sprintf("result-roc-a%g-b%g-senseful.pdf",alpha,beta)
+	pdf(file=filename,height=5.5,width=5.5)
+	par(cex=1.5)
+	par(mfrow=c(1,1))
+	plot.roc(subset(d,d$senseful==1))
+	dev.off()
+
+	filename<-sprintf("result-roc-a%g-b%g-no-restriction.pdf",alpha,beta)
+	pdf(file=filename,height=5.5,width=5.5)
+	par(cex=1.5)
+	par(mfrow=c(1,1))
+	plot.roc(subset(d,d$senseful==0))
+	dev.off()
+});
 
 
+
+
+	pdf(file="result-roc.pdf",height=5.5,width=5.5)
+	par(cex=1.5)
+	par(mfrow=c(1,1))
+	plot.roc(d)
+	dev.off()
+	system("evince result.pdf")
+	
+	pdf(file="result-roc-senseful.pdf",height=5.5,width=5.5)
+	par(cex=1.5)
+	par(mfrow=c(1,1))
+	plot.roc(subset(d,d$senseful==1))
+	dev.off()
+	
+	pdf(file="result-roc-notsenseful.pdf",height=5.5,width=5.5)
+	par(cex=1.5)
+	par(mfrow=c(1,1))
+	plot.roc(subset(d,d$senseful==0))
+	dev.off()
 
 
 
