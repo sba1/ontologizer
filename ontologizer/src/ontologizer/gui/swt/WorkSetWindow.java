@@ -155,13 +155,13 @@ public class WorkSetWindow extends ApplicationWindow
 
 			TreeItem oboTi = new TreeItem(ti, 0);
 			oboTi.setText(0, "Definitions");
-			oboTi.setText(1, FileCache.getPathInfo(obo));
+			oboTi.setText(1, FileCache.getDownloadTime(obo));
 			oboTi.setText(2, obo);
 			oboTi.setData(0);
 
 			TreeItem associationTi = new TreeItem(ti,0);
 			associationTi.setText("Association");
-			associationTi.setText(1, FileCache.getPathInfo(association));
+			associationTi.setText(1, FileCache.getDownloadTime(association));
 			associationTi.setText(2,association);
 			associationTi.setData(1);
 
