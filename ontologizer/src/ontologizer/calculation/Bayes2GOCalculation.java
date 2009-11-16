@@ -9,6 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.Map.Entry;
 
 import ontologizer.ByteString;
@@ -35,13 +36,94 @@ import ontologizer.worksets.WorkSetLoadThread;
 /**
  * The base class of bayes2go Score.
  *
+ * For efficiency reasons terms and genes are represented by own ids.
+ *
  * @author Sebastian Bauer
  */
 abstract class Bayes2GOScore
 {
+	/** Current score */
 	protected double score;
 
+	/** Source of randomness */
+	protected Random rnd;
+
+	protected GOTermEnumerator populationEnumerator;
+	protected Set<ByteString> population;
+	protected Set<ByteString> observedActiveGenes;
+
+	/** Array of terms */
+	protected TermID [] termsArray;
+
+	/** Indicates the activation state of a term */
+	protected boolean [] isActive;
+
+	/** Contains active terms */
+	protected LinkedHashSet<TermID> activeTerms = new LinkedHashSet<TermID>();
+
+	/** Contains genes that are active according to the active terms */
+	protected LinkedHashMap<ByteString,Integer> activeHiddenGenes = new LinkedHashMap<ByteString,Integer>();
+
+	/** Maps the term to the index in allTermsArray */
+	protected HashMap<TermID,Integer> term2TermsIdx = new HashMap<TermID,Integer>();
+
+	/** The current number of inactive terms */
+	protected int numInactiveTerms;
+
 	/**
+	 * An array representing the inactive terms.
+	 *
+	 * Note that only the first elements as given
+	 * by the attribute numInactiveTerms are the
+	 * inactive terms.
+	 */
+	protected TermID[] inactiveTermsArray;
+
+	/**
+	 * From a term to an index of the inactiveTermsArray.
+	 */
+	protected HashMap<TermID,Integer> term2InactiveTermsIdx = new HashMap<TermID,Integer>();
+
+
+	public Bayes2GOScore(GOTermEnumerator populationEnumerator, Set<ByteString> observedActiveGenes)
+	{
+		this(null,populationEnumerator, observedActiveGenes);
+	}
+
+	public Bayes2GOScore(Random rnd, GOTermEnumerator populationEnumerator, Set<ByteString> observedActiveGenes)
+	{
+		int i;
+
+		this.rnd = rnd;
+
+		List<TermID> termList = populationEnumerator.getAllAnnotatedTermsAsList();
+		isActive = new boolean[termList.size()];
+		termsArray = new TermID[termList.size()];
+		inactiveTermsArray = new TermID[termList.size()];
+		numInactiveTerms = termList.size();
+		i=0;
+		for (TermID tid : termList)
+		{
+			term2TermsIdx.put(tid,i);
+			termsArray[i]=tid;
+
+			inactiveTermsArray[i] = tid;
+			term2InactiveTermsIdx.put(tid, i);
+
+			i++;
+		}
+
+		this.populationEnumerator = populationEnumerator;
+
+		activeTerms = new LinkedHashSet<TermID>();
+		activeHiddenGenes = new LinkedHashMap<ByteString,Integer>();
+
+		population = populationEnumerator.getGenes();
+		this.observedActiveGenes = observedActiveGenes;
+	}
+
+	/**
+	 * Returns the score of the current state.
 	 *
 	 * @return
 	 */
@@ -50,8 +132,9 @@ abstract class Bayes2GOScore
 		return score;
 	}
 
-	public double proposeState()
+	public double proposeNewState()
 	{
+
 		return score;
 	}
 
@@ -69,10 +152,146 @@ abstract class Bayes2GOScore
  * Score of a setting in which alpha and beta are known.
  *
  * @author Sebastian Bauer
- *
  */
 class VariableAlphaBetaScore extends Bayes2GOScore
 {
+	private HashMap<ByteString, Double> llr = new HashMap<ByteString,Double>();
+	private double alpha;
+	private double beta;
+
+	public VariableAlphaBetaScore(Random rnd, GOTermEnumerator populationEnumerator, Set<ByteString> observedActiveGenes, double alpha, double beta)
+	{
+		super(rnd, populationEnumerator, observedActiveGenes);
+
+		this.alpha = alpha;
+		this.beta = beta;
+
+		calcLLR();
+	}
+
+	public void calcLLR()
+	{
+		for (ByteString g : population)
+		{
+			if (observedActiveGenes.contains(g))
+				llr.put(g, Math.log(1-beta) - Math.log(alpha)); // P(oi=1|h=1) / P(oi=1|h=0)
+			else
+				llr.put(g, Math.log(beta) - Math.log(1-alpha)); // P(oi=0|h=1) / P(oi=0|h=0)
+		}
+
+	}
+
+	private int proposalSwitch;
+	private TermID proposalT1;
+	private TermID proposalT2;
+
+	@Override
+	public double proposeNewState()
+	{
+		long oldPossibilities = getNeighborhoodSize();
+
+		proposalSwitch = -1;
+		proposalT1 = null;
+		proposalT2 = null;
+
+		long choose = Math.abs(rnd.nextLong()) % oldPossibilities;
+
+		if (choose < termsArray.length)
+		{
+			/* on/off */
+			proposalSwitch = (int)choose;
+			switchState(proposalSwitch);
+		}	else
+		{
+			long base = choose - termsArray.length;
+
+			int activeTermPos = (int)(base / numInactiveTerms);
+			int inactiveTermPos = (int)(base % numInactiveTerms);
+
+			for (TermID tid : activeTerms)
+				if (activeTermPos-- == 0) proposalT1 = tid;
+			proposalT2 = inactiveTermsArray[inactiveTermPos];
+
+			exchange(proposalT1, proposalT2);
+		}
+		return score;
+	}
+
+	@Override
+	public void undoProposal()
+	{
+		if (proposalSwitch != -1)	switchState(proposalSwitch);
+		else exchange(proposalT2, proposalT1);
+	}
+
+	public void switchState(int toSwitch)
+	{
+		TermID t = termsArray[toSwitch];
+		isActive[toSwitch] = !isActive[toSwitch];
+		if (isActive[toSwitch])
+		{
+			/* A term is added */
+			activeTerms.add(t);
+
+			/* Update hiddenActiveGenes */
+			for (ByteString gene : populationEnumerator.getAnnotatedGenes(t).totalAnnotated)
+			{
+				Integer cnt = activeHiddenGenes.get(gene);
+				if (cnt == null)
+				{
+					score += llr.get(gene);
+					activeHiddenGenes.put(gene, 1);
+				} else
+				{
+					activeHiddenGenes.put(gene, cnt + 1);
+				}
+			}
+
+			int inactiveIndex = term2InactiveTermsIdx.get(t);
+
+			if (inactiveIndex != (numInactiveTerms - 1))
+			{
+				inactiveTermsArray[inactiveIndex] = inactiveTermsArray[numInactiveTerms - 1];
+				term2InactiveTermsIdx.put(inactiveTermsArray[inactiveIndex], inactiveIndex);
+			}
+
+			term2InactiveTermsIdx.remove(t);
+			numInactiveTerms--;
+		} else
+		{
+			/* Remove a term */
+			activeTerms.remove(t);
+
+			/* Update hiddenActiveGenes */
+			for (ByteString gene : populationEnumerator.getAnnotatedGenes(t).totalAnnotated)
+			{
+				int cnt = activeHiddenGenes.get(gene);
+				cnt--;
+				if (cnt == 0)
+				{
+					activeHiddenGenes.remove(gene);
+					score -= llr.get(gene);
+				} else activeHiddenGenes.put(gene, cnt);
+			}
+
+			/* Append the new term at the end of the index list */
+			inactiveTermsArray[numInactiveTerms] = t;
+			term2InactiveTermsIdx.put(t, numInactiveTerms);
+			numInactiveTerms++;
+		}
+	}
+
+	public void exchange(TermID t1, TermID t2)
+	{
+		switchState(term2TermsIdx.get(t1));
+		switchState(term2TermsIdx.get(t2));
+	}
+
+	public long getNeighborhoodSize()
+	{
+		return termsArray.length + activeTerms.size() * numInactiveTerms;
+	}
+
 }
 
 /**
@@ -82,7 +301,10 @@ class VariableAlphaBetaScore extends Bayes2GOScore
  */
 class FixedAlphaBetaScore extends Bayes2GOScore
 {
-
+	public FixedAlphaBetaScore(Random rnd, GOTermEnumerator populationEnumerator, Set<ByteString> observedActiveGenes)
+	{
+		super(rnd, populationEnumerator, observedActiveGenes);
+	}
 }
 
 /**
@@ -425,7 +647,7 @@ public class Bayes2GOCalculation implements ICalculation
 			HashMap<ByteString, Double> llr,
 			double p)
 	{
-		List<TermID> allTerms = studyEnumerator.getAllAnnotatedTermsAsList();
+		List<TermID> allTerms = populationEnumerator.getAllAnnotatedTermsAsList();
 
 		Random rnd;
 		if (seed != 0)
@@ -435,8 +657,13 @@ public class Bayes2GOCalculation implements ICalculation
 		}
 		else rnd = new Random();
 
-		State state = new State(allTerms, populationEnumerator);
-		state.llr = llr;
+		VariableAlphaBetaScore bayesScore = new VariableAlphaBetaScore(rnd, populationEnumerator, studySet.getAllGeneNames(), alpha, beta);
+
+
+//		score.
+
+//		State state = new State(allTerms, populationEnumerator);
+//		state.llr = llr;
 //		state.observedGenes = observedGenes;
 
 		/* Stores the terms activation counts */
@@ -455,8 +682,8 @@ public class Bayes2GOCalculation implements ICalculation
 //		activeTerms.add(new TermID("GO:0001505")); /* regulation of neuro transmitter levels */
 
 
-		for (TermID t : state.activeTerms)
-			state.switchState(state.term2allTermsIdx.get(t));
+//		for (TermID t : state.activeTerms)
+//			state.switchState(state.term2allTermsIdx.get(t));
 
 		int maxSteps = 320000;
 		int burnin = 20000;
@@ -469,7 +696,8 @@ public class Bayes2GOCalculation implements ICalculation
 		if (calculationProgress != null)
 			calculationProgress.init(maxSteps);
 
-		double score = score(llr, state.activeTerms, populationEnumerator, p);
+//		double score = score(llr, state.activeTerms, populationEnumerator, p);
+		double score = bayesScore.getScore();
 
 		double maxScore = Double.MIN_VALUE;
 		ArrayList<TermID> maxScoredTerms = new ArrayList<TermID>();
@@ -484,13 +712,13 @@ public class Bayes2GOCalculation implements ICalculation
 			if (score > maxScore)
 			{
 				maxScore = score;
-				maxScoredTerms = new ArrayList<TermID>(state.activeTerms);
+				maxScoredTerms = new ArrayList<TermID>(bayesScore.activeTerms);
 			}
 
 			long now = System.currentTimeMillis();
 			if (now - start > 5000)
 			{
-				System.out.println((t*100/maxSteps) + "% (score=" + score +" maxScore=" + maxScore + " #terms="+state.activeTerms.size()+
+				System.out.println((t*100/maxSteps) + "% (score=" + score +" maxScore=" + maxScore + " #terms="+bayesScore.activeTerms.size()+
 									" accept/reject=" + String.format("%g",(double)numAccepts / (double)numRejects) +
 									" accept/steps=" + String.format("%g",(double)numAccepts / (double)t) +
 									" p=" + p + " noPrior=" + noPrior + ")");
@@ -500,88 +728,95 @@ public class Bayes2GOCalculation implements ICalculation
 					calculationProgress.update(t);
 			}
 
-			long oldPossibilities;
-
-			/* The number of possibilities is, on/off plus the number of replacements */
-			oldPossibilities = state.allTermsArray.length + state.activeTerms.size() * state.numInactiveTerms;
-
-			int toSwitch = -1;
-			TermID t1 = null;
-			TermID t2 = null;
-			long choose = Math.abs(rnd.nextLong()) % oldPossibilities;
-
-			if (choose < state.allTermsArray.length)
-			{
-				/* on/off */
-				toSwitch = (int)choose;
-				state.switchState(toSwitch);
-			}	else
-			{
-				long base = choose - state.allTermsArray.length;
-
-				int activeTermPos = (int)(base / state.numInactiveTerms);
-				int inactiveTermPos = (int)(base % state.numInactiveTerms);
-
-				for (TermID tid : state.activeTerms)
-					if (activeTermPos-- == 0) t1 = tid;
-				t2 = state.inactiveTermsArray[inactiveTermPos];
-
-				state.exchange(t1, t2);
-			}
+			long oldPossibilities = bayesScore.getNeighborhoodSize();
+			bayesScore.proposeNewState();
+			double newScore = bayesScore.getScore();
+			long newPossibilities = bayesScore.getNeighborhoodSize();
 
 
-			long newPossibilities = state.allTermsArray.length + state.activeTerms.size() * state.numInactiveTerms;
-
-//			double newScore = score(llr, state.activeTerms, populationEnumerator, p);
-//			double newScore = scoreFast(llr, state, p);
-			double newScore = state.llScore;
-
-			{
-//				double newScore2 =  Math.log(alpha);
-
-				HashSet<ByteString> activeAgreement = new HashSet<ByteString>(state.hiddenActiveGenes.keySet());
-				activeAgreement.retainAll(studySet.getAllGeneNames());
-
-				int n11 = activeAgreement.size();
-				int n10 = studySet.getGeneCount() - n11;
-
-				HashSet<ByteString> inactiveAgreement = new HashSet<ByteString>(populationSet.getAllGeneNames());
-				inactiveAgreement.removeAll(studySet.getAllGeneNames());
-				inactiveAgreement.removeAll(state.hiddenActiveGenes.keySet());
-
-				int n00 = inactiveAgreement.size();
-				int n01 = populationSet.getGeneCount() - studySet.getGeneCount() - n00;
-
-				double newScore2 = Math.log(alpha) * n10 + Math.log(1-alpha)*n11 + Math.log(1-beta)*n00 + Math.log(beta)*n01;
-
-
-				newScore2 -= Math.log(alpha) * studySet.getGeneCount() + Math.log(1-beta)* (populationSet.getGeneCount() - studySet.getGeneCount());
-
-				System.out.println(newScore + "  " + newScore2 + " n10=" + n10 + " n11="+n11 + " n01=" + n01 + " n00=" + n00);
-			}
-
-			if (!noPrior) newScore += state.activeTerms.size() * Math.log(p/(1.0-p));
-
+//
+//			long oldPossibilities;
+//
+//			/* The number of possibilities is, on/off plus the number of replacements */
+//			oldPossibilities = state.allTermsArray.length + state.activeTerms.size() * state.numInactiveTerms;
+//
+//			int toSwitch = -1;
+//			TermID t1 = null;
+//			TermID t2 = null;
+//			long choose = Math.abs(rnd.nextLong()) % oldPossibilities;
+//
+//			if (choose < state.allTermsArray.length)
+//			{
+//				/* on/off */
+//				toSwitch = (int)choose;
+//				state.switchState(toSwitch);
+//			}	else
+//			{
+//				long base = choose - state.allTermsArray.length;
+//
+//				int activeTermPos = (int)(base / state.numInactiveTerms);
+//				int inactiveTermPos = (int)(base % state.numInactiveTerms);
+//
+//				for (TermID tid : state.activeTerms)
+//					if (activeTermPos-- == 0) t1 = tid;
+//				t2 = state.inactiveTermsArray[inactiveTermPos];
+//
+//				state.exchange(t1, t2);
+//			}
+//
+//
+//			long newPossibilities = state.allTermsArray.length + state.activeTerms.size() * state.numInactiveTerms;
+//
+////			double newScore = score(llr, state.activeTerms, populationEnumerator, p);
+////			double newScore = scoreFast(llr, state, p);
+//			double newScore = state.llScore;
+//
+//			{
+////				double newScore2 =  Math.log(alpha);
+//
+//				HashSet<ByteString> activeAgreement = new HashSet<ByteString>(state.hiddenActiveGenes.keySet());
+//				activeAgreement.retainAll(studySet.getAllGeneNames());
+//
+//				int n11 = activeAgreement.size();
+//				int n10 = studySet.getGeneCount() - n11;
+//
+//				HashSet<ByteString> inactiveAgreement = new HashSet<ByteString>(populationSet.getAllGeneNames());
+//				inactiveAgreement.removeAll(studySet.getAllGeneNames());
+//				inactiveAgreement.removeAll(state.hiddenActiveGenes.keySet());
+//
+//				int n00 = inactiveAgreement.size();
+//				int n01 = populationSet.getGeneCount() - studySet.getGeneCount() - n00;
+//
+//				double newScore2 = Math.log(alpha) * n10 + Math.log(1-alpha)*n11 + Math.log(1-beta)*n00 + Math.log(beta)*n01;
+//
+//
+//				newScore2 -= Math.log(alpha) * studySet.getGeneCount() + Math.log(1-beta)* (populationSet.getGeneCount() - studySet.getGeneCount());
+//
+//				System.out.println(newScore + "  " + newScore2 + " n10=" + n10 + " n11="+n11 + " n01=" + n01 + " n00=" + n00);
+//			}
+//
+			if (!noPrior) newScore += bayesScore.activeTerms.size() * Math.log(p/(1.0-p));
+//
 			double acceptProb = Math.exp(newScore - score)*(double)oldPossibilities/(double)newPossibilities; /* last quotient is the hasting ratio */
-
+//
 			boolean DEBUG = false;
-
-			if (DEBUG) System.out.print(state.activeTerms.size() + "  score=" + score + " newScore="+newScore + " maxScore=" + maxScore + " a=" + acceptProb +  " " + state.isActive[toSwitch]);
-
+//
+			if (DEBUG) System.out.print(bayesScore.activeTerms.size() + "  score=" + score + " newScore="+newScore + " maxScore=" + maxScore + " a=" + acceptProb);
+//
 			double u = rnd.nextDouble();
 			if (u >= acceptProb)
 			{
-				if (toSwitch != -1)
-				{
-					state.switchState(toSwitch);
-				} else
-				{
-					state.exchange(t2, t1);
-				}
+//				if (toSwitch != -1)
+//				{
+//					state.switchState(toSwitch);
+//				} else
+//				{
+//					state.exchange(t2, t1);
+//				}
+				bayesScore.undoProposal();
 				numRejects++;
 			} else
 			{
-				if (DEBUG) System.out.print(" "  + state.allTermsArray[toSwitch].toString());
 				score = newScore;
 				numAccepts++;
 			}
@@ -589,8 +824,8 @@ public class Bayes2GOCalculation implements ICalculation
 
 			if (t>burnin)
 			{
-				for (TermID tid : state.activeTerms)
-					activeCount[state.term2allTermsIdx.get(tid)]++;
+				for (TermID tid : bayesScore.activeTerms)
+					activeCount[bayesScore.term2TermsIdx.get(tid)]++;
 				samplesTaken++;
 			}
 		}
@@ -604,7 +839,7 @@ public class Bayes2GOCalculation implements ICalculation
 			prop.annotatedPopulationGenes = populationEnumerator.getAnnotatedGenes(t).totalAnnotatedCount();
 
 			/* We reverse the probability as the framework assumes that low p values are important */
-			prop.p = 1 - ((double)activeCount[state.term2allTermsIdx.get(t)] / samplesTaken);
+			prop.p = 1 - ((double)activeCount[bayesScore.term2TermsIdx.get(t)] / samplesTaken);
 			prop.p_adjusted = prop.p;
 			prop.p_min = 0.001;
 			result.addGOTermProperties(prop);
