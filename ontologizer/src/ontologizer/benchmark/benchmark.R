@@ -39,8 +39,8 @@ v<-matrix(ncol=2,byrow=T,
 		    "p.pcu", "PCU",
 		    "p.tweight","TopW",
 			"p.gg", "GenGO'",
-			"p.b2g.ideal.pop", "B2G'",
-			"p.b2g.mcmc.pop", "B2G"
+			"p.b2g.ideal.pop", "MGSA'",
+			"p.b2g.mcmc.pop", "MGSA"
            ))
 
 # ROCR was used for the plotting, but their (down)sampling scheme is not
