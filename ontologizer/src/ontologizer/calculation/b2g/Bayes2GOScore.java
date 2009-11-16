@@ -42,7 +42,6 @@ abstract class Bayes2GOScore
 
 	protected GOTermEnumerator populationEnumerator;
 	protected Set<ByteString> population;
-	//protected Set<ByteString> observedActiveGenes;
 
 	/** Array of terms */
 	protected TermID [] termsArray;
@@ -54,11 +53,10 @@ abstract class Bayes2GOScore
 	protected LinkedHashSet<TermID> activeTerms = new LinkedHashSet<TermID>();
 
 	/** Array indicating the genes that have been observed */
-	public boolean [] observedGenes;
+	protected boolean [] observedGenes;
 
 	/** Array that indicate the activation counts of the genes */
-	public int [] activeHiddenGenes;
-	public int numActiveHiddenGenes;
+	protected int [] activeHiddenGenes;
 
 	/** Maps genes to an unique gene index */
 	protected HashMap<ByteString,Integer> gene2GenesIdx = new HashMap<ByteString,Integer>();
