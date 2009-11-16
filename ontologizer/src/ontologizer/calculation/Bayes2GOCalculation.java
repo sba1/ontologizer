@@ -4,6 +4,7 @@ import java.io.File;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -30,10 +31,16 @@ import ontologizer.go.TermID;
 import ontologizer.go.TermRelation;
 import ontologizer.statistics.AbstractTestCorrection;
 import ontologizer.statistics.Bonferroni;
-import ontologizer.statistics.None;
 import ontologizer.worksets.WorkSet;
 import ontologizer.worksets.WorkSetLoadThread;
-import sun.security.util.BigInt;
+
+class B2GTestParameter
+{
+	static double ALPHA = 0.35;
+	static double BETA = 0.35;
+	static int MCMC_STEPS = 3000000;
+}
+
 
 /**
  * The base class of bayes2go Score.
@@ -140,13 +147,21 @@ abstract class Bayes2GOScore
 
 		/* Enable new terms */
 		for (TermID tid : activeTerms)
-			switchState(term2TermsIdx.get(tid));
+		{
+			Integer idx = term2TermsIdx.get(tid);
+			if (idx != null)
+				switchState(idx);
+		}
 		
 		double score = getScore();
 		
 		/* Disable new terms */
 		for (TermID tid : activeTerms)
-			switchState(term2TermsIdx.get(tid));
+		{
+			Integer idx = term2TermsIdx.get(tid);
+			if (idx != null)
+				switchState(idx);
+		}
 
 		/* Enable old terms */
 		for (TermID tid : oldTerms)
@@ -473,12 +488,15 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 	@Override
 	public double getScore()
 	{
-		double beta = 0.1;
+//		double beta = 0.1;
 		double alpha;
+		double beta;
 		
 		if (Double.isNaN(this.alpha))
 			alpha = ALPHA[alphaIdx];
 		else alpha = this.alpha;
+
+		beta = this.beta;
 
 		double newScore2 = Math.log(alpha) * n10 + Math.log(1-alpha)*n11 + Math.log(1-beta)*n00 + Math.log(beta)*n01;
 		
@@ -711,7 +729,7 @@ public class Bayes2GOCalculation implements ICalculation
 			HashMap<ByteString, Double> llr,
 			double p)
 	{
-		List<TermID> allTerms = studyEnumerator.getAllAnnotatedTermsAsList();
+		List<TermID> allTerms = populationEnumerator.getAllAnnotatedTermsAsList();
 
 		Random rnd;
 		if (seed != 0)
@@ -763,7 +781,7 @@ public class Bayes2GOCalculation implements ICalculation
 	
 			result.setScore(bayesScore);
 	
-			int maxSteps = 320000;
+			int maxSteps = B2GTestParameter.MCMC_STEPS;
 			int burnin = 20000;
 			int numAccepts = 0;
 			int numRejects = 0;
@@ -1057,8 +1075,11 @@ public class Bayes2GOCalculation implements ICalculation
 		newStudyGenes.filterOutDuplicateGenes(assoc);
 		System.out.println("Number of genes in study set " + newStudyGenes.getGeneCount());
 
-		double alphaStudySet = 0.1;
-		double betaStudySet = 0.1;
+		double alphaStudySet = B2GTestParameter.ALPHA;
+		double betaStudySet = B2GTestParameter.BETA;
+
+		int tp = newStudyGenes.getGeneCount();
+		int tn = allGenes.getGeneCount();
 
 		/* Obfuscate the study set, i.e., create the observed state */
 		
@@ -1079,9 +1100,12 @@ public class Bayes2GOCalculation implements ICalculation
 		newStudyGenes.addGenes(fp);
 		newStudyGenes.removeGenes(fn);
 		
-		System.out.println("Study set misses " + fn.size() + " genes");
-		System.out.println("Study set has " + fp.size() + " false positives");
-		System.out.println("Study set has a total of " +  newStudyGenes.getGeneCount() + " genes.");
+		double realAlpha = ((double)fp.size())/tn;
+		double realBeta = ((double)fn.size())/tp;
+		
+		System.out.println("Study set has " + fp.size() + " false positives (alpha=" + realAlpha +")");
+		System.out.println("Study set has " + fn.size() + " false negatives (beta=" + realBeta +")");
+		System.out.println("Study set has a total of " +  newStudyGenes.getGeneCount() + " genes");
 
 		/**** Write out the graph ****/
 		//{
@@ -1131,16 +1155,19 @@ public class Bayes2GOCalculation implements ICalculation
 
 		double p = (double)wantedActiveTerms.size() / allEnumerator.getTotalNumberOfAnnotatedTerms();
 
-		ProbabilisticCalculation calc = new ProbabilisticCalculation();
+//		ProbabilisticCalculation calc = new ProbabilisticCalculation();
 //		TopologyWeightedCalculation calc = new TopologyWeightedCalculation();
 //		TermForTermCalculation calc = new TermForTermCalculation();
 //		ParentChildCalculation calc = new ParentChildCalculation();
-//		Bayes2GOCalculation calc = new Bayes2GOCalculation();
+		Bayes2GOCalculation calc = new Bayes2GOCalculation();
 ////		calc.setNoPrior(true);
-//		calc.setP(p);
-//		calc.setSeed(1);
+		calc.setP(p);
+		calc.setSeed(1);
+		calc.setAlpha(realAlpha);
+		calc.setBeta(realBeta);
 //		calc.setAlpha(alphaStudySet);
 //		calc.setBeta(betaStudySet);
+		
 		
 		evaluate(wantedActiveTerms, allGenes, newStudyGenes, allEnumerator, studySetEnumerator, calc, p);
 	}
@@ -1163,16 +1190,16 @@ public class Bayes2GOCalculation implements ICalculation
 		{
 			if (!s.contains(prop.goTerm.getID()))
 			{
-				System.out.println(prop.annotatedPopulationGenes + "  " + prop.annotatedStudyGenes);
+//				System.out.println(prop.annotatedPopulationGenes + "  " + prop.annotatedStudyGenes);
 				cnt++;
 			}
 		}
-		System.out.println(" cnt: " + cnt);
+		System.out.println("There are " + cnt + " terms to which none of the genes of the study set are annotated.");
 		boolean pIsReverseMarginal = false;
 	
 		System.out.println("Method is " + calc.getName());
 
-		System.out.println(result.getSize() + " terms found");
+		System.out.println("We have a statement over a total of " + result.getSize() + " terms.");
 
 		/*** Calculate the score of the optimal term set ***/
 		
@@ -1190,24 +1217,51 @@ public class Bayes2GOCalculation implements ICalculation
 		
 		//scoreDistribution(calc,allEnumerator,allGenes,newStudyGenes);
 		
-		System.out.println("The overrepresented terms:");
-		for (TermID w : wantedActiveTerms)
-		{
-			AbstractGOTermProperties prop = result.getGOTermProperties(w);
-			System.out.println(" " + prop.goTerm.getIDAsString() + "/" + prop.goTerm.getName() + "   " + (/*1.0f - */prop.p_adjusted) + ")");
-		}
+		ArrayList<AbstractGOTermProperties> resultList = new ArrayList<AbstractGOTermProperties>();
+		for (AbstractGOTermProperties prop : result)
+			resultList.add(prop);
+		Collections.sort(resultList);
+
+		ArrayList<AbstractGOTermProperties> interestingList = new ArrayList<AbstractGOTermProperties>();
+
+//		System.out.println("The overrepresented terms:");
+//		for (TermID w : wantedActiveTerms)
+//		{
+//			AbstractGOTermProperties prop = result.getGOTermProperties(w);
+//			if (prop!=null)
+//				System.out.println(" " + prop.goTerm.getIDAsString() + "/" + prop.goTerm.getName() + "   " + (/*1.0f - */prop.p_adjusted) + ")");
+//			else
+//				System.out.println(w.toString() + " not found");
+//		}
 
 		{
-			System.out.println("The terms found by the algorithm:");
+//			System.out.println("The terms found by the algorithm:");
 			HashSet<TermID> terms = new HashSet<TermID>();
-			for (AbstractGOTermProperties prop : result)
+
+			System.out.println("The overrepresented terms:");
+			
+			int rank = 1;
+			for (AbstractGOTermProperties prop : resultList)
+			{
+				if (wantedActiveTerms.contains(prop.goTerm.getID()))
+					System.out.println(" " + prop.goTerm.getIDAsString() + "/" + prop.goTerm.getName() + "   " + (/*1.0f - */prop.p_adjusted) + " rank=" + rank);
+				rank++;
+			}
+
+			System.out.println("The terms found by the algorithm:");
+
+			rank = 1;
+			for (AbstractGOTermProperties prop : resultList)
 			{
 				if (prop.p_adjusted < 0.9)
 				{
 					terms.add(prop.goTerm.getID());
-					System.out.println(" " + prop.goTerm.getIDAsString() + "/" + prop.goTerm.getName() + "   " + (/*1.0f - */prop.p_adjusted) + ")");
+					System.out.println(" " + prop.goTerm.getIDAsString() + "/" + prop.goTerm.getName() + "   " + (/*1.0f - */prop.p_adjusted)  + " rank=" + rank);
 				}
+				rank++;
 			}
+
+			
 			terms.addAll(wantedActiveTerms);
 
 			GODOTWriter.writeDOT(graph, new File("toy-result.dot"), null, terms, new IDotNodeAttributesProvider()
