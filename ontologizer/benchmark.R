@@ -92,7 +92,7 @@ decode.parameter.setting<-function(name)
 #
 # Draw some performance plots
 #
-plot.roc<-function(d,alpha=NA,beta=NA,calc.auc=F,y.axis="tpr",x.axis="fpr",legend.place="bottomright")
+plot.roc<-function(d,alpha=NA,beta=NA,calc.auc=F,y.axis="tpr",x.axis="fpr",legend.place="bottomright",rocn=NA)
 {
 	nruns<-length(unique(d$run))
 	
@@ -100,7 +100,7 @@ plot.roc<-function(d,alpha=NA,beta=NA,calc.auc=F,y.axis="tpr",x.axis="fpr",legen
 	{
 		return()
 	}
-
+	
 #	column.indices<-grep("^p\\.",colnames(d),perl=T)
 #	sapply(colnames(d)[column.indices],decode.parameter.setting)
 #	result.list<-list();
@@ -142,20 +142,41 @@ plot.roc<-function(d,alpha=NA,beta=NA,calc.auc=F,y.axis="tpr",x.axis="fpr",legen
 				    "p.pcu", "Parent Child",
 				    "p.tweight","Topology Weighted",
 					"p.pb", "Probabilistic (Lu et al.)",
-					"p.b2g.ideal", "B2G: Ideal",
-					"p.b2g.ideal.pop", "B2G: Ideal, PaR",
-					"p.b2g.mcmc", "B2G: MCMC",
-					"p.b2g.mcmc.pop", "B2G: MCMC, PaR",
-					"p.b2g.ideal.pop.nop", "B2G: No Prior"
+#					"p.b2g.ideal", "B2G: Ideal",
+					"p.b2g.ideal.pop", "B2G: Known Parameter",
+#					"p.b2g.mcmc", "B2G: MCMC",
+					"p.b2g.mcmc.pop", "B2G: Unknown Parameter"
+#					"p.b2g.ideal.pop.nop", "B2G: No Prior, Unknown"
 	               ))
 
 	colnames(v)<-c("short","full")
 	colors<-rainbow(nrow(v))
 	pchs<-1:nrow(v)
-
+	
 	for (i in (1:nrow(v)))
 	{
-		pred<-prediction(1-d[,v[i,1]],d$label)
+		values<-d[,v[i,1]]
+		labels<-d$label
+
+		# rebuild the values if this should be a rocn
+		if (!is.na(rocn))
+		{
+			d.by.run<-split(d,d$run)
+
+			d.new<-lapply(d.by.run,function(d2)
+			{
+				values2<-d2[,v[i,1]]
+			
+				o<-order(values2,decreasing=F)
+				cut.of<-which(d2[o,]$label==0)[rocn]
+				return(d2[o,][1:cut.of,])
+			})
+			d.new<-do.call(rbind,d.new) # merge the lists
+			values<-d.new[,v[i,1]]
+			labels<-d.new$label
+		}
+	
+		pred<-prediction(1-values,labels)
 		perf<-performance(pred, measure = y.axis, x.measure = x.axis) 
 		name<-v[i,2]
 		
@@ -194,7 +215,17 @@ s<-split(d,list(d$alpha,d$beta))
 #	dev.off()
 
 
+#q<-s[[4]]
+#subset(q,q$run %in% c(3001,3002))
+#plot.roc(subset(q,q$run %in% c(3001:3020)),alpha,beta,calc.auc=T)
+## 3004
+
+#
+# ROC
+#
+
 lapply(s,function(d) {
+
 	alpha<-unique(d$alpha)
 	beta<-unique(d$beta)
 
@@ -204,19 +235,22 @@ lapply(s,function(d) {
 	plot.roc(d,alpha,beta,calc.auc=T)
 	dev.off()
 
-	filename<-sprintf("result-roc-a%d-b%d-senseful.pdf",alpha*100,beta*100)
-	pdf(file=filename,height=9,width=9)
-	par(cex=1.3,cex.main=1.2,lwd=2)
-	plot.roc(subset(d,d$senseful==1),alpha,beta,calc.auc=T)
-	dev.off()
+#	filename<-sprintf("result-roc-a%d-b%d-senseful.pdf",alpha*100,beta*100)
+#	pdf(file=filename,height=9,width=9)
+#	par(cex=1.3,cex.main=1.2,lwd=2)
+#	plot.roc(subset(d,d$senseful==1),alpha,beta,calc.auc=T)
+#	dev.off()
 
-	filename<-sprintf("result-roc-a%d-b%d-no-restriction.pdf",alpha*100,beta*100)
-	pdf(file=filename,height=9,width=9)
-	par(cex=1.3,cex.main=1.2,lwd=2)
-	plot.roc(subset(d,d$senseful==0),alpha,beta,calc.auc=T)
-	dev.off()
+#	filename<-sprintf("result-roc-a%d-b%d-no-restriction.pdf",alpha*100,beta*100)
+#	pdf(file=filename,height=9,width=9)
+#	par(cex=1.3,cex.main=1.2,lwd=2)
+#	plot.roc(subset(d,d$senseful==0),alpha,beta,calc.auc=T)
+#	dev.off()
 });
 
+#
+# Pre/Recall
+#
 
 lapply(s,function(d) {
 	alpha<-unique(d$alpha)
@@ -228,19 +262,35 @@ lapply(s,function(d) {
 	plot.roc(d,alpha,beta,y.axis="prec",x.axis="rec",legend.place="topright")
 	dev.off()
 
-	filename<-sprintf("result-precall-a%d-b%d-senseful.pdf",alpha*100,beta*100)
-	pdf(file=filename,height=9,width=9)
-	par(cex=1.3,cex.main=1.2,lwd=2)
-	plot.roc(subset(d,d$senseful==1),alpha,beta,y.axis="prec",x.axis="rec",legend.place="topright")
-	dev.off()
+#	filename<-sprintf("result-precall-a%d-b%d-senseful.pdf",alpha*100,beta*100)
+#	pdf(file=filename,height=9,width=9)
+#	par(cex=1.3,cex.main=1.2,lwd=2)
+#	plot.roc(subset(d,d$senseful==1),alpha,beta,y.axis="prec",x.axis="rec",legend.place="topright")
+#	dev.off()
 
-	filename<-sprintf("result-precall-a%d-b%d-no-restriction.pdf",alpha*100,beta*100)
-	pdf(file=filename,height=9,width=9)
-	par(cex=1.3,cex.main=1.2,lwd=2)
-	plot.roc(subset(d,d$senseful==0),alpha,beta,y.axis="prec",x.axis="rec",legend.place="topright")
-	dev.off()
+#	filename<-sprintf("result-precall-a%d-b%d-no-restriction.pdf",alpha*100,beta*100)
+#	pdf(file=filename,height=9,width=9)
+#	par(cex=1.3,cex.main=1.2,lwd=2)
+#	plot.roc(subset(d,d$senseful==0),alpha,beta,y.axis="prec",x.axis="rec",legend.place="topright")
+#	dev.off()
 });
 
+
+#
+# ROC50
+#
+
+lapply(s,function(d) {
+
+	alpha<-unique(d$alpha)
+	beta<-unique(d$beta)
+
+	filename<-sprintf("result-roc5-a%d-b%d.pdf",alpha*100,beta*100)
+	pdf(file=filename,height=9,width=9)
+	par(cex=1.3,cex.main=1.2,lwd=2)
+	plot.roc(d,alpha,beta,calc.auc=T,rocn=5)
+	dev.off()
+});
 
 
 	pdf(file="result-roc.pdf",height=5.5,width=5.5)
