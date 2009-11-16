@@ -30,6 +30,7 @@ import ontologizer.go.TermID;
 import ontologizer.go.TermRelation;
 import ontologizer.statistics.AbstractTestCorrection;
 import ontologizer.statistics.Bonferroni;
+import ontologizer.statistics.None;
 import ontologizer.worksets.WorkSet;
 import ontologizer.worksets.WorkSetLoadThread;
 import sun.security.util.BigInt;
@@ -578,13 +579,14 @@ class Bayes2GOEnrichedGOTermsResult extends EnrichedGOTermsResult
  */
 public class Bayes2GOCalculation implements ICalculation
 {
-	public double defaultP = 0.01;
-	
 	private boolean noPrior = false;
 	
 	private int expectedNumber = -1;
 	public double alpha = Double.NaN;
 	public double beta = Double.NaN;
+	public double defaultP = Double.NaN;
+
+
 	public long seed = 0;
 	public boolean parameterEstimation = true;
 	
@@ -738,9 +740,9 @@ public class Bayes2GOCalculation implements ICalculation
 			doBetaEm = true;
 			doEm = true;
 		}
-		if (p<0)
+		if (Double.isNaN(p))
 		{
-			p = 1 / allTerms.size();
+			p = 0.001;// / allTerms.size();
 			doPEm = true;
 			doEm = true;
 		}
@@ -753,7 +755,7 @@ public class Bayes2GOCalculation implements ICalculation
 //			VariableAlphaBetaScore bayesScore = new VariableAlphaBetaScore(rnd, allTerms, populationEnumerator, studySet.getAllGeneNames(), alpha, beta);
 			FixedAlphaBetaScore bayesScore = new FixedAlphaBetaScore(rnd, allTerms, populationEnumerator,  studySet.getAllGeneNames());
 
-			System.out.println(alpha + "  " + beta);
+			System.out.println("EM-Iter("+i+")" + alpha + "  " + beta + "  " + p);
 			
 			bayesScore.setAlpha(alpha);
 			bayesScore.setBeta(beta);
@@ -1129,15 +1131,16 @@ public class Bayes2GOCalculation implements ICalculation
 
 		double p = (double)wantedActiveTerms.size() / allEnumerator.getTotalNumberOfAnnotatedTerms();
 
-//		ProbabilisticCalculation calc = new ProbabilisticCalculation();
+		ProbabilisticCalculation calc = new ProbabilisticCalculation();
 //		TopologyWeightedCalculation calc = new TopologyWeightedCalculation();
 //		TermForTermCalculation calc = new TermForTermCalculation();
-		Bayes2GOCalculation calc = new Bayes2GOCalculation();
-//		calc.setNoPrior(true);
-		calc.setP(p);
-		calc.setSeed(1);
+//		ParentChildCalculation calc = new ParentChildCalculation();
+//		Bayes2GOCalculation calc = new Bayes2GOCalculation();
+////		calc.setNoPrior(true);
+//		calc.setP(p);
+//		calc.setSeed(1);
 //		calc.setAlpha(alphaStudySet);
-//		calc.setBeta(betaStudySet * 2);
+//		calc.setBeta(betaStudySet);
 		
 		evaluate(wantedActiveTerms, allGenes, newStudyGenes, allEnumerator, studySetEnumerator, calc, p);
 	}
@@ -1149,10 +1152,27 @@ public class Bayes2GOCalculation implements ICalculation
 			ICalculation calc, double p)
 	{
 		final EnrichedGOTermsResult result = calc.calculateStudySet(graph, assoc, allGenes, newStudyGenes, new Bonferroni());
-		
+
+		TermForTermCalculation tft = new TermForTermCalculation();
+		EnrichedGOTermsResult r2 = tft.calculateStudySet(graph, assoc, allGenes, newStudyGenes, new Bonferroni());
+		HashSet<TermID> s = new HashSet<TermID>();
+		for (AbstractGOTermProperties p2 : r2)
+			s.add(p2.goTerm.getID());
+		int cnt = 0;
+		for (AbstractGOTermProperties prop : result)
+		{
+			if (!s.contains(prop.goTerm.getID()))
+			{
+				System.out.println(prop.annotatedPopulationGenes + "  " + prop.annotatedStudyGenes);
+				cnt++;
+			}
+		}
+		System.out.println(" cnt: " + cnt);
 		boolean pIsReverseMarginal = false;
 	
 		System.out.println("Method is " + calc.getName());
+
+		System.out.println(result.getSize() + " terms found");
 
 		/*** Calculate the score of the optimal term set ***/
 		
@@ -1301,4 +1321,3 @@ public class Bayes2GOCalculation implements ICalculation
 		this.calculationProgress = calculationProgress;
 	}
 }
-
