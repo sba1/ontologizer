@@ -187,9 +187,11 @@ public class PreferencesWindow extends ApplicationWindow
 			Label mcmcStepsLabel = new Label(composite,0);
 			mcmcStepsLabel.setText("Number of steps for MCMC");
 			mcmcStepsSpinner = new Spinner(composite,SWT.BORDER);
-			mcmcStepsSpinner.setMaximum(1000000);
+			mcmcStepsSpinner.setMaximum(2000000);
 			mcmcStepsSpinner.setSelection(500000);
 			new Label(composite,0);
+
+
 
 		}
 
