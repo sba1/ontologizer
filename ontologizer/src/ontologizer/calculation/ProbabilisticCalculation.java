@@ -373,7 +373,7 @@ public class ProbabilisticCalculation implements ICalculation
 
 	public String getName()
 	{
-		return "Probabilistic";
+		return "GenGO";
 	}
 
 }
