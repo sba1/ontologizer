@@ -207,27 +207,6 @@ lapply(s,function(d) {
 });
 
 
-	pdf(file="result-roc.pdf",height=5.5,width=5.5)
-	par(cex=1.5)
-	par(mfrow=c(1,1))
-	plot.roc(d)
-	dev.off()
-	system("evince result.pdf")
-	
-	pdf(file="result-roc-senseful.pdf",height=5.5,width=5.5)
-	par(cex=1.5)
-	par(mfrow=c(1,1))
-	plot.roc(subset(d,d$senseful==1))
-	dev.off()
-	
-	pdf(file="result-roc-notsenseful.pdf",height=5.5,width=5.5)
-	par(cex=1.5)
-	par(mfrow=c(1,1))
-	plot.roc(subset(d,d$senseful==0))
-	dev.off()
-
-
-
 
 
 
@@ -257,11 +236,3 @@ options(width=120)
 ord<-order(d$run,d$term)
 d.ord<-d[ord,]
 print(d.ord[which(d.ord$label==T),])
-
-
-
-
-#s<-split(d,d$run)
-#void<-sapply(s,function(el){
-#			print(s[which(el$label==T),])
-#		})
