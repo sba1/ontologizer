@@ -14,6 +14,7 @@ import ontologizer.go.ParentTermID;
 import ontologizer.go.Term;
 import ontologizer.go.TermContainer;
 import ontologizer.go.TermRelation;
+import ontologizer.statistics.None;
 import junit.framework.TestCase;
 
 public class ProbabilisticCalculationTest extends TestCase {
@@ -56,15 +57,15 @@ public class ProbabilisticCalculationTest extends TestCase {
 		/* Study */
 		StudySet study = new StudySet("study"); 
 		
-		/* 9 in C2 */
+		/* 9 of 10 in C2 */
 		for (int i=0;i<9;i++)
 			study.addGene(new ByteString("gene"+i), "");
 
-		/* 9 in C3 */
+		/* 9 of 10 in C3 */
 		for (int i=10;i<19;i++)
 			study.addGene(new ByteString("gene"+i), "");
 
-		/* 2 in C4 */
+		/* 2 of 100 in C4 */
 		for (int i=20;i<22;i++)
 			study.addGene(new ByteString("gene"+i), "");
 		
@@ -73,10 +74,9 @@ public class ProbabilisticCalculationTest extends TestCase {
 			study.addGene(new ByteString("gene"+i), "");
 		
 		ProbabilisticCalculation calc = new ProbabilisticCalculation();
-		calc.calculateStudySet(graph, assocContainer, pop, study, null);
-		
-		
-//		calc.calculateStudySet(graph, goAssociations, populationSet, studySet, null);
+		calc.setDefaultP(0.9);
+		calc.setDefaultQ(0.17);
+		calc.calculateStudySet(graph, assocContainer, pop, study, new None());
 	}
 
 }
