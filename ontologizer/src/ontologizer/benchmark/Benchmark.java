@@ -105,6 +105,7 @@ public class Benchmark
 		public double beta;
 		public boolean usePrior = true;
 		public boolean takePopulationAsReference;
+		public boolean useRandomStart;
 		public AbstractTestCorrection testCorrection;
 		
 		/** Number of desired terms */
@@ -150,6 +151,12 @@ public class Benchmark
 		m = new Method("Bayes2GO","b2g.ideal.pop");
 		m.takePopulationAsReference = true;
 		calcMethods.add(m);
+		
+		/* Bayes2GO Ideal, with pop as ref, random start */
+		m = new Method("Bayes2GO","b2g.ideal.pop.random");
+		m.takePopulationAsReference = true;
+		m.useRandomStart = true;
+		calcMethods.add(m);
 
 //		/* Tests for alpha/beta sensitivity */
 //		for (double a : calcAlpha)
@@ -168,7 +175,7 @@ public class Benchmark
 //		m.testCorrection = new Bonferroni();
 //		calcMethods.add(m);
 		calcMethods.add(new Method("Parent-Child-Union","pcu"));
-		calcMethods.add(new Method("Probabilistic","pb"));
+		calcMethods.add(new Method("GenGO","gg"));
 		calcMethods.add(new Method("Topology-Weighted","tweight"));
 
 //		m = new Method("Bayes2GO","b2g.em");
@@ -455,18 +462,19 @@ GlobalPreferences.setProxyHost("realproxy.charite.de");
 											b2g.setSeed(rnd.nextLong());
 											b2g.setUsePrior(m.usePrior);
 											b2g.setTakePopulationAsReference(m.takePopulationAsReference);
+											b2g.useRandomStart(m.useRandomStart);
 
 											double p;
 											
 											if (m.em)
 											{
-												b2g.setMcmcSteps(620000);
+												b2g.setMcmcSteps(1020000);
 												b2g.setAlpha(B2GParam.Type.EM);
 												b2g.setBeta(B2GParam.Type.EM);
 												b2g.setExpectedNumber(B2GParam.Type.EM);
 											} else if (m.mcmc)
 											{
-												b2g.setMcmcSteps(620000);
+												b2g.setMcmcSteps(1020000);
 												b2g.setAlpha(B2GParam.Type.MCMC);
 												b2g.setBeta(B2GParam.Type.MCMC);
 												
