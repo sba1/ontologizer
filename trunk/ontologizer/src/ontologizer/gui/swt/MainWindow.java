@@ -1481,6 +1481,14 @@ public class MainWindow extends ApplicationWindow
 		methodCombo.setItems(CalculationRegistry.getAllRegistered());
 		methodCombo.setText(CalculationRegistry.getDefault().getName());
 		methodCombo.setToolTipText(methodToolTip);
+		methodCombo.addSelectionListener(new SelectionAdapter()
+		{
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				for (ISimpleAction act : methodAction)
+					act.act();
+			}
+		});
 		methodCombo.pack();
 		methodToolItem.setWidth(methodCombo.getSize().x);
 		methodToolItem.setControl(methodCombo);

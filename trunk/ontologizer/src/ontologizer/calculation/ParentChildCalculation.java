@@ -208,5 +208,10 @@ public class ParentChildCalculation extends
 		return studySetResult;
 		
 	}
+	
+	public boolean supportsTestCorrection() {
+		return true;
+	}
+
 
 }

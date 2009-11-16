@@ -214,4 +214,8 @@ public class TopologyWeightedCalculation extends AbstractHypergeometricCalculati
 		return "Topology-Weighted";
 	}
 
+	public boolean supportsTestCorrection() {
+		return true;
+	}
+
 }

@@ -146,4 +146,8 @@ public class ChiSquareCalculation implements ICalculation
 		return prop;
 	}
 
+	public boolean supportsTestCorrection() {
+		return true;
+	}
+
 }
