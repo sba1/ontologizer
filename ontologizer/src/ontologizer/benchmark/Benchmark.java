@@ -19,6 +19,7 @@ import ontologizer.PopulationSet;
 import ontologizer.StudySet;
 import ontologizer.association.AssociationContainer;
 import ontologizer.calculation.AbstractGOTermProperties;
+import ontologizer.calculation.B2GParam;
 import ontologizer.calculation.Bayes2GOCalculation;
 import ontologizer.calculation.CalculationRegistry;
 import ontologizer.calculation.EnrichedGOTermsResult;
@@ -76,13 +77,13 @@ public class Benchmark
 	private static double [] BETAs = new double[]{0.25,0.4};
 	private static boolean ORIGINAL_SAMPLING = false;
 	private static int MAX_TERMS = 5;
-	private static int TERMS_PER_RUN = 100;
+	private static int TERMS_PER_RUN = 50;
 	
 	/**
 	 * Senseful terms are terms that have an annotation proportion between 0.1
 	 * and 0.9
 	 */
-	private static int SENSEFUL_TERMS_PER_RUN = 50;
+	private static int SENSEFUL_TERMS_PER_RUN = 25;
 
 	private static AbstractTestCorrection testCorrection = new None();
 
@@ -101,6 +102,8 @@ public class Benchmark
 
 		public boolean em;
 		public boolean mcmc;
+
+		public boolean useCorrectExpectedTerms;
 
 		public Method(String m, String a)
 		{
@@ -156,9 +159,25 @@ public class Benchmark
 		m = new Method("Bayes2GO","b2g.em");
 		m.em = true;
 		calcMethods.add(m);
+
+		m = new Method("Bayes2GO", "b2g.mcmc");
+		m.mcmc = true;
+		calcMethods.add(m);
+
+		m = new Method("Bayes2GO", "b2g.mcmc.cexpt");
+		m.mcmc = true;
+		m.useCorrectExpectedTerms = true;
+		calcMethods.add(m);
+
 		m = new Method("Bayes2GO","b2g.ideal.nop");
 		m.usePrior = false;
 		calcMethods.add(m);
+
+		m = new Method("Bayes2GO","b2g.mcmc.nop");
+		m.usePrior = false;
+		m.mcmc = true;
+		calcMethods.add(m);
+
 	}
 
 	public static void main(String[] args) throws Exception
@@ -337,7 +356,26 @@ GlobalPreferences.setProxyHost("realproxy.charite.de");
 
 											double p;
 											
-											if (!m.em)
+											if (m.em)
+											{
+												b2g.setMcmcSteps(600000);
+												b2g.setAlpha(B2GParam.Type.EM);
+												b2g.setBeta(B2GParam.Type.EM);
+												b2g.setExpectedNumber(B2GParam.Type.EM);
+											} else if (m.mcmc)
+											{
+												b2g.setMcmcSteps(600000);
+												b2g.setAlpha(B2GParam.Type.MCMC);
+												b2g.setBeta(B2GParam.Type.MCMC);
+												
+												if (m.useCorrectExpectedTerms)
+													b2g.setExpectedNumber(termCombi.size());
+												else
+													b2g.setExpectedNumber(B2GParam.Type.MCMC);
+
+													
+												
+											} else
 											{
 												if (m.dt == 0)
 												{
@@ -359,6 +397,8 @@ GlobalPreferences.setProxyHost("realproxy.charite.de");
 													b2g.setExpectedNumber(m.dt);
 												}
 											}
+											
+											
 											
 //											System.out.println(p);
 //											result = b2g.calculateStudySet(graph, assoc, completePop, newStudySet, (double)termCombi.size() / completePopEnumerator.getTotalNumberOfAnnotatedTerms());
