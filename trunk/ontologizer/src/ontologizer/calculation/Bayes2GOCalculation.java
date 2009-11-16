@@ -477,7 +477,7 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 	private TermID proposalT1;
 	private TermID proposalT2;
 
-	protected final double [] ALPHA = new double[] {0.0000001,0.05, 0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5};
+	protected final double [] ALPHA = new double[] {0.0000001,0.05, 0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5, 0.55,0.6,0.65,0.7,0.75,0.8,0.85,0.9,0.95};
 	private int alphaIdx = 0;
 	private int oldAlphaIdx;
 	protected int totalAlpha[] = new int[ALPHA.length];
@@ -1412,17 +1412,20 @@ public class Bayes2GOCalculation implements ICalculation
 
 		double p = (double)wantedActiveTerms.size() / allEnumerator.getTotalNumberOfAnnotatedTerms();
 
-//		ProbabilisticCalculation calc = new ProbabilisticCalculation();
+		ProbabilisticCalculation calc = new ProbabilisticCalculation();
+		calc.setDefaultP(1- realBeta);
+		calc.setDefaultQ(realAlpha);
+		
 //		TopologyWeightedCalculation calc = new TopologyWeightedCalculation();
 //		TermForTermCalculation calc = new TermForTermCalculation();
 //		ParentChildCalculation calc = new ParentChildCalculation();
-		Bayes2GOCalculation calc = new Bayes2GOCalculation();
-		calc.setSeed(1);
-		calc.setMcmcSteps(500000);
-
-		calc.setAlpha(realAlpha);
-		calc.setBeta(realBeta);
-		calc.setExpectedNumber(wantedActiveTerms.size());
+//		Bayes2GOCalculation calc = new Bayes2GOCalculation();
+//		calc.setSeed(1);
+//		calc.setMcmcSteps(500000);
+//
+//		calc.setAlpha(realAlpha);
+//		calc.setBeta(realBeta);
+//		calc.setExpectedNumber(wantedActiveTerms.size());
 
 //		calc.setMcmcSteps(500000);
 //		calc.setAlpha(B2GParam.Type.MCMC);
