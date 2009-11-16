@@ -354,8 +354,15 @@ public class Bayes2GOCalculation implements ICalculation
 		{
 			rnd = new Random(seed);
 			System.err.println("Created random number generator with seed of " + seed);
+		} else
+		{
+			long newSeed;
+			rnd = new Random();
+			newSeed = rnd.nextLong();
+			
+			logger.info("Use a random seed of: " + newSeed);
+			rnd = new Random(seed);
 		}
-		else rnd = new Random();
 
 		boolean doAlphaEm = false;
 		boolean doBetaEm = false;
@@ -428,24 +435,26 @@ public class Bayes2GOCalculation implements ICalculation
 			logger.info("Score of empty set: " + score);
 
 			/* Provide a starting point */
-			{
-				double pForStart = (double)bayesScore.EXPECTED_NUMBER_OF_TERMS[rnd.nextInt(bayesScore.EXPECTED_NUMBER_OF_TERMS.length)] / bayesScore.populationEnumerator.getTotalNumberOfAnnotatedTerms();
-				
-				for (int j=0;j<allTerms.size();j++)
-					if (Math.random() < pForStart) bayesScore.switchState(j);
-				
-				logger.info("Starting with " + bayesScore.activeTerms.size() + " terms (p=" + pForStart + ")");
-			}
+//			{
+//				double pForStart = (double)bayesScore.EXPECTED_NUMBER_OF_TERMS[rnd.nextInt(bayesScore.EXPECTED_NUMBER_OF_TERMS.length)] / bayesScore.populationEnumerator.getTotalNumberOfAnnotatedTerms();
+//				
+//				for (int j=0;j<allTerms.size();j++)
+//					if (Math.random() < pForStart) bayesScore.switchState(j);
+//				
+//				logger.info("Starting with " + bayesScore.activeTerms.size() + " terms (p=" + pForStart + ")");
+//			}
 
 
 			logger.info("Score of initial set: " + score);
 
 			double maxScore = Double.NEGATIVE_INFINITY;
 			ArrayList<TermID> maxScoredTerms = new ArrayList<TermID>();
+			double maxScoredAlpha = Double.NaN;
+			double maxScoredBeta = Double.NaN;
+			double maxScoredP = Double.NaN;
+			int maxWhenSeen = -1;
 			
 			
-//			bayesScore.EXPECTED_NUMBER_OF_TERMS
-
 
 			long start = System.currentTimeMillis();
 			
@@ -456,6 +465,10 @@ public class Bayes2GOCalculation implements ICalculation
 				{
 					maxScore = score;
 					maxScoredTerms = new ArrayList<TermID>(bayesScore.activeTerms);
+					maxScoredAlpha = bayesScore.getAlpha();
+					maxScoredBeta = bayesScore.getBeta();
+					maxScoredP = bayesScore.getP();
+					maxWhenSeen = t;
 				}
 	
 				long now = System.currentTimeMillis();
@@ -561,7 +574,7 @@ public class Bayes2GOCalculation implements ICalculation
 			System.out.println("numAccepts=" + numAccepts + "  numRejects = " + numRejects);
 	
 			/* Print out the term combination which scored max */
-			System.out.println("Term combination that reaches score of " + maxScore);
+			System.out.println("Term combination that reaches score of " + maxScore + " when alpha=" + maxScoredAlpha + ", beta=" + maxScoredBeta + ", p=" + maxScoredP + " at step " + maxWhenSeen);
 			for (TermID tid : maxScoredTerms)
 			{
 				System.out.println(tid.toString() + "/" + graph.getGOTerm(tid).getName());
