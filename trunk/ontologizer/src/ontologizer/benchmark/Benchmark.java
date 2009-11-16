@@ -24,6 +24,7 @@ import ontologizer.calculation.Bayes2GOCalculation;
 import ontologizer.calculation.CalculationRegistry;
 import ontologizer.calculation.EnrichedGOTermsResult;
 import ontologizer.calculation.ICalculation;
+import ontologizer.calculation.ProbabilisticCalculation;
 import ontologizer.go.GOGraph;
 import ontologizer.go.TermID;
 import ontologizer.sampling.KSubsetSampler;
@@ -343,6 +344,30 @@ GlobalPreferences.setProxyHost("realproxy.charite.de");
 										ICalculation calc = CalculationRegistry.getCalculationByName(m.method);
 										
 										EnrichedGOTermsResult result;
+										
+										if (calc instanceof ProbabilisticCalculation)
+										{
+											ProbabilisticCalculation prop = (ProbabilisticCalculation)calc;
+											calc = prop = new ProbabilisticCalculation(prop);
+											
+											double realAlpha;
+											double realBeta;
+											
+											
+											if (newStudySet instanceof GeneratedStudySet)
+											{
+												GeneratedStudySet gs = (GeneratedStudySet) newStudySet;
+												realAlpha = gs.getAlpha();
+												realBeta = gs.getBeta();
+											} else
+											{
+												realAlpha = ALPHA;
+												realBeta = BETA;
+											}
+
+											prop.setDefaultP(1 - realBeta);
+											prop.setDefaultQ(realAlpha);
+										}
 									
 										if (calc instanceof Bayes2GOCalculation)
 										{
