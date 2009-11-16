@@ -235,6 +235,9 @@ public class Bayes2GOCalculation implements ICalculation
 	{
 		boolean valuedCalculation;
 
+		if (studySet.getGeneCount() == 0)
+			return new EnrichedGOTermsResult(graph,goAssociations,studySet,populationSet.getGeneCount());
+
 		valuedCalculation = hasOnlyValuedItemAttributes(populationSet);
 		valuedCalculation = valuedCalculation & hasOnlyValuedItemAttributes(studySet);
 
