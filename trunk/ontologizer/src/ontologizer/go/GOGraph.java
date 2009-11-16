@@ -160,7 +160,7 @@ public class GOGraph implements Iterable<Term>
 
 
 	/** Available subsets */
-	private HashSet <Subset> availableSubsets;
+	private HashSet <Subset> availableSubsets = new HashSet<Subset>();
 
 	/**
 	 * Construct the GO Graph.
