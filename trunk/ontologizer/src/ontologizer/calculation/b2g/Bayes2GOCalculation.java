@@ -43,9 +43,9 @@ import ontologizer.worksets.WorkSetLoadThread;
 
 class B2GTestParameter
 {
-	static double ALPHA = 0.10;
+	static double ALPHA = 0.40;
 	static double BETA = 0.10;
-	static double BETA2 = 0.60;
+	static double BETA2 = 0.10;
 	static int MCMC_STEPS = 520000;
 }
 
@@ -661,7 +661,10 @@ public class Bayes2GOCalculation implements ICalculation
 		wantedActiveTerms.put(new TermID("GO:0007049"), B2GTestParameter.BETA2); /* cell cycle */
 		wantedActiveTerms.put(new TermID("GO:0043473"), B2GTestParameter.BETA2); /* pigmentation */
 		wantedActiveTerms.put(new TermID("GO:0001505"), B2GTestParameter.BETA); /* regulation of neuro transmitter levels */
-		wantedActiveTerms.put(new TermID("GO:0035237"), B2GTestParameter.BETA); /* corazonin receptor activity */
+//		wantedActiveTerms.put(new TermID("GO:0008078"), B2GTestParameter.BETA); /* mesodermal cell migration */
+//		wantedActiveTerms.put(new TermID("GO:0051208"), B2GTestParameter.BETA); /* sequestering of calcium ion */
+		wantedActiveTerms.put(new TermID("GO:0006874"), B2GTestParameter.BETA); /*  */
+//		wantedActiveTerms.put(new TermID("GO:0035237"), B2GTestParameter.BETA); /* corazonin receptor activity */
 
 //		wantedActiveTerms.add(new TermID("GO:0006797"));
 
@@ -723,7 +726,7 @@ public class Bayes2GOCalculation implements ICalculation
 
 		/* true -> false (beta, false negative) */
 		HashSet<ByteString>  fn = new HashSet<ByteString>();
-		if (false)
+		if (true)
 		{
 			for (ByteString gene : newStudyGenes)
 			{
@@ -809,12 +812,12 @@ public class Bayes2GOCalculation implements ICalculation
 		Bayes2GOCalculation calc = new Bayes2GOCalculation();
 		calc.setSeed(1);
 		calc.setMcmcSteps(500000);
-		calc.setAlpha(B2GParam.Type.MCMC);
-		calc.setBeta(B2GParam.Type.MCMC);
-		calc.setExpectedNumber(B2GParam.Type.MCMC);
-//		calc.setAlpha(realAlpha);
-//		calc.setBeta(realBeta);
-//		calc.setExpectedNumber(wantedActiveTerms.size());
+//		calc.setAlpha(B2GParam.Type.MCMC);
+//		calc.setBeta(B2GParam.Type.MCMC);
+//		calc.setExpectedNumber(B2GParam.Type.MCMC);
+		calc.setAlpha(realAlpha);
+		calc.setBeta(realBeta);
+		calc.setExpectedNumber(wantedActiveTerms.size());
 
 //		calc.setMcmcSteps(500000);
 //		calc.setAlpha(B2GParam.Type.MCMC);
