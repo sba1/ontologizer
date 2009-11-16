@@ -95,6 +95,11 @@ decode.parameter.setting<-function(name)
 plot.roc<-function(d,alpha=NA,beta=NA,calc.auc=F,y.axis="tpr",x.axis="fpr",legend.place="bottomright")
 {
 	nruns<-length(unique(d$run))
+	
+	if (nrow(d)==0)
+	{
+		return()
+	}
 
 #	column.indices<-grep("^p\\.",colnames(d),perl=T)
 #	sapply(colnames(d)[column.indices],decode.parameter.setting)
@@ -117,24 +122,36 @@ plot.roc<-function(d,alpha=NA,beta=NA,calc.auc=F,y.axis="tpr",x.axis="fpr",legen
 #	# Convert the list of lists to a data frame
 #	result.frame<-do.call(rbind,lapply(result.list,data.frame))
 
-	colors<-rainbow(12)
-	pchs<-1:12
 	l<-list();
 
+#	v<-matrix(ncol=2,byrow=T,
+#	              c("p.tft","Term for Term",
+#                    "p.tft.bf","Term for Term: BF",
+#				    "p.pcu", "Parent Child",
+#				    "p.tweight","Topology Weighted",
+#					"p.pb", "Probabilistic (Lu et al.)",
+#					"p.b2g.ideal", "B2G: Ideal",
+#					"p.b2g.ideal.pop", "B2G: Ideal, PaR",
+#					"p.b2g.em", "B2G: EM",
+#					"p.b2g.mcmc", "B2G: Full MCMC",
+#					"p.b2g.mcmc.cexpt", "B2G: Full MCMC (p known)",
+#					"p.b2g.ideal.nop", "B2G: No Prior"
+#	               ))
 	v<-matrix(ncol=2,byrow=T,
 	              c("p.tft","Term for Term",
-                    "p.tft.bf","Term for Term: BF",
 				    "p.pcu", "Parent Child",
 				    "p.tweight","Topology Weighted",
 					"p.pb", "Probabilistic (Lu et al.)",
 					"p.b2g.ideal", "B2G: Ideal",
 					"p.b2g.ideal.pop", "B2G: Ideal, PaR",
-					"p.b2g.em", "B2G: EM",
-					"p.b2g.mcmc", "B2G: Full MCMC",
-					"p.b2g.mcmc.cexpt", "B2G: Full MCMC (p known)",
-					"p.b2g.ideal.nop", "B2G: No Prior"
+					"p.b2g.mcmc", "B2G: MCMC",
+					"p.b2g.mcmc.pop", "B2G: MCMC, PaR",
+					"p.b2g.ideal.pop.nop", "B2G: No Prior"
 	               ))
+
 	colnames(v)<-c("short","full")
+	colors<-rainbow(nrow(v))
+	pchs<-1:nrow(v)
 
 	for (i in (1:nrow(v)))
 	{
@@ -156,11 +173,11 @@ plot.roc<-function(d,alpha=NA,beta=NA,calc.auc=F,y.axis="tpr",x.axis="fpr",legen
 
 		if (i==1)
 		{
-			plot(perf, col=colors[i],pch=pchs[i],downsampling=125, type="l", ylim=c(0,1),xlim=c(0,1),main=sprintf("Comparison (alpha=%g,beta=%g)",alpha,beta))
+			plot(perf, col=colors[i],pch=pchs[i],downsampling=200, type="l", ylim=c(0,1),xlim=c(0,1),main=sprintf("Comparison (alpha=%g,beta=%g)",alpha,beta))
 			plot(perf, col=colors[i],pch=pchs[i],downsampling=25, type="p", add=TRUE)
 		} else
 		{
-			plot(perf, col=colors[i],pch=pchs[i],downsampling=125, type="l", add=TRUE)
+			plot(perf, col=colors[i],pch=pchs[i],downsampling=200, type="l", add=TRUE)
 			plot(perf, col=colors[i],pch=pchs[i],downsampling=25, type="p", add=TRUE)
 		}		
 	}
