@@ -36,7 +36,8 @@ class VariableAlphaBetaScore extends Bayes2GOScore
 	{
 		for (ByteString g : population)
 		{
-			if (observedActiveGenes.contains(g))
+			int gid = gene2GenesIdx.get(g);
+			if (observedGenes[gid])
 				llr.put(g, Math.log(1-beta) - Math.log(alpha)); // P(oi=1|h=1) / P(oi=1|h=0)
 			else
 				llr.put(g, Math.log(beta) - Math.log(1-alpha)); // P(oi=0|h=1) / P(oi=0|h=0)
@@ -48,13 +49,15 @@ class VariableAlphaBetaScore extends Bayes2GOScore
 	private TermID proposalT1;
 	private TermID proposalT2;
 
-	public void hiddenGeneActivated(ByteString gene)
+	public void hiddenGeneActivated(int gid)
 	{
+		ByteString gene = genes[gid];
 		score += llr.get(gene);
 	}
 
-	public void hiddenGeneDeactivated(ByteString gene)
+	public void hiddenGeneDeactivated(int gid)
 	{
+		ByteString gene = genes[gid];
 		score -= llr.get(gene);
 	}
 
