@@ -230,16 +230,16 @@ public class Benchmark
 	{
 		int numProcessors = Runtime.getRuntime().availableProcessors();
 
-//		Bayes2GOCalculation.alpha = ALPHA;
-//		Bayes2GOCalculation.beta = BETA;
-
-GlobalPreferences.setProxyPort(888);
-GlobalPreferences.setProxyHost("realproxy.charite.de");
+		GlobalPreferences.setProxyPort(888);
+		GlobalPreferences.setProxyHost("realproxy.charite.de");
 
 		String oboPath = "http://www.geneontology.org/ontology/gene_ontology_edit.obo";
 		String assocPath = "http://cvsweb.geneontology.org/cgi-bin/cvsweb.cgi/go/gene-associations/gene_association.fb.gz?rev=HEAD";
 
-		long seed = 1;//System.nanoTime());
+		/* Write out the seed so it can be recovered. All the randomness is based upon this seed */
+		long seed = System.nanoTime();
+		new PrintWriter(new File("seed")).println(seed);
+
 		final Random rnd = new Random(seed);
 
 		Datafiles df = new Datafiles(oboPath,assocPath);
