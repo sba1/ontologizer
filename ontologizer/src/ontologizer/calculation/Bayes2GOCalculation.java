@@ -341,6 +341,12 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 	private TermID proposalT1;
 	private TermID proposalT2;
 
+	private double [] ALPHA = new double[] {0.05,0.1,0.15,0.2,0.25,0.3};
+//	private double alpha = 0.05;
+//	private double oldAlpha;
+	private int alphaIdx = 0;
+	private int oldAlphaIdx;
+
 	private int n00;
 	private int n01;
 	private int n10;
@@ -390,34 +396,44 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 		proposalSwitch = -1;
 		proposalT1 = null;
 		proposalT2 = null;
+		oldAlphaIdx = -1;
 
-		long choose = Math.abs(rand) % oldPossibilities;
-
-		if (choose < termsArray.length)
+		if (rnd.nextBoolean())
 		{
-			/* on/off */
-			proposalSwitch = (int)choose;
-			switchState(proposalSwitch);
-		}	else
+			long choose = Math.abs(rand) % oldPossibilities;
+
+			if (choose < termsArray.length)
+			{
+				/* on/off */
+				proposalSwitch = (int)choose;
+				switchState(proposalSwitch);
+			}	else
+			{
+				long base = choose - termsArray.length;
+
+				int activeTermPos = (int)(base / numInactiveTerms);
+				int inactiveTermPos = (int)(base % numInactiveTerms);
+
+				for (TermID tid : activeTerms)
+					if (activeTermPos-- == 0) proposalT1 = tid;
+				proposalT2 = inactiveTermsArray[inactiveTermPos];
+
+				exchange(proposalT1, proposalT2);
+			}
+		} else
 		{
-			long base = choose - termsArray.length;
-
-			int activeTermPos = (int)(base / numInactiveTerms);
-			int inactiveTermPos = (int)(base % numInactiveTerms);
-
-			for (TermID tid : activeTerms)
-				if (activeTermPos-- == 0) proposalT1 = tid;
-			proposalT2 = inactiveTermsArray[inactiveTermPos];
-
-			exchange(proposalT1, proposalT2);
+			int choose = Math.abs((int)rand) % ALPHA.length;
+			oldAlphaIdx = alphaIdx;
+			alphaIdx = choose;
 		}
 	}
 
 	@Override
 	public double getScore()
 	{
-		double alpha = 0.1;
+//		double alpha = 0.1;
 		double beta = 0.1;
+		double alpha = ALPHA[alphaIdx];
 
 		double newScore2 = Math.log(alpha) * n10 + Math.log(1-alpha)*n11 + Math.log(1-beta)*n00 + Math.log(beta)*n01;
 		newScore2 -= Math.log(alpha) * observedActiveGenes.size() + Math.log(1-beta)* (population.size() - observedActiveGenes.size());
@@ -427,12 +443,14 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 	public void undoProposal()
 	{
 		if (proposalSwitch != -1)	switchState(proposalSwitch);
-		else exchange(proposalT2, proposalT1);
+		else if (proposalT1 != null) exchange(proposalT2, proposalT1);
+		else alphaIdx = oldAlphaIdx;
 	}
 
 	public long getNeighborhoodSize()
 	{
-		return termsArray.length + activeTerms.size() * numInactiveTerms;
+		long size = termsArray.length + activeTerms.size() * numInactiveTerms;
+		return size;
 	}
 }
 
@@ -589,8 +607,8 @@ public class Bayes2GOCalculation implements ICalculation
 		}
 		else rnd = new Random();
 
-		VariableAlphaBetaScore bayesScore = new VariableAlphaBetaScore(rnd, allTerms, populationEnumerator, studySet.getAllGeneNames(), alpha, beta);
-//		FixedAlphaBetaScore bayesScore = new FixedAlphaBetaScore(rnd, allTerms, populationEnumerator,  studySet.getAllGeneNames());
+//		VariableAlphaBetaScore bayesScore = new VariableAlphaBetaScore(rnd, allTerms, populationEnumerator, studySet.getAllGeneNames(), alpha, beta);
+		FixedAlphaBetaScore bayesScore = new FixedAlphaBetaScore(rnd, allTerms, populationEnumerator,  studySet.getAllGeneNames());
 
 		result.setScore(bayesScore);
 
