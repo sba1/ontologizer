@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map.Entry;
 
 import ontologizer.calculation.AbstractGOTermProperties;
@@ -49,7 +50,7 @@ public class EnrichedGOTermsResultLatexWriter
 
 			double i = val / Math.pow(10,exp);
 			
-			return String.format("%.3f*10^{%d}",i,exp);	
+			return String.format(Locale.US,"%.3f \\times 10^{%d}",i,exp);	
 		} else
 		{
 			return Double.toString(val);
@@ -114,11 +115,17 @@ public class EnrichedGOTermsResultLatexWriter
 			out.println("\\end{tabular}");
 			out.println("\\end{footnotesize}");
 			out.println("\\end{center}");
-			out.println("\\caption{GO overrepresentation analysis with the Ontologizer V2, Bauer et al., Bioinformatics 24(14):1650-1.}");
+			out.println(String.format("\\caption{" +
+					                  "GO overrepresentation analysis using Ontologizer~\\cite{Ontologizer2008} with settings \"%s/%s\". " +
+					                  "For this analysis, a total of %d genes were in the population set, of which a total of %d genes were in the study set.}",result.getCalculationName(),result.getCorrectionName(),result.getPopulationGeneCount(),result.getStudyGeneCount()));
 			out.println("\\end{table}");
-
+			out.println("\\begin{thebibliography}{1}");
+			out.println("\\bibitem{Ontologizer2008} Sebastian Bauer, Steffen Grossmann, Martin Vingron, Peter N. Robinson. Ontologizer 2.0 -- a multifunctional tool for GO term enrichment analysis and data exploration. \\emph{Bioinformatics}, \\textbf{24}(14): 1650--1651.");
+			out.println("\\end{thebibliography}");
 			out.println("\\end{document}");
 
+			
+			
 			out.flush();
 			out.close();
 
