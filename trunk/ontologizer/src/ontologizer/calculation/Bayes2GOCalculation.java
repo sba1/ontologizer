@@ -1,7 +1,9 @@
 package ontologizer.calculation;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -36,9 +38,9 @@ import ontologizer.worksets.WorkSetLoadThread;
 
 class B2GTestParameter
 {
-	static double ALPHA = 0.35;
-	static double BETA = 0.35;
-	static int MCMC_STEPS = 500000;
+	static double ALPHA = 0.1;
+	static double BETA = 0.4;
+	static int MCMC_STEPS = 200000;
 }
 
 /**
@@ -496,7 +498,7 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 
 		beta = this.beta;
 
-		double newScore2 = Math.log(alpha) * n10 + Math.log(1-alpha)*n11 + Math.log(1-beta)*n00 + Math.log(beta)*n01;
+		double newScore2 = Math.log(alpha) * n10 + Math.log(1-alpha)*n00 + Math.log(1-beta)*n11 + Math.log(beta)*n01;
 
 		if (!Double.isNaN(p))
 			newScore2 += Math.log(p)*activeTerms.size() + Math.log(1-p)*(termsArray.length - activeTerms.size());
@@ -533,34 +535,34 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 		totalT = totalT.add(new BigInteger(new String(activeTerms.size() + "")));
 	}
 
-	public int getAvgN00()
+	public double getAvgN00()
 	{
-		BigInteger avgN00 = new BigInteger(totalN00.toString());
-		return avgN00.divide(new BigInteger(Integer.toString(numRecords))).intValue();
+		BigDecimal avgN00 = new BigDecimal(totalN00.toString());
+		return avgN00.divide(new BigDecimal(Integer.toString(numRecords)),15,BigDecimal.ROUND_HALF_EVEN).doubleValue();
 	}
 
-	public int getAvgN01()
+	public double getAvgN01()
 	{
-		BigInteger avgN01 = new BigInteger(totalN01.toString());
-		return avgN01.divide(new BigInteger(Integer.toString(numRecords))).intValue();
+		BigDecimal avgN01 = new BigDecimal(totalN01.toString());
+		return avgN01.divide(new BigDecimal(Integer.toString(numRecords)),15,BigDecimal.ROUND_HALF_EVEN).doubleValue();
 	}
 
-	public int getAvgN10()
+	public double getAvgN10()
 	{
-		BigInteger avgN10 = new BigInteger(totalN10.toString());
-		return avgN10.divide(new BigInteger(Integer.toString(numRecords))).intValue();
+		BigDecimal avgN10 = new BigDecimal(totalN10.toString());
+		return avgN10.divide(new BigDecimal(Integer.toString(numRecords)),15,BigDecimal.ROUND_HALF_EVEN).doubleValue();
 	}
 
-	public int getAvgN11()
+	public double getAvgN11()
 	{
-		BigInteger avgN11 = new BigInteger(totalN11.toString());
-		return avgN11.divide(new BigInteger(Integer.toString(numRecords))).intValue();
+		BigDecimal avgN11 = new BigDecimal(totalN11.toString());
+		return avgN11.divide(new BigDecimal(Integer.toString(numRecords)),15,BigDecimal.ROUND_HALF_EVEN).doubleValue();
 	}
 
-	public int getAvgT()
+	public double getAvgT()
 	{
-		BigInteger avgT = new BigInteger(totalT.toString());
-		return avgT.divide(new BigInteger(Integer.toString(numRecords))).intValue();
+		BigDecimal avgT = new BigDecimal(totalT.toString());
+		return avgT.divide(new BigDecimal(Integer.toString(numRecords)),15,BigDecimal.ROUND_HALF_EVEN).doubleValue();
 	}
 }
 
@@ -642,6 +644,11 @@ public class Bayes2GOCalculation implements ICalculation
 	public void setBeta(double beta)
 	{
 		this.beta = beta;
+	}
+
+	public void setTakePopulationAsReference(boolean takePopulationAsReference)
+	{
+		this.takePopulationAsReference = takePopulationAsReference;
 	}
 
 	public EnrichedGOTermsResult calculateStudySet(GOGraph graph,
@@ -761,7 +768,7 @@ public class Bayes2GOCalculation implements ICalculation
 		}
 		if (Double.isNaN(p))
 		{
-			p = 0.001;// / allTerms.size();
+			p = (double)1 / allTerms.size();
 			doPEm = true;
 			doEm = true;
 		}
@@ -853,7 +860,6 @@ public class Bayes2GOCalculation implements ICalculation
 
 			if (doAlphaEm)
 			{
-				System.out.println(bayesScore.getAvgN10() +  "   " + bayesScore.getAvgN00() + "  " + bayesScore.getAvgN10());
 				double newAlpha = (double)bayesScore.getAvgN10()/(bayesScore.getAvgN00() + bayesScore.getAvgN10());
 				System.out.println("alpha=" + alpha + "  newAlpha=" + newAlpha);
 				alpha = newAlpha;
@@ -861,7 +867,7 @@ public class Bayes2GOCalculation implements ICalculation
 
 			if (doBetaEm)
 			{
-				double newBeta = (double)bayesScore.getAvgN01()/(bayesScore.getAvgN01() + bayesScore.getAvgN00());
+				double newBeta = (double)bayesScore.getAvgN01()/(bayesScore.getAvgN01() + bayesScore.getAvgN11());
 				System.out.println("beta=" + beta + "  newBeta=" + newBeta);
 				beta = newBeta;
 			}
@@ -1162,10 +1168,10 @@ public class Bayes2GOCalculation implements ICalculation
 //		ParentChildCalculation calc = new ParentChildCalculation();
 		Bayes2GOCalculation calc = new Bayes2GOCalculation();
 ////		calc.setNoPrior(true);
-		calc.setP(p);
+//		calc.setP(p);
 		calc.setSeed(1);
-		calc.setAlpha(realAlpha);
-		calc.setBeta(realBeta);
+//		calc.setAlpha(realAlpha);
+//		calc.setBeta(realBeta);
 //		calc.setAlpha(alphaStudySet);
 //		calc.setBeta(betaStudySet);
 
@@ -1223,8 +1229,7 @@ public class Bayes2GOCalculation implements ICalculation
 			resultList.add(prop);
 		Collections.sort(resultList);
 
-		ArrayList<AbstractGOTermProperties> interestingList = new ArrayList<AbstractGOTermProperties>();
-
+//		ArrayList<AbstractGOTermProperties> interestingList = new ArrayList<AbstractGOTermProperties>();
 //		System.out.println("The overrepresented terms:");
 //		for (TermID w : wantedActiveTerms)
 //		{
