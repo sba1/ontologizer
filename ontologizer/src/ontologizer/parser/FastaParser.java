@@ -2,6 +2,7 @@ package ontologizer.parser;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
@@ -19,7 +20,7 @@ import ontologizer.ByteString;
  * @author Peter Robinson
  */
 
-public final class FastaParser implements IGeneNameParser
+public final class FastaParser extends AbstractItemParser
 {
 	/**
 	 * <P>
@@ -31,7 +32,9 @@ public final class FastaParser implements IGeneNameParser
 	 * Key: The gene name, Value: A description (optional)
 	 * </P>
 	 */
-	private HashMap<ByteString, String> genes = new HashMap<ByteString, String>();
+//	private HashMap<ByteString, String> genes = new HashMap<ByteString, String>();
+
+	private File file;
 
 	/**
 	 * The first word between ">" and the subsequent DELIM character will be
@@ -46,7 +49,13 @@ public final class FastaParser implements IGeneNameParser
 	 * @throws IOException
 	 *           On every io error. 
 	 */
-	public FastaParser(final File file) throws IOException
+	public FastaParser(final File file) // throws IOException
+	{
+		this.file = file;
+	}
+	
+	@Override
+	public void parseSource(IParserCallback callback) throws IOException
 	{
 		String inputLine;
 		BufferedReader is = new BufferedReader(new FileReader(file));
@@ -54,16 +63,16 @@ public final class FastaParser implements IGeneNameParser
 		while ((inputLine = is.readLine()) != null)
 		{
 			if (inputLine.length() > 0 && inputLine.charAt(0) == '>')
-				processFASTALine(inputLine);
+				processFASTALine(inputLine,callback);
 		}
 		is.close();
 	}
 
 
-	public HashMap<ByteString, String> getNames()
-	{
-		return genes;
-	}
+//	public HashMap<ByteString, String> getNames()
+//	{
+//		return genes;
+//	}
 
 	/**
 	 * @param line
@@ -76,7 +85,7 @@ public final class FastaParser implements IGeneNameParser
 	 *            parens/brackets).
 	 */
 
-	private void processFASTALine(final String line)
+	private void processFASTALine(final String line,IParserCallback callback)
 	{
 		StringTokenizer st = new StringTokenizer(line.substring(1), DELIM, true);
 		StringBuffer sb = new StringBuffer("");
@@ -97,7 +106,10 @@ public final class FastaParser implements IGeneNameParser
 		{
 			sb.append(st.nextToken());
 		}
-		genes.put(new ByteString(name), sb.toString());
+		ByteString itemName = new ByteString(name);
+		ItemAttribute itemAttribute = new ItemAttribute();
+		itemAttribute.description = sb.toString();
+		callback.newEntry(itemName, itemAttribute);
 	}
 
 }
