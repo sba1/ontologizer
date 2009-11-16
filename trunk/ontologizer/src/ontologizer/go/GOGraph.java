@@ -958,8 +958,9 @@ public class GOGraph implements Iterable<Term>
 
 		if (relevantSubontology != null)
 		{
-			if (!(existsPath(relevantSubontology.getID(), term.getID())))
-				return false;
+			if (term.getID().id != relevantSubontology.getID().id)
+				if (!(existsPath(relevantSubontology.getID(), term.getID())))
+					return false;
 		}
 
 		return true;
