@@ -513,7 +513,8 @@ public class GeneEditor extends Composite
 	 */
 	private String getGeneName(String line)
 	{
-		int pos = line.indexOf(' '); 
+		int pos = line.indexOf(' ');
+		if (pos == -1) pos = line.indexOf('\t');
 		if (pos != -1) line = line.substring(0, pos);
 		return line; 
 	}
