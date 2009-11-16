@@ -29,6 +29,7 @@ import ontologizer.sampling.KSubsetSampler;
 import ontologizer.sampling.PercentageEnrichmentRule;
 import ontologizer.sampling.StudySetSampler;
 import ontologizer.statistics.AbstractTestCorrection;
+import ontologizer.statistics.Bonferroni;
 import ontologizer.statistics.None;
 
 /**
@@ -40,17 +41,17 @@ public class Benchmark
 {
 	private static int NOISE_PERCENTAGE = 10;
 	private static int TERM_PERCENTAGE = 75;
-	private static double ALPHA = 0.1;
-	private static double BETA = 0.25;
+	private static double [] ALPHAs = new double[]{0.1,0.4};
+	private static double [] BETAs = new double[]{0.25,0.4};
 	private static boolean ORIGINAL_SAMPLING = false;
 	private static int MAX_TERMS = 5;
-	private static int TERMS_PER_RUN = 50;
+	private static int TERMS_PER_RUN = 75;
 	
 	/**
 	 * Senseful terms are terms that have an annotation proportion between 0.1
 	 * and 0.9
 	 */
-	private static int SENSEFUL_TERMS_PER_RUN = 50;
+	private static int SENSEFUL_TERMS_PER_RUN = 75;
 
 	private static AbstractTestCorrection testCorrection = new None();
 
@@ -61,6 +62,7 @@ public class Benchmark
 		public double alpha;
 		public double beta;
 		public boolean noPrior;
+		public AbstractTestCorrection testCorrection;
 		
 		/** Number of desired terms */
 		public int dt;
@@ -93,30 +95,33 @@ public class Benchmark
 	static
 	{
 		calcMethods = new ArrayList<Method>();
-//		calcMethods.add(new Method("Bayes2GO","b2g.ideal"));
-//		for (double a : calcAlpha)
-//		{
-//			for (double b : calcBeta)
-//			{
-//				for (int cdt : calcDesiredTerms)
-//				{
-//					String colName = String.format("b2g.a%.2g.b%.2g.d%d", a,b,cdt);
-//					calcMethods.add(new Method("Bayes2GO",colName,a,b,cdt));
-//				}
-//			}
-//		}
+		calcMethods.add(new Method("Bayes2GO","b2g.ideal"));
+		for (double a : calcAlpha)
+		{
+			for (double b : calcBeta)
+			{
+				for (int cdt : calcDesiredTerms)
+				{
+					String colName = String.format("b2g.a%.2g.b%.2g.d%d", a,b,cdt);
+					calcMethods.add(new Method("Bayes2GO",colName,a,b,cdt));
+				}
+			}
+		}
 		calcMethods.add(new Method("Term-For-Term","tft"));
+		Method m = new Method("Term-For-Term","tft.bf");
+		m.testCorrection = new Bonferroni();
+		calcMethods.add(m);
 		calcMethods.add(new Method("Parent-Child-Union","pcu"));
-//		calcMethods.add(new Method("Probabilistic","pb"));
-//		calcMethods.add(new Method("Topology-Weighted","tweight"));
-//
-//		Method m = new Method("Bayes2GO","b2g.em");
-//		m.em = true;
-//		calcMethods.add(m);
-//
-//		m = new Method("Bayes2GO","b2g.ideal.nop");
-//		m.noPrior = true;
-//		calcMethods.add(m);
+		calcMethods.add(new Method("Probabilistic","pb"));
+		calcMethods.add(new Method("Topology-Weighted","tweight"));
+
+		m = new Method("Bayes2GO","b2g.em");
+		m.em = true;
+		calcMethods.add(m);
+
+		m = new Method("Bayes2GO","b2g.ideal.nop");
+		m.noPrior = true;
+		calcMethods.add(m);
 	}
 
 	public static void main(String[] args) throws Exception
@@ -200,8 +205,10 @@ GlobalPreferences.setProxyHost("realproxy.charite.de");
 		out.print("pop.genes\t");
 		out.print("study.genes\t");
 		out.print("run\t");
-		out.println("senseful");
-		
+		out.print("senseful\t");
+		out.print("alpha\t");
+		out.println("beta");
+
 		/* We start with the term combinations */
 		class Combination
 		{
@@ -238,145 +245,158 @@ GlobalPreferences.setProxyHost("realproxy.charite.de");
 		
 		/* Generate study set and calculate */
 		int current = 0;
-		final int max = combinationList.size();
+		final int max = combinationList.size() * ALPHAs.length * BETAs.length;
 		final StudySetSampler sampler = new StudySetSampler(completePop);
-		for (final Combination combi : combinationList)
+
+		for (final double ALPHA : ALPHAs)
 		{
-			current++;
-
-			final int currentRun = current;
-			final ArrayList<TermID> termCombi = combi.termCombi;
-			
-			es.execute(new Runnable()
+			for (final double BETA : BETAs)
 			{
-				public void run()
+				for (final Combination combi : combinationList)
 				{
-					try
+					current++;
+		
+					final int currentRun = current;
+					final ArrayList<TermID> termCombi = combi.termCombi;
+					final Random studyRnd = new Random(rnd.nextLong());
+
+					es.execute(new Runnable()
 					{
-						System.out.println("***** " + currentRun + "/" + max + ": " + termCombi.size() + " terms" + " *****");
-
-						StudySet newStudySet = generateStudySet(rnd, assoc, graph,
-								completePopEnumerator, allGenesArray, sampler,
-								termCombi);
-
-						if (newStudySet != null)
+						public void run()
 						{
-							GOTermEnumerator studyEnumerator = newStudySet.enumerateGOTerms(graph, assoc);
-
-							/* Some buffer for the result */
-							StringBuilder builder = new StringBuilder(100000);
-							LinkedHashMap<TermID,Double []> terms2PVal = new LinkedHashMap<TermID,Double[]>();
-
-							/* Gather results */
-							for (int mPos = 0; mPos < calcMethods.size(); mPos++)
+							try
 							{
-								Method m = calcMethods.get(mPos);
-								ICalculation calc = CalculationRegistry.getCalculationByName(m.method);
-								
-								EnrichedGOTermsResult result;
-							
-								if (calc instanceof Bayes2GOCalculation)
+								System.out.println("***** " + currentRun + "/" + max + ": " + termCombi.size() + " terms" + " *****");
+
+								StudySet newStudySet = generateStudySet(studyRnd, assoc, graph,
+										completePopEnumerator, allGenesArray, sampler,
+										termCombi,ALPHA,BETA);
+
+								if (newStudySet != null)
 								{
-									/* Set some parameter */
-									Bayes2GOCalculation b2g = (Bayes2GOCalculation) calc;
-									calc = b2g = new Bayes2GOCalculation(b2g);
+									GOTermEnumerator studyEnumerator = newStudySet.enumerateGOTerms(graph, assoc);
 
-									b2g.setSeed(rnd.nextLong());
-									b2g.setNoPrior(m.noPrior);
+									/* Some buffer for the result */
+									StringBuilder builder = new StringBuilder(100000);
+									LinkedHashMap<TermID,Double []> terms2PVal = new LinkedHashMap<TermID,Double[]>();
 
-									double p;
-									
-									if (!m.em)
+									/* Gather results */
+									for (int mPos = 0; mPos < calcMethods.size(); mPos++)
 									{
-										if (m.dt == 0)
+										Method m = calcMethods.get(mPos);
+										ICalculation calc = CalculationRegistry.getCalculationByName(m.method);
+										
+										EnrichedGOTermsResult result;
+									
+										if (calc instanceof Bayes2GOCalculation)
 										{
-											p = (double)termCombi.size() / completePopEnumerator.getTotalNumberOfAnnotatedTerms();
-											b2g.setAlpha(ALPHA);
-											b2g.setBeta(BETA);
-											b2g.setP(p);
-	
-										} else
+											/* Set some parameter */
+											Bayes2GOCalculation b2g = (Bayes2GOCalculation) calc;
+											calc = b2g = new Bayes2GOCalculation(b2g);
+
+											b2g.setSeed(rnd.nextLong());
+											b2g.setNoPrior(m.noPrior);
+
+											double p;
+											
+											if (!m.em)
+											{
+												if (m.dt == 0)
+												{
+													p = (double)termCombi.size() / completePopEnumerator.getTotalNumberOfAnnotatedTerms();
+													b2g.setAlpha(ALPHA);
+													b2g.setBeta(BETA);
+													b2g.setP(p);
+			
+												} else
+												{
+													p = (double)m.dt / completePopEnumerator.getTotalNumberOfAnnotatedTerms();
+													b2g.setAlpha(m.alpha);
+													b2g.setBeta(m.beta);
+													b2g.setP(p);
+												}
+											}
+											
+//											System.out.println(p);
+//											result = b2g.calculateStudySet(graph, assoc, completePop, newStudySet, (double)termCombi.size() / completePopEnumerator.getTotalNumberOfAnnotatedTerms());
+										}
+										
+										if (m.testCorrection != null) result = calc.calculateStudySet(graph, assoc, completePop, newStudySet, m.testCorrection);
+										else result = calc.calculateStudySet(graph, assoc, completePop, newStudySet, testCorrection);
+
+										for (AbstractGOTermProperties p : result)
 										{
-											p = (double)m.dt / completePopEnumerator.getTotalNumberOfAnnotatedTerms();
-											b2g.setAlpha(m.alpha);
-											b2g.setBeta(m.beta);
-											b2g.setP(p);
+											Double [] pVals = terms2PVal.get(p.goTerm.getID());
+											if (pVals == null)
+											{
+												pVals = new Double[calcMethods.size()];
+												for (int i=0;i<pVals.length;i++)
+													pVals[i] = 2.0;
+												terms2PVal.put(p.goTerm.getID(), pVals);
+											}
+											pVals[mPos] = p.p_adjusted;
 										}
 									}
+
+									/* Write out the results */
+									for (Entry<TermID,Double[]> entry : terms2PVal.entrySet())
+									{
+										TermID tid = entry.getKey();
+
+										boolean termIsMoreGeneral = false;
+										boolean termIsMoreSpecific = false;
+										boolean label = termCombi.contains(tid);
+			
+										for (TermID toLookForTerm : termCombi)
+										{
+											if (graph.existsPath(tid,toLookForTerm))
+											{
+												termIsMoreGeneral = true;
+												break;
+											}
+										}
+			
+										for (TermID t : termCombi)
+										{
+											if (graph.existsPath(t,tid))
+											{
+												termIsMoreSpecific = true;
+												break;
+											}
+										}
+
+										Double [] pVals = terms2PVal.get(tid);
+			
+										builder.append(tid.id + "\t");
+										builder.append((label?"1":"0") + "\t");
+										for (double p : pVals)
+											builder.append(p + "\t");
+										builder.append((termIsMoreGeneral?"1":"0") + "\t");
+										builder.append((termIsMoreSpecific?"1":"0") + "\t");
+										builder.append(completePopEnumerator.getAnnotatedGenes(tid).totalAnnotatedCount() + "\t");
+										builder.append(studyEnumerator.getAnnotatedGenes(tid).totalAnnotatedCount() + "\t");
+										builder.append(currentRun + "\t");
+										builder.append((combi.isSenseful?"1":"0") + "\t");
+										builder.append(ALPHA+ "\t");
+										builder.append(BETA);
+										builder.append('\n');
+									}
 									
-//									System.out.println(p);
-//									result = b2g.calculateStudySet(graph, assoc, completePop, newStudySet, (double)termCombi.size() / completePopEnumerator.getTotalNumberOfAnnotatedTerms());
-								}
-								result = calc.calculateStudySet(graph, assoc, completePop, newStudySet, testCorrection);
-
-								for (AbstractGOTermProperties p : result)
-								{
-									Double [] pVals = terms2PVal.get(p.goTerm.getID());
-									if (pVals == null)
-									{
-										pVals = new Double[calcMethods.size()];
-										for (int i=0;i<pVals.length;i++)
-											pVals[i] = 2.0;
-										terms2PVal.put(p.goTerm.getID(), pVals);
+									synchronized (out) {
+										out.print(builder);
+										out.flush();
 									}
-									pVals[mPos] = p.p_adjusted;
 								}
 							}
-
-							/* Write out the results */
-							for (Entry<TermID,Double[]> entry : terms2PVal.entrySet())
+							catch (Exception e)
 							{
-								TermID tid = entry.getKey();
-
-								boolean termIsMoreGeneral = false;
-								boolean termIsMoreSpecific = false;
-								boolean label = termCombi.contains(tid);
-	
-								for (TermID toLookForTerm : termCombi)
-								{
-									if (graph.existsPath(tid,toLookForTerm))
-									{
-										termIsMoreGeneral = true;
-										break;
-									}
-								}
-	
-								for (TermID t : termCombi)
-								{
-									if (graph.existsPath(t,tid))
-									{
-										termIsMoreSpecific = true;
-										break;
-									}
-								}
-
-								Double [] pVals = terms2PVal.get(tid);
-	
-								builder.append(tid.id + "\t");
-								builder.append((label?"1":"0") + "\t");
-								for (double p : pVals)
-									builder.append(p + "\t");
-								builder.append((termIsMoreGeneral?"1":"0") + "\t");
-								builder.append((termIsMoreSpecific?"1":"0") + "\t");
-								builder.append(completePopEnumerator.getAnnotatedGenes(tid).totalAnnotatedCount() + "\t");
-								builder.append(studyEnumerator.getAnnotatedGenes(tid).totalAnnotatedCount() + "\t");
-								builder.append(currentRun + "\t");
-								builder.append((combi.isSenseful?"1":"0"));
-								builder.append('\n');
-							}
-							
-							synchronized (out) {
-								out.print(builder);
-								out.flush();
+								e.printStackTrace();
 							}
 						}
-					}
-					catch (Exception e)
-					{
-						e.printStackTrace();
-					}
+					});
+
 				}
-			});
+			}
 		}
 
 		
@@ -406,7 +426,7 @@ GlobalPreferences.setProxyHost("realproxy.charite.de");
 			AssociationContainer assoc, GOGraph graph,
 			GOTermEnumerator completePopEnumerator,
 			ByteString[] allGenesArray, StudySetSampler sampler,
-			ArrayList<TermID> termCombi)
+			ArrayList<TermID> termCombi, double ALPHA, double BETA)
 	{
 		StudySet newStudySet;
 		/* Original variant */
