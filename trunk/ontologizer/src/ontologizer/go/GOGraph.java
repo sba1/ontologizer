@@ -962,4 +962,19 @@ public class GOGraph implements Iterable<Term>
 		return true;
 	}
 
+	/**
+	 * Returns whether the given term is relevant (i.e., is contained in a relevant sub ontology and subset).
+	 *
+	 * @param goTermID
+	 * @return
+	 */
+	public boolean isRelevantTermID(TermID goTermID)
+	{
+		Term t;
+		if (isRootGOTermID(goTermID)) t = rootGOTerm;
+		else t = goTermContainer.get(goTermID);
+
+		return isRelevantTerm(t);
+	}
+
 }
