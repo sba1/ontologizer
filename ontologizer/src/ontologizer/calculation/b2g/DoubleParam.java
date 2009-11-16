@@ -4,6 +4,8 @@ import ontologizer.calculation.b2g.B2GParam.Type;
 
 class DoubleParam extends B2GParam
 {
+	private double min;
+	private double max;
 	private double val;
 
 	public DoubleParam(Type type, double val)
@@ -36,6 +38,46 @@ class DoubleParam extends B2GParam
 	{
 		this.val = newVal;
 		setType(Type.FIXED);
+	}
+
+	/**
+	 * Applicable for Variables of type MCMC or EM.
+	 *
+	 * @param min
+	 */
+	public void setMin(double min)
+	{
+		this.min = min;
+	}
+
+	/**
+	 * Applicable for Variables of type MCMC or EM.
+	 *
+	 * @param max
+	 */
+	public void setMax(double max)
+	{
+		this.max = max;
+	}
+
+	/**
+	 * Applicable for Variables of type MCMC or EM.
+	 *
+	 * @return
+	 */
+	public double getMin()
+	{
+		return min;
+	}
+
+	/**
+	 * Applicable for Variables of type MCMC or EM.
+	 *
+	 * @return
+	 */
+	public double getMax()
+	{
+		return max;
 	}
 
 	@Override
