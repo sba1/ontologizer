@@ -59,7 +59,9 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
@@ -97,6 +99,8 @@ class TreeItemData
 	public boolean isSettings;
 	public String filename;
 	public String entries;
+	public int numEntries;
+	public int numKnownEntries = -1;
 	public File projectDirectory;
 	public Settings settings;
 };
@@ -292,6 +296,7 @@ public class MainWindow extends ApplicationWindow
 			{
 				str.append(line);
 				str.append("\n");
+				newItemData.numEntries++;
 			}
 			is.close();
 
@@ -336,6 +341,7 @@ public class MainWindow extends ApplicationWindow
 			{
 				str.append(line);
 				str.append("\n");
+				newItemData.numEntries++;
 			}
 			is.close();
 
@@ -487,13 +493,14 @@ public class MainWindow extends ApplicationWindow
 				tid.settings.ontologyFileName = getDefinitionFileString();
 				tid.settings.mappingFileName = getMappingFileString();
 				tid.settings.isClosed = currentSelectedItem.getExpanded();
-
 				storeProjectSettings(tid);
-
 				return;
 			}
 
 			tid.entries = setTextArea.getText();
+			tid.numEntries = setTextArea.getNumberOfEntries();
+			tid.numKnownEntries = setTextArea.getNumberOfKnownEntries();
+			updateTextOfItem(currentSelectedItem);
 
 			try
 			{
@@ -602,7 +609,6 @@ public class MainWindow extends ApplicationWindow
 				if (getTreeItemData(currentSelectedItem).isPopulation)
 					setTextArea.setToolTipText(populationTip);
 				else setTextArea.setToolTipText(studyTip);
-
 
 				setTextArea.setText(genes);
 				setTextArea.setWorkSet(settingsComposite.getSelectedWorkset());
@@ -1536,6 +1542,25 @@ public class MainWindow extends ApplicationWindow
 				{
 					tid.settings.isClosed = true;
 					storeProjectSettings(tid);
+				}
+			}
+		});
+		workspaceTree.addListener(SWT.PaintItem, new Listener()
+		{
+			public void handleEvent(Event event) {
+				TreeItem item = (TreeItem)event.item;
+				TreeItemData tid = getTreeItemData(item);
+
+				if (!tid.isProjectFolder)
+				{
+					int x = event.x;
+					int itemHeight = workspaceTree.getItemHeight();
+					int y = event.y + (itemHeight - event.gc.getFontMetrics().getHeight())/2;
+
+					if (tid.numKnownEntries != -1)
+					{
+						event.gc.drawText(tid.numKnownEntries + "/" + tid.numEntries, x + event.width + 5, y);
+					} else event.gc.drawText(tid.numEntries + "", x + event.width + 5, y);
 				}
 			}
 		});
