@@ -115,55 +115,68 @@ plot.roc<-function(d)
 	# Convert the list of lists to a data frame
 #	result.frame<-do.call(rbind,lapply(result.list,data.frame))
 
-	colors<-c("red","blue","green","cyan","magenta", "gray")
-	
+	colors<-c("red","blue","green","cyan","magenta", "gray", "purple", "brown")
+	l<-list();
 
 	pred<-prediction(1-d$p.tft,d$label)
 	perf<-performance(pred, measure = "tpr", x.measure = "fpr") 
 	auc.perf<-performance(pred, measure = "auc")
 	auc<-auc.perf@y.values[[1]]
 #plot(perf, col="red",main=sprintf("comparison for %d runs (AUC=%g)",nruns,auc),downsampling=100)
+	name<-"Term for Term"
+	l<-append(l,sprintf("%s (%g)",name,auc))
 	plot(perf, col=colors[1],main="Comparison",downsampling=100)
-	
+
 	pred<-prediction(1-d$p.pcu,d$label)
 	perf<-performance(pred, measure = "tpr", x.measure = "fpr") 
 	auc.perf<-performance(pred, measure = "auc")
 	auc<-auc.perf@y.values[[1]]
 #plot(perf, col=rainbow(10),main=sprintf("Parent Child Union for %d runs (AUC=%g)",nruns,auc),downsampling=100)
+	name<-"Parent Child"
+	l<-append(l,sprintf("%s (%g)",name,auc))
 	plot(perf, col=colors[2],downsampling=100, add=TRUE)
 	
 	pred<-prediction(1-d$p.tweight,d$label)
 	perf<-performance(pred, measure = "tpr", x.measure = "fpr") 
 	auc.perf<-performance(pred, measure = "auc")
 	auc<-auc.perf@y.values[[1]]
+	name<-"Topology Weighted"
+	l<-append(l,sprintf("%s (%g)",name,auc))
 	plot(perf, col=colors[3],downsampling=100, add=TRUE)
 
 	pred<-prediction(1-d$p.pb,d$label)
 	perf<-performance(pred, measure = "tpr", x.measure = "fpr") 
 	auc.perf<-performance(pred, measure = "auc")
 	auc<-auc.perf@y.values[[1]]
+	name<-"Probabilistic"
+	l<-append(l,sprintf("%s (%g)",name,auc))
 	plot(perf, col=colors[4],downsampling=100, add=TRUE)
 
 	pred<-prediction(1-d$p.b2g.ideal,d$label)
 	perf<-performance(pred, measure = "tpr", x.measure = "fpr") 
 	auc.perf<-performance(pred, measure = "auc")
 	auc<-auc.perf@y.values[[1]]
+	name<-"B2G: Ideal"
+	l<-append(l,sprintf("%s (%g)",name,auc))
 	plot(perf, col=colors[5],downsampling=100, add=TRUE)
 
-	pred<-prediction(1-d$p.b2g.ideal,d$label)
+	pred<-prediction(1-d$p.b2g.em,d$label)
 	perf<-performance(pred, measure = "tpr", x.measure = "fpr") 
 	auc.perf<-performance(pred, measure = "auc")
 	auc<-auc.perf@y.values[[1]]
-	plot(perf, col=colors[5],downsampling=100, add=TRUE)
+	name<-"B2G: EM"
+	l<-append(l,sprintf("%s (%g)",name,auc))
+	plot(perf, col=colors[6],downsampling=100, add=TRUE)
 
 	pred<-prediction(1-d$p.b2g.ideal.nop,d$label)
 	perf<-performance(pred, measure = "tpr", x.measure = "fpr") 
 	auc.perf<-performance(pred, measure = "auc")
 	auc<-auc.perf@y.values[[1]]
-	plot(perf, col=colors[6],downsampling=100, add=TRUE)
+	name<-"B2G: No Prior"
+	l<-append(l,sprintf("%s (%g)",name,auc))
+	plot(perf, col=colors[7],downsampling=100, add=TRUE)
 
-	legend("right",	col=colors, 
-		legend = c("Term for Term", "Parent Child Union", "Topology Weighted", "Probabilistic", "B2G", "B2G (no prior)"), fill=colors)
+	legend("right",	col=colors, legend = unlist(l), fill=colors)
 }
 
 pdf(file="result.pdf",height=6,width=6)
