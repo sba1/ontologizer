@@ -80,8 +80,9 @@ public class Benchmark
 	private static double [] ALPHAs = new double[]{0.1,0.4};
 	private static double [] BETAs = new double[]{0.25,0.4};
 	private static boolean ORIGINAL_SAMPLING = false;
-	private static int MAX_TERMS = 5;
-	private static int TERMS_PER_RUN = 200;
+	private static int MIN_TERMS = 0;
+	private static int MAX_TERMS = 0;
+	private static int TERMS_PER_RUN = 300;
 
 	/**
 	 * Senseful terms are terms that have an annotation proportion between 0.1
@@ -106,6 +107,7 @@ public class Benchmark
 		public boolean usePrior = true;
 		public boolean takePopulationAsReference;
 		public boolean useRandomStart;
+		public boolean useMaxBeta;
 		public AbstractTestCorrection testCorrection;
 
 		/** Number of desired terms */
@@ -153,10 +155,10 @@ public class Benchmark
 		calcMethods.add(m);
 
 		/* Bayes2GO Ideal, with pop as ref, random start */
-		m = new Method("Bayes2GO","b2g.ideal.pop.random");
-		m.takePopulationAsReference = true;
-		m.useRandomStart = true;
-		calcMethods.add(m);
+//		m = new Method("Bayes2GO","b2g.ideal.pop.random");
+//		m.takePopulationAsReference = true;
+//		m.useRandomStart = true;
+//		calcMethods.add(m);
 
 //		/* Tests for alpha/beta sensitivity */
 //		for (double a : calcAlpha)
@@ -210,6 +212,12 @@ public class Benchmark
 //		m.mcmc = true;
 //		m.takePopulationAsReference = true;
 //		calcMethods.add(m);
+
+		m = new Method("Bayes2GO", "b2g.mcmc.pop.maxbeta");
+		m.takePopulationAsReference = true;
+		m.mcmc = true;
+		m.useMaxBeta = true;
+		calcMethods.add(m);
 
 		m = new Method("Bayes2GO","b2g.ideal.pop.nop");
 		m.usePrior = false;
@@ -333,8 +341,10 @@ GlobalPreferences.setProxyHost("realproxy.charite.de");
 
 		KSubsetSampler<TermID> kSubsetSampler = new KSubsetSampler<TermID>(goodTerms,rnd);
 		ArrayList<Combination> combinationList = new ArrayList<Combination>();
-		for (int i=1;i<=MAX_TERMS;i++)
+		for (int i=MIN_TERMS;i<=MAX_TERMS;i++)
 		{
+			ArrayList<TermID> termCombis;
+
 			for (ArrayList<TermID> termCombi : kSubsetSampler.sampleManyOrderedWithoutReplacement(i,TERMS_PER_RUN))
 			{
 				Combination comb = new Combination();
@@ -355,7 +365,7 @@ GlobalPreferences.setProxyHost("realproxy.charite.de");
 //		}
 
 		KSubsetSampler<TermID> kSensefulSubsetSampler = new KSubsetSampler<TermID>(sensefulTerms,rnd);
-		for (int i=1;i<=MAX_TERMS;i++)
+		for (int i=MIN_TERMS;i<=MAX_TERMS;i++)
 		{
 			for (ArrayList<TermID> termCombi : kSensefulSubsetSampler.sampleManyOrderedWithoutReplacement(i,SENSEFUL_TERMS_PER_RUN))
 			{
@@ -463,20 +473,18 @@ GlobalPreferences.setProxyHost("realproxy.charite.de");
 											b2g.setUsePrior(m.usePrior);
 											b2g.setTakePopulationAsReference(m.takePopulationAsReference);
 											b2g.useRandomStart(m.useRandomStart);
-
-											double p;
-
+											b2g.setMcmcSteps(1020000);
 											if (m.em)
 											{
-												b2g.setMcmcSteps(1020000);
 												b2g.setAlpha(B2GParam.Type.EM);
 												b2g.setBeta(B2GParam.Type.EM);
 												b2g.setExpectedNumber(B2GParam.Type.EM);
 											} else if (m.mcmc)
 											{
-												b2g.setMcmcSteps(1020000);
 												b2g.setAlpha(B2GParam.Type.MCMC);
 												b2g.setBeta(B2GParam.Type.MCMC);
+												if (m.useMaxBeta)
+													b2g.setBetaBounds(0,0.8);
 
 												if (m.useCorrectExpectedTerms)
 													b2g.setExpectedNumber(termCombi.size());
@@ -728,6 +736,8 @@ GlobalPreferences.setProxyHost("realproxy.charite.de");
 
 			realAlpha = ((double)fp.size())/tn;
 			realBeta = ((double)fn.size())/tp;
+			if (Double.isNaN(realBeta))
+				realBeta = BETA;
 
 			System.out.println("Number of genes in study set " + newStudySet.getGeneCount() + " " + wantedActiveTerms.size() + " terms enriched");
 			System.out.println("Study set has " + fp.size() + " false positives (alpha=" + realAlpha +")");
