@@ -374,6 +374,7 @@ public class Ontologizer
 			public void act()
 			{
 				ICalculation calc = CalculationRegistry.getCalculationByName(main.getSelectedMethodName());
+				main.setMTCEnabled(calc.supportsTestCorrection());
 			}});
 
 		/* Store the current settings on disposal */
@@ -439,7 +440,12 @@ public class Ontologizer
 		main.setDefinitonFileString(p.get("definitionFile",""));
 		main.setAssociationsFileString(p.get("associationsFile",""));
 		main.setSelectedMTCName(p.get("mtc",TestCorrectionRegistry.getDefault().getName()));
-		main.setSelectedMethodName(p.get("method",CalculationRegistry.getDefault().getName()));
+		
+		ICalculation calc = CalculationRegistry.getCalculationByName(p.get("method",CalculationRegistry.getDefault().getName()));
+		if (calc == null) calc = CalculationRegistry.getDefault();
+		main.setSelectedMethodName(calc.getName());
+		main.setMTCEnabled(calc.supportsTestCorrection());
+		
 		GlobalPreferences.setDOTPath(p.get("dotCMD","dot"));
 		GlobalPreferences.setNumberOfPermutations(p.getInt("numberOfPermutations", 500));
 		GlobalPreferences.setProxyPort(p.get("proxyPort", "8888"));
