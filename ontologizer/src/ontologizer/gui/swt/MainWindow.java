@@ -257,8 +257,8 @@ public class MainWindow extends ApplicationWindow
 		newItemData.settings.ontologyFileName = getDefinitionFileString();
 
 		TreeItem newItem = new TreeItem(workspaceTree,0);
-		newItem.setText(name);
 		newItem.setData(newItemData);
+		updateTextOfItem(newItem);
 		return newItem;
 	}
 
@@ -301,8 +301,8 @@ public class MainWindow extends ApplicationWindow
 		}
 
 		TreeItem newItem = new TreeItem(parent,0);
-		newItem.setText(name);
 		newItem.setData(newItemData);
+		updateTextOfItem(newItem);
 		return newItem;
 	}
 
@@ -345,9 +345,26 @@ public class MainWindow extends ApplicationWindow
 		}
 
 		TreeItem newItem = new TreeItem(parent,0);
-		newItem.setText(name);
 		newItem.setData(newItemData);
+		updateTextOfItem(newItem);
 		return newItem;
+	}
+
+	/**
+	 * Updates the text of the tree item.
+	 *
+	 * @param item
+	 */
+	private void updateTextOfItem(TreeItem item)
+	{
+		TreeItemData tid = getTreeItemData(item);
+		if (isTreeItemProject(item))
+		{
+			item.setText(tid.projectDirectory.getName());
+		} else
+		{
+			item.setText(tid.filename);
+		}
 	}
 
 	/**
@@ -400,7 +417,7 @@ public class MainWindow extends ApplicationWindow
 
 			tid.filename = name;
 		}
-		item.setText(name);
+		updateTextOfItem(item);
 		return true;
 	}
 
@@ -1522,6 +1539,7 @@ public class MainWindow extends ApplicationWindow
 				}
 			}
 		});
+
 		workspaceTreeEditor = new TreeEditor(workspaceTree);
 		workspaceTreeEditor.grabHorizontal = true;
 		workspaceTreeEditor.horizontalAlignment = SWT.LEFT;
@@ -1541,7 +1559,11 @@ public class MainWindow extends ApplicationWindow
 				final Text text = new Text(workspaceTree, SWT.NONE);
 				final TreeItem item = items[0];
 
-				text.setText(item.getText());
+				TreeItemData tid = getTreeItemData(item);
+
+				if (tid.isProjectFolder) text.setText(tid.projectDirectory.getName());
+				else text.setText(tid.filename);
+
 				text.addFocusListener(new FocusAdapter(){
 					public void focusLost(FocusEvent ev)
 					{
@@ -1557,7 +1579,7 @@ public class MainWindow extends ApplicationWindow
 									renameItem(item,text.getText());
 									/* FALL THROUGH */
 							case	SWT.TRAVERSE_ESCAPE:
-									text.dispose ();
+									text.dispose();
 									ev.doit = false;
 									break;
 						}
