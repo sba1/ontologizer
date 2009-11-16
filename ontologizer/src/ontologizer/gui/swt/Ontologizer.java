@@ -269,7 +269,7 @@ public class Ontologizer
 						GlobalPreferences.getNumberOfPermutations(),
 						prefs.getAlpha(),GlobalPreferences.getUpperAlpha(),
 						prefs.getBeta(),GlobalPreferences.getUpperBeta(),
-						prefs.getExpectedNumberOfTerms(), prefs.getNumberOfMCMCSteps());
+						prefs.getExpectedNumberOfTerms(), GlobalPreferences.getMcmcSteps());
 				result.addCloseAction(new ISimpleAction(){public void act()
 				{
 					newThread.interrupt();
@@ -378,6 +378,7 @@ public class Ontologizer
 			p.put("wrapColumn", Integer.toString(GlobalPreferences.getWrapColumn()));
 			p.put("upperAlpha", Double.toString(GlobalPreferences.getUpperAlpha()));
 			p.put("upperBeta", Double.toString(GlobalPreferences.getUpperBeta()));
+			p.put("mcmcSteps", Integer.toString(GlobalPreferences.getMcmcSteps()));
 			if (GlobalPreferences.getProxyHost() != null)
 			{
 				p.put("proxyHost",GlobalPreferences.getProxyHost());
@@ -418,6 +419,7 @@ public class Ontologizer
 				GlobalPreferences.setWrapColumn(prefs.getWrapColumn());
 				GlobalPreferences.setUpperAlpha(prefs.getUpperAlpha());
 				GlobalPreferences.setUpperBeta(prefs.getUpperBeta());
+				GlobalPreferences.setMcmcSteps(prefs.getNumberOfMCMCSteps());
 			}
 		});
 
@@ -434,6 +436,7 @@ public class Ontologizer
 		GlobalPreferences.setWrapColumn(p.getInt("wrapColumn", 30));
 		GlobalPreferences.setUpperAlpha(p.getDouble("upperAlpha", 1));
 		GlobalPreferences.setUpperBeta(p.getDouble("upperBeta", 1));
+		GlobalPreferences.setMcmcSteps(p.getInt("mcmcSteps", 500000));
 
 		/* Prepare workspace */
 		workspace = new File(ontologizer.util.Util.getAppDataDirectory("ontologizer"),"workspace");
