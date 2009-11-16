@@ -66,10 +66,11 @@ plot.roc<-function(d,alpha=NA,beta=NA,calc.auc=F,y.axis="tpr",x.axis="fpr",xlim=
 	              c("p.tft","Term for Term",
 				    "p.pcu", "Parent Child",
 				    "p.tweight","Topology Weighted",
-					"p.pb", "GenGO",
+					"p.gg", "GenGO",
 					"p.b2g.ideal.pop", "B2G: Known Parameter",
 					"p.b2g.mcmc.pop", "B2G: Unknown Parameter",
-					"p.b2g.ideal.pop.nop", "B2G: No Prior, Known Parameter"
+					"p.b2g.ideal.pop.nop", "B2G: No Prior, Known Parameter",
+					"p.b2g.ideal.pop.random", "B2G: Known, Random"
 	               ))
 
 	colnames(v)<-c("short","full")
@@ -104,7 +105,6 @@ plot.roc<-function(d,alpha=NA,beta=NA,calc.auc=F,y.axis="tpr",x.axis="fpr",xlim=
 				return (roc.value)
 			}))
 
-			d.new<-do.call(rbind,d.new) # merge the lists
 			print(sprintf("%s: %f (alpha=%f, beta=%f)",v[i,2],avg.rocn,alpha,beta))
 		}
 	
@@ -135,6 +135,21 @@ plot.roc<-function(d,alpha=NA,beta=NA,calc.auc=F,y.axis="tpr",x.axis="fpr",xlim=
 
 	legend(legend.place, col=colors, pch=pchs, legend = unlist(l))
 }
+
+# at first reduce the data sets ()
+# and figure out number of random terms
+s<-split(d,d$run)
+number.of.labels<-function(el,thresh)
+{
+    num.of.tests<-nrow(el)
+	num.of.l<-sum(el$label)
+	num.p.tft<-sum(el$p.tft< (thresh / num.of.tests))
+	num.p.b2g.mcmc.pop<-sum(el$p.b2g.mcmc.pop < 0.5)
+	
+	return(data.frame(labels=num.of.l,p.tft=num.p.tft,p.b2g.mcmc.pop=num.p.b2g.mcmc.pop))
+}
+s.f<-lapply(s,number.of.labels,thresh=0.01)
+all<-do.call(rbind,s.f)
 
 s<-split(d,list(d$alpha,d$beta))
 
