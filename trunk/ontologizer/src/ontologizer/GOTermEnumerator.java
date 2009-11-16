@@ -9,6 +9,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import ontologizer.association.Association;
 import ontologizer.association.Gene2Associations;
@@ -283,5 +284,15 @@ public class GOTermEnumerator implements Iterable<TermID>
 		for (TermID t : this)
 			at.add(t);
 		return at;
+	}
+
+	public Set<ByteString> getGenes()
+	{
+		LinkedHashSet<ByteString> genes = new LinkedHashSet<ByteString>();
+
+		for (Entry<TermID,GOTermAnnotatedGenes> ent : map.entrySet())
+			genes.addAll(ent.getValue().totalAnnotated);
+
+		return genes;
 	}
 }
