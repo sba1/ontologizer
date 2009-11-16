@@ -37,7 +37,7 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 	protected int totalBeta[] = new int[BETA.length];
 	private boolean doBetaMCMC = true;
 
-	protected final int [] EXPECTED_NUMBER_OF_TERMS = new int[]{1,2,3,4,5,6,7,8,9,10,12,15,17,20,25};
+	protected final int [] EXPECTED_NUMBER_OF_TERMS = new int[]{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20};
 	private int expIdx = 0;
 	private int oldExpIdx;
 	protected int totalExp[] = new int[EXPECTED_NUMBER_OF_TERMS.length];
