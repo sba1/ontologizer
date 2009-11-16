@@ -29,10 +29,13 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 import ontologizer.calculation.CalculationRegistry;
+import ontologizer.go.GOGraph;
+import ontologizer.go.Subset;
 import ontologizer.gui.swt.support.SWTUtil;
 import ontologizer.statistics.TestCorrectionRegistry;
 import ontologizer.worksets.WorkSet;
 import ontologizer.worksets.WorkSetList;
+import ontologizer.worksets.WorkSetLoadThread;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -578,6 +581,8 @@ public class MainWindow extends ApplicationWindow
 		return null;
 	}
 
+	private static WorkSet currentWorkSet;
+
 	/**
 	 * Update the setTextArea to the genes of the current
 	 * selected set.
@@ -597,6 +602,32 @@ public class MainWindow extends ApplicationWindow
 				setAssociationsFileString(settings.annotationsFileName);
 				setDefinitonFileString(settings.ontologyFileName);
 				setMappingFileString(settings.mappingFileName);
+
+				if (currentWorkSet != null) WorkSetLoadThread.releaseDatafiles(currentWorkSet);
+				currentWorkSet = settingsComposite.getSelectedWorkset();				
+				
+				settingsComposite.setRestrictionChoices(null);
+				
+				WorkSetLoadThread.obtainDatafiles(currentWorkSet,
+						new Runnable(){
+							public void run()
+							{
+								settingsComposite.getDisplay().asyncExec(new Runnable()
+								{
+									public void run()
+									{
+										GOGraph graph = WorkSetLoadThread.getGraph(currentWorkSet.getOboPath());
+										String [] choices = new String[graph.getAvailableSubsets().size()];
+										int i=0;
+										for (Subset s : graph.getAvailableSubsets())
+											choices[i++] = s.getName();
+										settingsComposite.setRestrictionChoices(choices);
+									}
+								});
+							}});
+
+				
+				
 			}
 			
 			if (isTreeItemProject(currentSelectedItem))
@@ -618,7 +649,6 @@ public class MainWindow extends ApplicationWindow
 				setTextArea.setText(genes);
 				treeItemWhenWorkSetIsChanged = currentSelectedItem;
 				setTextArea.setWorkSet(settingsComposite.getSelectedWorkset());
-
 				if (rightStackedLayout.topControl != rightComposite)
 				{
 					rightStackedLayout.topControl = rightComposite;
