@@ -80,7 +80,7 @@ public class Benchmark
 	private static double [] ALPHAs = new double[]{0.1,0.4};
 	private static double [] BETAs = new double[]{0.25,0.4};
 	private static boolean ORIGINAL_SAMPLING = false;
-	private static int MAX_TERMS = 0;
+	private static int MAX_TERMS = 5;
 	private static int TERMS_PER_RUN = 200;
 
 	/**
@@ -569,6 +569,7 @@ GlobalPreferences.setProxyHost("realproxy.charite.de");
 										for (int i=0;i<times.length;i++)
 											outTime.print("\t" + times[i]);
 										outTime.println();
+										outTime.flush();
 									}
 								}
 							}
