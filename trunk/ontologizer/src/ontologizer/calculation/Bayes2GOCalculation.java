@@ -24,6 +24,7 @@ import ontologizer.PopulationSet;
 import ontologizer.StudySet;
 import ontologizer.association.Association;
 import ontologizer.association.AssociationContainer;
+import ontologizer.calculation.B2GParam.Type;
 import ontologizer.go.GOGraph;
 import ontologizer.go.ParentTermID;
 import ontologizer.go.Term;
@@ -834,12 +835,10 @@ public class Bayes2GOCalculation implements ICalculation
 		this.expectedNumberOfTerms.setValue(expectedNumber);
 	}
 
-//	public void setDoFullMCMC(boolean doFullMCMC)
-//	{
-//		this.doFullMCMC = doFullMCMC;
-//
-//
-//	}
+	public void setExpectedNumber(B2GParam.Type expectedNumber)
+	{
+		this.expectedNumberOfTerms.setType(expectedNumber);
+	}
 
 	public void setTakePopulationAsReference(boolean takePopulationAsReference)
 	{
@@ -1407,12 +1406,13 @@ public class Bayes2GOCalculation implements ICalculation
 		calc.setSeed(1);
 //		calc.setAlpha(realAlpha);
 //		calc.setBeta(realBeta);
+//		calc.setExpectedNumber(4);
 //		calc.setAlpha(B2GParam.Type.MCMC);
 //		calc.setBeta(B2GParam.Type.MCMC);
 		calc.setAlpha(B2GParam.Type.EM);
 		calc.setBeta(B2GParam.Type.EM);
+		calc.setExpectedNumber(B2GParam.Type.EM);
 
-		calc.setExpectedNumber(4);
 ////	calc.setNoPrior(true);
 //		calc.setAlpha(alphaStudySet);
 //		calc.setBeta(betaStudySet);
