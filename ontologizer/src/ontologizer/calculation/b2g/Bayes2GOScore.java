@@ -14,6 +14,20 @@ import ontologizer.GOTermEnumerator;
 import ontologizer.go.TermID;
 
 /**
+ * Basic class containing a mutable interger. Used as a replacement
+ * for Integer in HashMaps.
+ */
+class MutableInteger
+{
+	public int value;
+
+	public MutableInteger(int value)
+	{
+		this.value = value;
+	}
+}
+
+/**
  * The base class of bayes2go Score.
  *
  * For efficiency reasons terms and genes are represented by own ids.
@@ -39,7 +53,7 @@ abstract class Bayes2GOScore
 	protected LinkedHashSet<TermID> activeTerms = new LinkedHashSet<TermID>();
 
 	/** Contains genes that are active according to the active terms */
-	protected LinkedHashMap<ByteString,Integer> activeHiddenGenes = new LinkedHashMap<ByteString,Integer>();
+	protected LinkedHashMap<ByteString,MutableInteger> activeHiddenGenes = new LinkedHashMap<ByteString,MutableInteger>();
 
 	/** Maps the term to the index in allTermsArray */
 	protected HashMap<TermID,Integer> term2TermsIdx = new HashMap<TermID,Integer>();
@@ -98,7 +112,7 @@ abstract class Bayes2GOScore
 		this.populationEnumerator = populationEnumerator;
 
 		activeTerms = new LinkedHashSet<TermID>();
-		activeHiddenGenes = new LinkedHashMap<ByteString,Integer>();
+		activeHiddenGenes = new LinkedHashMap<ByteString,MutableInteger>();
 
 		population = populationEnumerator.getGenes();
 		this.observedActiveGenes = observedActiveGenes;
@@ -168,8 +182,12 @@ abstract class Bayes2GOScore
 	public abstract void hiddenGeneActivated(ByteString gene);
 	public abstract void hiddenGeneDeactivated(ByteString gene);
 
+//	public long currentTime;
+
 	public void switchState(int toSwitch)
 	{
+//		long enterTime = System.nanoTime();
+
 		TermID t = termsArray[toSwitch];
 		isActive[toSwitch] = !isActive[toSwitch];
 		if (isActive[toSwitch])
@@ -180,14 +198,14 @@ abstract class Bayes2GOScore
 			/* Update hiddenActiveGenes */
 			for (ByteString gene : populationEnumerator.getAnnotatedGenes(t).totalAnnotated)
 			{
-				Integer cnt = activeHiddenGenes.get(gene);
+				MutableInteger cnt = activeHiddenGenes.get(gene);
 				if (cnt == null)
 				{
 					hiddenGeneActivated(gene);
-					activeHiddenGenes.put(gene, 1);
+					activeHiddenGenes.put(gene, new MutableInteger(1));
 				} else
 				{
-					activeHiddenGenes.put(gene, cnt + 1);
+					cnt.value++;
 				}
 			}
 
@@ -209,9 +227,8 @@ abstract class Bayes2GOScore
 			/* Update hiddenActiveGenes */
 			for (ByteString gene : populationEnumerator.getAnnotatedGenes(t).totalAnnotated)
 			{
-				int cnt = activeHiddenGenes.get(gene);
-				cnt--;
-				if (cnt == 0)
+				MutableInteger cnt = activeHiddenGenes.get(gene);
+				if (--cnt.value == 0)
 				{
 					activeHiddenGenes.remove(gene);
 					hiddenGeneDeactivated(gene);
@@ -223,6 +240,13 @@ abstract class Bayes2GOScore
 			term2InactiveTermsIdx.put(t, numInactiveTerms);
 			numInactiveTerms++;
 		}
+
+//		{
+//			long ms = currentTime / 1000000;
+//			currentTime += System.nanoTime() - enterTime;
+//			if (currentTime / 1000000 != ms)
+//				System.out.println(currentTime / 1000000);
+//		}
 	}
 
 	public void exchange(TermID t1, TermID t2)
