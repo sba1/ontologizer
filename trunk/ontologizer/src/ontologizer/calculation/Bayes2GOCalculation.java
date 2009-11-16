@@ -1,6 +1,7 @@
 package ontologizer.calculation;
 
 import java.io.File;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -31,6 +32,7 @@ import ontologizer.statistics.AbstractTestCorrection;
 import ontologizer.statistics.Bonferroni;
 import ontologizer.worksets.WorkSet;
 import ontologizer.worksets.WorkSetLoadThread;
+import sun.security.util.BigInt;
 
 /**
  * The base class of bayes2go Score.
@@ -360,14 +362,29 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 	private TermID proposalT2;
 
 //	private double [] ALPHA = new double[] {0.0001,0.01,0.05,0.1,0.15,0.2,0.25,0.3};
-	private double [] ALPHA = new double[] {0.1};
+
+	private double [] ALPHA = new double[] {0.1,0.15,0.2,0.25,0.3};
 	private int alphaIdx = 0;
 	private int oldAlphaIdx;
+
+	protected int totalAlpha[] = new int[ALPHA.length];
+
+	protected double alpha = Double.NaN;
 
 	private int n00;
 	private int n01;
 	private int n10;
 	private int n11;
+
+	private BigInteger totalN00 = new BigInteger("0");
+	private BigInteger totalN01 = new BigInteger("0");
+	private BigInteger totalN10 = new BigInteger("0");
+	private BigInteger totalN11 = new BigInteger("0");
+
+	public void setAlpha(double alpha)
+	{
+		this.alpha = alpha;
+	}
 
 	public FixedAlphaBetaScore(Random rnd, List<TermID> termList, GOTermEnumerator populationEnumerator, Set<ByteString> observedActiveGenes)
 	{
@@ -449,7 +466,11 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 	public double getScore()
 	{
 		double beta = 0.1;
-		double alpha = ALPHA[alphaIdx];
+		double alpha;
+
+		if (Double.isNaN(this.alpha))
+			alpha = ALPHA[alphaIdx];
+		else alpha = this.alpha;
 
 		double newScore2 = Math.log(alpha) * n10 + Math.log(1-alpha)*n11 + Math.log(1-beta)*n00 + Math.log(beta)*n01;
 
@@ -474,6 +495,47 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 	{
 		long size = termsArray.length + activeTerms.size() * numInactiveTerms;
 		return size;
+	}
+
+	@Override
+	public void record()
+	{
+		super.record();
+
+		totalN00 = totalN00.add(new BigInteger(new String(n00 +"")));
+		totalN01 = totalN01.add(new BigInteger(new String(n01 +"")));
+		totalN10 = totalN10.add(new BigInteger(new String(n10 +"")));
+		totalN11 = totalN11.add(new BigInteger(new String(n11 +"")));
+
+		totalAlpha[alphaIdx]++;
+	}
+
+	public int getAvgN00()
+	{
+		BigInteger avgN00 = new BigInteger(totalN00.toString());
+		avgN00.divide(new BigInteger(Integer.toString(numRecords)));
+		return avgN00.intValue();
+	}
+
+	public int getAvgN01()
+	{
+		BigInteger avgN01 = new BigInteger(totalN01.toString());
+		avgN01.divide(new BigInteger(Integer.toString(numRecords)));
+		return avgN01.intValue();
+	}
+
+	public int getAvgN10()
+	{
+		BigInteger avgN10 = new BigInteger(totalN10.toString());
+		avgN10.divide(new BigInteger(Integer.toString(numRecords)));
+		return avgN10.intValue();
+	}
+
+	public int getAvgN11()
+	{
+		BigInteger avgN11 = new BigInteger(totalN11.toString());
+		avgN11.divide(new BigInteger(Integer.toString(numRecords)));
+		return avgN11.intValue();
 	}
 }
 
@@ -630,121 +692,119 @@ public class Bayes2GOCalculation implements ICalculation
 		}
 		else rnd = new Random();
 
-//		VariableAlphaBetaScore bayesScore = new VariableAlphaBetaScore(rnd, allTerms, populationEnumerator, studySet.getAllGeneNames(), alpha, beta);
-		FixedAlphaBetaScore bayesScore = new FixedAlphaBetaScore(rnd, allTerms, populationEnumerator,  studySet.getAllGeneNames());
+		alpha = 0.4;
 
-		result.setScore(bayesScore);
-		if (!noPrior) bayesScore.setP(p);
-
-		/* Stores the terms activation counts */
-//		int [] activeCount = new int[allTerms.size()];
-
-//		/* Initialize initially active terms randomly */
-//		for (int i=0;i<allTermsArrayList.size();i++)
-//		{
-//			if ((isActive[i] = rnd.nextBoolean()))
-//				activeTerms.add(term[i]);
-//		}
-
-		/* Initialize with some default values */
-//		activeTerms.add(new TermID("GO:0007049")); /* cell cycle */
-//		activeTerms.add(new TermID("GO:0043473")); /* pigmentation */
-//		activeTerms.add(new TermID("GO:0001505")); /* regulation of neuro transmitter levels */
-
-//		for (TermID t : state.activeTerms)
-//			state.switchState(state.term2allTermsIdx.get(t));
-
-		int maxSteps = 320000;
-		int burnin = 20000;
-		int numAccepts = 0;
-		int numRejects = 0;
-
-		if (noPrior) maxSteps = maxSteps * 3 / 2;
-
-		if (calculationProgress != null)
-			calculationProgress.init(maxSteps);
-
-		double score = bayesScore.getScore();
-
-		double maxScore = Double.NEGATIVE_INFINITY;
-		ArrayList<TermID> maxScoredTerms = new ArrayList<TermID>();
-
-		System.out.println("Initial score: " + score);
-
-		long start = System.currentTimeMillis();
-
-		for (int t=0;t<maxSteps;t++)
+		for (int i=0;i<10;i++)
 		{
-			/* Remember maximum score and terms */
-			if (score > maxScore)
+//			VariableAlphaBetaScore bayesScore = new VariableAlphaBetaScore(rnd, allTerms, populationEnumerator, studySet.getAllGeneNames(), alpha, beta);
+			FixedAlphaBetaScore bayesScore = new FixedAlphaBetaScore(rnd, allTerms, populationEnumerator,  studySet.getAllGeneNames());
+			bayesScore.setAlpha(alpha);
+
+			result.setScore(bayesScore);
+			if (!noPrior) bayesScore.setP(p);
+
+			int maxSteps = 320000;
+			int burnin = 20000;
+			int numAccepts = 0;
+			int numRejects = 0;
+
+			if (noPrior) maxSteps = maxSteps * 3 / 2;
+
+			if (calculationProgress != null)
+				calculationProgress.init(maxSteps);
+
+			double score = bayesScore.getScore();
+
+			double maxScore = Double.NEGATIVE_INFINITY;
+			ArrayList<TermID> maxScoredTerms = new ArrayList<TermID>();
+
+			System.out.println("Initial score: " + score);
+
+			long start = System.currentTimeMillis();
+
+			for (int t=0;t<maxSteps;t++)
 			{
-				maxScore = score;
-				maxScoredTerms = new ArrayList<TermID>(bayesScore.activeTerms);
+				/* Remember maximum score and terms */
+				if (score > maxScore)
+				{
+					maxScore = score;
+					maxScoredTerms = new ArrayList<TermID>(bayesScore.activeTerms);
+				}
+
+				long now = System.currentTimeMillis();
+				if (now - start > 5000)
+				{
+					System.out.println((t*100/maxSteps) + "% (score=" + score +" maxScore=" + maxScore + " #terms="+bayesScore.activeTerms.size()+
+										" accept/reject=" + String.format("%g",(double)numAccepts / (double)numRejects) +
+										" accept/steps=" + String.format("%g",(double)numAccepts / (double)t) +
+										" p=" + p + " noPrior=" + noPrior + ")");
+					start = now;
+
+					if (calculationProgress != null)
+						calculationProgress.update(t);
+				}
+
+				long oldPossibilities = bayesScore.getNeighborhoodSize();
+				long r = rnd.nextLong();
+				bayesScore.proposeNewState(r);
+				double newScore = bayesScore.getScore();
+				long newPossibilities = bayesScore.getNeighborhoodSize();
+
+				double acceptProb = Math.exp(newScore - score)*(double)oldPossibilities/(double)newPossibilities; /* last quotient is the hasting ratio */
+
+				boolean DEBUG = false;
+
+				if (DEBUG) System.out.print(bayesScore.activeTerms.size() + "  score=" + score + " newScore="+newScore + " maxScore=" + maxScore + " a=" + acceptProb);
+
+				double u = rnd.nextDouble();
+				if (u >= acceptProb)
+				{
+					bayesScore.undoProposal();
+					numRejects++;
+				} else
+				{
+					score = newScore;
+					numAccepts++;
+				}
+				if (DEBUG) System.out.println();
+
+				if (t>burnin)
+					bayesScore.record();
 			}
 
-			long now = System.currentTimeMillis();
-			if (now - start > 5000)
-			{
-				System.out.println((t*100/maxSteps) + "% (score=" + score +" maxScore=" + maxScore + " #terms="+bayesScore.activeTerms.size()+
-									" accept/reject=" + String.format("%g",(double)numAccepts / (double)numRejects) +
-									" accept/steps=" + String.format("%g",(double)numAccepts / (double)t) +
-									" p=" + p + " noPrior=" + noPrior + ")");
-				start = now;
+			double newAlpha = (double)bayesScore.getAvgN01()/(bayesScore.getAvgN11() + bayesScore.getAvgN10());
+			System.out.println("alpha=" + alpha + "  newAlpha=" + newAlpha);
+			alpha = newAlpha;
 
-				if (calculationProgress != null)
-					calculationProgress.update(t);
+			if (i==9)
+			for (TermID t : allTerms)
+			{
+				TermForTermGOTermProperties prop = new TermForTermGOTermProperties();
+				prop.ignoreAtMTC = true;
+				prop.goTerm = graph.getGOTerm(t);
+				prop.annotatedStudyGenes = studyEnumerator.getAnnotatedGenes(t).totalAnnotatedCount();
+				prop.annotatedPopulationGenes = populationEnumerator.getAnnotatedGenes(t).totalAnnotatedCount();
+
+				/* We reverse the probability as the framework assumes that low p values are important */
+				prop.p = 1 - ((double)bayesScore.termActivationCounts[bayesScore.term2TermsIdx.get(t)] / bayesScore.numRecords);
+				prop.p_adjusted = prop.p;
+				prop.p_min = 0.001;
+				result.addGOTermProperties(prop);
 			}
 
-			long oldPossibilities = bayesScore.getNeighborhoodSize();
-			long r = rnd.nextLong();
-			bayesScore.proposeNewState(r);
-			double newScore = bayesScore.getScore();
-			long newPossibilities = bayesScore.getNeighborhoodSize();
+			System.out.println("numAccepts=" + numAccepts + "  numRejects = " + numRejects);
 
-			double acceptProb = Math.exp(newScore - score)*(double)oldPossibilities/(double)newPossibilities; /* last quotient is the hasting ratio */
-
-			boolean DEBUG = false;
-
-			if (DEBUG) System.out.print(bayesScore.activeTerms.size() + "  score=" + score + " newScore="+newScore + " maxScore=" + maxScore + " a=" + acceptProb);
-
-			double u = rnd.nextDouble();
-			if (u >= acceptProb)
+			/* Print out the term combination which scored max */
+			System.out.println("Term combination that reaches score of " + maxScore);
+			for (TermID tid : maxScoredTerms)
 			{
-				bayesScore.undoProposal();
-				numRejects++;
-			} else
-			{
-				score = newScore;
-				numAccepts++;
+				System.out.println(tid.toString() + "/" + graph.getGOTerm(tid).getName());
 			}
-			if (DEBUG) System.out.println();
 
-			if (t>burnin)
-				bayesScore.record();
-		}
+			for (int j=0;j<bayesScore.totalAlpha.length;j++)
+				System.out.println("Total " + (double)bayesScore.totalAlpha[j] / bayesScore.numRecords);
 
-		for (TermID t : allTerms)
-		{
-			TermForTermGOTermProperties prop = new TermForTermGOTermProperties();
-			prop.ignoreAtMTC = true;
-			prop.goTerm = graph.getGOTerm(t);
-			prop.annotatedStudyGenes = studyEnumerator.getAnnotatedGenes(t).totalAnnotatedCount();
-			prop.annotatedPopulationGenes = populationEnumerator.getAnnotatedGenes(t).totalAnnotatedCount();
 
-			/* We reverse the probability as the framework assumes that low p values are important */
-			prop.p = 1 - ((double)bayesScore.termActivationCounts[bayesScore.term2TermsIdx.get(t)] / bayesScore.numRecords);
-			prop.p_adjusted = prop.p;
-			prop.p_min = 0.001;
-			result.addGOTermProperties(prop);
-		}
-
-		System.out.println("numAccepts=" + numAccepts + "  numRejects = " + numRejects);
-
-		/* Print out the term combination which scored max */
-		System.out.println("Term combination that reaches score of " + maxScore);
-		for (TermID tid : maxScoredTerms)
-		{
-			System.out.println(tid.toString() + "/" + graph.getGOTerm(tid).getName());
 		}
 	}
 
