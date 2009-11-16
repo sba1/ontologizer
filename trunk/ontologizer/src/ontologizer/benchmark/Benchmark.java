@@ -93,30 +93,30 @@ public class Benchmark
 	static
 	{
 		calcMethods = new ArrayList<Method>();
-		calcMethods.add(new Method("Bayes2GO","b2g.ideal"));
-		for (double a : calcAlpha)
-		{
-			for (double b : calcBeta)
-			{
-				for (int cdt : calcDesiredTerms)
-				{
-					String colName = String.format("b2g.a%.2g.b%.2g.d%d", a,b,cdt);
-					calcMethods.add(new Method("Bayes2GO",colName,a,b,cdt));
-				}
-			}
-		}
-		calcMethods.add(new Method("Term-For-Term","tft"));
-		calcMethods.add(new Method("Parent-Child-Union","pcu"));
-		calcMethods.add(new Method("Probabilistic","pb"));
-		calcMethods.add(new Method("Topology-Weighted","tweight"));
+//		calcMethods.add(new Method("Bayes2GO","b2g.ideal"));
+//		for (double a : calcAlpha)
+//		{
+//			for (double b : calcBeta)
+//			{
+//				for (int cdt : calcDesiredTerms)
+//				{
+//					String colName = String.format("b2g.a%.2g.b%.2g.d%d", a,b,cdt);
+//					calcMethods.add(new Method("Bayes2GO",colName,a,b,cdt));
+//				}
+//			}
+//		}
+//		calcMethods.add(new Method("Term-For-Term","tft"));
+//		calcMethods.add(new Method("Parent-Child-Union","pcu"));
+//		calcMethods.add(new Method("Probabilistic","pb"));
+//		calcMethods.add(new Method("Topology-Weighted","tweight"));
 
 		Method m = new Method("Bayes2GO","b2g.em");
 		m.em = true;
 		calcMethods.add(m);
 
-		m = new Method("Bayes2GO","b2g.ideal.nop");
-		m.noPrior = true;
-		calcMethods.add(m);
+//		m = new Method("Bayes2GO","b2g.ideal.nop");
+//		m.noPrior = true;
+//		calcMethods.add(m);
 	}
 
 	public static void main(String[] args) throws Exception
@@ -286,18 +286,23 @@ GlobalPreferences.setProxyHost("realproxy.charite.de");
 
 									double p;
 									
-									if (m.dt == 0)
+									if (!m.em)
 									{
-										p = (double)termCombi.size() / completePopEnumerator.getTotalNumberOfAnnotatedTerms();
-										b2g.setAlpha(ALPHA);
-										b2g.setBeta(BETA);
-									} else
-									{
-										p = (double)m.dt / completePopEnumerator.getTotalNumberOfAnnotatedTerms();
-										b2g.setAlpha(m.alpha);
-										b2g.setBeta(m.beta);
+										if (m.dt == 0)
+										{
+											p = (double)termCombi.size() / completePopEnumerator.getTotalNumberOfAnnotatedTerms();
+											b2g.setAlpha(ALPHA);
+											b2g.setBeta(BETA);
+											b2g.setP(p);
+	
+										} else
+										{
+											p = (double)m.dt / completePopEnumerator.getTotalNumberOfAnnotatedTerms();
+											b2g.setAlpha(m.alpha);
+											b2g.setBeta(m.beta);
+											b2g.setP(p);
+										}
 									}
-									b2g.setP(p);
 									
 //									System.out.println(p);
 //									result = b2g.calculateStudySet(graph, assoc, completePop, newStudySet, (double)termCombi.size() / completePopEnumerator.getTotalNumberOfAnnotatedTerms());
