@@ -370,6 +370,7 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 	protected int totalAlpha[] = new int[ALPHA.length];
 
 	protected double alpha = Double.NaN;
+	protected double beta = Double.NaN;
 
 	private int n00;
 	private int n01;
@@ -384,6 +385,11 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 	public void setAlpha(double alpha)
 	{
 		this.alpha = alpha;
+	}
+
+	public void setBeta(double beta)
+	{
+		this.beta = beta;
 	}
 
 	public FixedAlphaBetaScore(Random rnd, List<TermID> termList, GOTermEnumerator populationEnumerator, Set<ByteString> observedActiveGenes)
@@ -513,29 +519,25 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 	public int getAvgN00()
 	{
 		BigInteger avgN00 = new BigInteger(totalN00.toString());
-		avgN00.divide(new BigInteger(Integer.toString(numRecords)));
-		return avgN00.intValue();
+		return avgN00.divide(new BigInteger(Integer.toString(numRecords))).intValue();
 	}
 
 	public int getAvgN01()
 	{
 		BigInteger avgN01 = new BigInteger(totalN01.toString());
-		avgN01.divide(new BigInteger(Integer.toString(numRecords)));
-		return avgN01.intValue();
+		return avgN01.divide(new BigInteger(Integer.toString(numRecords))).intValue();
 	}
 
 	public int getAvgN10()
 	{
 		BigInteger avgN10 = new BigInteger(totalN10.toString());
-		avgN10.divide(new BigInteger(Integer.toString(numRecords)));
-		return avgN10.intValue();
+		return avgN10.divide(new BigInteger(Integer.toString(numRecords))).intValue();
 	}
 
 	public int getAvgN11()
 	{
 		BigInteger avgN11 = new BigInteger(totalN11.toString());
-		avgN11.divide(new BigInteger(Integer.toString(numRecords)));
-		return avgN11.intValue();
+		return avgN11.divide(new BigInteger(Integer.toString(numRecords))).intValue();
 	}
 }
 
@@ -693,12 +695,14 @@ public class Bayes2GOCalculation implements ICalculation
 		else rnd = new Random();
 
 		alpha = 0.4;
+		beta = 0.3;
 
 		for (int i=0;i<10;i++)
 		{
 //			VariableAlphaBetaScore bayesScore = new VariableAlphaBetaScore(rnd, allTerms, populationEnumerator, studySet.getAllGeneNames(), alpha, beta);
 			FixedAlphaBetaScore bayesScore = new FixedAlphaBetaScore(rnd, allTerms, populationEnumerator,  studySet.getAllGeneNames());
 			bayesScore.setAlpha(alpha);
+			bayesScore.setBeta(beta);
 
 			result.setScore(bayesScore);
 			if (!noPrior) bayesScore.setP(p);
@@ -772,9 +776,14 @@ public class Bayes2GOCalculation implements ICalculation
 					bayesScore.record();
 			}
 
-			double newAlpha = (double)bayesScore.getAvgN01()/(bayesScore.getAvgN11() + bayesScore.getAvgN10());
+			System.out.println(bayesScore.getAvgN10() +  "   " + bayesScore.getAvgN00() + "  " + bayesScore.getAvgN10());
+			double newAlpha = (double)bayesScore.getAvgN10()/(bayesScore.getAvgN00() + bayesScore.getAvgN10());
 			System.out.println("alpha=" + alpha + "  newAlpha=" + newAlpha);
 			alpha = newAlpha;
+
+			double newBeta = (double)bayesScore.getAvgN01()/(bayesScore.getAvgN01() + bayesScore.getAvgN00());
+			System.out.println("beta=" + beta + "  newBeta=" + newBeta);
+			beta = newBeta;
 
 			if (i==9)
 			for (TermID t : allTerms)
