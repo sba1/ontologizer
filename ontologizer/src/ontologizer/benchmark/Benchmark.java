@@ -382,12 +382,12 @@ GlobalPreferences.setProxyHost("realproxy.charite.de");
 			
 			if (i==0)
 			{
-				termCombis = new ArrayList<ArrayList<TermID>>(TERMS_PER_RUN);
-				for (int j=0;j<TERMS_PER_RUN;j++)
+				termCombis = new ArrayList<ArrayList<TermID>>(SENSEFUL_TERMS_PER_RUN);
+				for (int j=0;j<SENSEFUL_TERMS_PER_RUN;j++)
 					termCombis.add(new ArrayList<TermID>());
 			} else
 			{
-				termCombis = kSensefulSubsetSampler.sampleManyOrderedWithoutReplacement(i,TERMS_PER_RUN);
+				termCombis = kSensefulSubsetSampler.sampleManyOrderedWithoutReplacement(i,SENSEFUL_TERMS_PER_RUN);
 			}
 
 			for (ArrayList<TermID> termCombi : termCombis)
