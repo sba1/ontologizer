@@ -89,11 +89,14 @@ decode.parameter.setting<-function(name)
 	}
 }
 
-plot.roc<-function(d,alpha=NA,beta=NA)
+#
+# Draw some performance plots
+#
+plot.roc<-function(d,alpha=NA,beta=NA,calc.auc=F,y.axis="tpr",x.axis="fpr",legend.place="bottomright")
 {
 	nruns<-length(unique(d$run))
 
-	column.indices<-grep("^p\\.",colnames(d),perl=T)
+#	column.indices<-grep("^p\\.",colnames(d),perl=T)
 #	sapply(colnames(d)[column.indices],decode.parameter.setting)
 #	result.list<-list();
 #	for (ci in column.indices)
@@ -111,12 +114,12 @@ plot.roc<-function(d,alpha=NA,beta=NA)
 #
 #		print(paste(decode.name(cn)," auc=", auc, sep=""))		
 #	}
-	# Convert the list of lists to a data frame
+#	# Convert the list of lists to a data frame
 #	result.frame<-do.call(rbind,lapply(result.list,data.frame))
 
-	colors<-c(rainbow(12))
+	colors<-rainbow(12)
+	pchs<-1:12
 	l<-list();
-
 
 	v<-matrix(ncol=2,byrow=T,
 	              c("p.tft","Term for Term",
@@ -136,22 +139,33 @@ plot.roc<-function(d,alpha=NA,beta=NA)
 	for (i in (1:nrow(v)))
 	{
 		pred<-prediction(1-d[,v[i,1]],d$label)
-		perf<-performance(pred, measure = "tpr", x.measure = "fpr") 
-		auc.perf<-performance(pred, measure = "auc")
-		auc<-auc.perf@y.values[[1]]
+		perf<-performance(pred, measure = y.axis, x.measure = x.axis) 
 		name<-v[i,2]
-		l<-append(l,sprintf("%s (%g)",name,auc))
+		
+		if (calc.auc)
+		{
+			auc.perf<-performance(pred, measure = "auc")
+			auc<-auc.perf@y.values[[1]]
+			l<-append(l,sprintf("%s (%g)",name,auc))
+		} else
+		{
+#			f.perf<-performance(pred, measure = "f")
+#			f<-f.perf@y.values[[1]]
+			l<-append(l,sprintf("%s",name))
+		}
 
 		if (i==1)
 		{
-			plot(perf, col=colors[i],downsampling=100, main=sprintf("Comparison (alpha=%g,beta=%g)",alpha,beta))
+			plot(perf, col=colors[i],pch=pchs[i],downsampling=125, type="l", ylim=c(0,1),xlim=c(0,1),main=sprintf("Comparison (alpha=%g,beta=%g)",alpha,beta))
+			plot(perf, col=colors[i],pch=pchs[i],downsampling=25, type="p", add=TRUE)
 		} else
 		{
-			plot(perf, col=colors[i],downsampling=100, add=TRUE)
+			plot(perf, col=colors[i],pch=pchs[i],downsampling=125, type="l", add=TRUE)
+			plot(perf, col=colors[i],pch=pchs[i],downsampling=25, type="p", add=TRUE)
 		}		
 	}
 
-	legend("bottomright", col=colors, legend = unlist(l), fill=colors)
+	legend(legend.place, col=colors, pch=pchs, legend = unlist(l))
 }
 
 s<-split(d,list(d$alpha,d$beta))
@@ -170,22 +184,45 @@ lapply(s,function(d) {
 	filename<-sprintf("result-roc-a%d-b%d.pdf",alpha*100,beta*100)
 	pdf(file=filename,height=9,width=9)
 	par(cex=1.3,cex.main=1.2,lwd=2)
-	plot.roc(d,alpha,beta)
+	plot.roc(d,alpha,beta,calc.auc=T)
 	dev.off()
 
 	filename<-sprintf("result-roc-a%d-b%d-senseful.pdf",alpha*100,beta*100)
 	pdf(file=filename,height=9,width=9)
 	par(cex=1.3,cex.main=1.2,lwd=2)
-	plot.roc(subset(d,d$senseful==1),alpha,beta)
+	plot.roc(subset(d,d$senseful==1),alpha,beta,calc.auc=T)
 	dev.off()
 
 	filename<-sprintf("result-roc-a%d-b%d-no-restriction.pdf",alpha*100,beta*100)
 	pdf(file=filename,height=9,width=9)
 	par(cex=1.3,cex.main=1.2,lwd=2)
-	plot.roc(subset(d,d$senseful==0),alpha,beta)
+	plot.roc(subset(d,d$senseful==0),alpha,beta,calc.auc=T)
 	dev.off()
 });
 
+
+lapply(s,function(d) {
+	alpha<-unique(d$alpha)
+	beta<-unique(d$beta)
+
+	filename<-sprintf("result-precall-a%d-b%d.pdf",alpha*100,beta*100)
+	pdf(file=filename,height=9,width=9)
+	par(cex=1.3,cex.main=1.2,lwd=2)
+	plot.roc(d,alpha,beta,y.axis="prec",x.axis="rec",legend.place="topright")
+	dev.off()
+
+	filename<-sprintf("result-precall-a%d-b%d-senseful.pdf",alpha*100,beta*100)
+	pdf(file=filename,height=9,width=9)
+	par(cex=1.3,cex.main=1.2,lwd=2)
+	plot.roc(subset(d,d$senseful==1),alpha,beta,y.axis="prec",x.axis="rec",legend.place="topright")
+	dev.off()
+
+	filename<-sprintf("result-precall-a%d-b%d-no-restriction.pdf",alpha*100,beta*100)
+	pdf(file=filename,height=9,width=9)
+	par(cex=1.3,cex.main=1.2,lwd=2)
+	plot.roc(subset(d,d$senseful==0),alpha,beta,y.axis="prec",x.axis="rec",legend.place="topright")
+	dev.off()
+});
 
 
 
