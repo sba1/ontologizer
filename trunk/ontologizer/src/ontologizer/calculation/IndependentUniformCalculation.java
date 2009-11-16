@@ -129,4 +129,9 @@ public class IndependentUniformCalculation implements ICalculation
 
 		return studySetResult;
 	}
+
+	public boolean supportsTestCorrection() {
+		return true;
+	}
+
 }

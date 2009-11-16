@@ -162,6 +162,11 @@ public class ChiSquareQCalculation implements ICalculation
 		}
 		return studySetResult;
 	}
+
+	public boolean supportsTestCorrection() {
+		return false;
+	}
+
 }
 
 /* In R use "dat2<-cbind(dat,p2=pchisq(dat$chisquare,1,lower.tail=FALSE))" to

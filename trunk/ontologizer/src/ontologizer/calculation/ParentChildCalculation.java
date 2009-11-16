@@ -209,4 +209,9 @@ public class ParentChildCalculation extends
 
 	}
 
+	public boolean supportsTestCorrection() {
+		return true;
+	}
+
+
 }
