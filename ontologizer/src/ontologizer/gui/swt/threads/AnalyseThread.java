@@ -17,6 +17,7 @@ import ontologizer.calculation.CalculationRegistry;
 import ontologizer.calculation.EnrichedGOTermsResult;
 import ontologizer.calculation.ICalculation;
 import ontologizer.calculation.ICalculationProgress;
+import ontologizer.calculation.b2g.B2GParam;
 import ontologizer.calculation.b2g.Bayes2GOCalculation;
 import ontologizer.go.GOGraph;
 import ontologizer.go.IOBOParserProgress;
@@ -117,9 +118,14 @@ public class AnalyseThread extends AbstractOntologizerThread
 			if (calculation instanceof Bayes2GOCalculation)
 			{
 				Bayes2GOCalculation b2g = (Bayes2GOCalculation)calculation;
-				b2g.setAlpha(alpha);
-				b2g.setBeta(beta);
-				b2g.setExpectedNumber(expectedNumber);
+
+				if (!Double.isNaN(alpha)) b2g.setAlpha(alpha);
+				else b2g.setAlpha(B2GParam.Type.MCMC);
+				if (!Double.isNaN(beta)) b2g.setBeta(beta);
+				else b2g.setBeta(B2GParam.Type.MCMC);
+				if (expectedNumber != -1) b2g.setExpectedNumber(expectedNumber);
+				else b2g.setExpectedNumber(B2GParam.Type.MCMC);
+
 				b2g.setProgress(new ICalculationProgress()
 				{
 					public void init(final int max)

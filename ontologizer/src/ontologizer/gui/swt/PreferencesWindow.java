@@ -334,15 +334,23 @@ public class PreferencesWindow extends ApplicationWindow
 	public double getAlpha()
 	{
 		if (alphaAutoButton != null)
-			if (alphaAutoButton.isEnabled()) return Double.NaN;
+			if (alphaAutoButton.getSelection()) return Double.NaN;
 
 		if (alphaSpinner != null)
 			return alphaSpinner.getSelection() / Math.pow(10, ALPHA_BETA_DIGITS) / 100.0;
 		return Double.NaN;
 	}
 	
+	/**
+	 * Returns the selected beta.
+	 *  
+	 * @return the selected beta or NaN if alpha value is not given.
+	 */
 	public double getBeta()
 	{
+		if (betaAutoButton != null)
+			if (betaAutoButton.getSelection()) return Double.NaN;
+
 		if (betaSpinner != null)
 			return betaSpinner.getSelection() / Math.pow(10, ALPHA_BETA_DIGITS) / 100.0;
 		return 0.1;
@@ -350,6 +358,9 @@ public class PreferencesWindow extends ApplicationWindow
 	
 	public int getExpectedNumberOfTerms()
 	{
+		if (expectedNumberAutoButton != null)
+			if (expectedNumberAutoButton.getSelection()) return -1;
+
 		if (expectedNumberSpinner != null)
 			return expectedNumberSpinner.getSelection();
 		return 1;
