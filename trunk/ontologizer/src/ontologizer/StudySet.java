@@ -24,7 +24,7 @@ import ontologizer.go.GOGraph;
 import ontologizer.go.TermContainer;
 import ontologizer.go.TermID;
 import ontologizer.go.GOGraph.IVisitingGOVertex;
-import ontologizer.parser.IGeneNameParser;
+import ontologizer.parser.AbstractItemParser;
 import ontologizer.parser.ItemAttribute;
 import ontologizer.parser.OneOnALineParser;
 import ontologizer.parser.ParserFactory;
@@ -86,27 +86,21 @@ public class StudySet implements Iterable<ByteString>
 		Matcher m = suffixPat.matcher(name);
 		name = m.replaceAll("");
 
-		IGeneNameParser parser = ParserFactory.getNewInstance(file);
-		
+		AbstractItemParser parser = ParserFactory.getNewInstance(file);
 		logger.info("Processing studyset " + file.toString());
-
-		retrieveGenesAndAttributesFromParser(parser);
+		parseAndRetrieveGenesAndAttributes(parser);
 	}
 
 	/**
 	 * Retrieves the genes and its attributes from the parser.
 	 * 
 	 * @param parser
+	 * @throws IOException 
 	 */
-	private void retrieveGenesAndAttributesFromParser(IGeneNameParser parser)
+	private void parseAndRetrieveGenesAndAttributes(AbstractItemParser parser) throws IOException
 	{
-		gene2Attribute = new HashMap<ByteString,ItemAttribute>();
-		for (Entry<ByteString,String> e : parser.getNames().entrySet())
-		{
-			ItemAttribute attr = new ItemAttribute();
-			attr.description = e.getValue();
-			gene2Attribute.put(e.getKey(), attr);
-		}
+		parser.parse();
+		gene2Attribute = parser.getItem2Attributes();
 	}
 
 	/**
@@ -121,6 +115,10 @@ public class StudySet implements Iterable<ByteString>
 		gene2Attribute = new HashMap<ByteString,ItemAttribute>();
 	}
 
+
+	/**
+	 * Constructs a empty study set with a generated unique name.
+	 */
 	public StudySet()
 	{
 		this.name = generateUniqueName();
@@ -131,8 +129,17 @@ public class StudySet implements Iterable<ByteString>
 	{
 		this.name = name;
 	
-		OneOnALineParser parser = new OneOnALineParser(entries);
-		retrieveGenesAndAttributesFromParser(parser);
+		try
+		{
+			if (entries != null)
+			{
+				OneOnALineParser parser = new OneOnALineParser(entries);
+				parseAndRetrieveGenesAndAttributes(parser);
+			}
+		} catch (IOException ex)
+		{
+			logger.warning(ex.getLocalizedMessage());
+		}
 	}
 
 	/**

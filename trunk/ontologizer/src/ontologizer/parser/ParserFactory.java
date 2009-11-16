@@ -32,7 +32,7 @@ public final class ParserFactory
 	 * @return an object which can be queried for gene names.
 	 * @throws IOException on an error
 	 */
-	public static IGeneNameParser getNewInstance(final File file) throws IOException
+	public static AbstractItemParser getNewInstance(final File file) throws IOException
 	{
 		String type = getFileType(file);
 		if (type.equals("fasta"))

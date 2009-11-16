@@ -23,10 +23,10 @@ import ontologizer.ByteString;
  * 
  * @author Peter Robinson, Sebastian Bauer
  */
-public class OneOnALineParser implements IGeneNameParser
+public class OneOnALineParser extends AbstractItemParser
 {
-	/** The hash map storing genes and their descriptions. */
-	private HashMap<ByteString,String> genes = new HashMap<ByteString,String>();
+	private File file;
+	private String [] names;
 
 	/**
 	 * Constructs the gene names by parsing a file.
@@ -36,15 +36,7 @@ public class OneOnALineParser implements IGeneNameParser
 	 */
 	public OneOnALineParser(final File file) throws IOException
 	{
-		BufferedReader is;
-
-		is = new BufferedReader(new FileReader(file));
-		String inputLine;
-		while ((inputLine = is.readLine()) != null)
-		{
-			processLine(inputLine);
-		}
-		is.close();
+		this.file = file;
 	}
 
 	/**
@@ -55,22 +47,33 @@ public class OneOnALineParser implements IGeneNameParser
 	 */
 	public OneOnALineParser(final String [] names)
 	{
-		int i;
-
-		for (i = 0; i < names.length; i++)
-			processLine(names[i]);
+		this.names = names;
 	}
 	
-	/**
-	 * @return a HashMap with key = gene name value = description
-	 */
-	public HashMap<ByteString,String> getNames()
+	@Override
+	public void parseSource(IParserCallback callback) throws IOException
 	{
-		return genes;
+		if (file != null)
+		{
+			BufferedReader is;
+			is = new BufferedReader(new FileReader(file));
+			String inputLine;
+			while ((inputLine = is.readLine()) != null)
+				processLine(inputLine,callback);
+			is.close();
+
+			return;
+		}
+		
+		if (names != null)
+		{
+			for (int i = 0; i < names.length; i++)
+				processLine(names[i],callback);
+		}
 	}
 
 	/**
-	 * Processes the given line. The line should start with a genname followed by
+	 * Processes the given line. The line should start with a genename followed by
 	 * an optional descriptions (separated by a space sign). If the line starts
 	 * with ';' or '#' it is ignored. Empty lines are ignored as well.
 	 * 
@@ -78,7 +81,7 @@ public class OneOnALineParser implements IGeneNameParser
 	 *            a single line of the input gene list file.
 	 */
 
-	private void processLine(final String line)
+	private void processLine(final String line, IParserCallback callback)
 	{
 		/* Ignore comments */
 		if (line.length() == 0 || line.startsWith(";") || line.startsWith("#"))
@@ -89,8 +92,11 @@ public class OneOnALineParser implements IGeneNameParser
 		String [] sfields = line.split("\\s+", 2);
 		for (int i = 0; i < sfields.length; ++i)
 			fields[i] = sfields[i];
-
-		genes.put(new ByteString(fields[0]), fields[1]);
+		
+		ByteString itemName = new ByteString(fields[0]);
+		ItemAttribute itemAttribute = new ItemAttribute();
+		itemAttribute.description = new StringBuilder(fields[1]).toString();
+		callback.newEntry(itemName, itemAttribute);
 	}
 
 }
