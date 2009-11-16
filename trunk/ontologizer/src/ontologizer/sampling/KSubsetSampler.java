@@ -121,6 +121,13 @@ public class KSubsetSampler<T>
 			int n) throws Exception
 	{
 		HashSet<ArrayList<T>> samples = new HashSet<ArrayList<T>>();
+		
+		if (k==0)
+		{
+			for (int i=0;i<n;i++)
+				samples.add(new ArrayList<T>());
+			return samples;
+		}
 
 		double logRejectProb = Math.log(n) - hyperg.logfact(this.nObj)
 				+ hyperg.logfact(this.nObj - k);
