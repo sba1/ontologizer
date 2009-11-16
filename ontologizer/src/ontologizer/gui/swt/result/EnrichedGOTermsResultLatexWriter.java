@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
@@ -33,11 +34,35 @@ import att.grappa.Subgraph;
 public class EnrichedGOTermsResultLatexWriter
 {
 	/**
+	 * Converts the given double value to a proper latex formated
+	 * version.
+	 *
+	 * @param val
+	 * @return
+	 */
+	private static String toLatex(double val)
+	{
+		double e = Math.log(val)/Math.log(10);
+		if (Math.abs(e) > 3)
+		{
+			int exp = (int)Math.floor(e);
+
+			double i = val / Math.pow(10,exp);
+
+			return String.format("%.3f*10^{%d}",i,exp);
+		} else
+		{
+			return Double.toString(val);
+		}
+	}
+
+	/**
+	 * @param terms
 	 * @param htmlFile
 	 * @param dotFile
 	 * @param pngFile
 	 */
-	public static void write(EnrichedGOTermsResult result, File texFile)
+	public static void write(EnrichedGOTermsResult result, File texFile, Collection<TermID> terms)
 	{
 		try
 		{
@@ -63,6 +88,9 @@ public class EnrichedGOTermsResultLatexWriter
 
 			for (AbstractGOTermProperties props : sortedProps)
 			{
+				if (!terms.contains(props.goTerm.getID()))
+					continue;
+
 				out.print (props.goTerm.getIDAsString());
 				out.print (" & ");
 
@@ -70,11 +98,11 @@ public class EnrichedGOTermsResultLatexWriter
 				name = name.replaceAll("_", " ");
 				out.print(name);
 
-				out.print(" & ");
-				out.printf("%.4f", props.p);
-				out.println(" & ");
-				out.printf("%.4f", props.p_adjusted);
-				out.println(" & ");
+				out.print(" & $");
+				out.print(toLatex(props.p));
+				out.println("$ & $");
+				out.print(toLatex(props.p_adjusted));
+				out.println("$ & ");
 				out.println(props.annotatedStudyGenes);
 				out.println(" & ");
 				out.println(props.annotatedPopulationGenes);
