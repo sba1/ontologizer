@@ -106,13 +106,17 @@ public class GOTermEnumerator implements Iterable<TermID>
 		}
 */	
 		/* Here we ignore the association qualifier (e.g. colocalized_with)
-		 * completly
+		 * completely.
 		 */
 		
 		/* At first add the direct counts */
 		for (Association association : geneAssociations)
 		{
 			TermID goTermID = association.getTermID();
+			
+			if (!graph.isRelevantTermID(goTermID))
+				continue;
+			
 			GOTermAnnotatedGenes termGenes = map.get(goTermID);
 			
 			/* Create an entry if it doesn't exist */
@@ -133,7 +137,7 @@ public class GOTermEnumerator implements Iterable<TermID>
 		/* Then add the total counts */
 
 		/**
-		 * The term vistor: To all visted terms (which here
+		 * The term visitor: To all visited terms (which here
 		 * all terms up from the goTerms of the set) add the
 		 * given gene.
 		 *
@@ -150,14 +154,17 @@ public class GOTermEnumerator implements Iterable<TermID>
 
 			public void visiting(TermID goTermID)
 			{
-				GOTermAnnotatedGenes termGenes = map.get(goTermID);
-
-				if (termGenes == null)
+				if (graph.isRelevantTermID(goTermID))
 				{
-					termGenes = new GOTermAnnotatedGenes();
-					map.put(goTermID,termGenes);
+					GOTermAnnotatedGenes termGenes = map.get(goTermID);
+	
+					if (termGenes == null)
+					{
+						termGenes = new GOTermAnnotatedGenes();
+						map.put(goTermID,termGenes);
+					}
+					termGenes.totalAnnotated.add(geneName);
 				}
-				termGenes.totalAnnotated.add(geneName);
 			}
 		};
 
