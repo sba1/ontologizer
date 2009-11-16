@@ -195,7 +195,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 				return 0;
 			}});
 		termID2PValueRank = new HashMap<TermID,Integer>();
-		for (int rank = 0;rank < props.length; rank++)
+		for (int rank = 1;rank <= props.length; rank++)
 			termID2PValueRank.put(props[rank].goTerm.getID(), rank);
 
 		prepareSignificanceColors();
