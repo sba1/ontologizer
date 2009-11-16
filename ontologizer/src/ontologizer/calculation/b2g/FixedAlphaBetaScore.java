@@ -277,25 +277,3 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 	}
 }
 
-class Bayes2GOEnrichedGOTermsResult extends EnrichedGOTermsResult
-{
-	private Bayes2GOScore score;
-
-	public Bayes2GOEnrichedGOTermsResult(GOGraph go,
-			AssociationContainer associations, StudySet studySet,
-			int populationGeneCount)
-	{
-		super(go, associations, studySet, populationGeneCount);
-	}
-
-	public void setScore(Bayes2GOScore score)
-	{
-		this.score = score;
-	}
-
-	public Bayes2GOScore getScore()
-	{
-		return score;
-	}
-}
-
