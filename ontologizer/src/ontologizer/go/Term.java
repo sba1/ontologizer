@@ -237,6 +237,23 @@ public class Term
 	}
 
 	/**
+	 * Returns the abbreviated string for the term's namespace
+	 * if possible.
+	 *
+	 * @return
+	 */
+	public String getNamespaceAsAbbrevString()
+	{
+		if (namespace == null) return Namespace.UNKOWN_NAMESPACE.getName();
+		String nameSpace = namespace.getName();
+
+		if (nameSpace.equalsIgnoreCase("biological_process")) return "B";
+		if (nameSpace.equalsIgnoreCase("molecular_function")) return "M";
+		if (nameSpace.equalsIgnoreCase("cellular_compoment")) return "C";
+		return nameSpace;
+	}
+
+	/**
 	 * Returns the parent terms including the relation.
 	 *
 	 * @return
