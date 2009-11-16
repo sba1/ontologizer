@@ -120,7 +120,7 @@ public class PreferencesWindow extends ApplicationWindow
 		portSpinner.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 		portSpinner.setMaximum(65535);
 
-		if (CalculationRegistry.experimentalActivated())
+		if (true)//CalculationRegistry.experimentalActivated())
 		{
 			Label alphaLabel = new Label(composite,0);
 			alphaLabel.setText("Alpha (in percent)");
