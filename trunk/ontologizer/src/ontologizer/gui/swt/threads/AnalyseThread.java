@@ -46,14 +46,14 @@ public class AnalyseThread extends AbstractOntologizerThread
 	private StudySetList studySetList;
 	private int numberOfPermutations;
 
-	private double alpha, beta;
+	private double alpha, upperAlpha, beta, upperBeta;
 	private int expectedNumber;
 	private int numberOfMCMCSteps;
 
 	public AnalyseThread(Display display, Runnable calledWhenFinished, ResultWindow result,
 			String definitionFile, String associationsFile, String mappingFile, PopulationSet populationSet, StudySetList studySetList,
 			String methodName, String mtcName, String subsetName, String subontologyName,
-			int noP, double alpha, double beta, int expectedNumber, int numberOfMCMCSteps)
+			int noP, double alpha, double upperAlpha, double beta, double upperBeta, int expectedNumber, int numberOfMCMCSteps)
 	{
 		super("Analyze Thread",calledWhenFinished,display,result);
 
@@ -69,7 +69,9 @@ public class AnalyseThread extends AbstractOntologizerThread
 
 		this.numberOfPermutations = noP;
 		this.alpha = alpha;
+		this.upperAlpha = upperAlpha;
 		this.beta = beta;
+		this.upperBeta = upperBeta;
 		this.expectedNumber = expectedNumber;
 		this.numberOfMCMCSteps = numberOfMCMCSteps;
 
@@ -130,8 +132,16 @@ public class AnalyseThread extends AbstractOntologizerThread
 				Bayes2GOCalculation b2g = (Bayes2GOCalculation)calculation;
 
 				if (!Double.isNaN(alpha)) b2g.setAlpha(alpha);
-				else b2g.setAlpha(B2GParam.Type.MCMC);
-				if (!Double.isNaN(beta)) b2g.setBeta(beta);
+				else
+				{
+					b2g.setAlpha(B2GParam.Type.MCMC);
+					b2g.setAlphaBounds(0,upperAlpha);
+				}
+				if (!Double.isNaN(beta))
+				{
+					b2g.setBeta(beta);
+					b2g.setBetaBounds(0,upperBeta);
+				}
 				else b2g.setBeta(B2GParam.Type.MCMC);
 				if (expectedNumber != -1) b2g.setExpectedNumber(expectedNumber);
 				else b2g.setExpectedNumber(B2GParam.Type.MCMC);
@@ -275,7 +285,7 @@ public class AnalyseThread extends AbstractOntologizerThread
 			if (popWasEmpty)
 			{
 				/* If population set was empty we add all genes whose associations
-				 * are know to the poupulation set. */
+				 * are know to the population set. */
 				List<ByteString> l = ap.getListOfObjectSymbols();
 				for (ByteString bs : l)
 					populationSet.addGene(bs,"");
@@ -317,7 +327,7 @@ public class AnalyseThread extends AbstractOntologizerThread
 				studyNum++;
 
 				/* If procedure is a resampling test
-				 * TODO: Enclose testCorrection by synchonize statement */
+				 * TODO: Enclose testCorrection by synchronize statement */
 				if (testCorrection instanceof AbstractResamplingTestCorrection)
 				{
 					AbstractResamplingTestCorrection rtc = (AbstractResamplingTestCorrection)testCorrection;
