@@ -115,26 +115,32 @@ plot.roc<-function(d,alpha=NA,beta=NA)
 	# Convert the list of lists to a data frame
 #	result.frame<-do.call(rbind,lapply(result.list,data.frame))
 
-	colors<-c("red","blue","green","cyan","magenta", "gray", "purple", "brown")
+	colors<-c(rainbow(12))
 	l<-list();
 
 	pred<-prediction(1-d$p.tft,d$label)
 	perf<-performance(pred, measure = "tpr", x.measure = "fpr") 
 	auc.perf<-performance(pred, measure = "auc")
 	auc<-auc.perf@y.values[[1]]
-#plot(perf, col="red",main=sprintf("comparison for %d runs (AUC=%g)",nruns,auc),downsampling=100)
 	name<-"Term for Term"
 	l<-append(l,sprintf("%s (%g)",name,auc))
 	plot(perf, col=colors[1],main=sprintf("Comparison (alpha=%g,beta=%g)",alpha,beta),downsampling=100)
+
+	pred<-prediction(1-d$p.tft.bf,d$label)
+	perf<-performance(pred, measure = "tpr", x.measure = "fpr") 
+	auc.perf<-performance(pred, measure = "auc")
+	auc<-auc.perf@y.values[[1]]
+	name<-"Term for Term: BF"
+	l<-append(l,sprintf("%s (%g)",name,auc))
+	plot(perf, col=colors[2],downsampling=100, add=TRUE)
 
 	pred<-prediction(1-d$p.pcu,d$label)
 	perf<-performance(pred, measure = "tpr", x.measure = "fpr") 
 	auc.perf<-performance(pred, measure = "auc")
 	auc<-auc.perf@y.values[[1]]
-#plot(perf, col=rainbow(10),main=sprintf("Parent Child Union for %d runs (AUC=%g)",nruns,auc),downsampling=100)
 	name<-"Parent Child"
 	l<-append(l,sprintf("%s (%g)",name,auc))
-	plot(perf, col=colors[2],downsampling=100, add=TRUE)
+	plot(perf, col=colors[3],downsampling=100, add=TRUE)
 	
 	pred<-prediction(1-d$p.tweight,d$label)
 	perf<-performance(pred, measure = "tpr", x.measure = "fpr") 
@@ -142,7 +148,7 @@ plot.roc<-function(d,alpha=NA,beta=NA)
 	auc<-auc.perf@y.values[[1]]
 	name<-"Topology Weighted"
 	l<-append(l,sprintf("%s (%g)",name,auc))
-	plot(perf, col=colors[3],downsampling=100, add=TRUE)
+	plot(perf, col=colors[4],downsampling=100, add=TRUE)
 
 	pred<-prediction(1-d$p.pb,d$label)
 	perf<-performance(pred, measure = "tpr", x.measure = "fpr") 
@@ -150,7 +156,7 @@ plot.roc<-function(d,alpha=NA,beta=NA)
 	auc<-auc.perf@y.values[[1]]
 	name<-"Probabilistic"
 	l<-append(l,sprintf("%s (%g)",name,auc))
-	plot(perf, col=colors[4],downsampling=100, add=TRUE)
+	plot(perf, col=colors[5],downsampling=100, add=TRUE)
 
 	pred<-prediction(1-d$p.b2g.ideal,d$label)
 	perf<-performance(pred, measure = "tpr", x.measure = "fpr") 
@@ -158,7 +164,15 @@ plot.roc<-function(d,alpha=NA,beta=NA)
 	auc<-auc.perf@y.values[[1]]
 	name<-"B2G: Ideal"
 	l<-append(l,sprintf("%s (%g)",name,auc))
-	plot(perf, col=colors[5],downsampling=100, add=TRUE)
+	plot(perf, col=colors[6],downsampling=100, add=TRUE)
+
+	pred<-prediction(1-d$p.b2g.ideal.pop,d$label)
+	perf<-performance(pred, measure = "tpr", x.measure = "fpr") 
+	auc.perf<-performance(pred, measure = "auc")
+	auc<-auc.perf@y.values[[1]]
+	name<-"B2G: Ideal, PaR"
+	l<-append(l,sprintf("%s (%g)",name,auc))
+	plot(perf, col=colors[7],downsampling=100, add=TRUE)
 
 	pred<-prediction(1-d$p.b2g.em,d$label)
 	perf<-performance(pred, measure = "tpr", x.measure = "fpr") 
@@ -166,7 +180,23 @@ plot.roc<-function(d,alpha=NA,beta=NA)
 	auc<-auc.perf@y.values[[1]]
 	name<-"B2G: EM"
 	l<-append(l,sprintf("%s (%g)",name,auc))
-	plot(perf, col=colors[6],downsampling=100, add=TRUE)
+	plot(perf, col=colors[8],downsampling=100, add=TRUE)
+
+	pred<-prediction(1-d$p.b2g.mcmc,d$label)
+	perf<-performance(pred, measure = "tpr", x.measure = "fpr") 
+	auc.perf<-performance(pred, measure = "auc")
+	auc<-auc.perf@y.values[[1]]
+	name<-"B2G: Full MCMC"
+	l<-append(l,sprintf("%s (%g)",name,auc))
+	plot(perf, col=colors[9],downsampling=100, add=TRUE)
+
+	pred<-prediction(1-d$p.b2g.mcmc.cexpt,d$label)
+	perf<-performance(pred, measure = "tpr", x.measure = "fpr") 
+	auc.perf<-performance(pred, measure = "auc")
+	auc<-auc.perf@y.values[[1]]
+	name<-"B2G: Full MCMC (but p known)"
+	l<-append(l,sprintf("%s (%g)",name,auc))
+	plot(perf, col=colors[10],downsampling=100, add=TRUE)
 
 	pred<-prediction(1-d$p.b2g.ideal.nop,d$label)
 	perf<-performance(pred, measure = "tpr", x.measure = "fpr") 
@@ -174,36 +204,43 @@ plot.roc<-function(d,alpha=NA,beta=NA)
 	auc<-auc.perf@y.values[[1]]
 	name<-"B2G: No Prior"
 	l<-append(l,sprintf("%s (%g)",name,auc))
-	plot(perf, col=colors[7],downsampling=100, add=TRUE)
+	plot(perf, col=colors[11],downsampling=100, add=TRUE)
 
 	legend("bottomright",	col=colors, legend = unlist(l), fill=colors)
 }
 
 s<-split(d,list(d$alpha,d$beta))
 
+#	filename<-sprintf("result-roc-a%d-b%d.pdf",alpha*100,beta*100)
+#	pdf(file=filename,height=9,width=9)
+#	par(cex=1.5,lwd=2)
+#	plot.roc(d,alpha,beta)
+#	dev.off()
+
+
 lapply(s,function(d) {
 	alpha<-unique(d$alpha)
 	beta<-unique(d$beta)
 
-	filename<-sprintf("result-roc-a%g-b%g.pdf",alpha,beta)
-	pdf(file=filename,height=5.5,width=5.5)
-	par(cex=1.5)
+	filename<-sprintf("result-roc-a%d-b%d.pdf",alpha*100,beta*100)
+	pdf(file=filename,height=9,width=9)
+	par(cex=1.5,lwd=2)
 	par(mfrow=c(1,1))
-	plot.roc(d)
+	plot.roc(d,alpha,beta)
 	dev.off()
 
-	filename<-sprintf("result-roc-a%g-b%g-senseful.pdf",alpha,beta)
-	pdf(file=filename,height=5.5,width=5.5)
-	par(cex=1.5)
+	filename<-sprintf("result-roc-a%d-b%d-senseful.pdf",alpha*100,beta*100)
+	pdf(file=filename,height=9,width=9)
+	par(cex=1.5,lwd=2)
 	par(mfrow=c(1,1))
-	plot.roc(subset(d,d$senseful==1))
+	plot.roc(subset(d,d$senseful==1),alpha,beta)
 	dev.off()
 
-	filename<-sprintf("result-roc-a%g-b%g-no-restriction.pdf",alpha,beta)
-	pdf(file=filename,height=5.5,width=5.5)
-	par(cex=1.5)
+	filename<-sprintf("result-roc-a%d-b%d-no-restriction.pdf",alpha*100,beta*100)
+	pdf(file=filename,height=9,width=9)
+	par(cex=1.5,lwd=2)
 	par(mfrow=c(1,1))
-	plot.roc(subset(d,d$senseful==0))
+	plot.roc(subset(d,d$senseful==0),alpha,beta)
 	dev.off()
 });
 
