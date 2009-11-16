@@ -27,8 +27,8 @@ public class Datafiles
 			workspace.mkdirs();
 		FileCache.setCacheDirectory(new File(workspace,".cache").getAbsolutePath());
 		final WorkSet ws = new WorkSet("Test");
-		ws.setOboPath("http://www.geneontology.org/ontology/gene_ontology_edit.obo");
-		ws.setAssociationPath("http://cvsweb.geneontology.org/cgi-bin/cvsweb.cgi/go/gene-associations/gene_association.fb.gz?rev=HEAD");
+		ws.setOboPath(oboName);
+		ws.setAssociationPath(assocName);
 		final Object notify = new Object();
 
 		synchronized (notify)
