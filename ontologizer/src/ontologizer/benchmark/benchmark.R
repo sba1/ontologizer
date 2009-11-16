@@ -1,3 +1,29 @@
+######################################################################################
+# Copyright (c) 2009, Ontologizer Open Source Team
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without modification,
+# are permitted provided that the following conditions are met:
+#
+#    * Redistributions of source code must retain the above copyright notice, 
+#      this list of conditions and the following disclaimer.
+#    * Redistributions in binary form must reproduce the above copyright notice,
+#      this list of conditions and the following disclaimer in the documentation
+#      and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+# IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+# INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+# NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+# PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+######################################################################################
+
+
 ########################################
 # This is the R script used to analyze #
 # the results of Benchmark.java        #
@@ -16,9 +42,11 @@ v<-matrix(ncol=2,byrow=T,
 			"p.b2g.ideal.pop", "B2G'",
 			"p.b2g.mcmc.pop", "B2G"
            ))
-#as.character(expression(B2G^"*")
 
-# Libraries that we need
+# ROCR was used for the plotting, but their (down)sampling scheme is not
+# optimal (seems to only sample from the data, ignoring the fact that in
+# some areas the data is denser than in others). It has been replaced by
+# custom functions. You can comment the following line.
 library(ROCR)
 
 # Read the input file. Ignore any 0 term.
@@ -67,7 +95,9 @@ decode.parameter.setting<-function(name)
 }
 
 #
-# Draw some performance plots
+# Draw some performance plots using ROCR. Also k-truncated score
+# is calculated in this routine (should have been moved into a
+# plot.roc.new function, does not depend on ROCR...)
 #
 plot.roc<-function(d,main="Comparision",alpha=NA,beta=NA,calc.auc=F,y.axis="tpr",x.axis="fpr",xlim=c(0,1),ylim=c(0,1),legend.place="bottomright",rocn=NA,downsampling=300)
 {
@@ -143,9 +173,68 @@ plot.roc<-function(d,main="Comparision",alpha=NA,beta=NA,calc.auc=F,y.axis="tpr"
 	legend(legend.place, col=colors, pch=pchs, legend = unlist(l))
 }
 
+#
+# Draw ROC plots (doesn't use ROCR)
+#
+plot.roc.new<-function(d,main="Comparision",alpha=NA,beta=NA,xlim=c(0,1),ylim=c(0,1),legend.place="bottomright",downsampling=300)
+{
+	nruns<-length(unique(d$run))
+	
+	if (nrow(d)==0)
+	{
+		return()
+	}
+	
+	l<-list();
+
+	colnames(v)<-c("short","full")
+	colors<-rainbow(nrow(v))
+	pchs<-1:nrow(v)
+	
+	for (i in (1:nrow(v)))
+	{
+		ord<-order(d[,v[i,1]])
+		
+		# data is orderd. Threshold is such that the values
+		# above an element are flagged as positive (inclusive)
+		# and values below an element as negative.
+		values<-d[ord,v[i,1]]
+		labels<-d[ord,]$label
+
+		tps<-cumsum(labels)
+		fps<-(1:length(labels)) - tps
+		tpr<-tps / tps[length(tps)] # true postive rate
+		fpr<-fps / fps[length(fps)] # false positive rate
+
+		idx.dots<-cumsum(hist(fpr,plot=F,breaks=25)$counts)
+		idx.lines<-c(1,cumsum(hist(fpr,plot=F,breaks=300)$counts))
+		
+		# For AUROC scores we request a higher resolution 
+		idx.auroc<-c(1,cumsum(hist(fpr,plot=F,breaks=1000)$counts))
+
+		# calculate the AUROC. Note that diff() returns the difference of
+		# consecutive elements. We calculate the lower bound of the area.
+		auroc<-sum(c(diff(fpr[idx.lines]),0) * tpr[idx.lines])
+		name<-v[i,2]
+		l<-append(l,sprintf("%s (%.3g)",name,auroc))
+
+		if (i==1)
+		{
+			plot(fpr[idx.lines], xlab="False positive rate",tpr[idx.lines], ylab="True positive rate", col=colors[i],pch=pchs[i],type="l", ylim=ylim,xlim=xlim,main=sprintf("%s (alpha=%g,beta=%g)",main,alpha,beta))
+		} else
+		{
+			lines(fpr[idx.lines], tpr[idx.lines], col=colors[i],pch=pchs[i],type="l", ylim=ylim,xlim=xlim,main=sprintf("%s (alpha=%g,beta=%g)",main,alpha,beta))
+		}
+		points(fpr[idx.dots], tpr[idx.dots], col=colors[i],pch=pchs[i],type="p")
+	}
+
+	legend(legend.place, col=colors, pch=pchs, legend = unlist(l))
+}
+
 
 #
-# Draw some performance plots
+# Draw precision/recall plots (doesn't use ROCR)
+# The outer frame looks as in plot.roc.new()
 #
 plot.pr<-function(d,main="Comparision",alpha=NA,beta=NA,xlim=c(0,1),ylim=c(0,1),legend.place="bottomright",downsampling=300)
 {
@@ -165,18 +254,26 @@ plot.pr<-function(d,main="Comparision",alpha=NA,beta=NA,xlim=c(0,1),ylim=c(0,1),
 	for (i in (1:nrow(v)))
 	{
 		ord<-order(d[,v[i,1]])
+
+		# data is orderd. Threshold is such that the values
+		# above an element are flagged as positive (inclusive)
+		# and values below an element as negative.
 		values<-d[ord,v[i,1]]
 		labels<-d[ord,]$label
-		tps<-cumsum(labels)
 
-		prec<-tps/1:length(values) # number of true positives / (number of all positives = (true positives + false negatives))
-		recall<-tps/sum(labels)    # number of true positives / (true positives + false negatives = all positive samples)
+		tps<-cumsum(labels)
+		fps<-(1:length(labels)) - tps
+		tpr<-tps / tps[length(tps)]
+		fpr<-fps / fps[length(fps)]
+
+		prec<-tps/(1:length(values)) # number of true positives / (number of all positives = (true positives + false negatives))
+		recall<-tps/sum(labels)      # number of true positives / (true positives + false negatives = all positive samples)
 		
 		name<-v[i,2]
 		l<-append(l,sprintf("%s",name))
 
-		idx.dots<-cumsum(h<-hist(recall,plot=F,breaks=25)$counts)
-		idx.lines<-cumsum(h<-hist(recall,plot=F,breaks=300)$counts)
+		idx.dots<-cumsum(hist(recall,plot=F,breaks=25)$counts)
+		idx.lines<-cumsum(hist(recall,plot=F,breaks=300)$counts)
 
 		if (i==1)
 		{
@@ -197,7 +294,6 @@ s<-split(d,list(d$alpha,d$beta))
 #
 # ROC
 #
-
 lapply(s,function(d) {
 
 	alpha<-unique(d$alpha)
@@ -206,13 +302,7 @@ lapply(s,function(d) {
 	filename<-sprintf("result-roc-a%d-b%d.pdf",alpha*100,beta*100)
 	pdf(file=filename,height=8,width=8)
 	par(cex=1.3,cex.main=1.2,lwd=2)
-	plot.roc(subset(d,d$senseful==0),alpha,beta,calc.auc=T,rocn=10,main="ROC")
-	dev.off()
-
-	filename<-sprintf("result-roc-a%d-b%d-senseful.pdf",alpha*100,beta*100)
-	pdf(file=filename,height=8,width=8)
-	par(cex=1.3,cex.main=1.2,lwd=2)
-	plot.roc(subset(d,d$senseful==1),alpha,beta,calc.auc=T,rocn=10,main="ROC")
+	plot.roc.new(subset(d,d$senseful==0),alpha,beta,main="ROC")
 	dev.off()
 });
 
@@ -246,8 +336,6 @@ lapply(s,function(d) {
 
 });
 
-
-
 #
 # ROCn
 #
@@ -262,34 +350,3 @@ lapply(s,function(d) {
 	plot.roc(d,alpha,beta,calc.auc=T,rocn=50)
 	dev.off()
 });
-
-
-
-
-
-s<-split(d,d$run)
-filter<-function(el)
-{
-	root.idx<-which(el$term==0)
-	total.genes<-el[root.idx,"pop.genes"]
-	proportion<-el$pop.genes/total.genes
-#	su<-sum(proportion[which(el$label==T)])
-#	return(su > 0.2)
-	return(sum(proportion[which(el$label==T)]>0.1) == length(which(el$label==T)))
-}
-
-filter.index<-as.vector(sapply(s,filter))
-filter.list<-s[which(filter.index==T)]
-filter.dat<-do.call("rbind",filter.list)
-
-pdf(file="result-2.pdf",height=6,width=18)
-par(mfrow=c(1,3))
-plot.roc(filter.dat)
-dev.off()
-
-
-
-options(width=120)
-ord<-order(d$run,d$term)
-d.ord<-d[ord,]
-print(d.ord[which(d.ord$label==T),])
