@@ -879,8 +879,8 @@ public class Bayes2GOCalculation implements ICalculation
 				System.out.println(tid.toString() + "/" + graph.getGOTerm(tid).getName());
 			}
 
-			for (int j=0;j<bayesScore.totalAlpha.length;j++)
-				System.out.println("Total " + (double)bayesScore.totalAlpha[j] / bayesScore.numRecords);
+//			for (int j=0;j<bayesScore.totalAlpha.length;j++)
+//				System.out.println("Total " + (double)bayesScore.totalAlpha[j] / bayesScore.numRecords);
 
 
 		}
