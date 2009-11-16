@@ -81,13 +81,13 @@ public class Benchmark
 	private static double [] BETAs = new double[]{0.25,0.4};
 	private static boolean ORIGINAL_SAMPLING = false;
 	private static int MAX_TERMS = 5;
-	private static int TERMS_PER_RUN = 200;
+	private static int TERMS_PER_RUN = 150;
 
 	/**
 	 * Senseful terms are terms that have an annotation proportion between 0.1
 	 * and 0.9
 	 */
-	private static int SENSEFUL_TERMS_PER_RUN = 0;
+	private static int SENSEFUL_TERMS_PER_RUN = 50;
 
 	/**
 	 * Defines how many terms are taken when beta is varied.
