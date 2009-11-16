@@ -221,6 +221,7 @@ public class Term
 	 */
 	public Namespace getNamespace()
 	{
+		if (namespace == null) return Namespace.UNKOWN_NAMESPACE;
 		return namespace;
 	}
 
@@ -231,6 +232,7 @@ public class Term
 	 */
 	public String getNamespaceAsString()
 	{
+		if (namespace == null) return Namespace.UNKOWN_NAMESPACE.getName();
 		return namespace.getName();
 	}
 
@@ -248,9 +250,13 @@ public class Term
 	public String toString()
 	{
 		String parents = "";
-		for (ParentTermID ptid : getParents())
+		
+		if (getParents() != null)
 		{
-			parents += ptid.termid.toString() + " ";
+			for (ParentTermID ptid : getParents())
+			{
+				parents += ptid.termid.toString() + " ";
+			}
 		}
 
 		return id.toString() + ": " + parents;
