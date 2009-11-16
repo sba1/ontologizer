@@ -18,6 +18,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.InvalidPropertiesFormatException;
 import java.util.LinkedList;
@@ -161,6 +162,9 @@ public class MainWindow extends ApplicationWindow
 	private ToolItem analyzeToolItem = null;
 	private ToolItem newProjectToolItem = null;
 	private ToolItem similarityToolItem = null;
+
+	/** Action to be called when a new method is selected */
+	private List<ISimpleAction> methodAction = new LinkedList<ISimpleAction>();
 
 	/* Menu Items */
 	private MenuItem preferencesMenuItem;
@@ -1033,6 +1037,12 @@ public class MainWindow extends ApplicationWindow
 		System.out.println(str);
 	}
 
+	/**
+	 * Sets the currently selected method to the method
+	 * with the given name.
+	 *
+	 * @param string
+	 */
 	public void setSelectedMethodName(String string)
 	{
 		String [] items = methodCombo.getItems();
@@ -1046,11 +1056,25 @@ public class MainWindow extends ApplicationWindow
 		}
 	}
 
+	/**
+	 * Add a new action that is called when a new method is selected.
+	 *
+	 * @param action
+	 */
+	public void addMethodAction(ISimpleAction action)
+	{
+		methodAction.add(action);
+	}
+
+	/**
+	 * Returns the name of the currently selected method.
+	 *
+	 * @return
+	 */
 	public String getSelectedMethodName()
 	{
 		return methodCombo.getItem(methodCombo.getSelectionIndex());
 	}
-
 
 	public String getSelectedMTCName()
 	{
@@ -1069,7 +1093,6 @@ public class MainWindow extends ApplicationWindow
 			}
 		}
 	}
-
 
 	/* Generated methods */
 
