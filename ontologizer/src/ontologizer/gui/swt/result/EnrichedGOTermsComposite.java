@@ -1265,7 +1265,13 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 	@Override
 	public String getTitle()
 	{
-		return getResult().getStudySet().getName() + " (" + getResult().getCalculationName() + "/" + getResult().getCorrectionName() + ")";
+		String correctionName = getResult().getCorrectionName();
+		String calculationName = getResult().getCalculationName();
+
+		 if (correctionName != null)
+			 return getResult().getStudySet().getName() + " (" + calculationName + "/" + correctionName + ")";
+		 else
+			 return getResult().getStudySet().getName() + " (" + calculationName + ")";
 	}
 
 }
