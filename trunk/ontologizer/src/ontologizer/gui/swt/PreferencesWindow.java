@@ -78,7 +78,7 @@ public class PreferencesWindow extends ApplicationWindow
 		TabItem generalItem = new TabItem(tabFolder,SWT.NONE);
 		generalItem.setText("General");
 		TabItem b2gItem = new TabItem(tabFolder,SWT.NONE);
-		b2gItem.setText("Bayes2GO");
+		b2gItem.setText("MGSA");
 
 		/* Dot composite */
 		Composite composite = new Composite(tabFolder,0);
