@@ -26,4 +26,16 @@ public class PValue implements Cloneable, Comparable<PValue>
 		if (p > o.p) return 1;
 		return 0;
 	}
+	
+	/**
+	 * Returns whether this pvalue is significant according
+	 * to a given threshold.
+	 * 
+	 * @param thresh
+	 * @return
+	 */
+	public boolean isSignificant(double thresh)
+	{
+		return p_adjusted < thresh;
+	}
 }
