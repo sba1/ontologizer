@@ -80,21 +80,20 @@ public class Benchmark
 	private static double [] ALPHAs = new double[]{0.1,0.4};
 	private static double [] BETAs = new double[]{0.25,0.4};
 	private static boolean ORIGINAL_SAMPLING = false;
-	private static int MAX_TERMS = 5;
-	private static int TERMS_PER_RUN = 70;
+	private static int MAX_TERMS = 0;
+	private static int TERMS_PER_RUN = 200;
 
 	/**
 	 * Senseful terms are terms that have an annotation proportion between 0.1
 	 * and 0.9
 	 */
-	private static int SENSEFUL_TERMS_PER_RUN = 35;
+	private static int SENSEFUL_TERMS_PER_RUN = 0;
 
 	/**
 	 * Defines how many terms are taken when beta is varied.
 	 */
-	private static int TERMS_WHEN_VARING_BETA = 2;
+	private static int TERMS_WHEN_VARING_BETA = 15;
 	private static double VARING_BETA [] = new double[]{0.2,0.4,0.6,0.8};
-
 
 	private static AbstractTestCorrection testCorrection = new None();
 
@@ -176,9 +175,9 @@ public class Benchmark
 //		m.em = true;
 //		calcMethods.add(m);
 
-		m = new Method("Bayes2GO", "b2g.mcmc");
-		m.mcmc = true;
-		calcMethods.add(m);
+//		m = new Method("Bayes2GO", "b2g.mcmc");
+//		m.mcmc = true;
+//		calcMethods.add(m);
 
 		m = new Method("Bayes2GO", "b2g.mcmc.pop");
 		m.takePopulationAsReference = true;
@@ -274,6 +273,8 @@ GlobalPreferences.setProxyHost("realproxy.charite.de");
 
 		System.out.println("We have a total of " + sensefulTerms.size() + " senseful terms");
 
+
+		/**********************************************************/
 		final PrintWriter out = new PrintWriter(new File("result-" + (ORIGINAL_SAMPLING?"tn":"fp") + ".txt"));
 
 		/* Prepare header */
@@ -298,6 +299,15 @@ GlobalPreferences.setProxyHost("realproxy.charite.de");
 		out.print("alpha\t");
 		out.println("beta");
 
+		/**********************************************************/
+		final PrintWriter outTime = new PrintWriter(new File("result-time.txt"));
+
+		/* Prepare header */
+		outTime.print("run");
+		for (Method cm : calcMethods)
+			outTime.print("\t" + cm.abbrev);
+		outTime.println();
+
 		/* We start with the term combinations */
 		class Combination
 		{
@@ -320,14 +330,14 @@ GlobalPreferences.setProxyHost("realproxy.charite.de");
 			}
 		}
 
-		for (ArrayList<TermID> termCombi : kSubsetSampler.sampleManyOrderedWithoutReplacement(TERMS_WHEN_VARING_BETA,TERMS_PER_RUN))
-		{
-			Combination comb = new Combination();
-			comb.termCombi = termCombi;
-			comb.isSenseful = false;
-			comb.hasVaryingBeta = true;
-			combinationList.add(comb);
-		}
+//		for (ArrayList<TermID> termCombi : kSubsetSampler.sampleManyOrderedWithoutReplacement(TERMS_WHEN_VARING_BETA,TERMS_PER_RUN))
+//		{
+//			Combination comb = new Combination();
+//			comb.termCombi = termCombi;
+//			comb.isSenseful = false;
+//			comb.hasVaryingBeta = true;
+//			combinationList.add(comb);
+//		}
 
 		KSubsetSampler<TermID> kSensefulSubsetSampler = new KSubsetSampler<TermID>(sensefulTerms,rnd);
 		for (int i=1;i<=MAX_TERMS;i++)
@@ -388,6 +398,8 @@ GlobalPreferences.setProxyHost("realproxy.charite.de");
 								{
 									GOTermEnumerator studyEnumerator = newStudySet.enumerateGOTerms(graph, assoc);
 
+									long times[] = new long[calcMethods.size()];
+
 									/* Some buffer for the result */
 									StringBuilder builder = new StringBuilder(100000);
 									LinkedHashMap<TermID,Double []> terms2PVal = new LinkedHashMap<TermID,Double[]>();
@@ -395,6 +407,8 @@ GlobalPreferences.setProxyHost("realproxy.charite.de");
 									/* Gather results */
 									for (int mPos = 0; mPos < calcMethods.size(); mPos++)
 									{
+										long start = System.currentTimeMillis();
+
 										Method m = calcMethods.get(mPos);
 										ICalculation calc = CalculationRegistry.getCalculationByName(m.method);
 
@@ -438,13 +452,13 @@ GlobalPreferences.setProxyHost("realproxy.charite.de");
 
 											if (m.em)
 											{
-												b2g.setMcmcSteps(600000);
+												b2g.setMcmcSteps(620000);
 												b2g.setAlpha(B2GParam.Type.EM);
 												b2g.setBeta(B2GParam.Type.EM);
 												b2g.setExpectedNumber(B2GParam.Type.EM);
 											} else if (m.mcmc)
 											{
-												b2g.setMcmcSteps(600000);
+												b2g.setMcmcSteps(620000);
 												b2g.setAlpha(B2GParam.Type.MCMC);
 												b2g.setBeta(B2GParam.Type.MCMC);
 
@@ -452,9 +466,6 @@ GlobalPreferences.setProxyHost("realproxy.charite.de");
 													b2g.setExpectedNumber(termCombi.size());
 												else
 													b2g.setExpectedNumber(B2GParam.Type.MCMC);
-
-
-
 											} else
 											{
 												if (m.dt == 0)
@@ -499,6 +510,9 @@ GlobalPreferences.setProxyHost("realproxy.charite.de");
 											}
 											pVals[mPos] = p.p_adjusted;
 										}
+
+										long end = System.currentTimeMillis();
+										times[mPos] = end - start;
 									}
 
 									/* Write out the results */
@@ -549,6 +563,12 @@ GlobalPreferences.setProxyHost("realproxy.charite.de");
 									synchronized (out) {
 										out.print(builder);
 										out.flush();
+
+										/* Time */
+										outTime.print(currentRun);
+										for (int i=0;i<times.length;i++)
+											outTime.print("\t" + times[i]);
+										outTime.println();
 									}
 								}
 							}
