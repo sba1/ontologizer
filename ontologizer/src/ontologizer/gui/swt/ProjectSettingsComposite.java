@@ -6,6 +6,8 @@
  */
 package ontologizer.gui.swt;
 
+import java.util.ArrayList;
+
 import ontologizer.gui.swt.support.FileGridCompositeWidgets;
 import ontologizer.worksets.WorkSet;
 import ontologizer.worksets.WorkSetList;
@@ -19,6 +21,8 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+
+import sonumina.swt.ISimpleAction;
 
 /**
  * The Composite of project settings.
@@ -35,6 +39,8 @@ public class ProjectSettingsComposite extends Composite
 	private FileGridCompositeWidgets mappingFileGridCompositeWidgets = null;
 	private Combo restrictToCombo;
 	private Button mappingCheckBox;
+
+	private ArrayList<ISimpleAction> definitionChangedList = new ArrayList<ISimpleAction>();
 
 	private WorkSetList wsl;
 
@@ -147,6 +153,15 @@ public class ProjectSettingsComposite extends Composite
 	}
 
 	/**
+	 * Add a action that is invoked if
+	 * @param act
+	 */
+	public void addDefinitionChanged(ISimpleAction act)
+	{
+		definitionChangedList.add(act);
+	}
+
+	/**
 	 * Sets the definition file string.
 	 *
 	 * @param string
@@ -224,5 +239,12 @@ public class ProjectSettingsComposite extends Composite
 		ws.setAssociationPath(assocFileGridCompositeWidgets.getPath());
 		ws.setOboPath(ontologyFileGridCompositeWidgets.getPath());
 		return ws;
+	}
+
+	public void setRestrictionChoices(String[] choices)
+	{
+		if (choices == null) choices = new String[0];
+		restrictToCombo.setEnabled(choices.length > 0);
+		restrictToCombo.setItems(choices);
 	}
 }
