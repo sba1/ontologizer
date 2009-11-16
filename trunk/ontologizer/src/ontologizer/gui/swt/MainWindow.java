@@ -1896,4 +1896,14 @@ public class MainWindow extends ApplicationWindow
 	{
 		return settingsComposite.getSubsetString();
 	}
+
+	/**
+	 * Sets whether the MTC selection is enabled.
+	 * 
+	 * @param supportsTestCorrection
+	 */
+	public void setMTCEnabled(boolean supportsTestCorrection)
+	{
+		mtcCombo.setEnabled(supportsTestCorrection);
+	}
 }
