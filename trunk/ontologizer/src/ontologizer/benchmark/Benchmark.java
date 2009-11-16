@@ -341,15 +341,6 @@ GlobalPreferences.setProxyHost("realproxy.charite.de");
 											{
 												if (m.dt == 0)
 												{
-//													p = (double)termCombi.size() / completePopEnumerator.getTotalNumberOfAnnotatedTerms();
-													b2g.setAlpha(ALPHA);
-													b2g.setBeta(BETA);
-													b2g.setExpectedNumber(termCombi.size());
-
-												} else
-												{
-//													p = (double)m.dt / completePopEnumerator.getTotalNumberOfAnnotatedTerms();
-
 													if (newStudySet instanceof GeneratedStudySet)
 													{
 														GeneratedStudySet gs = (GeneratedStudySet) newStudySet;
@@ -357,11 +348,15 @@ GlobalPreferences.setProxyHost("realproxy.charite.de");
 														b2g.setBeta(gs.getBeta());
 													} else
 													{
-														b2g.setAlpha(m.alpha);
-														b2g.setBeta(m.beta);
+														b2g.setAlpha(ALPHA);
+														b2g.setBeta(BETA);
 													}
+													b2g.setExpectedNumber(termCombi.size());
+												} else
+												{
+													b2g.setAlpha(m.alpha);
+													b2g.setBeta(m.beta);
 													b2g.setExpectedNumber(m.dt);
-//													b2g.setP(p);
 												}
 											}
 
