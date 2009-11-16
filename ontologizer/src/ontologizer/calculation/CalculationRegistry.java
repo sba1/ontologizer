@@ -71,6 +71,12 @@ public class CalculationRegistry
 		return names;
 	}
 
+	static public boolean experimentalActivated()
+	{
+		String enable = System.getenv("ONTOLOGIZER_ENABLE_EXPERIMENTAL");
+		if (enable != null && enable.equals("yes")) return true;
+		return false;
+	}
 
 	/**
 	 * Register all known calculations.
@@ -88,12 +94,7 @@ public class CalculationRegistry
 		registerCalculation(new TopCalculation());
 		registerCalculation(new TopologyWeightedCalculation());
 
-
-		boolean debug = false;
-		String enable = System.getenv("ONTOLOGIZER_ENABLE_EXPERIMENTAL");
-		if (enable != null && enable.equals("yes")) debug = true;
-
-		if (debug)
+		if (experimentalActivated())
 		{
 			System.err.println("Enabled experimental calculations");
 			registerCalculation(new ProbabilisticCalculation());
