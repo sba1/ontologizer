@@ -366,6 +366,7 @@ public class Benchmark
 			}
 		}
 
+/*		This enables the creation of terms with different betas */
 //		for (ArrayList<TermID> termCombi : kSubsetSampler.sampleManyOrderedWithoutReplacement(TERMS_WHEN_VARING_BETA,TERMS_PER_RUN))
 //		{
 //			Combination comb = new Combination();
