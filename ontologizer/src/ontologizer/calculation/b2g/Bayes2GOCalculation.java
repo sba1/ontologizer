@@ -52,7 +52,6 @@ class B2GTestParameter
 	static int MCMC_STEPS = 520000;
 }
 
-
 class Bayes2GOEnrichedGOTermsResult extends EnrichedGOTermsResult
 {
 	private Bayes2GOScore score;
@@ -93,6 +92,8 @@ public class Bayes2GOCalculation implements ICalculation
 
 	private boolean takePopulationAsReference = false;
 	private ICalculationProgress calculationProgress;
+
+	private boolean randomStart = false;
 
 	private int mcmcSteps = B2GTestParameter.MCMC_STEPS;
 	private int updateReportTime = 1000; /* Update report time in ms */
@@ -230,6 +231,16 @@ public class Bayes2GOCalculation implements ICalculation
 	public void setMcmcSteps(int mcmcSteps)
 	{
 		this.mcmcSteps = mcmcSteps;
+	}
+
+	/**
+	 * Sets whether a random start should be used.
+	 *
+	 * @param randomStart
+	 */
+	public void useRandomStart(boolean randomStart)
+	{
+		this.randomStart = randomStart;
 	}
 
 	/**
@@ -435,22 +446,23 @@ public class Bayes2GOCalculation implements ICalculation
 
 			logger.info("Score of empty set: " + score);
 
-//			/* Provide a starting point */
-//			{
-//				int numberOfTerms = bayesScore.EXPECTED_NUMBER_OF_TERMS[rnd.nextInt(bayesScore.EXPECTED_NUMBER_OF_TERMS.length)];
-//				double pForStart = ((double)numberOfTerms) / allTerms.size();
-//
-//				System.out.println("Number of Terms=" + numberOfTerms);
-//
-//				for (int j=0;j<allTerms.size();j++)
-//					if (rnd.nextDouble() < pForStart) bayesScore.switchState(j);
-//
-//				logger.info("Starting with " + bayesScore.activeTerms.size() + " terms (p=" + pForStart + ")");
-//			}
-//			logger.info("Score of initial set: " + score);
+			/* Provide a starting point */
+			if (randomStart)
+			{
+				int numberOfTerms = bayesScore.EXPECTED_NUMBER_OF_TERMS[rnd.nextInt(bayesScore.EXPECTED_NUMBER_OF_TERMS.length)];
+				double pForStart = ((double)numberOfTerms) / allTerms.size();
 
-			double maxScore = Double.NEGATIVE_INFINITY;
-			ArrayList<TermID> maxScoredTerms = new ArrayList<TermID>();
+				for (int j=0;j<allTerms.size();j++)
+					if (rnd.nextDouble() < pForStart) bayesScore.switchState(j);
+
+				logger.info("Starting with " + bayesScore.activeTerms.size() + " terms (p=" + pForStart + ")");
+
+				score = bayesScore.getScore();
+			}
+			logger.info("Score of initial set: " + score);
+
+			double maxScore = score;
+			ArrayList<TermID> maxScoredTerms = new ArrayList<TermID>(bayesScore.activeTerms);
 			double maxScoredAlpha = Double.NaN;
 			double maxScoredBeta = Double.NaN;
 			double maxScoredP = Double.NaN;
