@@ -33,6 +33,7 @@ public class ProjectSettingsComposite extends Composite
 	private FileGridCompositeWidgets ontologyFileGridCompositeWidgets = null;
 	private FileGridCompositeWidgets assocFileGridCompositeWidgets = null;
 	private FileGridCompositeWidgets mappingFileGridCompositeWidgets = null;
+	private Combo restrictToCombo;
 	private Button mappingCheckBox;
 
 	private WorkSetList wsl;
@@ -65,6 +66,15 @@ public class ProjectSettingsComposite extends Composite
 		ontologyFileGridCompositeWidgets.setToolTipText("Specifies the ontology file (OBO file format) which defines the GO terms and their structure.");
 		ontologyFileGridCompositeWidgets.setFilterExtensions(new String[]{"*.obo","*.*"});
 		ontologyFileGridCompositeWidgets.setFilterNames(new String[]{"OBO File","All files"});
+
+		Label restrictLabel = new Label(this,0);
+		restrictLabel.setText("Restrict to");
+		restrictLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+		restrictToCombo = new Combo(this,SWT.BORDER);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		restrictToCombo.setLayoutData(gd);
+		restrictToCombo.setEnabled(false);
 
 		assocFileGridCompositeWidgets = new FileGridCompositeWidgets(this);
 		assocFileGridCompositeWidgets.setLabel("Annotations");
