@@ -654,10 +654,22 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 
 				sortColumn = (Integer)col.getData("column");
 
+				TableItem selectedItem = null;
+				TableItem [] selectedItems = table.getSelection();
+				if (selectedItems != null && selectedItems.length > 0)
+					selectedItem = selectedItems[0];
+
 				table.setSortColumn(col);
 				table.setSortDirection(sortDirection);
 
 				populateTable();
+
+				if (selectedItem != null)
+				{
+					Term selectedTerm = (Term)selectedItem.getData("term");
+					table.setSelection(termID2ListLine.get(selectedTerm.getID().id));
+				}
+
 			}
 		};
 
