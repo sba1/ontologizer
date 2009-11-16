@@ -147,16 +147,16 @@ public class Benchmark
 
 		calcMethods = new ArrayList<Method>();
 		
-		/* Bayes2GO Ideal */
-		calcMethods.add(new Method("Bayes2GO","b2g.ideal"));
+		/* Bayes2GO Ideal, note that Bayes2GO was the working title */
+		calcMethods.add(new Method("MGSA","b2g.ideal"));
 
 		/* Bayes2GO Ideal, with pop as ref */
-		m = new Method("Bayes2GO","b2g.ideal.pop");
+		m = new Method("MGSA","b2g.ideal.pop");
 		m.takePopulationAsReference = true;
 		calcMethods.add(m);
 		
 		/* Bayes2GO Ideal, with pop as ref, random start */
-//		m = new Method("Bayes2GO","b2g.ideal.pop.random");
+//		m = new Method("MGSA","b2g.ideal.pop.random");
 //		m.takePopulationAsReference = true;
 //		m.useRandomStart = true;
 //		calcMethods.add(m);
@@ -169,7 +169,7 @@ public class Benchmark
 //				for (int cdt : calcDesiredTerms)
 //				{
 //					String colName = String.format("b2g.a%.2g.b%.2g.d%d", a,b,cdt);
-//					calcMethods.add(new Method("Bayes2GO",colName,a,b,cdt));
+//					calcMethods.add(new Method("MGSA",colName,a,b,cdt));
 //				}
 //			}
 //		}
@@ -181,46 +181,46 @@ public class Benchmark
 		calcMethods.add(new Method("GenGO","gg"));
 		calcMethods.add(new Method("Topology-Weighted","tweight"));
 
-//		m = new Method("Bayes2GO","b2g.em");
+//		m = new Method("MGSA","b2g.em");
 //		m.em = true;
 //		calcMethods.add(m);
 
-//		m = new Method("Bayes2GO", "b2g.mcmc");
+//		m = new Method("MGSA", "b2g.mcmc");
 //		m.mcmc = true;
 //		calcMethods.add(m);
 
-		m = new Method("Bayes2GO", "b2g.mcmc.pop");
+		m = new Method("MGSA", "b2g.mcmc.pop");
 		m.takePopulationAsReference = true;
 		m.mcmc = true;
 		calcMethods.add(m);
 
-//		m = new Method("Bayes2GO", "b2g.mcmc.cexpt");
+//		m = new Method("MGSA", "b2g.mcmc.cexpt");
 //		m.mcmc = true;
 //		m.useCorrectExpectedTerms = true;
 //		calcMethods.add(m);
 
-//		m = new Method("Bayes2GO","b2g.ideal.nop");
+//		m = new Method("MGSA","b2g.ideal.nop");
 //		m.usePrior = false;
 //		calcMethods.add(m);
 
-//		m = new Method("Bayes2GO","b2g.mcmc.nop");
+//		m = new Method("MGSA","b2g.mcmc.nop");
 //		m.usePrior = false;
 //		m.mcmc = true;
 //		calcMethods.add(m);
 
-//		m = new Method("Bayes2GO","b2g.mcmc.pop.nop");
+//		m = new Method("MGSA","b2g.mcmc.pop.nop");
 //		m.usePrior = false;
 //		m.mcmc = true;
 //		m.takePopulationAsReference = true;
 //		calcMethods.add(m);
 		
-		m = new Method("Bayes2GO", "b2g.mcmc.pop.maxbeta");
+		m = new Method("MGSA", "b2g.mcmc.pop.maxbeta");
 		m.takePopulationAsReference = true;
 		m.mcmc = true;
 		m.useMaxBeta = true;
 		calcMethods.add(m);
 
-		m = new Method("Bayes2GO","b2g.ideal.pop.nop");
+		m = new Method("MGSA","b2g.ideal.pop.nop");
 		m.usePrior = false;
 		m.takePopulationAsReference = true;
 		calcMethods.add(m);
