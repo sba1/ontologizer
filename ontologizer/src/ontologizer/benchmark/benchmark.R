@@ -161,7 +161,8 @@ plot.roc<-function(d,main="Comparision",alpha=NA,beta=NA,calc.auc=F,y.axis="tpr"
 
 		if (i==1)
 		{
-			plot(perf, col=colors[i],pch=pchs[i],downsampling=downsampling, type="l", ylim=ylim,xlim=xlim,main=sprintf("%s (alpha=%g,beta=%g)",main,alpha,beta))
+			title<-bquote(paste(.(main),": ", alpha,"=",.(alpha),",",beta,"=",.(beta)))
+			plot(perf, col=colors[i],pch=pchs[i],downsampling=downsampling, type="l", ylim=ylim,xlim=xlim,main=title)
 			plot(perf, col=colors[i],pch=pchs[i],downsampling=25, type="p", add=TRUE)
 		} else
 		{
@@ -220,7 +221,8 @@ plot.roc.new<-function(d,main="Comparision",alpha=NA,beta=NA,xlim=c(0,1),ylim=c(
 
 		if (i==1)
 		{
-			plot(fpr[idx.lines], xlab="False positive rate",tpr[idx.lines], ylab="True positive rate", col=colors[i],pch=pchs[i],type="l", ylim=ylim,xlim=xlim,main=sprintf("%s (alpha=%g,beta=%g)",main,alpha,beta))
+			title<-bquote(paste(.(main),": ", alpha,"=",.(alpha),",",beta,"=",.(beta)))
+			plot(fpr[idx.lines], xlab="False positive rate",tpr[idx.lines], ylab="True positive rate", col=colors[i],pch=pchs[i],type="l", ylim=ylim,xlim=xlim,main=title)
 		} else
 		{
 			lines(fpr[idx.lines], tpr[idx.lines], col=colors[i],pch=pchs[i],type="l", ylim=ylim,xlim=xlim,main=sprintf("%s (alpha=%g,beta=%g)",main,alpha,beta))
@@ -277,7 +279,8 @@ plot.pr<-function(d,main="Comparision",alpha=NA,beta=NA,xlim=c(0,1),ylim=c(0,1),
 
 		if (i==1)
 		{
-			plot(recall[idx.lines], xlab="Recall", prec[idx.lines], ylab="Precision", col=colors[i],pch=pchs[i],type="l", ylim=ylim,xlim=xlim,main=sprintf("%s (alpha=%g,beta=%g)",main,alpha,beta))
+			title<-bquote(paste(.(main),": ", alpha,"=",.(alpha),",",beta,"=",.(beta)))
+			plot(recall[idx.lines], xlab="Recall", prec[idx.lines], ylab="Precision", col=colors[i],pch=pchs[i],type="l", ylim=ylim,xlim=xlim,main=title)
 		} else
 		{
 			lines(recall[idx.lines], prec[idx.lines], col=colors[i],pch=pchs[i],type="l", ylim=ylim,xlim=xlim,main=sprintf("%s (alpha=%g,beta=%g)",main,alpha,beta))
