@@ -374,8 +374,14 @@ public class ProjectSettingsComposite extends Composite
 	{
 		if (choices == null) choices = new String[0];
 		considerCheckbox.setEnabled(choices.length > 0);
-//		considerCombo.setEnabled(choices.length > 0);
 		considerCombo.setItems(choices);
+		updateConsiderEnabled();
+	}
+
+	public void setConsider(String subontology)
+	{
+		considerCombo.setText(subontology);
+		considerCheckbox.setSelection(subontology.length() > 0);
 		updateConsiderEnabled();
 	}
 }
