@@ -9,6 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.Map.Entry;
 
 import ontologizer.AbstractStudySetResult;
@@ -48,7 +49,7 @@ public class Bayes2GOCalculation implements ICalculation
 	public double alpha = 0.1;
 	public double beta = 0.1;
 	public long seed = 0;
-	public boolean paramterEstimation;
+	public boolean parameterEstimation = true;
 
 	public ICalculationProgress calculationProgress;
 
@@ -134,7 +135,7 @@ public class Bayes2GOCalculation implements ICalculation
 		System.out.println("Starting calculation: p=" + p + " alpha=" + alpha + " beta=" + beta);
 
 		long start = System.nanoTime();
-		calculateByMCMC(graph, result, populationEnumerator, studyEnumerator, llr, p);
+		calculateByMCMC(graph, result, populationEnumerator, studyEnumerator, populationSet, studySet, llr, p);
 		long end = System.nanoTime();
 		System.out.println(((end - start)/1000) + "ms");
 
@@ -224,6 +225,14 @@ public class Bayes2GOCalculation implements ICalculation
 		 */
 		private HashMap<TermID,Integer> term2InactiveTermsIdx;
 
+		/** Genes that are correctly active */
+		public HashSet<ByteString> correctActiveGenes = new HashSet<ByteString>();
+		
+		/** Genes that are correctly inactive */
+		public HashSet<ByteString> correctInactiveGenes = new HashSet<ByteString>();
+
+//		public HashSet<ByteString> observedGenes;
+		
 		public State(List<TermID> allTerms, GOTermEnumerator populationEnumerator)
 		{
 			int i;
@@ -272,6 +281,10 @@ public class Bayes2GOCalculation implements ICalculation
 					{
 						llScore += llr.get(gene);
 						hiddenActiveGenes.put(gene, 1);
+
+//						/* Reformulation */
+//						if (observedGenes.contains(gene))
+//							correctActiveGenes.add(gene);
 					} else
 					{
 						hiddenActiveGenes.put(gene, cnt + 1);
@@ -357,6 +370,8 @@ public class Bayes2GOCalculation implements ICalculation
 			EnrichedGOTermsResult result,
 			GOTermEnumerator populationEnumerator,
 			GOTermEnumerator studyEnumerator,
+			PopulationSet populationSet,
+			StudySet studySet,
 			HashMap<ByteString, Double> llr,
 			double p)
 	{
@@ -372,6 +387,7 @@ public class Bayes2GOCalculation implements ICalculation
 
 		State state = new State(allTerms, populationEnumerator);
 		state.llr = llr;
+//		state.observedGenes = observedGenes;
 
 		/* Stores the terms activation counts */
 		int [] activeCount = new int[allTerms.size()];
@@ -469,6 +485,31 @@ public class Bayes2GOCalculation implements ICalculation
 //			double newScore = score(llr, state.activeTerms, populationEnumerator, p);
 //			double newScore = scoreFast(llr, state, p);
 			double newScore = state.llScore;
+			
+			{
+//				double newScore2 =  Math.log(alpha);
+				
+				HashSet<ByteString> activeAgreement = new HashSet<ByteString>(state.hiddenActiveGenes.keySet());
+				activeAgreement.retainAll(studySet.getAllGeneNames());
+
+				int n11 = activeAgreement.size();
+				int n10 = studySet.getGeneCount() - n11;
+
+				HashSet<ByteString> inactiveAgreement = new HashSet<ByteString>(populationSet.getAllGeneNames());
+				inactiveAgreement.removeAll(studySet.getAllGeneNames());
+				inactiveAgreement.removeAll(state.hiddenActiveGenes.keySet());
+				
+				int n00 = inactiveAgreement.size();
+				int n01 = populationSet.getGeneCount() - studySet.getGeneCount() - n00;
+
+				double newScore2 = Math.log(alpha) * n10 + Math.log(1-alpha)*n11 + Math.log(1-beta)*n00 + Math.log(beta)*n01;
+				
+
+				newScore2 -= Math.log(alpha) * studySet.getGeneCount() + Math.log(1-beta)* (populationSet.getGeneCount() - studySet.getGeneCount());
+
+				System.out.println(newScore + "  " + newScore2 + " n10=" + n10 + " n11="+n11 + " n01=" + n01 + " n00=" + n00);
+			}
+
 			if (!noPrior) newScore += state.activeTerms.size() * Math.log(p/(1.0-p));
 			
 			double acceptProb = Math.exp(newScore - score)*(double)oldPossibilities/(double)newPossibilities; /* last quotient is the hasting ratio */
@@ -776,7 +817,7 @@ public class Bayes2GOCalculation implements ICalculation
 //		TopologyWeightedCalculation calc = new TopologyWeightedCalculation();
 //		TermForTermCalculation calc = new TermForTermCalculation();
 		Bayes2GOCalculation calc = new Bayes2GOCalculation();
-		calc.setNoPrior(true);
+//		calc.setNoPrior(true);
 		calc.setP(p);
 		calc.setSeed(1);
 		
