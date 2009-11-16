@@ -1,7 +1,6 @@
 package ontologizer.gui.swt;
 
 import ontologizer.GlobalPreferences;
-import ontologizer.calculation.CalculationRegistry;
 import ontologizer.gui.swt.support.FileGridCompositeWidgets;
 import ontologizer.gui.swt.support.SWTUtil;
 
@@ -17,6 +16,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Spinner;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 
 /**
@@ -70,17 +71,26 @@ public class PreferencesWindow extends ApplicationWindow
 				shell.setVisible(false);
 			}
 		});
+		
+		
+		TabFolder tabFolder = new TabFolder (shell, SWT.NONE);
+		tabFolder.setLayoutData(new GridData(GridData.FILL_BOTH));
+		TabItem generalItem = new TabItem(tabFolder,SWT.NONE);
+		generalItem.setText("General");
+		TabItem b2gItem = new TabItem(tabFolder,SWT.NONE);
+		b2gItem.setText("Bayes2GO");
+		
 		/* Dot composite */
-		Composite composite = new Composite(shell,0);
+		Composite composite = new Composite(tabFolder,0);
 		composite.setLayout(SWTUtil.newEmptyMarginGridLayout(3));
-		composite.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL|GridData.HORIZONTAL_ALIGN_FILL));
+
 		dotFileComposite = new FileGridCompositeWidgets(composite);
 		dotFileComposite.setToolTipText("Specifies the path of the dot command of the GraphViz package, which is used for layouting the graph.");
 		dotFileComposite.setLabel("DOT command");
 
 		Label wrapLabel = new Label(composite,0);
 		wrapLabel.setText("Wrap GO names");
-		wrapLabel.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL|GridData.HORIZONTAL_ALIGN_END|GridData.VERTICAL_ALIGN_CENTER));
+		wrapLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END|GridData.VERTICAL_ALIGN_CENTER));
 		
 		Composite wrapComposite = new Composite(composite,0);
 		wrapComposite.setLayoutData(new GridData(SWT.FILL,0,true,false,2,1));
@@ -102,7 +112,7 @@ public class PreferencesWindow extends ApplicationWindow
 
 		Label permutationLabel = new Label(composite,0);
 		permutationLabel.setText("Resampling Steps");
-		permutationLabel.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL|GridData.HORIZONTAL_ALIGN_END));
+		permutationLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		permutationLabel.setToolTipText(resamplingToolTipText);
 		permutationSpinner = new Spinner(composite,SWT.BORDER);
 		permutationSpinner.setLayoutData(new GridData(SWT.FILL,0,true,false,2,1));
@@ -120,19 +130,26 @@ public class PreferencesWindow extends ApplicationWindow
 		portSpinner.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
 		portSpinner.setMaximum(65535);
 
+		generalItem.setControl(composite);
+
 		if (true)//CalculationRegistry.experimentalActivated())
 		{
-			Label alphaLabel = new Label(composite,0);
+			Composite b2gComp = new Composite(tabFolder, 0);
+			b2gItem.setControl(b2gComp);
+			b2gComp.setLayout(SWTUtil.newEmptyMarginGridLayout(3));
+			composite.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL|GridData.HORIZONTAL_ALIGN_FILL));
+
+			Label alphaLabel = new Label(b2gComp,0);
 			alphaLabel.setText("Alpha (in percent)");
 			alphaLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-			alphaSpinner = new Spinner(composite,SWT.BORDER);
+			alphaSpinner = new Spinner(b2gComp,SWT.BORDER);
 			alphaSpinner.setLayoutData(new GridData(SWT.FILL,0,true,false,1,1));
 			alphaSpinner.setMinimum(1);
 			alphaSpinner.setMaximum(99*(int)Math.pow(10, ALPHA_BETA_DIGITS));
 			alphaSpinner.setSelection(10*(int)Math.pow(10, ALPHA_BETA_DIGITS));
 			alphaSpinner.setDigits(ALPHA_BETA_DIGITS);
 			alphaSpinner.setEnabled(false);
-			alphaAutoButton = new Button(composite,SWT.CHECK);
+			alphaAutoButton = new Button(b2gComp,SWT.CHECK);
 			alphaAutoButton.setText("Auto");
 			alphaAutoButton.setSelection(true);
 			alphaAutoButton.addSelectionListener(new SelectionAdapter()
@@ -144,29 +161,29 @@ public class PreferencesWindow extends ApplicationWindow
 				}
 			});
 			
-			Label upperAlphaLabel = new Label(composite,0);
+			Label upperAlphaLabel = new Label(b2gComp,0);
 			upperAlphaLabel.setText("Upper bound for alpha");
 			upperAlphaLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-			upperAlphaSpinner = new Spinner(composite,SWT.BORDER);
+			upperAlphaSpinner = new Spinner(b2gComp,SWT.BORDER);
 			upperAlphaSpinner.setLayoutData(new GridData(SWT.FILL,0,true,false,1,1));
 			upperAlphaSpinner.setMinimum(1);
 			upperAlphaSpinner.setMaximum(100*(int)Math.pow(10, ALPHA_BETA_DIGITS));
 			upperAlphaSpinner.setSelection(100*(int)Math.pow(10, ALPHA_BETA_DIGITS));
 			upperAlphaSpinner.setDigits(ALPHA_BETA_DIGITS);
 			upperAlphaSpinner.setEnabled(true);
-			new Label(composite,0);
+			new Label(b2gComp,0);
 
-			Label betaLabel = new Label(composite,0);
+			Label betaLabel = new Label(b2gComp,0);
 			betaLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 			betaLabel.setText("Beta (in percent)");
-			betaSpinner = new Spinner(composite,SWT.BORDER);
+			betaSpinner = new Spinner(b2gComp,SWT.BORDER);
 			betaSpinner.setLayoutData(new GridData(SWT.FILL,0,true,false,1,1));
 			betaSpinner.setMinimum(1);
 			betaSpinner.setMaximum(99*(int)Math.pow(10, ALPHA_BETA_DIGITS));
 			betaSpinner.setSelection(25*(int)Math.pow(10, ALPHA_BETA_DIGITS));
 			betaSpinner.setDigits(ALPHA_BETA_DIGITS);
 			betaSpinner.setEnabled(false);
-			betaAutoButton = new Button(composite,SWT.CHECK);
+			betaAutoButton = new Button(b2gComp,SWT.CHECK);
 			betaAutoButton.setText("Auto");
 			betaAutoButton.setSelection(true);
 			betaAutoButton.addSelectionListener(new SelectionAdapter()
@@ -178,28 +195,28 @@ public class PreferencesWindow extends ApplicationWindow
 				}
 			});
 
-			Label upperBetaLabel = new Label(composite,0);
+			Label upperBetaLabel = new Label(b2gComp,0);
 			upperBetaLabel.setText("Upper bound for beta");
 			upperBetaLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-			upperBetaSpinner = new Spinner(composite,SWT.BORDER);
+			upperBetaSpinner = new Spinner(b2gComp,SWT.BORDER);
 			upperBetaSpinner.setLayoutData(new GridData(SWT.FILL,0,true,false,1,1));
 			upperBetaSpinner.setMinimum(1);
 			upperBetaSpinner.setMaximum(100*(int)Math.pow(10, ALPHA_BETA_DIGITS));
 			upperBetaSpinner.setSelection(100*(int)Math.pow(10, ALPHA_BETA_DIGITS));
 			upperBetaSpinner.setDigits(ALPHA_BETA_DIGITS);
 			upperBetaSpinner.setEnabled(true);
-			new Label(composite,0);
+			new Label(b2gComp,0);
 
-			Label priorLabel = new Label(composite,0);
+			Label priorLabel = new Label(b2gComp,0);
 			priorLabel.setText("Expected number of terms");
 			priorLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-			expectedNumberSpinner = new Spinner(composite,SWT.BORDER);
+			expectedNumberSpinner = new Spinner(b2gComp,SWT.BORDER);
 			expectedNumberSpinner.setLayoutData(new GridData(SWT.FILL,0,true,false,1,1));
 			expectedNumberSpinner.setMinimum(1);
 			expectedNumberSpinner.setMaximum(50);
 			expectedNumberSpinner.setSelection(5);
 			expectedNumberSpinner.setEnabled(false);
-			expectedNumberAutoButton = new Button(composite,SWT.CHECK);
+			expectedNumberAutoButton = new Button(b2gComp,SWT.CHECK);
 			expectedNumberAutoButton.setText("Auto");
 			expectedNumberAutoButton.setSelection(true);
 			expectedNumberAutoButton.addSelectionListener(new SelectionAdapter()
@@ -211,16 +228,16 @@ public class PreferencesWindow extends ApplicationWindow
 				}
 			});
 			
-			Label mcmcStepsLabel = new Label(composite,0);
+			Label mcmcStepsLabel = new Label(b2gComp,0);
 			mcmcStepsLabel.setText("Number of steps for MCMC");
 			mcmcStepsLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-			mcmcStepsSpinner = new Spinner(composite,SWT.BORDER);
+			mcmcStepsSpinner = new Spinner(b2gComp,SWT.BORDER);
 			mcmcStepsSpinner.setLayoutData(new GridData(SWT.FILL,0,true,false,1,1));
 			mcmcStepsSpinner.setMaximum(10000000);
 			mcmcStepsSpinner.setIncrement(50000);
 			mcmcStepsSpinner.setPageIncrement(100000);
 			mcmcStepsSpinner.setSelection(500000);
-			new Label(composite,0);
+			new Label(b2gComp,0);
 		}
 
 		/* Button composite */
