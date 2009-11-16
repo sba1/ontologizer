@@ -4,8 +4,8 @@ import ontologizer.calculation.b2g.B2GParam.Type;
 
 class DoubleParam extends B2GParam
 {
-	private double min;
-	private double max;
+	private double min = Double.NaN;
+	private double max = Double.NaN;
 	private double val;
 
 	public DoubleParam(Type type, double val)
@@ -63,7 +63,7 @@ class DoubleParam extends B2GParam
 	/**
 	 * Applicable for Variables of type MCMC or EM.
 	 * 
-	 * @return
+	 * @return NaN if no maximum has been specified.
 	 */
 	public double getMin()
 	{
@@ -71,13 +71,33 @@ class DoubleParam extends B2GParam
 	}
 	
 	/**
+	 * Returns whether variable has a minimum.
+	 *  
+	 * @return
+	 */
+	public boolean hasMin()
+	{
+		return !Double.isNaN(min);
+	}
+	
+	/**
 	 * Applicable for Variables of type MCMC or EM.
 	 * 
-	 * @return
+	 * @return NaN if no maximum has been specified.
 	 */
 	public double getMax()
 	{
 		return max;
+	}
+	
+	/**
+	 * Returns whether variable has a maximum.
+	 * 
+	 * @return
+	 */
+	public boolean hasMax()
+	{
+		return !Double.isNaN(max);
 	}
 	
 	@Override
