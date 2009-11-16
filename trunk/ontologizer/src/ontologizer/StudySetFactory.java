@@ -3,6 +3,8 @@ package ontologizer;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import ontologizer.parser.AbstractItemParser;
 import ontologizer.parser.IParserCallback;
@@ -33,8 +35,16 @@ public class StudySetFactory
 	{
 		logger.info("Processing studyset " + file.toString());
 
+		/* Removing suffix from filename */
+		String name = file.getName();
+		Pattern suffixPat = Pattern.compile("\\.[a-zA-Z0-9]+$");
+		Matcher m = suffixPat.matcher(name);
+		name = m.replaceAll("");
+
 		AbstractItemParser itemParser = ParserFactory.getNewInstance(file);
-		return createFromParser(itemParser,isPopulation);
+		StudySet newStudySet = createFromParser(itemParser,isPopulation);
+		newStudySet.setName(name);
+		return newStudySet;
 	}
 
 	/**

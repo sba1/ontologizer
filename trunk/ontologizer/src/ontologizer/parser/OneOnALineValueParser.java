@@ -23,7 +23,6 @@ public class OneOnALineValueParser extends OneOnALineParser
 	{
 		if (ignoreLine(line)) return;
 
-		String [] fields = new String[]{"", "", ""};
 		String [] sfields = line.split("\\s+", 3);
 
 		if (sfields.length < 2) throw new IllegalArgumentException("Number of colums is smaller than two.");
@@ -31,10 +30,11 @@ public class OneOnALineValueParser extends OneOnALineParser
 		for (int i = 0; i < sfields.length; i++)
 			if (sfields[i] == null) sfields[i] = "";
 
-		ByteString itemName = new ByteString(fields[0]);
+		ByteString itemName = new ByteString(sfields[0]);
 		ValuedItemAttribute itemAttribute = new ValuedItemAttribute();
-		itemAttribute.setValue(Double.parseDouble(fields[1]));
-		itemAttribute.description = new StringBuilder(fields[2]).toString();
+		itemAttribute.setValue(Double.parseDouble(sfields[1]));
+		if (sfields.length > 2) itemAttribute.description = new StringBuilder(sfields[2]).toString();
+		else itemAttribute.description = "";
 		callback.newEntry(itemName, itemAttribute);
 	}
 }

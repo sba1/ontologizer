@@ -41,7 +41,9 @@ class GeneratedStudySet extends StudySet
 
 	public GeneratedStudySet(String name)
 	{
-		super(name);
+		super();
+
+		setName(name);
 	}
 
 	public void setAlpha(double alpha)
@@ -203,7 +205,8 @@ GlobalPreferences.setProxyHost("realproxy.charite.de");
 
 		Set<ByteString> allAnnotatedGenes = assoc.getAllAnnotatedGenes();
 
-		final PopulationSet completePop = new PopulationSet("AllAnnotated");
+		final PopulationSet completePop = new PopulationSet();
+		completePop.setName("AllAnnotated");
 		for (ByteString gene : allAnnotatedGenes)
 			completePop.addGene(gene,"None");
 		completePop.filterOutAssociationlessGenes(assoc);
