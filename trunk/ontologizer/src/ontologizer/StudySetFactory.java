@@ -9,7 +9,6 @@ import java.util.regex.Pattern;
 import ontologizer.parser.AbstractItemParser;
 import ontologizer.parser.IParserCallback;
 import ontologizer.parser.ItemAttribute;
-import ontologizer.parser.OneOnALineParser;
 import ontologizer.parser.ParserFactory;
 
 /**

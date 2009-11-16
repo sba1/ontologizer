@@ -39,6 +39,8 @@ import ontologizer.go.Term;
 import ontologizer.go.TermContainer;
 import ontologizer.go.TermID;
 import ontologizer.go.TermRelation;
+import ontologizer.parser.ItemAttribute;
+import ontologizer.parser.ValuedItemAttribute;
 import ontologizer.statistics.AbstractTestCorrection;
 import ontologizer.statistics.Bonferroni;
 import ontologizer.worksets.WorkSet;
@@ -183,10 +185,47 @@ public class Bayes2GOCalculation implements ICalculation
 		this.mcmcSteps = mcmcSteps;
 	}
 	
+	/**
+	 * Returns whether the given study set has only valued item attributes.
+	 * 
+	 * @param studySet
+	 * @return
+	 */
+	private static boolean hasOnlyValuedItemAttributes(StudySet studySet)
+	{
+		boolean hasOnlyValuedItemAttributes = true;
+		
+		for (ByteString gene : studySet)
+		{
+			ItemAttribute item = studySet.getItemAttribute(gene);
+			if (!(item instanceof ValuedItemAttribute))
+			{
+				hasOnlyValuedItemAttributes = false;
+				break;
+			}
+		}
+		
+		return hasOnlyValuedItemAttributes;
+	}
+	
 	public EnrichedGOTermsResult calculateStudySet(GOGraph graph,
 			AssociationContainer goAssociations, PopulationSet populationSet,
 			StudySet studySet)
 	{
+		boolean valuedCalculation;
+		
+		valuedCalculation = hasOnlyValuedItemAttributes(populationSet);
+		valuedCalculation = valuedCalculation & hasOnlyValuedItemAttributes(studySet);
+
+		if (valuedCalculation)
+		{
+			System.out.println("We have values!");
+		} else
+		{
+			System.out.println("We don't have values!");
+		}
+
+
 		Bayes2GOEnrichedGOTermsResult result = new Bayes2GOEnrichedGOTermsResult(graph,goAssociations,studySet,populationSet.getGeneCount());
 
 		GOTermEnumerator populationEnumerator = populationSet.enumerateGOTerms(graph, goAssociations);

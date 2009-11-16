@@ -188,7 +188,7 @@ public class StudySet implements Iterable<ByteString>
 	 * @param name
 	 * @return
 	 */
-	public ItemAttribute getGeneAttribute(ByteString name)
+	public ItemAttribute getItemAttribute(ByteString name)
 	{
 		return gene2Attribute.get(name);
 	}
