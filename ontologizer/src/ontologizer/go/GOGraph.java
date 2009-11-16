@@ -889,13 +889,27 @@ public class GOGraph implements Iterable<Term>
 		return goTermContainer.iterator();
 	}
 
+	private Subset relevantSubset;
+	private Term relevantSubontology;
+
 	/**
 	 * Sets the relevant subset.
 	 * 
 	 * @param subsetName
 	 */
-	public void selectRelevantSubset(String subsetName)
+	public void setRelevantSubset(String subsetName)
 	{
+		for (Subset s : availableSubsets)
+		{
+			if (s.getName().equals(subsetName))
+			{
+				relevantSubset = s;
+				return;
+			}
+		}
+		
+		relevantSubset = null;
+		throw new IllegalArgumentException("Subset \"" + subsetName + "\" couldn't be found!");
 	}
 
 	/**
@@ -903,7 +917,49 @@ public class GOGraph implements Iterable<Term>
 	 * 
 	 * @param subontologyName
 	 */
-	public void selectRelevantSubontology(String subontologyName)
+	public void setRelevantSubontology(String subontologyName)
 	{
+		/* FIXME: That's so slow */
+		for (Term t : goTermContainer)
+		{
+			if (t.getName().equals(subontologyName))
+			{
+				relevantSubontology = t;
+				return;
+			}
+		}
+		throw new IllegalArgumentException("Subontology \"" + subontologyName + "\" couldn't be found!");
 	}
+	
+	/**
+	 * Returns whether the given term is relevant (i.e., is contained in a relevant sub ontology and subset).
+	 * 
+	 * @param term
+	 * @return
+	 */
+	public boolean isRelevantTerm(Term term)
+	{
+		if (relevantSubset != null)
+		{
+			boolean found = false;
+			for (Subset s : term.getSubsets())
+			{
+				if (s.equals(relevantSubset))
+				{
+					found = true;
+					break;
+				}
+			}
+			if (!found) return false;
+		}
+		
+		if (relevantSubontology != null)
+		{
+			if (!(existsPath(relevantSubontology.getID(), term.getID())))
+				return false;
+		}
+		
+		return true;
+	}
+	
 }
