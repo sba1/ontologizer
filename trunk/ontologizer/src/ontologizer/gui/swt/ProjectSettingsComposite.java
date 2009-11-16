@@ -9,6 +9,7 @@ package ontologizer.gui.swt;
 import java.util.ArrayList;
 
 import ontologizer.gui.swt.support.FileGridCompositeWidgets;
+import ontologizer.gui.swt.support.SWTUtil;
 import ontologizer.worksets.WorkSet;
 import ontologizer.worksets.WorkSetList;
 
@@ -21,9 +22,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-
-import sonumina.swt.ISimpleAction;
-import sonumina.swt.SWTUtil;
 
 class Expander extends Composite
 {
