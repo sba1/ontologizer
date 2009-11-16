@@ -43,6 +43,7 @@ public class PreferencesWindow extends ApplicationWindow
 	private Button betaAutoButton;
 	private Spinner expectedNumberSpinner;
 	private Button expectedNumberAutoButton;
+	private Spinner mcmcStepsSpinner;
 	private final static int ALPHA_BETA_DIGITS = 4;
 
 	/**
@@ -182,6 +183,13 @@ public class PreferencesWindow extends ApplicationWindow
 					expectedNumberSpinner.setEnabled(!expectedNumberAutoButton.getSelection());
 				}
 			});
+
+			Label mcmcStepsLabel = new Label(composite,0);
+			mcmcStepsLabel.setText("Number of steps for MCMC");
+			mcmcStepsSpinner = new Spinner(composite,SWT.BORDER);
+			mcmcStepsSpinner.setMaximum(1000000);
+			mcmcStepsSpinner.setSelection(500000);
+			new Label(composite,0);
 
 		}
 
@@ -364,5 +372,17 @@ public class PreferencesWindow extends ApplicationWindow
 		if (expectedNumberSpinner != null)
 			return expectedNumberSpinner.getSelection();
 		return 1;
+	}
+
+	/**
+	 * Returns the number of MCMC steps to be performed.
+	 *
+	 * @return
+	 */
+	public int getNumberOfMCMCSteps()
+	{
+		if (mcmcStepsSpinner != null)
+			return mcmcStepsSpinner.getSelection();
+		return 500000;
 	}
 }
