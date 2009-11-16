@@ -30,16 +30,16 @@ import ontologizer.parser.ParserFactory;
 import ontologizer.sampling.StudySetSampler;
 
 
-class Attribute
+class ItemAttribute
 {
 	public String description;
 	
-	public Attribute(Attribute attr)
+	public ItemAttribute(ItemAttribute attr)
 	{
 		this.description = attr.description;
 	}
 
-	public Attribute()
+	public ItemAttribute()
 	{
 		
 		this.description = "";
@@ -51,9 +51,9 @@ class Attribute
 	 * @param attr
 	 * @return the new attribute
 	 */
-	public Attribute merge(Attribute attr)
+	public ItemAttribute merge(ItemAttribute attr)
 	{
-		Attribute newAttribute = new Attribute(attr);
+		ItemAttribute newAttribute = new ItemAttribute(attr);
 		newAttribute.description = description + "; " + attr.description;
 		return newAttribute;
 	}
@@ -64,7 +64,7 @@ class Attribute
 	 * @param attr
 	 * @return true if the given attribute is preferred.
 	 */
-	public boolean prefer(Attribute attr)
+	public boolean prefer(ItemAttribute attr)
 	{
 		if (attr.description == null) return false;
 		if (description == null) return true;
@@ -92,7 +92,7 @@ public class StudySet implements Iterable<ByteString>
 	 * HashMap containing the names of genes (or gene products) of the study
 	 * and their optional description.
 	 */
-	private HashMap<ByteString, Attribute> gene2Attribute;
+	private HashMap<ByteString, ItemAttribute> gene2Attribute;
 
 	/**
 	 * List containing genes which are not annotated
@@ -144,10 +144,10 @@ public class StudySet implements Iterable<ByteString>
 	 */
 	private void retrieveGenesAndAttributesFromParser(IGeneNameParser parser)
 	{
-		gene2Attribute = new HashMap<ByteString,Attribute>();
+		gene2Attribute = new HashMap<ByteString,ItemAttribute>();
 		for (Entry<ByteString,String> e : parser.getNames().entrySet())
 		{
-			Attribute attr = new Attribute();
+			ItemAttribute attr = new ItemAttribute();
 			attr.description = e.getValue();
 			gene2Attribute.put(e.getKey(), attr);
 		}
@@ -162,13 +162,13 @@ public class StudySet implements Iterable<ByteString>
 	public StudySet(String name)
 	{
 		this.name = name;
-		gene2Attribute = new HashMap<ByteString,Attribute>();
+		gene2Attribute = new HashMap<ByteString,ItemAttribute>();
 	}
 
 	public StudySet()
 	{
 		this.name = generateUniqueName();
-		gene2Attribute = new HashMap<ByteString,Attribute>();
+		gene2Attribute = new HashMap<ByteString,ItemAttribute>();
 	}
 	
 	public StudySet(String name, String [] entries)
@@ -233,10 +233,11 @@ public class StudySet implements Iterable<ByteString>
 	 * @param name
 	 * @return
 	 */
-	public Attribute getGeneAttribute(ByteString name)
+	public ItemAttribute getGeneAttribute(ByteString name)
 	{
 		return gene2Attribute.get(name);
 	}
+
 	/**
 	 * Returns the gene description of the specified gene.
 	 * 
@@ -244,7 +245,7 @@ public class StudySet implements Iterable<ByteString>
 	 */
 	public String getGeneDescription(ByteString name)
 	{
-		Attribute attr = gene2Attribute.get(name);
+		ItemAttribute attr = gene2Attribute.get(name);
 		if (attr == null) return "";
 		if (attr.description == null) return "";
 		return attr.description;
@@ -273,7 +274,7 @@ public class StudySet implements Iterable<ByteString>
 	 */
 	public void addGene(ByteString geneName, String description)
 	{
-		Attribute attr = new Attribute();
+		ItemAttribute attr = new ItemAttribute();
 		attr.description = description;
 		
 		gene2Attribute.put(geneName,attr);
@@ -319,7 +320,7 @@ public class StudySet implements Iterable<ByteString>
 	public void filterOutDuplicateGenes(AssociationContainer associationContainer)
 	{
 		/* This will be filled with unique genes */
-		HashMap<ByteString,Attribute> uniqueGenes = new HashMap<ByteString,Attribute>();
+		HashMap<ByteString,ItemAttribute> uniqueGenes = new HashMap<ByteString,ItemAttribute>();
 
 		for (ByteString geneName : gene2Attribute.keySet())
 		{
@@ -327,11 +328,11 @@ public class StudySet implements Iterable<ByteString>
 			if (gene2Association != null)
 			{
 				boolean add;
-				Attribute desc = uniqueGenes.get(gene2Association.name());
+				ItemAttribute desc = uniqueGenes.get(gene2Association.name());
 				
 				if (!(add = (desc == null)))
 				{
-					Attribute current = gene2Attribute.get(geneName);
+					ItemAttribute current = gene2Attribute.get(geneName);
 					if (current != null)
 					{
 						add = desc.prefer(current);
@@ -789,9 +790,9 @@ public class StudySet implements Iterable<ByteString>
 
 		resetCounterAndEnumerator();
 
-		HashMap<ByteString, Attribute> newGene2Attributes = new HashMap<ByteString,Attribute>();
+		HashMap<ByteString, ItemAttribute> newGene2Attributes = new HashMap<ByteString,ItemAttribute>();
 		
-		for (Entry<ByteString,Attribute> entry : gene2Attribute.entrySet())
+		for (Entry<ByteString,ItemAttribute> entry : gene2Attribute.entrySet())
 		{
 			ByteString newName = filter.mapGene(entry.getKey());
 
@@ -810,7 +811,7 @@ public class StudySet implements Iterable<ByteString>
 					 * but we wouldn't like to loss the information.
 					 * Therefore we merge the attributes */
 
-					Attribute attr = newGene2Attributes.get(newName);
+					ItemAttribute attr = newGene2Attributes.get(newName);
 					if (attr != null)
 						attr = attr.merge(entry.getValue());
 					else attr = entry.getValue();
@@ -845,6 +846,6 @@ public class StudySet implements Iterable<ByteString>
 	public void addGenes(Collection<ByteString> toBeAdded)
 	{
 		for (ByteString g : toBeAdded)
-			gene2Attribute.put(g,new Attribute());
+			gene2Attribute.put(g,new ItemAttribute());
 	}
 }
