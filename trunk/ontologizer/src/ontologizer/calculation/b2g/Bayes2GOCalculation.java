@@ -43,7 +43,7 @@ import ontologizer.worksets.WorkSetLoadThread;
 
 class B2GTestParameter
 {
-	static double ALPHA = 0.40;
+	static double ALPHA = 0.25;
 	static double BETA = 0.10;
 	static double BETA2 = 0.10;
 	static int MCMC_STEPS = 520000;
@@ -92,6 +92,7 @@ public class Bayes2GOCalculation implements ICalculation
 	private ICalculationProgress calculationProgress;
 
 	private int mcmcSteps = B2GTestParameter.MCMC_STEPS;
+	private int updateReportTime = 1000; /* Update report time in ms */
 
 	public Bayes2GOCalculation()
 	{
@@ -204,6 +205,16 @@ public class Bayes2GOCalculation implements ICalculation
 	public void setMcmcSteps(int mcmcSteps)
 	{
 		this.mcmcSteps = mcmcSteps;
+	}
+
+	/**
+	 * Sets the update report time.
+	 *
+	 * @param updateReportTime
+	 */
+	public void setUpdateReportTime(int updateReportTime)
+	{
+		this.updateReportTime = updateReportTime;
 	}
 
 	/**
@@ -406,7 +417,7 @@ public class Bayes2GOCalculation implements ICalculation
 				}
 
 				long now = System.currentTimeMillis();
-				if (now - start > 5000)
+				if (now - start > updateReportTime)
 				{
 					logger.info((t*100/maxSteps) + "% (score=" + score +" maxScore=" + maxScore + " #terms="+bayesScore.activeTerms.size()+
 										" accept/reject=" + String.format("%g",(double)numAccepts / (double)numRejects) +
@@ -664,10 +675,11 @@ public class Bayes2GOCalculation implements ICalculation
 		wantedActiveTerms.put(new TermID("GO:0007049"), B2GTestParameter.BETA2); /* cell cycle */
 		wantedActiveTerms.put(new TermID("GO:0043473"), B2GTestParameter.BETA2); /* pigmentation */
 		wantedActiveTerms.put(new TermID("GO:0001505"), B2GTestParameter.BETA); /* regulation of neuro transmitter levels */
-//		wantedActiveTerms.put(new TermID("GO:0008078"), B2GTestParameter.BETA); /* mesodermal cell migration */
-//		wantedActiveTerms.put(new TermID("GO:0051208"), B2GTestParameter.BETA); /* sequestering of calcium ion */
-		wantedActiveTerms.put(new TermID("GO:0006874"), B2GTestParameter.BETA); /*  */
-//		wantedActiveTerms.put(new TermID("GO:0035237"), B2GTestParameter.BETA); /* corazonin receptor activity */
+////		wantedActiveTerms.put(new TermID("GO:0008078"), B2GTestParameter.BETA); /* mesodermal cell migration */
+////		wantedActiveTerms.put(new TermID("GO:0051208"), B2GTestParameter.BETA); /* sequestering of calcium ion */
+		wantedActiveTerms.put(new TermID("GO:0030011"), B2GTestParameter.BETA); /* maintenace of cell polarity */
+////		wantedActiveTerms.put(new TermID("GO:0035237"), B2GTestParameter.BETA); /* corazonin receptor activity */
+//		wantedActiveTerms.put(new TermID("GO:0015280"), B2GTestParameter.BETA);
 
 //		wantedActiveTerms.add(new TermID("GO:0006797"));
 
@@ -677,7 +689,7 @@ public class Bayes2GOCalculation implements ICalculation
 
 		/* ***************************************************************** */
 
-		Random rnd = new Random(1);
+		Random rnd = new Random(6);
 
 		/* Simulation */
 
@@ -813,8 +825,9 @@ public class Bayes2GOCalculation implements ICalculation
 //		TermForTermCalculation calc = new TermForTermCalculation();
 //		ParentChildCalculation calc = new ParentChildCalculation();
 		Bayes2GOCalculation calc = new Bayes2GOCalculation();
-		calc.setSeed(1);
-		calc.setMcmcSteps(500000);
+//		calc.setSeed(2); /* Finds optimum */
+		calc.setSeed(68587); /* Finds a suboptimum */
+//		calc.setMcmcSteps(1000000);
 //		calc.setAlpha(B2GParam.Type.MCMC);
 //		calc.setBeta(B2GParam.Type.MCMC);
 //		calc.setExpectedNumber(B2GParam.Type.MCMC);
@@ -878,6 +891,11 @@ public class Bayes2GOCalculation implements ICalculation
 				double wantedScore = b2gResult.getScore().score(wantedActiveTerms.keySet());
 //				if (!(((Bayes2GOCalculation)calc).noPrior)) wantedScore += wantedActiveTerms.size() * Math.log(p/(1.0-p));
 				System.out.println("Score of the given set is " + wantedScore);
+
+				HashSet<TermID> terms = new HashSet<TermID>(wantedActiveTerms.keySet());
+				terms.remove(new TermID("GO:0030011"));
+				wantedScore = b2gResult.getScore().score(terms);
+				System.out.println("Score of reduced set is " + wantedScore);
 			}
 			pIsReverseMarginal = true;
 		}
