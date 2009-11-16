@@ -25,54 +25,10 @@ import ontologizer.go.TermContainer;
 import ontologizer.go.TermID;
 import ontologizer.go.GOGraph.IVisitingGOVertex;
 import ontologizer.parser.IGeneNameParser;
+import ontologizer.parser.ItemAttribute;
 import ontologizer.parser.OneOnALineParser;
 import ontologizer.parser.ParserFactory;
 import ontologizer.sampling.StudySetSampler;
-
-
-class ItemAttribute
-{
-	public String description;
-	
-	public ItemAttribute(ItemAttribute attr)
-	{
-		this.description = attr.description;
-	}
-
-	public ItemAttribute()
-	{
-		
-		this.description = "";
-	}
-
-	/**
-	 * Merge this attribute with the given attribute. 
-	 * 
-	 * @param attr
-	 * @return the new attribute
-	 */
-	public ItemAttribute merge(ItemAttribute attr)
-	{
-		ItemAttribute newAttribute = new ItemAttribute(attr);
-		newAttribute.description = description + "; " + attr.description;
-		return newAttribute;
-	}
-
-	/**
-	 * Decide whether this attribute is preferred over the given attribute.
-	 * 
-	 * @param attr
-	 * @return true if the given attribute is preferred.
-	 */
-	public boolean prefer(ItemAttribute attr)
-	{
-		if (attr.description == null) return false;
-		if (description == null) return true;
-		if (attr.description.length() > description.length())
-			return true;
-		return false;
-	}
-}
 
 /**
  * This class holds all gene names of a study and their associated
