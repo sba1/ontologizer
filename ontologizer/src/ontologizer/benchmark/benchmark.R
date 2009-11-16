@@ -145,21 +145,6 @@ plot.roc<-function(d,alpha=NA,beta=NA,calc.auc=F,y.axis="tpr",x.axis="fpr",xlim=
 	legend(legend.place, col=colors, pch=pchs, legend = unlist(l))
 }
 
-# at first reduce the data sets ()
-# and figure out number of random terms
-s<-split(d,d$run)
-number.of.labels<-function(el,thresh)
-{
-    num.of.tests<-nrow(el)
-	num.of.l<-sum(el$label)
-	num.p.tft<-sum(el$p.tft< (thresh / num.of.tests))
-	num.p.b2g.mcmc.pop<-sum(el$p.b2g.mcmc.pop < 0.5)
-	
-	return(data.frame(labels=num.of.l,p.tft=num.p.tft,p.b2g.mcmc.pop=num.p.b2g.mcmc.pop))
-}
-s.f<-lapply(s,number.of.labels,thresh=0.01)
-all<-do.call(rbind,s.f)
-
 s<-split(d,list(d$alpha,d$beta))
 
 #
