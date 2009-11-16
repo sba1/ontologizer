@@ -60,28 +60,6 @@ class B2GTestParameter
 	static int MCMC_STEPS = 1020000;
 }
 
-class Bayes2GOEnrichedGOTermsResult extends EnrichedGOTermsResult
-{
-	private Bayes2GOScore score;
-
-	public Bayes2GOEnrichedGOTermsResult(GOGraph go,
-			AssociationContainer associations, StudySet studySet,
-			int populationGeneCount)
-	{
-		super(go, associations, studySet, populationGeneCount);
-	}
-
-	public void setScore(Bayes2GOScore score)
-	{
-		this.score = score;
-	}
-	
-	public Bayes2GOScore getScore()
-	{
-		return score;
-	}
-}
-
 /**
  * This class implements an model-based analysis.
  * The description of this method can be found at XXXX.
@@ -539,16 +517,17 @@ public class Bayes2GOCalculation implements ICalculation
 			{
 				for (TermID t : allTerms)
 				{
-					TermForTermGOTermProperties prop = new TermForTermGOTermProperties();
-					prop.ignoreAtMTC = true;
+					Bayes2GOGOTermProperties prop = new Bayes2GOGOTermProperties();
 					prop.goTerm = graph.getGOTerm(t);
 					prop.annotatedStudyGenes = studyEnumerator.getAnnotatedGenes(t).totalAnnotatedCount();
 					prop.annotatedPopulationGenes = populationEnumerator.getAnnotatedGenes(t).totalAnnotatedCount();
+					prop.marg = ((double)bayesScore.termActivationCounts[bayesScore.term2TermsIdx.get(t)] / bayesScore.numRecords);
 					
-					/* We reverse the probability as the framework assumes that low p values are important */
+					/* At the moment, we need these fields for technical reasons */
 					prop.p = 1 - ((double)bayesScore.termActivationCounts[bayesScore.term2TermsIdx.get(t)] / bayesScore.numRecords);
 					prop.p_adjusted = prop.p;
 					prop.p_min = 0.001;
+
 					result.addGOTermProperties(prop);
 				}
 			}
