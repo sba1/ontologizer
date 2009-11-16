@@ -49,6 +49,26 @@ public final class ParserFactory
 	}
 
 	/**
+	 * Returns an instance of a gene name parser.
+	 * 
+	 * @param entries
+	 * @return
+	 */
+	public static AbstractItemParser getNewInstance(String[] entries)
+	{
+		if (entries.length > 0)
+		{
+			String [] splitted = entries[0].split("\\s+");
+			try
+			{
+				Double.parseDouble(splitted[1]);
+				return new OneOnALineValueParser(entries);
+			} catch (NumberFormatException ex) {}
+		}
+		return new OneOnALineParser(entries);
+	}
+
+	/**
 	 * Tries to determine the file type of the given file.
 	 * 
 	 * @param file specifies the file whose type should be identified.
@@ -73,7 +93,7 @@ public final class ParserFactory
 				break;
 			}	else
 			{
-				String [] splitted = inputLine.split("\\s+", 3);
+				String [] splitted = inputLine.split("\\s+");
 				if (splitted.length > 2)
 				{
 					try
