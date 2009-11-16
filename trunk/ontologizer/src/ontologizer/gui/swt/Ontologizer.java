@@ -267,7 +267,7 @@ public class Ontologizer
 						populationSet,studySetList,methodName,mtcName,
 						subsetName,subontologyName,
 						GlobalPreferences.getNumberOfPermutations(),
-						prefs.getAlpha(),prefs.getBeta(),prefs.getExpectedNumberOfTerms());
+						prefs.getAlpha(),prefs.getBeta(),prefs.getExpectedNumberOfTerms(), prefs.getNumberOfMCMCSteps());
 				result.addCloseAction(new ISimpleAction(){public void act()
 				{
 					newThread.interrupt();

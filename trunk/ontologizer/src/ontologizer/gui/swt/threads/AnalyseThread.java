@@ -48,11 +48,12 @@ public class AnalyseThread extends AbstractOntologizerThread
 	
 	private double alpha, beta;
 	private int expectedNumber;
+	private int numberOfMCMCSteps;
 
 	public AnalyseThread(Display display, Runnable calledWhenFinished, ResultWindow result,
 			String definitionFile, String associationsFile, String mappingFile, PopulationSet populationSet, StudySetList studySetList,
 			String methodName, String mtcName, String subsetName, String subontologyName,
-			int noP, double alpha, double beta, int expectedNumber)
+			int noP, double alpha, double beta, int expectedNumber, int numberOfMCMCSteps)
 	{
 		super("Analyze Thread",calledWhenFinished,display,result);
 
@@ -70,6 +71,7 @@ public class AnalyseThread extends AbstractOntologizerThread
 		this.alpha = alpha;
 		this.beta = beta;
 		this.expectedNumber = expectedNumber;
+		this.numberOfMCMCSteps = numberOfMCMCSteps;
 
 		setPriority(Thread.MIN_PRIORITY);
 	}
@@ -133,6 +135,8 @@ public class AnalyseThread extends AbstractOntologizerThread
 				else b2g.setBeta(B2GParam.Type.MCMC);
 				if (expectedNumber != -1) b2g.setExpectedNumber(expectedNumber);
 				else b2g.setExpectedNumber(B2GParam.Type.MCMC);
+
+				b2g.setMcmcSteps(numberOfMCMCSteps);
 
 				b2g.setProgress(new ICalculationProgress()
 				{
