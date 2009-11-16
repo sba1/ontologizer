@@ -25,6 +25,8 @@ import ontologizer.GOTermEnumerator.GOTermAnnotatedGenes;
 import ontologizer.association.Gene2Associations;
 import ontologizer.calculation.AbstractGOTermProperties;
 import ontologizer.calculation.EnrichedGOTermsResult;
+import ontologizer.calculation.b2g.Bayes2GOEnrichedGOTermsResult;
+import ontologizer.calculation.b2g.Bayes2GOGOTermProperties;
 import ontologizer.go.Namespace;
 import ontologizer.go.Term;
 import ontologizer.go.TermID;
@@ -90,11 +92,16 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 	private static final int NAMESPACE = 3;
 	private static final int PVAL = 4;
 	private static final int ADJPVAL = 5;
-	private static final int RANK = 6;
-	private static final int POP = 7;
-	private static final int STUDY = 8;
-	private static final int LAST = 9;
+	private static final int MARG = 6;
+	private static final int RANK = 7;
+	private static final int POP = 8;
+	private static final int STUDY = 9;
+	private static final int LAST = 10;
 
+	/** Indicates whether pvalues should be handled as marginals
+	 * (TODO: needs to be done in a more abstract way) */
+	private static boolean useMarginal = false;
+	
 	/* Texts */
 	private static String NOBROWSER_TOOLTIP = "The SWT browser widget could not " +
 	"be instantiated. Please ensure that your system fulfills the requirements " +
@@ -168,6 +175,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 			{
 				disposeSignificanceColors();
 			}});
+
 	}
 
 	/**
@@ -181,6 +189,27 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 
 		this.result = result;
 
+		if (result instanceof Bayes2GOEnrichedGOTermsResult) {
+			useMarginal = true;
+			
+			/* This hides the given columns. Should perhaps find better variant to hide them
+			 * (e.g., on creation time)
+			 */
+			columns[PVAL].setWidth(0);
+			columns[PVAL].setResizable(false);
+			columns[ADJPVAL].setWidth(0);
+			columns[ADJPVAL].setResizable(false);
+			
+			/* Also set a new default significance selection */
+			significanceSpinner.setSelection(SIGNIFICANCE_RESOLUTION/2);
+			significanceLabel.setText("Threshold (higher is more important)");
+		} else
+		{
+			useMarginal = false;
+			columns[MARG].setWidth(0);
+			columns[MARG].setResizable(false);
+			significanceLabel.setText("Threshold (lower is more important)");
+		}
 		initializeCheckedTerms();
 
 		/* We sort the array now by adjusted p-values (if no decision could be made,
@@ -195,8 +224,8 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 				return 0;
 			}});
 		termID2PValueRank = new HashMap<TermID,Integer>();
-		for (int rank = 1;rank <= props.length; rank++)
-			termID2PValueRank.put(props[rank].goTerm.getID(), rank);
+		for (int rank = 0;rank < props.length; rank++)
+			termID2PValueRank.put(props[rank].goTerm.getID(), rank + 1);
 
 		prepareSignificanceColors();
 		buildCheckedTermHashSet();
@@ -251,6 +280,32 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 						}});
 					break;
 
+			case	MARG:
+					Arrays.sort(props,new Comparator<AbstractGOTermProperties>()
+					{
+							public int compare(AbstractGOTermProperties o1, AbstractGOTermProperties o2)
+							{
+								int r;
+	
+								if (o1 instanceof Bayes2GOGOTermProperties && o2 instanceof Bayes2GOGOTermProperties)
+								{
+									double m1 = ((Bayes2GOGOTermProperties)o1).marg;
+									double m2 = ((Bayes2GOGOTermProperties)o2).marg;
+									
+									if (m1 < m2) r = -1;
+									else if (m1 > m2) r = 1;
+									else r = 0;
+								} else
+								{
+									if (o1.p < o2.p) r = -1;
+									else if (o1.p > o2.p) r = 1;
+									else r = 0;
+								}
+								r *= direction;
+								return r;
+							}
+					});
+					break;
 			case	PVAL:
 					Arrays.sort(props,new Comparator<AbstractGOTermProperties>()
 					{
@@ -469,25 +524,29 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 		/* count the number of significant entries */
 		for (Integer i : line2TermPos.keySet())
 		{
-			if (props[line2TermPos.get(i)].p_adjusted < level)
-				count++;
+			AbstractGOTermProperties prop = props[line2TermPos.get(i)];
+			if (prop.isSignificant(level)) count++;
 		}
 		
 		/* display */
 		StringBuilder str = new StringBuilder();
+		
+		str.append(getNumberOfCheckedTerms());
+		str.append("/");
 		str.append(count);
-		if (count == 1) str.append(" term");
-		else str.append(" terms");
-		str.append(" out of ");
+		str.append("/");
 		str.append(total);
-		str.append(" displayed");
-		if (total == 1) str.append(" term");
-		else str.append(" terms");
-		if (count == 1) str.append(" is ");
-		else str.append(" are ");
-		str.append("significant");
 		
 		significanceText.setText(str.toString());
+		
+		str.setLength(0);
+		str.append("The first value shows the number of checked terms.\n");
+		str.append("The second value shows the number of terms ");
+		if (useMarginal) str.append("above");
+		else str.append("below");
+		str.append(" the given threshold.\n");
+		str.append("The third value shows the total number of terms that are displayed within the table.");
+		significanceText.setToolTipText(str.toString());
 	}
 
 	private void buildCheckedTermHashSet()
@@ -499,7 +558,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 		/* count the number of significant entries */
 		for (int i=0;i<props.length;i++)
 		{
-			if (props[i].p_adjusted < level)
+			if (props[i].isSignificant(level))
 				addToCheckedTerms(props[i].goTerm.getID());
 		}
 	}
@@ -528,7 +587,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 		/* count the number of significant entries */
 		for (int i=0;i<props.length;i++)
 		{
-			if (props[i].p_adjusted < level)
+			if (props[i].isSignificant(level))
 				count++;
 		}
 
@@ -536,7 +595,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 
 		for (AbstractGOTermProperties prop : props)
 		{
-			if (prop.p_adjusted < level)
+			if (prop.isSignificant(level))
 			{
 				/* See class StudySetResult */
 				float hue,saturation,brightness;
@@ -545,7 +604,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 				 * We want that more significant nodes have more saturation, but
 				 * we avoid having significant nodes with too less saturation (at
 				 * least 0.2) */
-				int rank = termID2PValueRank.get(prop.goTerm.getID());
+				int rank = termID2PValueRank.get(prop.goTerm.getID()) - 1;
 				assert(rank < count);
 				saturation = 1.0f - (((float)rank  + 1)/count)*0.8f;
 
@@ -612,7 +671,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 			if (term != null)
 			{
 				AbstractGOTermProperties prop = result.getGOTermProperties(term);
-				if (prop.p_adjusted < getSignificanceLevel())
+				if (prop.isSignificant(getSignificanceLevel()))
 					str.append("(*)");
 			}
 
@@ -731,6 +790,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 					if (ti.getChecked()) addToCheckedTerms(term.getID());
 					else removeFromCheckedTerms(term.getID());
 					checkedTermsChanged = true;
+					updateSignificanceText();
 				}
 				updateBrowser();
 				updateGraph();
@@ -746,9 +806,19 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 					item.setText(GOID, prop.goTerm.getIDAsString());
 					item.setText(NAME, prop.goTerm.getName());
 					item.setText(NAMESPACE,prop.goTerm.getNamespaceAsAbbrevString());
-					item.setText(PVAL,String.format("%.3g",prop.p));
+					if (useMarginal)
+					{
+						if (prop instanceof Bayes2GOGOTermProperties) {
+							Bayes2GOGOTermProperties b2gp = (Bayes2GOGOTermProperties) prop;
+							item.setText(MARG,String.format("%.3g",b2gp.marg));	
+						}
+						
+					}	else
+					{
+						item.setText(PVAL,String.format("%.3g",prop.p));
+						item.setText(ADJPVAL,String.format("%.3g",prop.p_adjusted));
+					}
 					item.setText(RANK,termID2PValueRank.get(prop.goTerm.getID()).toString());
-					item.setText(ADJPVAL,String.format("%.3g",prop.p_adjusted));
 					item.setText(POP,Integer.toString(prop.annotatedPopulationGenes));
 					item.setText(STUDY,Integer.toString(prop.annotatedStudyGenes));
 	
@@ -758,8 +828,15 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 						item.setChecked(true);
 	
 					Color background = termID2Color.get(prop.goTerm.getID());
-					item.setBackground(PVAL,background);
-					item.setBackground(ADJPVAL,background);
+					if (useMarginal)
+					{
+						item.setBackground(MARG,background);	
+					} else
+					{
+						item.setBackground(PVAL,background);
+						item.setBackground(ADJPVAL,background);
+					}
+
 				}
 			}
 		});
@@ -782,6 +859,9 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 		columns[ADJPVAL].setText("Adj. P-Value");
 		columns[ADJPVAL].setToolTipText("Adjusted P-Value");
 		columns[ADJPVAL].setAlignment(SWT.RIGHT);
+		columns[MARG].setText("Marginal");
+		columns[MARG].setToolTipText("Marginal probability");
+		columns[MARG].setAlignment(SWT.RIGHT);
 		columns[RANK].setText("Rank");
 		columns[RANK].setToolTipText("The rank of the term in the list");
 		columns[RANK].setAlignment(SWT.RIGHT);
@@ -796,8 +876,8 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 		/* Ensure useful columns sizes */
 		if (columns[ACTIVITY].getWidth() < 20)
 			columns[ACTIVITY].setWidth(20);
-		if (columns[GOID].getWidth() < 70)
-			columns[GOID].setWidth(70);
+		if (columns[GOID].getWidth() < 80)
+			columns[GOID].setWidth(90);
 		if (columns[NAME].getWidth() < 250)
 			columns[NAME].setWidth(250);
 
@@ -810,7 +890,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 		significanceText.setBackground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 		significanceText.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL|GridData.FILL_HORIZONTAL));
 		significanceLabel = new Label(significanceComposite,SWT.NONE);
-		significanceLabel.setText("Significance Level");
+		significanceLabel.setText("Threshold");
 		significanceSpinner = new Spinner(significanceComposite,SWT.BORDER);
 		significanceSpinner.setMaximum(SIGNIFICANCE_RESOLUTION);
 		significanceSpinner.setDigits(4);
