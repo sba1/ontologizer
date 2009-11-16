@@ -38,8 +38,11 @@ public class PreferencesWindow extends ApplicationWindow
 	private Spinner wrapColumnSpinner;
 	
 	private Spinner alphaSpinner;
+	private Button alphaAutoButton;
 	private Spinner betaSpinner;
+	private Button betaAutoButton;
 	private Spinner expectedNumberSpinner;
+	private Button expectedNumberAutoButton;
 	private final static int ALPHA_BETA_DIGITS = 4;
 
 	/**
@@ -118,29 +121,67 @@ public class PreferencesWindow extends ApplicationWindow
 		{
 			Label alphaLabel = new Label(composite,0);
 			alphaLabel.setText("Alpha (in percent)");
+			alphaLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 			alphaSpinner = new Spinner(composite,SWT.BORDER);
-			alphaSpinner.setLayoutData(new GridData(SWT.FILL,0,true,false,2,1));
+			alphaSpinner.setLayoutData(new GridData(SWT.FILL,0,true,false,1,1));
 			alphaSpinner.setMinimum(1);
-			alphaSpinner.setMaximum(50*(int)Math.pow(10, ALPHA_BETA_DIGITS));
+			alphaSpinner.setMaximum(99*(int)Math.pow(10, ALPHA_BETA_DIGITS));
 			alphaSpinner.setSelection(10*(int)Math.pow(10, ALPHA_BETA_DIGITS));
 			alphaSpinner.setDigits(ALPHA_BETA_DIGITS);
+			alphaSpinner.setEnabled(false);
+			alphaAutoButton = new Button(composite,SWT.CHECK);
+			alphaAutoButton.setText("Auto");
+			alphaAutoButton.setSelection(true);
+			alphaAutoButton.addSelectionListener(new SelectionAdapter()
+			{
+				@Override
+				public void widgetSelected(SelectionEvent e)
+				{
+					alphaSpinner.setEnabled(!alphaAutoButton.getSelection());
+				}
+			});
 
 			Label betaLabel = new Label(composite,0);
+			betaLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 			betaLabel.setText("Beta (in percent)");
 			betaSpinner = new Spinner(composite,SWT.BORDER);
-			betaSpinner.setLayoutData(new GridData(SWT.FILL,0,true,false,2,1));
+			betaSpinner.setLayoutData(new GridData(SWT.FILL,0,true,false,1,1));
 			betaSpinner.setMinimum(1);
-			betaSpinner.setMaximum(50*(int)Math.pow(10, ALPHA_BETA_DIGITS));
+			betaSpinner.setMaximum(99*(int)Math.pow(10, ALPHA_BETA_DIGITS));
 			betaSpinner.setSelection(25*(int)Math.pow(10, ALPHA_BETA_DIGITS));
 			betaSpinner.setDigits(ALPHA_BETA_DIGITS);
-
+			betaSpinner.setEnabled(false);
+			betaAutoButton = new Button(composite,SWT.CHECK);
+			betaAutoButton.setText("Auto");
+			betaAutoButton.setSelection(true);
+			betaAutoButton.addSelectionListener(new SelectionAdapter()
+			{
+				@Override
+				public void widgetSelected(SelectionEvent e)
+				{
+					betaSpinner.setEnabled(!betaAutoButton.getSelection());
+				}
+			});
+			
 			Label priorLabel = new Label(composite,0);
 			priorLabel.setText("Expected number of terms");
 			expectedNumberSpinner = new Spinner(composite,SWT.BORDER);
-			expectedNumberSpinner.setLayoutData(new GridData(SWT.FILL,0,true,false,2,1));
+			expectedNumberSpinner.setLayoutData(new GridData(SWT.FILL,0,true,false,1,1));
 			expectedNumberSpinner.setMinimum(1);
 			expectedNumberSpinner.setMaximum(50);
 			expectedNumberSpinner.setSelection(5);
+			expectedNumberSpinner.setEnabled(false);
+			expectedNumberAutoButton = new Button(composite,SWT.CHECK);
+			expectedNumberAutoButton.setText("Auto");
+			expectedNumberAutoButton.setSelection(true);
+			expectedNumberAutoButton.addSelectionListener(new SelectionAdapter()
+			{
+				@Override
+				public void widgetSelected(SelectionEvent e)
+				{
+					expectedNumberSpinner.setEnabled(!expectedNumberAutoButton.getSelection());
+				}
+			});
 			
 		}
 
@@ -285,11 +326,19 @@ public class PreferencesWindow extends ApplicationWindow
 		wrapColumnSpinner.setEnabled(wrapColumnCheckbox.getSelection());
 	}
 
+	/**
+	 * Returns the selected alpha.
+	 *  
+	 * @return the selected alpha or NaN if alpha value is not given.
+	 */
 	public double getAlpha()
 	{
+		if (alphaAutoButton != null)
+			if (alphaAutoButton.isEnabled()) return Double.NaN;
+
 		if (alphaSpinner != null)
 			return alphaSpinner.getSelection() / Math.pow(10, ALPHA_BETA_DIGITS) / 100.0;
-		return 0.1;
+		return Double.NaN;
 	}
 	
 	public double getBeta()
