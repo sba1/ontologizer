@@ -212,7 +212,7 @@ public class GOGraph implements Iterable<Term>
 
 			logger.info("Ontology contains multiple level-one terms: " + level1StringBuilder.toString() + ". Adding artificial root term.");
 
-			rootGOTerm = new Term("GO:0000000", "root", null);
+			rootGOTerm = new Term("GO:0000000", "root");
 			graph.addVertex(rootGOTerm);
 
 			for (Term lvl1 : level1terms)
