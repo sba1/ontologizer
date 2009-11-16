@@ -73,16 +73,16 @@ public class Benchmark
 	private static int NOISE_PERCENTAGE = 10;
 	private static int TERM_PERCENTAGE = 75;
 	private static double [] ALPHAs = new double[]{0.1,0.4};
-	private static double [] BETAs = new double[]{0.1,0.4};
+	private static double [] BETAs = new double[]{0.25,0.4};
 	private static boolean ORIGINAL_SAMPLING = false;
 	private static int MAX_TERMS = 5;
-	private static int TERMS_PER_RUN = 50;
+	private static int TERMS_PER_RUN = 100;
 
 	/**
 	 * Senseful terms are terms that have an annotation proportion between 0.1
 	 * and 0.9
 	 */
-	private static int SENSEFUL_TERMS_PER_RUN = 25;
+	private static int SENSEFUL_TERMS_PER_RUN = 50;
 
 	private static AbstractTestCorrection testCorrection = new None();
 
@@ -341,16 +341,17 @@ GlobalPreferences.setProxyHost("realproxy.charite.de");
 											{
 												if (m.dt == 0)
 												{
-													p = (double)termCombi.size() / completePopEnumerator.getTotalNumberOfAnnotatedTerms();
+//													p = (double)termCombi.size() / completePopEnumerator.getTotalNumberOfAnnotatedTerms();
 													b2g.setAlpha(ALPHA);
 													b2g.setBeta(BETA);
-													b2g.setP(p);
+													b2g.setExpectedNumber(termCombi.size());
 
 												} else
 												{
-													p = (double)m.dt / completePopEnumerator.getTotalNumberOfAnnotatedTerms();
+//													p = (double)m.dt / completePopEnumerator.getTotalNumberOfAnnotatedTerms();
 
-													if (newStudySet instanceof GeneratedStudySet) {
+													if (newStudySet instanceof GeneratedStudySet)
+													{
 														GeneratedStudySet gs = (GeneratedStudySet) newStudySet;
 														b2g.setAlpha(gs.getAlpha());
 														b2g.setBeta(gs.getBeta());
@@ -359,7 +360,8 @@ GlobalPreferences.setProxyHost("realproxy.charite.de");
 														b2g.setAlpha(m.alpha);
 														b2g.setBeta(m.beta);
 													}
-													b2g.setP(p);
+													b2g.setExpectedNumber(m.dt);
+//													b2g.setP(p);
 												}
 											}
 
