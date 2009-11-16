@@ -55,6 +55,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
@@ -86,6 +87,8 @@ public class GeneEditor extends Composite
 	private Font smallFont;
 	
 	private WorkSet displayedWorkSet;
+	
+	private ISimpleAction datasetsLoadedAction;
 	
 	private GraphWindow graphWindow;
 	
@@ -617,10 +620,21 @@ public class GeneEditor extends Composite
 								assoc = WorkSetLoadThread.getAssociations(displayedWorkSet.getAssociationPath());
 								text.redraw();
 								setAllButton.setEnabled(true);
+								if (datasetsLoadedAction != null) datasetsLoadedAction.act();
 							}
 						});
 
 					}});
+	}
+	
+	/**
+	 * Add an action that is called as soon as a datafile has been successfully loaded.
+	 * 
+	 * @param loadedAction
+	 */
+	public void addDatafilesLoadedListener(ISimpleAction loadedAction)
+	{
+		datasetsLoadedAction = loadedAction;
 	}
 	
 	/**
