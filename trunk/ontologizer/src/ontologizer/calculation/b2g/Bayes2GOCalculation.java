@@ -49,7 +49,7 @@ class B2GTestParameter
 	static double ALPHA = 0.25;
 	static double BETA = 0.10;
 	static double BETA2 = 0.10;
-	static int MCMC_STEPS = 520000;
+	static int MCMC_STEPS = 1020000;
 }
 
 class Bayes2GOEnrichedGOTermsResult extends EnrichedGOTermsResult
@@ -769,7 +769,7 @@ public class Bayes2GOCalculation implements ICalculation
 
 		/* ***************************************************************** */
 
-		Random rnd = new Random(8);
+		Random rnd = new Random(10);
 
 		/* Simulation */
 
@@ -902,25 +902,26 @@ public class Bayes2GOCalculation implements ICalculation
 //		calc.setDefaultQ(realAlpha);
 
 //		TopologyWeightedCalculation calc = new TopologyWeightedCalculation();
-//		TermForTermCalculation calc = new TermForTermCalculation();
+		TermForTermCalculation calc = new TermForTermCalculation();
 //		ParentChildCalculation calc = new ParentChildCalculation();
-		Bayes2GOCalculation calc = new Bayes2GOCalculation();
-//		calc.setSeed(1); /* Finds a optimum */
-//		calc.setSeed(14); /* Finds a sub optimum (score 6845.27)*/
+//		Bayes2GOCalculation calc = new Bayes2GOCalculation();
+//		calc.setSeed(2); /* Finds a optimum */
+//		calc.setSeed(3); /* with basement membrane, score 6826.695 */
+//		calc.setSeed(4); /* Optimum, score 6826.039 */
 
 //		calc.setSeed(121);
 //		calc.setMcmcSteps(50000);
 ////		calc.setAlpha(B2GParam.Type.MCMC);
 ////		calc.setBeta(B2GParam.Type.MCMC);
 ////		calc.setExpectedNumber(B2GParam.Type.MCMC);
-		calc.setAlpha(realAlpha);
-		calc.setBeta(realBeta);
-		calc.setExpectedNumber(wantedActiveTerms.size());
+//		calc.setAlpha(realAlpha);
+//		calc.setBeta(realBeta);
+//		calc.setExpectedNumber(wantedActiveTerms.size());
 
 //		calc.setMcmcSteps(500000);
-		calc.setAlpha(B2GParam.Type.MCMC);
-		calc.setBeta(B2GParam.Type.MCMC);
-		calc.setExpectedNumber(B2GParam.Type.MCMC);
+//		calc.setAlpha(B2GParam.Type.MCMC);
+//		calc.setBeta(B2GParam.Type.MCMC);
+//		calc.setExpectedNumber(B2GParam.Type.MCMC);
 
 //		calc.setAlpha(B2GParam.Type.EM);
 //		calc.setBeta(B2GParam.Type.EM);
@@ -933,93 +934,93 @@ public class Bayes2GOCalculation implements ICalculation
 
 		evaluate(wantedActiveTerms, allGenes, newStudyGenes, allEnumerator, studySetEnumerator, calc);
 
-		/* Draw the basic example figure */
-		final int MAX_ITER = 20;
-
-		long rank_sum = 0;
-		double marg_sum = 0;
-
-		double [] marg = new double[MAX_ITER];
-		int [] rank = new int[MAX_ITER];
-		long [] seed = new long[MAX_ITER];
-
-		final HashMap<TermID,Double> t2marg = new HashMap<TermID,Double>();
-//		int [][] allMargs = null;
-
-		Random seedRandom = new Random();
-
-		for (int i=0;i<MAX_ITER;i++)
-		{
-			seed[i] = seedRandom.nextLong();
-
-			Bayes2GOCalculation calc2 = new Bayes2GOCalculation();
-			calc2.setSeed(seed[i]);
-			calc2.setAlpha(realAlpha);
-			calc2.setBeta(realBeta);
-			calc2.setExpectedNumber(wantedActiveTerms.size());
-
-			EnrichedGOTermsResult result = calc2.calculateStudySet(graph, assoc, allGenes, newStudyGenes, new None());
-
-			ArrayList<AbstractGOTermProperties> resultList = new ArrayList<AbstractGOTermProperties>();
-
-			for (AbstractGOTermProperties prop : result)
-			{
-				double tMarg = 1 - prop.p;
-				Double cMarg = t2marg.get(prop.goTerm.getID());
-				if (cMarg != null)
-					tMarg += cMarg;
-				t2marg.put(prop.goTerm.getID(), tMarg);
-
-				resultList.add(prop);
-			}
-			Collections.sort(resultList);
-
-			/* Determine the rank of a special term */
-			int r = 1;
-			for (AbstractGOTermProperties prop : resultList)
-			{
-				if (prop.goTerm.getID().id == 30011)
-				{
-					marg[i] = (1 - prop.p);
-					rank[i] = r;
-					break;
-				}
-				r++;
-			}
-		}
-
-		System.out.println("rank\tmarg\tseed");
-		for (int i=0;i<MAX_ITER;i++)
-			System.out.println(rank[i] + "\t" + marg[i] + "\t" + seed[i]);
-
-		GODOTWriter.writeDOT(graph, new File("toy-result-avg.dot"), null, wantedActiveTerms.keySet(), new IDotNodeAttributesProvider()
-		{
-			public String getDotNodeAttributes(TermID id)
-			{
-				StringBuilder str = new StringBuilder(200);
-				str.append("label=\"");
-
-				str.append(Util.wrapLine(graph.getGOTerm(id).getName(),"\\n",20));
-
-				str.append("\\n");
-				str.append(studySetEnumerator.getAnnotatedGenes(id).totalAnnotatedCount() + "/" + allEnumerator.getAnnotatedGenes(id).totalAnnotatedCount());
-				str.append("\\n");
-				if (t2marg.get(id) != null)
-					str.append(String.format("P(T=1)=%g", ((Double)t2marg.get(id)/ MAX_ITER)));
-
-				str.append("\"");
-				if (wantedActiveTerms.containsKey(id))
-				{
-					str.append("style=\"filled\" color=\"gray\"");
-				}
-
-//				if (result.getGOTermProperties(id) != null && result.getGOTermProperties(id).p_adjusted < 0.999)
+//		/* Draw the basic example figure */
+//		final int MAX_ITER = 20;
+//
+//		long rank_sum = 0;
+//		double marg_sum = 0;
+//
+//		double [] marg = new double[MAX_ITER];
+//		int [] rank = new int[MAX_ITER];
+//		long [] seed = new long[MAX_ITER];
+//
+//		final HashMap<TermID,Double> t2marg = new HashMap<TermID,Double>();
+////		int [][] allMargs = null;
+//
+//		Random seedRandom = new Random();
+//
+//		for (int i=0;i<MAX_ITER;i++)
+//		{
+//			seed[i] = seedRandom.nextLong();
+//
+//			Bayes2GOCalculation calc2 = new Bayes2GOCalculation();
+//			calc2.setSeed(seed[i]);
+//			calc2.setAlpha(realAlpha);
+//			calc2.setBeta(realBeta);
+//			calc2.setExpectedNumber(wantedActiveTerms.size());
+//
+//			EnrichedGOTermsResult result = calc2.calculateStudySet(graph, assoc, allGenes, newStudyGenes, new None());
+//
+//			ArrayList<AbstractGOTermProperties> resultList = new ArrayList<AbstractGOTermProperties>();
+//
+//			for (AbstractGOTermProperties prop : result)
+//			{
+//				double tMarg = 1 - prop.p;
+//				Double cMarg = t2marg.get(prop.goTerm.getID());
+//				if (cMarg != null)
+//					tMarg += cMarg;
+//				t2marg.put(prop.goTerm.getID(), tMarg);
+//
+//				resultList.add(prop);
+//			}
+//			Collections.sort(resultList);
+//
+//			/* Determine the rank of a special term */
+//			int r = 1;
+//			for (AbstractGOTermProperties prop : resultList)
+//			{
+//				if (prop.goTerm.getID().id == 30011)
 //				{
-//					str.append(" penwidth=\"2\"");
+//					marg[i] = (1 - prop.p);
+//					rank[i] = r;
+//					break;
 //				}
-				return str.toString();
-			}
-		});
+//				r++;
+//			}
+//		}
+//
+//		System.out.println("rank\tmarg\tseed");
+//		for (int i=0;i<MAX_ITER;i++)
+//			System.out.println(rank[i] + "\t" + marg[i] + "\t" + seed[i]);
+//
+//		GODOTWriter.writeDOT(graph, new File("toy-result-avg.dot"), null, wantedActiveTerms.keySet(), new IDotNodeAttributesProvider()
+//		{
+//			public String getDotNodeAttributes(TermID id)
+//			{
+//				StringBuilder str = new StringBuilder(200);
+//				str.append("label=\"");
+//
+//				str.append(Util.wrapLine(graph.getGOTerm(id).getName(),"\\n",20));
+//
+//				str.append("\\n");
+//				str.append(studySetEnumerator.getAnnotatedGenes(id).totalAnnotatedCount() + "/" + allEnumerator.getAnnotatedGenes(id).totalAnnotatedCount());
+//				str.append("\\n");
+//				if (t2marg.get(id) != null)
+//					str.append(String.format("P(T=1)=%g", ((Double)t2marg.get(id)/ MAX_ITER)));
+//
+//				str.append("\"");
+//				if (wantedActiveTerms.containsKey(id))
+//				{
+//					str.append("style=\"filled\" color=\"gray\"");
+//				}
+//
+////				if (result.getGOTermProperties(id) != null && result.getGOTermProperties(id).p_adjusted < 0.999)
+////				{
+////					str.append(" penwidth=\"2\"");
+////				}
+//				return str.toString();
+//			}
+//		});
 
 	}
 
