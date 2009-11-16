@@ -17,6 +17,8 @@ public final class GlobalPreferences
 	private static double b2gAlpha = Double.NaN;
 	private static double b2gBeta =Double.NaN;
 	private static double b2gDT = -1;
+	private static double upperAlpha = 1.;
+	private static double upperBeta = 1.;
 
 	static
 	{
@@ -145,5 +147,25 @@ public final class GlobalPreferences
 	public static void setWrapColumn(int wrapColumn)
 	{
 		GlobalPreferences.wrapColumn = wrapColumn;
+	}
+
+	public static double getUpperAlpha()
+	{
+		return upperAlpha;
+	}
+
+	public static void setUpperAlpha(double upperAlpha)
+	{
+		GlobalPreferences.upperAlpha = upperAlpha;
+	}
+
+	public static double getUpperBeta()
+	{
+		return upperBeta;
+	}
+
+	public static void setUpperBeta(double upperBeta)
+	{
+		GlobalPreferences.upperBeta = upperBeta;
 	}
 }
