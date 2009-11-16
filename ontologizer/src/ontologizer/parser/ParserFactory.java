@@ -40,6 +40,10 @@ public final class ParserFactory
 			return new FastaParser(file);
 		} else
 		{
+			if (type.equals("plain-valued"))
+			{
+				return new OneOnALineValueParser(file);
+			}
 			return new OneOnALineParser(file);
 		}
 	}
@@ -67,6 +71,17 @@ public final class ParserFactory
 			{
 				type = "fasta";
 				break;
+			}	else
+			{
+				String [] splitted = inputLine.split("\\s+", 3);
+				if (splitted.length > 2)
+				{
+					try
+					{
+						Double val = Double.parseDouble(splitted[1]);
+						type = "plain-valued";
+					} catch (NumberFormatException ex) {}
+				}
 			}
 			num++;
 		}
