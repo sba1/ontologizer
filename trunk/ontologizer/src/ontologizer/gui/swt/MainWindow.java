@@ -77,6 +77,17 @@ class Settings
 	public String annotationsFileName;
 	public String mappingFileName;
 	public boolean isClosed;
+
+	public Properties getSettingsAsProperty()
+	{
+		Properties prop = new Properties();
+		prop.setProperty("annotationsFileName",annotationsFileName);
+		prop.setProperty("ontologyFileName",ontologyFileName);
+		prop.setProperty("mappingFileName",mappingFileName);
+		prop.setProperty("isClosed", Boolean.toString(isClosed));
+
+		return prop;
+	}
 };
 
 class TreeItemData
@@ -460,23 +471,7 @@ public class MainWindow extends ApplicationWindow
 				tid.settings.mappingFileName = getMappingFileString();
 				tid.settings.isClosed = currentSelectedItem.getExpanded();
 
-				Properties prop = new Properties();
-				prop.setProperty("annotationsFileName",getAssociationsFileString());
-				prop.setProperty("ontologyFileName",getDefinitionFileString());
-				prop.setProperty("mappingFileName",getMappingFileString());
-				prop.setProperty("isClosed", Boolean.toString(tid.settings.isClosed));
-				try
-				{
-					FileOutputStream fos = new FileOutputStream(new File(tid.projectDirectory,PROJECT_SETTINGS_NAME));
-					prop.storeToXML(fos,"Ontologizer Project File");
-					fos.close();
-				} catch (FileNotFoundException e)
-				{
-					e.printStackTrace();
-				} catch (IOException e)
-				{
-					e.printStackTrace();
-				}
+				storeProjectSettings(tid);
 
 				return;
 			}
@@ -495,6 +490,30 @@ public class MainWindow extends ApplicationWindow
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+		}
+	}
+
+	/**
+	 * Stores the project settings of item represented by the TreeItemData.
+	 *
+	 * @param tid
+	 */
+	private void storeProjectSettings(TreeItemData tid)
+	{
+		if (!tid.isProjectFolder) return;
+
+		Properties prop = tid.settings.getSettingsAsProperty();
+		try
+		{
+			FileOutputStream fos = new FileOutputStream(new File(tid.projectDirectory,PROJECT_SETTINGS_NAME));
+			prop.storeToXML(fos,"Ontologizer Project File");
+			fos.close();
+		} catch (FileNotFoundException e)
+		{
+			e.printStackTrace();
+		} catch (IOException e)
+		{
+			e.printStackTrace();
 		}
 	}
 
@@ -1489,7 +1508,7 @@ public class MainWindow extends ApplicationWindow
 				if (tid != null && tid.isProjectFolder)
 				{
 					tid.settings.isClosed = false;
-					storeGenes();
+					storeProjectSettings(tid);
 				}
 			}
 
@@ -1499,7 +1518,7 @@ public class MainWindow extends ApplicationWindow
 				if (tid != null && tid.isProjectFolder)
 				{
 					tid.settings.isClosed = true;
-					storeGenes();
+					storeProjectSettings(tid);
 				}
 			}
 		});
