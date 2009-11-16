@@ -222,6 +222,7 @@ public class GOGraph implements Iterable<Term>
 			logger.info("Ontology contains multiple level-one terms: " + level1StringBuilder.toString() + ". Adding artificial root term.");
 
 			rootGOTerm = new Term("GO:0000000", "root");
+			rootGOTerm.setSubsets(new ArrayList<Subset>(availableSubsets));
 			graph.addVertex(rootGOTerm);
 
 			for (Term lvl1 : level1terms)
@@ -899,6 +900,8 @@ public class GOGraph implements Iterable<Term>
 	 */
 	public void setRelevantSubset(String subsetName)
 	{
+		System.out.println(subsetName);
+
 		for (Subset s : availableSubsets)
 		{
 			if (s.getName().equals(subsetName))
