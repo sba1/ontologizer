@@ -105,15 +105,15 @@ public class Benchmark
 //				}
 //			}
 //		}
-//		calcMethods.add(new Method("Term-For-Term","tft"));
-//		calcMethods.add(new Method("Parent-Child-Union","pcu"));
+		calcMethods.add(new Method("Term-For-Term","tft"));
+		calcMethods.add(new Method("Parent-Child-Union","pcu"));
 //		calcMethods.add(new Method("Probabilistic","pb"));
 //		calcMethods.add(new Method("Topology-Weighted","tweight"));
-
-		Method m = new Method("Bayes2GO","b2g.em");
-		m.em = true;
-		calcMethods.add(m);
-
+//
+//		Method m = new Method("Bayes2GO","b2g.em");
+//		m.em = true;
+//		calcMethods.add(m);
+//
 //		m = new Method("Bayes2GO","b2g.ideal.nop");
 //		m.noPrior = true;
 //		calcMethods.add(m);
@@ -432,6 +432,9 @@ GlobalPreferences.setProxyHost("realproxy.charite.de");
 			}
 			newStudySet.filterOutDuplicateGenes(assoc);
 
+			int tp = newStudySet.getGeneCount();
+			int tn = allGenesArray.length - tp;
+
 			/* Obfuscate the study set, i.e., create the observed state */
 			
 			/* false -> true (alpha, false positive) */
@@ -444,16 +447,17 @@ GlobalPreferences.setProxyHost("realproxy.charite.de");
 
 			/* true -> false (beta, false negative) */
 			HashSet<ByteString>  fn = new HashSet<ByteString>();
-			for (ByteString gene : allGenesArray)
+			for (ByteString gene : newStudySet)
 			{
-				if (rnd.nextDouble() < BETA) fn.add(gene);
+				if (rnd.nextDouble() < BETA) fn.add(gene);	
 			}
+
 			newStudySet.addGenes(fp);
 			newStudySet.removeGenes(fn);
 
 			System.out.println("Number of genes in study set " + newStudySet.getGeneCount() + " " + termCombi.size() + " terms enriched");
-			System.out.println("Study set misses " + fn.size() + " genes");
-			System.out.println("Study set has " + fp.size() + " false positives");
+			System.out.println("Study set has " + fp.size() + " false positives (alpha=" + ((double)fp.size())/tn +")");
+			System.out.println("Study set misses " + fn.size() + " genes (beta=" + ((double)fn.size())/tp +")");
 		}
 		return newStudySet;
 	}
