@@ -4,9 +4,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Logger;
 
-import ontologizer.association.AssociationParser;
 import ontologizer.go.GOGraph;
 import ontologizer.go.ParentTermID;
 import ontologizer.go.TermID;
@@ -37,7 +37,7 @@ public class GODOTWriter
 	 * @param provider
 	 *          should provide for every property an appropiate id.
 	 */
-	public static void writeDOT(GOGraph graph, File file, TermID rootTerm, HashSet<TermID> terms, IDotNodeAttributesProvider provider)
+	public static void writeDOT(GOGraph graph, File file, TermID rootTerm, Set<TermID> terms, IDotNodeAttributesProvider provider)
 	{
 		/* Collect terms starting from the terms upto the root term and place them into nodeSet */
 		HashSet<TermID> nodeSet = new HashSet<TermID>();
