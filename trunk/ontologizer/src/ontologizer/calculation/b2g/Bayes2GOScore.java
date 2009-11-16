@@ -16,6 +16,8 @@ import ontologizer.go.TermID;
 /**
  * Basic class containing a mutable interger. Used as a replacement
  * for Integer in HashMaps.
+ *
+ * @author Sebastian Bauer
  */
 class MutableInteger
 {
@@ -24,6 +26,21 @@ class MutableInteger
 	public MutableInteger(int value)
 	{
 		this.value = value;
+	}
+}
+
+/**
+ * A basic container representing a set of genes
+ *
+ * @author Sebastian Bauer
+ */
+class GeneIDs
+{
+	public int [] gid;
+
+	public GeneIDs(int size)
+	{
+		gid = new int[size];
 	}
 }
 
@@ -55,8 +72,14 @@ abstract class Bayes2GOScore
 	/** Contains genes that are active according to the active terms */
 	protected LinkedHashMap<ByteString,MutableInteger> activeHiddenGenes = new LinkedHashMap<ByteString,MutableInteger>();
 
+	/** Maps genes to an unique gene index */
+	protected HashMap<ByteString,Integer> gene2GenesIdx = new HashMap<ByteString,Integer>();
+
 	/** Maps the term to the index in allTermsArray */
 	protected HashMap<TermID,Integer> term2TermsIdx = new HashMap<TermID,Integer>();
+
+	/** Maps a term id to the ids of the genes to that the term is annotated */
+	protected GeneIDs [] termLinks;
 
 	/** The current number of inactive terms */
 	protected int numInactiveTerms;
@@ -92,11 +115,25 @@ abstract class Bayes2GOScore
 
 		this.rnd = rnd;
 
+		/* Initialize basics of genes */
+		population = populationEnumerator.getGenes();
+		i=0;
+		for (ByteString g : population)
+		{
+			gene2GenesIdx.put(g,i);
+			i++;
+		}
+		this.observedActiveGenes = observedActiveGenes;
+
+
+		/* Initialize basics of terms */
 		isActive = new boolean[termList.size()];
 		termsArray = new TermID[termList.size()];
 		inactiveTermsArray = new TermID[termList.size()];
 		numInactiveTerms = termList.size();
 		termActivationCounts = new int[termList.size()];
+		termLinks = new GeneIDs[termList.size()];
+
 		i=0;
 		for (TermID tid : termList)
 		{
@@ -106,6 +143,15 @@ abstract class Bayes2GOScore
 			inactiveTermsArray[i] = tid;
 			term2InactiveTermsIdx.put(tid, i);
 
+			/* Fill in the links */
+			termLinks[i] = new GeneIDs(populationEnumerator.getAnnotatedGenes(tid).totalAnnotated.size());
+			int j=0;
+			for (ByteString gene : populationEnumerator.getAnnotatedGenes(tid).totalAnnotated)
+			{
+				termLinks[i].gid[j] = gene2GenesIdx.get(gene);
+				j++;
+			}
+
 			i++;
 		}
 
@@ -113,9 +159,6 @@ abstract class Bayes2GOScore
 
 		activeTerms = new LinkedHashSet<TermID>();
 		activeHiddenGenes = new LinkedHashMap<ByteString,MutableInteger>();
-
-		population = populationEnumerator.getGenes();
-		this.observedActiveGenes = observedActiveGenes;
 	}
 
 	public void setUsePrior(boolean usePrior)
@@ -242,9 +285,9 @@ abstract class Bayes2GOScore
 		}
 
 //		{
-//			long ms = currentTime / 1000000;
+//			long ds = currentTime / 100000000;
 //			currentTime += System.nanoTime() - enterTime;
-//			if (currentTime / 1000000 != ms)
+//			if (currentTime / 100000000 != ds)
 //				System.out.println(currentTime / 1000000);
 //		}
 	}
