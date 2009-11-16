@@ -233,9 +233,17 @@ public class Ontologizer
 				String mappingFile = main.getMappingFileString();
 				String methodName = main.getSelectedMethodName();
 				String mtcName = main.getSelectedMTCName();
+				String subontologyName = main.getSubontologyString();
+				String subsetName = main.getSubsetString();
 
 				if (mappingFile != null && mappingFile.length() == 0)
 					mappingFile = null;
+
+				if (subontologyName != null && subontologyName.length() == 0)
+					subontologyName = null;
+
+				if (subsetName != null && subsetName.length() == 0)
+					subsetName = null;
 
 				final Display display = main.getShell().getDisplay();
 				final ResultWindow result = new ResultWindow(display);
