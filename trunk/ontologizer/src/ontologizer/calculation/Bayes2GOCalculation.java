@@ -317,19 +317,45 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 	private TermID proposalT1;
 	private TermID proposalT2;
 
+	private int n00;
+	private int n01;
+	private int n10;
+	private int n11;
+
 	public FixedAlphaBetaScore(Random rnd, List<TermID> termList, GOTermEnumerator populationEnumerator, Set<ByteString> observedActiveGenes)
 	{
 		super(rnd, termList, populationEnumerator, observedActiveGenes);
+
+		n10 = observedActiveGenes.size();
+		n00 = population.size() - n10;
 	}
 
 	@Override
 	public void hiddenGeneActivated(ByteString gene)
 	{
+		if (observedActiveGenes.contains(gene))
+		{
+			n11++;
+			n10--;
+		} else
+		{
+			n01++;
+			n00--;
+		}
 	}
 
 	@Override
 	public void hiddenGeneDeactivated(ByteString gene)
 	{
+		if (observedActiveGenes.contains(gene))
+		{
+			n11--;
+			n10++;
+		} else
+		{
+			n01--;
+			n00++;
+		}
 	}
 
 	@Override
@@ -370,19 +396,22 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 		double alpha = 0.1;
 		double beta = 0.1;
 
-		HashSet<ByteString> activeAgreement = new HashSet<ByteString>(activeHiddenGenes.keySet());
-		activeAgreement.retainAll(observedActiveGenes);
-
-		int n11 = activeAgreement.size();
-		int n10 = observedActiveGenes.size() - n11;
-
-		HashSet<ByteString> inactiveAgreement = new HashSet<ByteString>(population);
-		inactiveAgreement.removeAll(observedActiveGenes);
-		inactiveAgreement.removeAll(activeHiddenGenes.keySet());
+//		HashSet<ByteString> activeAgreement = new HashSet<ByteString>(activeHiddenGenes.keySet());
+//		activeAgreement.retainAll(observedActiveGenes);
+//
+//		int n11 = activeAgreement.size();
+//		int n10 = observedActiveGenes.size() - n11;
+//
+//		HashSet<ByteString> inactiveAgreement = new HashSet<ByteString>(population);
+//		inactiveAgreement.removeAll(observedActiveGenes);
+//		inactiveAgreement.removeAll(activeHiddenGenes.keySet());
+//		
+//		int n00 = inactiveAgreement.size();
+//		int n01 = population.size() - observedActiveGenes.size() - n00;
+//
+//		System.out.println("n00="+ n00 + " n01="+n01 + " n10=" + n10 + " n11="+n11);
+//		System.out.println("n00="+ this.n00 + " n01="+this.n01 + " n10=" + this.n10 + " n11="+this.n11);
 		
-		int n00 = inactiveAgreement.size();
-		int n01 = population.size() - observedActiveGenes.size() - n00;
-
 		double newScore2 = Math.log(alpha) * n10 + Math.log(1-alpha)*n11 + Math.log(1-beta)*n00 + Math.log(beta)*n01;
 		newScore2 -= Math.log(alpha) * observedActiveGenes.size() + Math.log(1-beta)* (population.size() - observedActiveGenes.size());
 		return newScore2;
@@ -750,8 +779,8 @@ public class Bayes2GOCalculation implements ICalculation
 		}
 		else rnd = new Random();
 
-		VariableAlphaBetaScore bayesScore = new VariableAlphaBetaScore(rnd, allTerms, populationEnumerator, studySet.getAllGeneNames(), alpha, beta);
-		FixedAlphaBetaScore fBayesScore = new FixedAlphaBetaScore(rnd, allTerms, populationEnumerator,  studySet.getAllGeneNames());
+//		VariableAlphaBetaScore bayesScore = new VariableAlphaBetaScore(rnd, allTerms, populationEnumerator, studySet.getAllGeneNames(), alpha, beta);
+		FixedAlphaBetaScore bayesScore = new FixedAlphaBetaScore(rnd, allTerms, populationEnumerator,  studySet.getAllGeneNames());
 
 //		score.
 //		State state = new State(allTerms, populationEnumerator);
@@ -823,12 +852,12 @@ public class Bayes2GOCalculation implements ICalculation
 			long oldPossibilities = bayesScore.getNeighborhoodSize();
 			long r = rnd.nextLong();
 			bayesScore.proposeNewState(r);
-			fBayesScore.proposeNewState(r);
+//			fBayesScore.proposeNewState(r);
 			double newScore = bayesScore.getScore();
-			double newScore2 = fBayesScore.getScore();
+//			double newScore2 = fBayesScore.getScore();
 			long newPossibilities = bayesScore.getNeighborhoodSize();
 
-			System.out.println(newScore + "  " + newScore2);
+//			System.out.println(newScore + "  " + newScore2);
 //
 //			long oldPossibilities;
 //			
@@ -909,7 +938,7 @@ public class Bayes2GOCalculation implements ICalculation
 //					state.exchange(t2, t1);
 //				}
 				bayesScore.undoProposal();
-				fBayesScore.undoProposal();
+//				fBayesScore.undoProposal();
 				numRejects++;
 			} else
 			{
