@@ -229,4 +229,9 @@ public class ParentChildCutCalculation extends
 
 	}
 
+	public boolean supportsTestCorrection() {
+		return true;
+	}
+
+
 }

@@ -31,6 +31,7 @@ import ontologizer.StudySetFactory;
 import ontologizer.StudySetList;
 import ontologizer.FileCache.FileCacheUpdateCallback;
 import ontologizer.calculation.CalculationRegistry;
+import ontologizer.calculation.ICalculation;
 import ontologizer.gui.swt.MainWindow.Set;
 import ontologizer.gui.swt.images.Images;
 import ontologizer.gui.swt.support.SWTUtil;
@@ -364,6 +365,16 @@ public class Ontologizer
 				workSet.open();
 			}
 		});
+
+		/* When a new method is selected check if the new method
+		 * supports MTC and update the state of the MTC selector
+		 * accordingly.
+		 */
+		main.addMethodAction(new ISimpleAction(){
+			public void act()
+			{
+				ICalculation calc = CalculationRegistry.getCalculationByName(main.getSelectedMethodName());
+			}});
 
 		/* Store the current settings on disposal */
 		main.addDisposeAction(new ISimpleAction(){public void act()

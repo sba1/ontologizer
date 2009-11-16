@@ -376,4 +376,11 @@ public class ProbabilisticCalculation implements ICalculation
 		return "GenGO";
 	}
 
+	/**
+	 * Used for the companion method.
+	 */
+	public boolean supportsTestCorrection() {
+		return true;
+	}
+
 }

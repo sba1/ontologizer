@@ -163,4 +163,8 @@ public class TopCalculation extends AbstractHypergeometricCalculation
 		return "Topology-Elim";
 	}
 
+	public boolean supportsTestCorrection() {
+		return true;
+	}
+
 }
