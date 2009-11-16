@@ -53,7 +53,7 @@ public class EnrichedGOTermsResultLatexWriter
 			return String.format(Locale.US,"%.3f \\times 10^{%d}",i,exp);
 		} else
 		{
-			return Double.toString(val);
+			return String.format(Locale.US,"%.5f",val);
 		}
 	}
 
