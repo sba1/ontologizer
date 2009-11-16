@@ -156,11 +156,11 @@ public class OntologizerCore
 		{
 			/* Create a study list with a dummy name and add the study manually */
 			studySetList = new StudySetList("study");
-			studySetList.addStudySet(new StudySet(studyFile));
+			studySetList.addStudySet(StudySetFactory.createFromFile(studyFile, false));
 		}
 
-		/* create the population set */
-		populationSet = new PopulationSet(new File(args.populationFile));
+		/* create the population set TODO: Get rid of the casting */
+		populationSet = (PopulationSet)StudySetFactory.createFromFile(new File(args.populationFile), true);
 
 		/* Apply the optional gene name mapping given by the supplied filter file */
 		if (args.filterFile != null)
