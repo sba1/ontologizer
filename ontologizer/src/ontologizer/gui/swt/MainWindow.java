@@ -50,6 +50,8 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
+import org.eclipse.swt.events.TreeEvent;
+import org.eclipse.swt.events.TreeListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -74,6 +76,7 @@ class Settings
 	public String ontologyFileName;
 	public String annotationsFileName;
 	public String mappingFileName;
+	public boolean isClosed;
 };
 
 class TreeItemData
@@ -205,6 +208,7 @@ public class MainWindow extends ApplicationWindow
 					tid.settings.annotationsFileName = prop.getProperty("annotationsFileName",getAssociationsFileString());
 					tid.settings.ontologyFileName = prop.getProperty("ontologyFileName",getDefinitionFileString());
 					tid.settings.mappingFileName = prop.getProperty("mappingFileName",getMappingFileString());
+					tid.settings.isClosed = Boolean.parseBoolean(prop.getProperty("isClosed","false"));
 				} catch (InvalidPropertiesFormatException e)
 				{
 					e.printStackTrace();
@@ -220,7 +224,9 @@ public class MainWindow extends ApplicationWindow
 
 			newStudyItem(projectTreeItem, name);
 		}
-		projectTreeItem.setExpanded(true);
+
+		TreeItemData tid = getTreeItemData(projectTreeItem);
+		projectTreeItem.setExpanded(!tid.settings.isClosed);
 	}
 
 	/**
@@ -452,11 +458,13 @@ public class MainWindow extends ApplicationWindow
 				tid.settings.annotationsFileName = getAssociationsFileString();
 				tid.settings.ontologyFileName = getDefinitionFileString();
 				tid.settings.mappingFileName = getMappingFileString();
+				tid.settings.isClosed = currentSelectedItem.getExpanded();
 
 				Properties prop = new Properties();
 				prop.setProperty("annotationsFileName",getAssociationsFileString());
 				prop.setProperty("ontologyFileName",getDefinitionFileString());
 				prop.setProperty("mappingFileName",getMappingFileString());
+				prop.setProperty("isClosed", Boolean.toString(tid.settings.isClosed));
 				try
 				{
 					FileOutputStream fos = new FileOutputStream(new File(tid.projectDirectory,PROJECT_SETTINGS_NAME));
@@ -1471,6 +1479,28 @@ public class MainWindow extends ApplicationWindow
 			{
 				storeGenes();
 				updateGenes();
+			}
+		});
+		workspaceTree.addTreeListener(new TreeListener()
+		{
+			public void treeExpanded(TreeEvent e)
+			{
+				TreeItemData tid = getTreeItemData((TreeItem) e.item);
+				if (tid != null && tid.isProjectFolder)
+				{
+					tid.settings.isClosed = false;
+					storeGenes();
+				}
+			}
+			
+			public void treeCollapsed(TreeEvent e)
+			{
+				TreeItemData tid = getTreeItemData((TreeItem) e.item);
+				if (tid != null && tid.isProjectFolder)
+				{
+					tid.settings.isClosed = true;
+					storeGenes();
+				}
 			}
 		});
 		workspaceTreeEditor = new TreeEditor(workspaceTree);
