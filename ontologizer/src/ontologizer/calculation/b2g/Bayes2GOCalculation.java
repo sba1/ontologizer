@@ -1,4 +1,4 @@
-package ontologizer.calculation;
+package ontologizer.calculation.b2g;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -25,6 +25,14 @@ import ontologizer.PopulationSet;
 import ontologizer.StudySet;
 import ontologizer.association.Association;
 import ontologizer.association.AssociationContainer;
+import ontologizer.calculation.AbstractGOTermProperties;
+import ontologizer.calculation.EnrichedGOTermsResult;
+import ontologizer.calculation.ICalculation;
+import ontologizer.calculation.ICalculationProgress;
+import ontologizer.calculation.ProbabilisticCalculation;
+import ontologizer.calculation.TermForTermCalculation;
+import ontologizer.calculation.TermForTermGOTermProperties;
+import ontologizer.calculation.b2g.B2GParam.Type;
 import ontologizer.go.GOGraph;
 import ontologizer.go.ParentTermID;
 import ontologizer.go.Term;
