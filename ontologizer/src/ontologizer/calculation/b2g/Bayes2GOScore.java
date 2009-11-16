@@ -183,7 +183,7 @@ abstract class Bayes2GOScore
 		}
 		
 		double score = getScore();
-		
+
 		/* Disable new terms */
 		for (TermID tid : activeTerms)
 		{
