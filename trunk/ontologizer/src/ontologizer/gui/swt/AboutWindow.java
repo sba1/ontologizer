@@ -31,10 +31,10 @@ import org.eclipse.swt.widgets.Display;
  */
 public class AboutWindow extends ApplicationWindow
 {
-	final static String aboutText = "Ontologizer\n\nVersion %s\nCopyright (c) Ontologizer Development Team 2005-2008. All rights reserved.";
+	final static String aboutText = "Ontologizer\n\nVersion %s\nCopyright (c) Ontologizer Development Team 2005-2009. All rights reserved.";
 	final static String visitText = "Visit %s for more information.";
 
-	final static String verisonText = "2.0";
+	final static String verisonText = "2.1";
 	final static String homepageText = "http://compbio.charite.de/ontologizer/";
 	
 	public AboutWindow(Display display)
