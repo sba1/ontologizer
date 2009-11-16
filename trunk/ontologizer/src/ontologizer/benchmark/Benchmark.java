@@ -32,6 +32,37 @@ import ontologizer.statistics.AbstractTestCorrection;
 import ontologizer.statistics.Bonferroni;
 import ontologizer.statistics.None;
 
+class GeneratedStudySet extends StudySet
+{
+	public double alpha;
+	public double beta;
+
+	public GeneratedStudySet(String name)
+	{
+		super(name);
+	}
+	
+	public void setAlpha(double alpha)
+	{
+		this.alpha = alpha;
+	}
+	
+	public void setBeta(double beta)
+	{
+		this.beta = beta;
+	}
+	
+	public double getAlpha()
+	{
+		return alpha;
+	}
+	
+	public double getBeta()
+	{
+		return beta;
+	}
+}
+
 /**
  * Main class responsible for performing benchmarks.
  * 
@@ -42,16 +73,16 @@ public class Benchmark
 	private static int NOISE_PERCENTAGE = 10;
 	private static int TERM_PERCENTAGE = 75;
 	private static double [] ALPHAs = new double[]{0.1,0.4};
-	private static double [] BETAs = new double[]{0.25,0.4};
+	private static double [] BETAs = new double[]{0.1,0.4};
 	private static boolean ORIGINAL_SAMPLING = false;
 	private static int MAX_TERMS = 5;
-	private static int TERMS_PER_RUN = 75;
+	private static int TERMS_PER_RUN = 50;
 	
 	/**
 	 * Senseful terms are terms that have an annotation proportion between 0.1
 	 * and 0.9
 	 */
-	private static int SENSEFUL_TERMS_PER_RUN = 75;
+	private static int SENSEFUL_TERMS_PER_RUN = 25;
 
 	private static AbstractTestCorrection testCorrection = new None();
 
@@ -62,6 +93,7 @@ public class Benchmark
 		public double alpha;
 		public double beta;
 		public boolean noPrior;
+		public boolean takePopulationAsReference;
 		public AbstractTestCorrection testCorrection;
 		
 		/** Number of desired terms */
@@ -94,8 +126,14 @@ public class Benchmark
 
 	static
 	{
+		Method m;
+
 		calcMethods = new ArrayList<Method>();
 		calcMethods.add(new Method("Bayes2GO","b2g.ideal"));
+		m = new Method("Bayes2GO","b2g.ideal.pop");
+		m.takePopulationAsReference = true;
+		calcMethods.add(m);
+		
 		for (double a : calcAlpha)
 		{
 			for (double b : calcBeta)
@@ -108,7 +146,7 @@ public class Benchmark
 			}
 		}
 		calcMethods.add(new Method("Term-For-Term","tft"));
-		Method m = new Method("Term-For-Term","tft.bf");
+		m = new Method("Term-For-Term","tft.bf");
 		m.testCorrection = new Bonferroni();
 		calcMethods.add(m);
 		calcMethods.add(new Method("Parent-Child-Union","pcu"));
@@ -118,7 +156,6 @@ public class Benchmark
 		m = new Method("Bayes2GO","b2g.em");
 		m.em = true;
 		calcMethods.add(m);
-
 		m = new Method("Bayes2GO","b2g.ideal.nop");
 		m.noPrior = true;
 		calcMethods.add(m);
@@ -296,6 +333,7 @@ GlobalPreferences.setProxyHost("realproxy.charite.de");
 
 											b2g.setSeed(rnd.nextLong());
 											b2g.setNoPrior(m.noPrior);
+											b2g.setTakePopulationAsReference(m.takePopulationAsReference);
 
 											double p;
 											
@@ -311,8 +349,16 @@ GlobalPreferences.setProxyHost("realproxy.charite.de");
 												} else
 												{
 													p = (double)m.dt / completePopEnumerator.getTotalNumberOfAnnotatedTerms();
-													b2g.setAlpha(m.alpha);
-													b2g.setBeta(m.beta);
+													
+													if (newStudySet instanceof GeneratedStudySet) {
+														GeneratedStudySet gs = (GeneratedStudySet) newStudySet;
+														b2g.setAlpha(gs.getAlpha());
+														b2g.setBeta(gs.getBeta());
+													} else
+													{
+														b2g.setAlpha(m.alpha);
+														b2g.setBeta(m.beta);
+													}
 													b2g.setP(p);
 												}
 											}
@@ -331,7 +377,7 @@ GlobalPreferences.setProxyHost("realproxy.charite.de");
 											{
 												pVals = new Double[calcMethods.size()];
 												for (int i=0;i<pVals.length;i++)
-													pVals[i] = 2.0;
+													pVals[i] = 1.0;
 												terms2PVal.put(p.goTerm.getID(), pVals);
 											}
 											pVals[mPos] = p.p_adjusted;
@@ -428,10 +474,11 @@ GlobalPreferences.setProxyHost("realproxy.charite.de");
 			ByteString[] allGenesArray, StudySetSampler sampler,
 			ArrayList<TermID> termCombi, double ALPHA, double BETA)
 	{
-		StudySet newStudySet;
 		/* Original variant */
 		if (ORIGINAL_SAMPLING)
 		{
+			StudySet newStudySet;
+
 			PercentageEnrichmentRule rule = new PercentageEnrichmentRule();
 			rule.setNoisePercentage(NOISE_PERCENTAGE);
 			for (TermID t : termCombi)
@@ -441,9 +488,13 @@ GlobalPreferences.setProxyHost("realproxy.charite.de");
 //								System.out.println("Studyset with ");
 //								for (TermID tid : termCombi)
 //									System.out.println("   " + df.graph.getGOTerm(tid).getName() + "  " + tid.toString());
+			return newStudySet;
 		} else
 		{
-			newStudySet = new StudySet("study");
+			double realAlpha;
+			double realBeta;
+
+			GeneratedStudySet newStudySet = new GeneratedStudySet("study");
 			
 			for (TermID t : termCombi)
 			{
@@ -475,10 +526,17 @@ GlobalPreferences.setProxyHost("realproxy.charite.de");
 			newStudySet.addGenes(fp);
 			newStudySet.removeGenes(fn);
 
+			realAlpha = ((double)fp.size())/tn;
+			realBeta = ((double)fn.size())/tp;
+
 			System.out.println("Number of genes in study set " + newStudySet.getGeneCount() + " " + termCombi.size() + " terms enriched");
-			System.out.println("Study set has " + fp.size() + " false positives (alpha=" + ((double)fp.size())/tn +")");
-			System.out.println("Study set misses " + fn.size() + " genes (beta=" + ((double)fn.size())/tp +")");
+			System.out.println("Study set has " + fp.size() + " false positives (alpha=" + realAlpha +")");
+			System.out.println("Study set misses " + fn.size() + " genes (beta=" + realBeta +")");
+
+			newStudySet.setAlpha(realAlpha);
+			newStudySet.setBeta(realBeta);
+
+			return newStudySet;
 		}
-		return newStudySet;
 	}
 }
