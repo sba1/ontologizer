@@ -29,9 +29,11 @@ import ontologizer.calculation.AbstractGOTermProperties;
 import ontologizer.calculation.EnrichedGOTermsResult;
 import ontologizer.calculation.ICalculation;
 import ontologizer.calculation.ICalculationProgress;
+import ontologizer.calculation.ParentChildCalculation;
 import ontologizer.calculation.ProbabilisticCalculation;
 import ontologizer.calculation.TermForTermCalculation;
 import ontologizer.calculation.TermForTermGOTermProperties;
+import ontologizer.calculation.TopologyWeightedCalculation;
 import ontologizer.calculation.b2g.B2GParam.Type;
 import ontologizer.go.GOGraph;
 import ontologizer.go.ParentTermID;
@@ -43,6 +45,7 @@ import ontologizer.parser.ItemAttribute;
 import ontologizer.parser.ValuedItemAttribute;
 import ontologizer.statistics.AbstractTestCorrection;
 import ontologizer.statistics.Bonferroni;
+import ontologizer.statistics.None;
 import ontologizer.worksets.WorkSet;
 import ontologizer.worksets.WorkSetLoadThread;
 
@@ -110,6 +113,7 @@ public class Bayes2GOCalculation implements ICalculation
 		if (alpha < 0.000001) alpha = 0.000001;
 		if (alpha > 0.999999) alpha = 0.999999;
 		this.alpha.setValue(alpha);
+//		this.alpha =  new DoubleParam(B2GParam.Type.MCMC);
 	}
 
 	/**
@@ -122,6 +126,7 @@ public class Bayes2GOCalculation implements ICalculation
 		if (beta < 0.000001) beta = 0.000001;
 		if (beta > 0.999999) beta = 0.999999;
 		this.beta.setValue(beta);
+//		this.beta =  new DoubleParam(B2GParam.Type.MCMC);
 	}
 
 	/**
@@ -761,7 +766,6 @@ public class Bayes2GOCalculation implements ICalculation
 //		Bayes2GOCalculation calc = new Bayes2GOCalculation();
 //		calc.setSeed(1);
 //		calc.setMcmcSteps(500000);
-//
 //		calc.setAlpha(realAlpha);
 //		calc.setBeta(realBeta);
 //		calc.setExpectedNumber(wantedActiveTerms.size());
@@ -789,7 +793,7 @@ public class Bayes2GOCalculation implements ICalculation
 			final GOTermEnumerator studySetEnumerator,
 			ICalculation calc)
 	{
-		final EnrichedGOTermsResult result = calc.calculateStudySet(graph, assoc, allGenes, newStudyGenes, new Bonferroni());
+		final EnrichedGOTermsResult result = calc.calculateStudySet(graph, assoc, allGenes, newStudyGenes, new None());
 
 		TermForTermCalculation tft = new TermForTermCalculation();
 		EnrichedGOTermsResult r2 = tft.calculateStudySet(graph, assoc, allGenes, newStudyGenes, new Bonferroni());
@@ -812,7 +816,7 @@ public class Bayes2GOCalculation implements ICalculation
 
 		System.out.println("We have a statement over a total of " + result.getSize() + " terms.");
 
-		/*** Calculate the score of the optimal term set ***/
+		/*** Calculate the score of the given term set ***/
 
 		if (calc instanceof Bayes2GOCalculation)
 		{
@@ -821,7 +825,7 @@ public class Bayes2GOCalculation implements ICalculation
 				Bayes2GOEnrichedGOTermsResult b2gResult = (Bayes2GOEnrichedGOTermsResult)result;
 				double wantedScore = b2gResult.getScore().score(wantedActiveTerms);
 //				if (!(((Bayes2GOCalculation)calc).noPrior)) wantedScore += wantedActiveTerms.size() * Math.log(p/(1.0-p));
-				System.out.println("Score of the optimal set is " + wantedScore);
+				System.out.println("Score of the given set is " + wantedScore);
 			}
 			pIsReverseMarginal = true;
 		}
