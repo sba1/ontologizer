@@ -46,7 +46,7 @@ class B2GTestParameter
 	static double ALPHA = 0.10;
 	static double BETA = 0.10;
 	static double BETA2 = 0.60;
-	static int MCMC_STEPS = 320000;
+	static int MCMC_STEPS = 520000;
 }
 
 
@@ -804,11 +804,14 @@ public class Bayes2GOCalculation implements ICalculation
 //		calc.setDefaultQ(realAlpha);
 
 //		TopologyWeightedCalculation calc = new TopologyWeightedCalculation();
-		TermForTermCalculation calc = new TermForTermCalculation();
+//		TermForTermCalculation calc = new TermForTermCalculation();
 //		ParentChildCalculation calc = new ParentChildCalculation();
-//		Bayes2GOCalculation calc = new Bayes2GOCalculation();
-//		calc.setSeed(1);
-//		calc.setMcmcSteps(500000);
+		Bayes2GOCalculation calc = new Bayes2GOCalculation();
+		calc.setSeed(1);
+		calc.setMcmcSteps(500000);
+		calc.setAlpha(B2GParam.Type.MCMC);
+		calc.setBeta(B2GParam.Type.MCMC);
+		calc.setExpectedNumber(B2GParam.Type.MCMC);
 //		calc.setAlpha(realAlpha);
 //		calc.setBeta(realBeta);
 //		calc.setExpectedNumber(wantedActiveTerms.size());
@@ -827,10 +830,10 @@ public class Bayes2GOCalculation implements ICalculation
 //		calc.setBeta(betaStudySet);
 
 
-		evaluate(wantedActiveTerms.keySet(), allGenes, newStudyGenes, allEnumerator, studySetEnumerator, calc);
+		evaluate(wantedActiveTerms, allGenes, newStudyGenes, allEnumerator, studySetEnumerator, calc);
 	}
 
-	private static void evaluate(final Set<TermID> wantedActiveTerms,
+	private static void evaluate(final HashMap<TermID,Double> wantedActiveTerms,
 			PopulationSet allGenes, StudySet newStudyGenes,
 			final GOTermEnumerator allEnumerator,
 			final GOTermEnumerator studySetEnumerator,
@@ -866,7 +869,7 @@ public class Bayes2GOCalculation implements ICalculation
 			if (result instanceof Bayes2GOEnrichedGOTermsResult)
 			{
 				Bayes2GOEnrichedGOTermsResult b2gResult = (Bayes2GOEnrichedGOTermsResult)result;
-				double wantedScore = b2gResult.getScore().score(wantedActiveTerms);
+				double wantedScore = b2gResult.getScore().score(wantedActiveTerms.keySet());
 //				if (!(((Bayes2GOCalculation)calc).noPrior)) wantedScore += wantedActiveTerms.size() * Math.log(p/(1.0-p));
 				System.out.println("Score of the given set is " + wantedScore);
 			}
@@ -900,8 +903,8 @@ public class Bayes2GOCalculation implements ICalculation
 			int rank = 1;
 			for (AbstractGOTermProperties prop : resultList)
 			{
-				if (wantedActiveTerms.contains(prop.goTerm.getID()))
-					System.out.println(" " + prop.goTerm.getIDAsString() + "/" + prop.goTerm.getName() + "   " + (/*1.0f - */prop.p_adjusted) + " rank=" + rank);
+				if (wantedActiveTerms.containsKey(prop.goTerm.getID()))
+					System.out.println(" " + prop.goTerm.getIDAsString() + "/" + prop.goTerm.getName() + "   " + (/*1.0f - */prop.p_adjusted) + " rank=" + rank + " beta=" + wantedActiveTerms.get(prop.goTerm.getID()));
 				rank++;
 			}
 
@@ -919,7 +922,7 @@ public class Bayes2GOCalculation implements ICalculation
 			}
 
 
-			terms.addAll(wantedActiveTerms);
+			terms.addAll(wantedActiveTerms.keySet());
 
 			GODOTWriter.writeDOT(graph, new File("toy-result.dot"), null, terms, new IDotNodeAttributesProvider()
 			{
@@ -933,7 +936,7 @@ public class Bayes2GOCalculation implements ICalculation
 						str.append(String.format("p(t)=%g\\n", /*1-*/result.getGOTermProperties(id).p_adjusted));
 					str.append(studySetEnumerator.getAnnotatedGenes(id).totalAnnotatedCount() + "/" + allEnumerator.getAnnotatedGenes(id).totalAnnotatedCount());
 					str.append("\"");
-					if (wantedActiveTerms.contains(id))
+					if (wantedActiveTerms.containsKey(id))
 					{
 						str.append("style=\"filled\" color=\"gray\"");
 					}
