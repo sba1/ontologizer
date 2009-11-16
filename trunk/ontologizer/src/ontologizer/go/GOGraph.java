@@ -158,6 +158,10 @@ public class GOGraph implements Iterable<Term>
 	/** The artificial root term */
 	private Term rootGOTerm;
 
+
+	/** Available subsets */
+	private HashSet <Subset> availableSubsets;
+
 	/**
 	 * Construct the GO Graph.
 	 * 
@@ -176,6 +180,9 @@ public class GOGraph implements Iterable<Term>
 		/* Now add the edges, i.e. link the terms */
 		for (Term term : goTermContainer)
 		{
+			for (Subset s : term.getSubsets())
+				availableSubsets.add(s);
+
 			for (ParentTermID parent : term.getParents())
 			{
 				/* Ignore loops */
@@ -248,6 +255,16 @@ public class GOGraph implements Iterable<Term>
 	public Term getRootGOTerm()
 	{
 		return rootGOTerm;
+	}
+
+	/**
+	 * Returns all available subsets.
+	 * 
+	 * @return
+	 */
+	public Collection<Subset> getAvailableSubsets()
+	{
+		return availableSubsets;
 	}
 
 	/**
@@ -859,5 +876,4 @@ public class GOGraph implements Iterable<Term>
 	{
 		return goTermContainer.iterator();
 	}
-	
 }
