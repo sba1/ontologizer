@@ -15,6 +15,8 @@ import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -689,6 +691,37 @@ public class FileCache
 
 	}
 
+	/**
+	 * Returns a formatted string that represents the time
+	 * at which the given URL was downloaded.
+	 * 
+	 * @param url
+	 * @return
+	 */
+	public static String getDownloadTime(String url)
+	{
+		synchronized (downloadHashMap)
+		{
+			FileState fs = getState(url);
+			if (fs == FileState.CACHED)
+			{
+				CachedFile cf = fileCache.get(url);
+				if (cf != null)
+				{
+					File f = new File(cf.cachedFilename);
+					long modTime = f.lastModified();
+					SimpleDateFormat sdf = new SimpleDateFormat();
+					Date date = new Date(modTime);
+					return sdf.format(date);
+					
+				}
+				return "Unknown";
+			}
+			
+			return getPathInfo(url);
+		}
+	}
+	
 	public static String getPathInfo(String url)
 	{
 		synchronized (downloadHashMap)
