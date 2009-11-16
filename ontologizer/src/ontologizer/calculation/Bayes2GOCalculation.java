@@ -719,19 +719,47 @@ public class Bayes2GOCalculation implements ICalculation
 		}
 		else rnd = new Random();
 
-		alpha = 0.4;
-		beta = 0.3;
-		p = 0.0001;
+		boolean doAlphaEm = false;
+		boolean doBetaEm = false;
+		boolean doPEm = false;
+		boolean doEm = false;
 
-		for (int i=0;i<10;i++)
+		int maxIter;
+
+		if (Double.isNaN(alpha))
+		{
+			alpha = 0.4;
+			doAlphaEm = true;
+			doEm = true;
+		}
+		if (Double.isNaN(beta))
+		{
+			beta = 0.4;
+			doBetaEm = true;
+			doEm = true;
+		}
+		if (p<0)
+		{
+			p = 1 / allTerms.size();
+			doPEm = true;
+			doEm = true;
+		}
+
+		if (doEm) maxIter = 10;
+		else maxIter = 1;
+
+		for (int i=0;i<maxIter;i++)
 		{
 //			VariableAlphaBetaScore bayesScore = new VariableAlphaBetaScore(rnd, allTerms, populationEnumerator, studySet.getAllGeneNames(), alpha, beta);
 			FixedAlphaBetaScore bayesScore = new FixedAlphaBetaScore(rnd, allTerms, populationEnumerator,  studySet.getAllGeneNames());
+
+			System.out.println(alpha + "  " + beta);
+
 			bayesScore.setAlpha(alpha);
 			bayesScore.setBeta(beta);
+			if (!noPrior) bayesScore.setP(p);
 
 			result.setScore(bayesScore);
-			if (!noPrior) bayesScore.setP(p);
 
 			int maxSteps = 320000;
 			int burnin = 20000;
@@ -802,33 +830,44 @@ public class Bayes2GOCalculation implements ICalculation
 					bayesScore.record();
 			}
 
-			System.out.println(bayesScore.getAvgN10() +  "   " + bayesScore.getAvgN00() + "  " + bayesScore.getAvgN10());
-			double newAlpha = (double)bayesScore.getAvgN10()/(bayesScore.getAvgN00() + bayesScore.getAvgN10());
-			System.out.println("alpha=" + alpha + "  newAlpha=" + newAlpha);
-			alpha = newAlpha;
-
-			double newBeta = (double)bayesScore.getAvgN01()/(bayesScore.getAvgN01() + bayesScore.getAvgN00());
-			System.out.println("beta=" + beta + "  newBeta=" + newBeta);
-			beta = newBeta;
-
-			double newP = (double)bayesScore.getAvgT() / bayesScore.termsArray.length;
-			System.out.println("p=" + p + "  newP=" + newP);
-			p = newP;
-
-			if (i==9)
-			for (TermID t : allTerms)
+			if (doAlphaEm)
 			{
-				TermForTermGOTermProperties prop = new TermForTermGOTermProperties();
-				prop.ignoreAtMTC = true;
-				prop.goTerm = graph.getGOTerm(t);
-				prop.annotatedStudyGenes = studyEnumerator.getAnnotatedGenes(t).totalAnnotatedCount();
-				prop.annotatedPopulationGenes = populationEnumerator.getAnnotatedGenes(t).totalAnnotatedCount();
+				System.out.println(bayesScore.getAvgN10() +  "   " + bayesScore.getAvgN00() + "  " + bayesScore.getAvgN10());
+				double newAlpha = (double)bayesScore.getAvgN10()/(bayesScore.getAvgN00() + bayesScore.getAvgN10());
+				System.out.println("alpha=" + alpha + "  newAlpha=" + newAlpha);
+				alpha = newAlpha;
+			}
 
-				/* We reverse the probability as the framework assumes that low p values are important */
-				prop.p = 1 - ((double)bayesScore.termActivationCounts[bayesScore.term2TermsIdx.get(t)] / bayesScore.numRecords);
-				prop.p_adjusted = prop.p;
-				prop.p_min = 0.001;
-				result.addGOTermProperties(prop);
+			if (doBetaEm)
+			{
+				double newBeta = (double)bayesScore.getAvgN01()/(bayesScore.getAvgN01() + bayesScore.getAvgN00());
+				System.out.println("beta=" + beta + "  newBeta=" + newBeta);
+				beta = newBeta;
+			}
+
+			if (doPEm)
+			{
+				double newP = (double)bayesScore.getAvgT() / bayesScore.termsArray.length;
+				System.out.println("p=" + p + "  newP=" + newP);
+				p = newP;
+			}
+
+			if (i==maxIter - 1)
+			{
+				for (TermID t : allTerms)
+				{
+					TermForTermGOTermProperties prop = new TermForTermGOTermProperties();
+					prop.ignoreAtMTC = true;
+					prop.goTerm = graph.getGOTerm(t);
+					prop.annotatedStudyGenes = studyEnumerator.getAnnotatedGenes(t).totalAnnotatedCount();
+					prop.annotatedPopulationGenes = populationEnumerator.getAnnotatedGenes(t).totalAnnotatedCount();
+
+					/* We reverse the probability as the framework assumes that low p values are important */
+					prop.p = 1 - ((double)bayesScore.termActivationCounts[bayesScore.term2TermsIdx.get(t)] / bayesScore.numRecords);
+					prop.p_adjusted = prop.p;
+					prop.p_min = 0.001;
+					result.addGOTermProperties(prop);
+				}
 			}
 
 			System.out.println("numAccepts=" + numAccepts + "  numRejects = " + numRejects);
@@ -1097,6 +1136,8 @@ public class Bayes2GOCalculation implements ICalculation
 //		calc.setNoPrior(true);
 		calc.setP(p);
 		calc.setSeed(1);
+//		calc.setAlpha(alphaStudySet);
+//		calc.setBeta(betaStudySet * 2);
 
 		evaluate(wantedActiveTerms, allGenes, newStudyGenes, allEnumerator, studySetEnumerator, calc, p);
 	}

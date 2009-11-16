@@ -11,8 +11,6 @@ import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.eclipse.swt.widgets.Combo;
-
 import ontologizer.ByteString;
 import ontologizer.GOTermEnumerator;
 import ontologizer.GlobalPreferences;
@@ -67,6 +65,8 @@ public class Benchmark
 		/** Number of desired terms */
 		public int dt;
 
+		public boolean em;
+
 		public Method(String m, String a)
 		{
 			method = m;
@@ -77,6 +77,7 @@ public class Benchmark
 		{
 			method = m;
 			abbrev = a;
+
 			this.alpha = alpha;
 			this.beta = beta;
 			this.dt = dt;
@@ -85,9 +86,9 @@ public class Benchmark
 	}
 
 	static ArrayList<Method> calcMethods;
-	static double [] calcAlpha = new double[]{0.05,0.1,0.25,0.5};
-	static double [] calcBeta = new double[]{0.05,0.1,0.25,0.5};
-	static int [] calcDesiredTerms = new int []{1,2,4,6,8};
+	static double [] calcAlpha = new double[]{/*0.05,0.1,0.25,*/0.5};
+	static double [] calcBeta = new double[]{/*0.05,0.1,0.25,*/0.5};
+	static int [] calcDesiredTerms = new int []{1/*,2,4,6,8*/};
 
 	static
 	{
@@ -109,7 +110,11 @@ public class Benchmark
 		calcMethods.add(new Method("Probabilistic","pb"));
 		calcMethods.add(new Method("Topology-Weighted","tweight"));
 
-		Method m = new Method("Bayes2GO","b2g.ideal.nop");
+		Method m = new Method("Bayes2GO","b2g.em");
+		m.em = true;
+		calcMethods.add(m);
+
+		m = new Method("Bayes2GO","b2g.ideal.nop");
 		m.noPrior = true;
 		calcMethods.add(m);
 	}
@@ -272,7 +277,10 @@ GlobalPreferences.setProxyHost("realproxy.charite.de");
 
 								if (calc instanceof Bayes2GOCalculation)
 								{
+									/* Set some parameter */
 									Bayes2GOCalculation b2g = (Bayes2GOCalculation) calc;
+									calc = b2g = new Bayes2GOCalculation(b2g);
+
 									b2g.setSeed(rnd.nextLong());
 									b2g.setNoPrior(m.noPrior);
 
