@@ -39,12 +39,14 @@ public class PreferencesWindow extends ApplicationWindow
 
 	private Spinner alphaSpinner;
 	private Button alphaAutoButton;
+	private Spinner upperAlphaSpinner;
 	private Spinner betaSpinner;
 	private Button betaAutoButton;
+	private Spinner upperBetaSpinner;
 	private Spinner expectedNumberSpinner;
 	private Button expectedNumberAutoButton;
 	private Spinner mcmcStepsSpinner;
-	private final static int ALPHA_BETA_DIGITS = 4;
+	private final static int ALPHA_BETA_DIGITS = 2;
 
 	/**
 	 * Constructor.
@@ -77,7 +79,7 @@ public class PreferencesWindow extends ApplicationWindow
 		dotFileComposite.setLabel("DOT command");
 
 		Label wrapLabel = new Label(composite,0);
-		wrapLabel.setText("Wrap GO Names");
+		wrapLabel.setText("Wrap GO names");
 		wrapLabel.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL|GridData.HORIZONTAL_ALIGN_END|GridData.VERTICAL_ALIGN_CENTER));
 
 		Composite wrapComposite = new Composite(composite,0);
@@ -142,6 +144,18 @@ public class PreferencesWindow extends ApplicationWindow
 				}
 			});
 
+			Label upperAlphaLabel = new Label(composite,0);
+			upperAlphaLabel.setText("Upper bound for alpha");
+			upperAlphaLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+			upperAlphaSpinner = new Spinner(composite,SWT.BORDER);
+			upperAlphaSpinner.setLayoutData(new GridData(SWT.FILL,0,true,false,1,1));
+			upperAlphaSpinner.setMinimum(1);
+			upperAlphaSpinner.setMaximum(100*(int)Math.pow(10, ALPHA_BETA_DIGITS));
+			upperAlphaSpinner.setSelection(100*(int)Math.pow(10, ALPHA_BETA_DIGITS));
+			upperAlphaSpinner.setDigits(ALPHA_BETA_DIGITS);
+			upperAlphaSpinner.setEnabled(true);
+			new Label(composite,0);
+
 			Label betaLabel = new Label(composite,0);
 			betaLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 			betaLabel.setText("Beta (in percent)");
@@ -164,8 +178,21 @@ public class PreferencesWindow extends ApplicationWindow
 				}
 			});
 
+			Label upperBetaLabel = new Label(composite,0);
+			upperBetaLabel.setText("Upper bound for beta");
+			upperBetaLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+			upperBetaSpinner = new Spinner(composite,SWT.BORDER);
+			upperBetaSpinner.setLayoutData(new GridData(SWT.FILL,0,true,false,1,1));
+			upperBetaSpinner.setMinimum(1);
+			upperBetaSpinner.setMaximum(100*(int)Math.pow(10, ALPHA_BETA_DIGITS));
+			upperBetaSpinner.setSelection(100*(int)Math.pow(10, ALPHA_BETA_DIGITS));
+			upperBetaSpinner.setDigits(ALPHA_BETA_DIGITS);
+			upperBetaSpinner.setEnabled(true);
+			new Label(composite,0);
+
 			Label priorLabel = new Label(composite,0);
 			priorLabel.setText("Expected number of terms");
+			priorLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 			expectedNumberSpinner = new Spinner(composite,SWT.BORDER);
 			expectedNumberSpinner.setLayoutData(new GridData(SWT.FILL,0,true,false,1,1));
 			expectedNumberSpinner.setMinimum(1);
@@ -186,13 +213,12 @@ public class PreferencesWindow extends ApplicationWindow
 
 			Label mcmcStepsLabel = new Label(composite,0);
 			mcmcStepsLabel.setText("Number of steps for MCMC");
+			mcmcStepsLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 			mcmcStepsSpinner = new Spinner(composite,SWT.BORDER);
+			mcmcStepsSpinner.setLayoutData(new GridData(SWT.FILL,0,true,false,1,1));
 			mcmcStepsSpinner.setMaximum(2000000);
 			mcmcStepsSpinner.setSelection(500000);
 			new Label(composite,0);
-
-
-
 		}
 
 		/* Button composite */
@@ -233,6 +259,8 @@ public class PreferencesWindow extends ApplicationWindow
 			dotFileComposite.setPath(GlobalPreferences.getDOTPath());
 			permutationSpinner.setSelection(GlobalPreferences.getNumberOfPermutations());
 			portSpinner.setSelection(GlobalPreferences.getProxyPort());
+			upperAlphaSpinner.setSelection((int)(GlobalPreferences.getUpperAlpha() * Math.pow(10, ALPHA_BETA_DIGITS) * 100));
+			upperBetaSpinner.setSelection((int)(GlobalPreferences.getUpperBeta() * Math.pow(10, ALPHA_BETA_DIGITS) * 100 ));
 
 			int wc = GlobalPreferences.getWrapColumn();
 			if (wc == -1)
@@ -351,6 +379,11 @@ public class PreferencesWindow extends ApplicationWindow
 		return Double.NaN;
 	}
 
+	public double getUpperAlpha()
+	{
+		return upperAlphaSpinner.getSelection() / Math.pow(10, ALPHA_BETA_DIGITS) / 100.0;
+	}
+
 	/**
 	 * Returns the selected beta.
 	 *
@@ -364,6 +397,11 @@ public class PreferencesWindow extends ApplicationWindow
 		if (betaSpinner != null)
 			return betaSpinner.getSelection() / Math.pow(10, ALPHA_BETA_DIGITS) / 100.0;
 		return 0.1;
+	}
+
+	public double getUpperBeta()
+	{
+		return upperBetaSpinner.getSelection() / Math.pow(10, ALPHA_BETA_DIGITS) / 100.0;
 	}
 
 	public int getExpectedNumberOfTerms()
