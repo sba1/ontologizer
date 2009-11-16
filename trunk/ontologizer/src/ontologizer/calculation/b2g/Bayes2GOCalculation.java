@@ -287,6 +287,7 @@ public class Bayes2GOCalculation implements ICalculation
 
 
 		Bayes2GOEnrichedGOTermsResult result = new Bayes2GOEnrichedGOTermsResult(graph,goAssociations,studySet,populationSet.getGeneCount());
+		result.setCalculationName(this.getName());
 
 		GOTermEnumerator populationEnumerator = populationSet.enumerateGOTerms(graph, goAssociations);
 		GOTermEnumerator studyEnumerator = studySet.enumerateGOTerms(graph, goAssociations);
