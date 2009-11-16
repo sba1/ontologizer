@@ -888,4 +888,22 @@ public class GOGraph implements Iterable<Term>
 	{
 		return goTermContainer.iterator();
 	}
+
+	/**
+	 * Sets the relevant subset.
+	 *
+	 * @param subsetName
+	 */
+	public void selectRelevantSubset(String subsetName)
+	{
+	}
+
+	/**
+	 * Sets the relevant subontology.
+	 *
+	 * @param subontologyName
+	 */
+	public void selectRelevantSubontology(String subontologyName)
+	{
+	}
 }

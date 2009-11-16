@@ -40,6 +40,8 @@ public class AnalyseThread extends AbstractOntologizerThread
 	private String mappingFile;
 	private String methodName;
 	private String mtcName;
+	private String subsetName;
+	private String subontologyName;
 	private PopulationSet populationSet;
 	private StudySetList studySetList;
 	private int numberOfPermutations;
@@ -47,7 +49,10 @@ public class AnalyseThread extends AbstractOntologizerThread
 	private double alpha, beta;
 	private int expectedNumber;
 
-	public AnalyseThread(Display display, Runnable calledWhenFinished, ResultWindow result, String definitionFile, String associationsFile, String mappingFile, PopulationSet populationSet, StudySetList studySetList, String methodName, String mtcName, int noP, double alpha, double beta, int expectedNumber)
+	public AnalyseThread(Display display, Runnable calledWhenFinished, ResultWindow result,
+			String definitionFile, String associationsFile, String mappingFile, PopulationSet populationSet, StudySetList studySetList,
+			String methodName, String mtcName, String subsetName, String subontologyName,
+			int noP, double alpha, double beta, int expectedNumber)
 	{
 		super("Analyze Thread",calledWhenFinished,display,result);
 
@@ -58,6 +63,9 @@ public class AnalyseThread extends AbstractOntologizerThread
 		this.studySetList = studySetList;
 		this.methodName = methodName;
 		this.mtcName = mtcName;
+		this.subsetName = subsetName;
+		this.subontologyName = subontologyName;
+
 		this.numberOfPermutations = noP;
 		this.alpha = alpha;
 		this.beta = beta;
@@ -204,6 +212,8 @@ public class AnalyseThread extends AbstractOntologizerThread
 			display.asyncExec(new ResultAppendLogRunnable("Building GO graph"));
 			TermContainer goTerms = new TermContainer(oboParser.getTermMap(), oboParser.getFormatVersion(), oboParser.getDate());
 			GOGraph goGraph = new GOGraph(goTerms);
+			if (subsetName != null) goGraph.selectRelevantSubset(subsetName);
+			if (subontologyName != null) goGraph.selectRelevantSubontology(subontologyName);
 
 			if (mappingFile != null)
 			{

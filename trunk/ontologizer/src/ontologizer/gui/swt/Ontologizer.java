@@ -265,6 +265,7 @@ public class Ontologizer
 				final Thread newThread = new AnalyseThread(display,calledWhenFinished,
 						result,defintionFile,associationsFile,mappingFile,
 						populationSet,studySetList,methodName,mtcName,
+						subsetName,subontologyName,
 						GlobalPreferences.getNumberOfPermutations(),
 						prefs.getAlpha(),prefs.getBeta(),prefs.getExpectedNumberOfTerms());
 				result.addCloseAction(new ISimpleAction(){public void act()
