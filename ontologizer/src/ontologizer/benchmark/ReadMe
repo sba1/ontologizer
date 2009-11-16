@@ -1,0 +1,4 @@
+This package adheres to the simulation procedure described in the paper.
+While Benchmark.java actually contains the all the code necessary to run
+the simulation, benchmark.R is a simply R script to produce the figures in
+the paper.
