@@ -348,6 +348,9 @@ public class ProbabilisticCalculation implements ICalculation
 		EnrichedGOTermsResult results = tftc.calculateStudySet(graph, goAssociations, populationSet, studySet, testCorrection);
 
 		/* Merge results and flag all inactive terms as insignificant */
+		
+		System.out.println("Found " + data.activeTerms.size() + " terms");
+		
 		for (AbstractGOTermProperties prop : results)
 		{
 			if (!data.activeTerms.contains(prop.goTerm.getID()))
