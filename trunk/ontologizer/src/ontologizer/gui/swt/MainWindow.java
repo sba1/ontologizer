@@ -1840,4 +1840,14 @@ public class MainWindow extends ApplicationWindow
 	{
 		return settingsComposite.getSelectedWorkset();
 	}
+
+	public String getSubontologyString()
+	{
+		return settingsComposite.getSubontologyString();
+	}
+
+	public String getSubsetString()
+	{
+		return settingsComposite.getSubsetString();
+	}
 }
