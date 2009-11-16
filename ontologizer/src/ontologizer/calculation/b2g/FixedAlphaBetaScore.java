@@ -74,6 +74,8 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 	{
 		int span;
 
+		if (Double.isNaN(maxAlpha)) maxAlpha = 1;
+
 		if (maxAlpha < 0.01) maxAlpha = 0.01;
 		if (maxAlpha > 0.99999999) span = 20;
 		else span = 19;
@@ -90,6 +92,8 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 	{
 		int span;
 		
+		if (Double.isNaN(maxBeta)) maxBeta = 1;
+
 		if (maxBeta < 0.01) maxBeta = 0.01;
 		if (maxBeta > 0.99999999) span = 20;
 		else span = 19;

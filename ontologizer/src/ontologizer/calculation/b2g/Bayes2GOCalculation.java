@@ -426,9 +426,11 @@ public class Bayes2GOCalculation implements ICalculation
 			}
 
 			bayesScore.setAlpha(alpha);
-			bayesScore.setMaxAlpha(this.alpha.getMax());
+			if (this.alpha.hasMax())
+				bayesScore.setMaxAlpha(this.alpha.getMax());
 			bayesScore.setBeta(beta);
-			bayesScore.setMaxBeta(this.beta.getMax());
+			if (this.beta.hasMax())
+				bayesScore.setMaxBeta(this.beta.getMax());
 			bayesScore.setExpectedNumberOfTerms(expectedNumberOfTerms);
 			bayesScore.setUsePrior(usePrior);
 
@@ -902,15 +904,13 @@ public class Bayes2GOCalculation implements ICalculation
 //		calc.setDefaultQ(realAlpha);
 		
 //		TopologyWeightedCalculation calc = new TopologyWeightedCalculation();
-		TermForTermCalculation calc = new TermForTermCalculation();
+//		TermForTermCalculation calc = new TermForTermCalculation();
 //		ParentChildCalculation calc = new ParentChildCalculation();
-//		Bayes2GOCalculation calc = new Bayes2GOCalculation();
+		Bayes2GOCalculation calc = new Bayes2GOCalculation();
 //		calc.setSeed(2); /* Finds a optimum */
 //		calc.setSeed(3); /* with basement membrane, score 6826.695 */
 //		calc.setSeed(4); /* Optimum, score 6826.039 */
 
-//		calc.setSeed(121);
-//		calc.setMcmcSteps(50000);
 ////		calc.setAlpha(B2GParam.Type.MCMC);
 ////		calc.setBeta(B2GParam.Type.MCMC);
 ////		calc.setExpectedNumber(B2GParam.Type.MCMC);
@@ -918,10 +918,10 @@ public class Bayes2GOCalculation implements ICalculation
 //		calc.setBeta(realBeta);
 //		calc.setExpectedNumber(wantedActiveTerms.size());
 
-//		calc.setMcmcSteps(500000);
-//		calc.setAlpha(B2GParam.Type.MCMC);
-//		calc.setBeta(B2GParam.Type.MCMC);
-//		calc.setExpectedNumber(B2GParam.Type.MCMC);
+		calc.setMcmcSteps(520000);
+		calc.setAlpha(B2GParam.Type.MCMC);
+		calc.setBeta(B2GParam.Type.MCMC);
+		calc.setExpectedNumber(B2GParam.Type.MCMC);
 
 //		calc.setAlpha(B2GParam.Type.EM);
 //		calc.setBeta(B2GParam.Type.EM);
