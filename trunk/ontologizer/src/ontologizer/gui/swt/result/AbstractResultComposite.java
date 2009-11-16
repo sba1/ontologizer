@@ -226,6 +226,12 @@ public abstract class AbstractResultComposite extends Composite
 		checkedTerms.remove(tid);
 	}
 
+	/**
+	 * Returns whether the given term is checked.
+	 *
+	 * @param tid
+	 * @return
+	 */
 	protected boolean isCheckedTerm(TermID tid)
 	{
 		return checkedTerms.contains(tid);
@@ -234,6 +240,16 @@ public abstract class AbstractResultComposite extends Composite
 	protected Collection<TermID> getCheckedTermsCollection()
 	{
 		return checkedTerms;
+	}
+
+	/**
+	 * Returns the number of checked terms.
+	 *
+	 * @return
+	 */
+	protected int getNumberOfCheckedTerms()
+	{
+		return checkedTerms.size();
 	}
 
 
