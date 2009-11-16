@@ -90,9 +90,10 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 	private static final int NAMESPACE = 3;
 	private static final int PVAL = 4;
 	private static final int ADJPVAL = 5;
-	private static final int POP = 6;
-	private static final int STUDY = 7;
-	private static final int LAST = 8;
+	private static final int RANK = 6;
+	private static final int POP = 7;
+	private static final int STUDY = 8;
+	private static final int LAST = 9;
 
 	/* Texts */
 	private static String NOBROWSER_TOOLTIP = "The SWT browser widget could not " +
@@ -219,6 +220,19 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 			case	ACTIVITY: Arrays.sort(props, getCheckedComparator(direction)); break;
 			case	GOID: Arrays.sort(props, new GOIDComparator(direction)); break;
 			case	NAME: Arrays.sort(props, new GONameComparator(direction)); break;
+
+			case	RANK:
+					Arrays.sort(props, new Comparator<AbstractGOTermProperties>(){
+						public int compare(AbstractGOTermProperties o1, AbstractGOTermProperties o2)
+						{
+							int r;
+
+							r = termID2PValueRank.get(o1.goTerm.getID()) - termID2PValueRank.get(o2.goTerm.getID());
+
+							r *= direction;
+							return r;
+						}});
+					break;
 
 			case	ADJPVAL:
 					Arrays.sort(props, new Comparator<AbstractGOTermProperties>(){
@@ -721,6 +735,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 					item.setText(NAME, prop.goTerm.getName());
 					item.setText(NAMESPACE,prop.goTerm.getNamespaceAsAbbrevString());
 					item.setText(PVAL,String.format("%.3g",prop.p));
+					item.setText(RANK,termID2PValueRank.get(prop.goTerm.getID()).toString());
 					item.setText(ADJPVAL,String.format("%.3g",prop.p_adjusted));
 					item.setText(POP,Integer.toString(prop.annotatedPopulationGenes));
 					item.setText(STUDY,Integer.toString(prop.annotatedStudyGenes));
@@ -755,6 +770,9 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 		columns[ADJPVAL].setText("Adj. P-Value");
 		columns[ADJPVAL].setToolTipText("Adjusted P-Value");
 		columns[ADJPVAL].setAlignment(SWT.RIGHT);
+		columns[RANK].setText("Rank");
+		columns[RANK].setToolTipText("The rank of the term in the list");
+		columns[RANK].setAlignment(SWT.RIGHT);
 		columns[POP].setText("Pop. Count");
 		columns[POP].setAlignment(SWT.RIGHT);
 		columns[POP].setToolTipText("Number of entries within the population set annotated to the term");
