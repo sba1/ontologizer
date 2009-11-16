@@ -13,7 +13,6 @@ d<-subset(d,d$term!=0)
 #result.files<-c("result-Term-For-Term-fp.txt",
 #		        "result-Parent-Child-Union-fp.txt",
 #				"result-Bayes2GO-fp.txt")
-
 #for (filename in result.files)
 #{
 #	is.bayes<-length(grep("Bayes",filename))
@@ -92,7 +91,7 @@ decode.parameter.setting<-function(name)
 #
 # Draw some performance plots
 #
-plot.roc<-function(d,alpha=NA,beta=NA,calc.auc=F,y.axis="tpr",x.axis="fpr",legend.place="bottomright",rocn=NA)
+plot.roc<-function(d,alpha=NA,beta=NA,calc.auc=F,y.axis="tpr",x.axis="fpr",xlim=c(0,1),ylim=c(0,1),legend.place="bottomright",rocn=NA)
 {
 	nruns<-length(unique(d$run))
 	
@@ -129,7 +128,7 @@ plot.roc<-function(d,alpha=NA,beta=NA,calc.auc=F,y.axis="tpr",x.axis="fpr",legen
 #                    "p.tft.bf","Term for Term: BF",
 #				    "p.pcu", "Parent Child",
 #				    "p.tweight","Topology Weighted",
-#					"p.pb", "Probabilistic (Lu et al.)",
+#					"p.pb", "GenGO",
 #					"p.b2g.ideal", "B2G: Ideal",
 #					"p.b2g.ideal.pop", "B2G: Ideal, PaR",
 #					"p.b2g.em", "B2G: EM",
@@ -141,12 +140,12 @@ plot.roc<-function(d,alpha=NA,beta=NA,calc.auc=F,y.axis="tpr",x.axis="fpr",legen
 	              c("p.tft","Term for Term",
 				    "p.pcu", "Parent Child",
 				    "p.tweight","Topology Weighted",
-					"p.pb", "Probabilistic (Lu et al.)",
+					"p.pb", "GenGO",
 #					"p.b2g.ideal", "B2G: Ideal",
 					"p.b2g.ideal.pop", "B2G: Known Parameter",
 #					"p.b2g.mcmc", "B2G: MCMC",
-					"p.b2g.mcmc.pop", "B2G: Unknown Parameter"
-#					"p.b2g.ideal.pop.nop", "B2G: No Prior, Unknown"
+					"p.b2g.mcmc.pop", "B2G: Unknown Parameter",
+					"p.b2g.ideal.pop.nop", "B2G: No Prior, Known Parameter"
 	               ))
 
 	colnames(v)<-c("short","full")
@@ -163,17 +162,43 @@ plot.roc<-function(d,alpha=NA,beta=NA,calc.auc=F,y.axis="tpr",x.axis="fpr",legen
 		{
 			d.by.run<-split(d,d$run)
 
-			d.new<-lapply(d.by.run,function(d2)
+			avg.rocn<-mean(sapply(d.by.run,function(d2)
 			{
 				values2<-d2[,v[i,1]]
 			
 				o<-order(values2,decreasing=F)
-				cut.of<-which(d2[o,]$label==0)[rocn]
+				negatives.idx<-which(d2[o,]$label==0)
+				total.t<-length(which(d2[o,]$label==1))
+				
+				r.n<-sum(sapply(1:rocn,function(j)
+				{
+					return(negatives.idx[j]-j)
+				}))
+				
+				roc.value<- 1.0 / rocn / total.t * r.n
+				
+				return (roc.value)
+			}))
+
+			d.new<-lapply(d.by.run,function(d2)
+			{
+				values2<-d2[,v[i,1]]
+			
+				o<-order(values2,decreasing=F)				
+#
+#				AFAIU that would be the true rocn
+#               But it is unfair, as the number of entries would differ
+#
+#				cut.of<-which(d2[o,]$label==0)[rocn]
+				cut.of<-rocn
 				return(d2[o,][1:cut.of,])
 			})
 			d.new<-do.call(rbind,d.new) # merge the lists
-			values<-d.new[,v[i,1]]
-			labels<-d.new$label
+			print(sprintf("%s: %d %f (alpha=%f, beta=%f)",v[i,2],nrow(d.new) - length(d.by.run)*rocn,avg.rocn,alpha,beta))
+
+## We don't want to plot these "ROCs"
+#			values<-d.new[,v[i,1]]
+#			labels<-d.new$label
 		}
 	
 		pred<-prediction(1-values,labels)
@@ -194,11 +219,11 @@ plot.roc<-function(d,alpha=NA,beta=NA,calc.auc=F,y.axis="tpr",x.axis="fpr",legen
 
 		if (i==1)
 		{
-			plot(perf, col=colors[i],pch=pchs[i],downsampling=200, type="l", ylim=c(0,1),xlim=c(0,1),main=sprintf("Comparison (alpha=%g,beta=%g)",alpha,beta))
+			plot(perf, col=colors[i],pch=pchs[i],downsampling=300, type="l", ylim=ylim,xlim=xlim,main=sprintf("Comparison (alpha=%g,beta=%g)",alpha,beta))
 			plot(perf, col=colors[i],pch=pchs[i],downsampling=25, type="p", add=TRUE)
 		} else
 		{
-			plot(perf, col=colors[i],pch=pchs[i],downsampling=200, type="l", add=TRUE)
+			plot(perf, col=colors[i],pch=pchs[i],downsampling=300, type="l", add=TRUE)
 			plot(perf, col=colors[i],pch=pchs[i],downsampling=25, type="p", add=TRUE)
 		}		
 	}
@@ -232,14 +257,14 @@ lapply(s,function(d) {
 	filename<-sprintf("result-roc-a%d-b%d.pdf",alpha*100,beta*100)
 	pdf(file=filename,height=9,width=9)
 	par(cex=1.3,cex.main=1.2,lwd=2)
-	plot.roc(d,alpha,beta,calc.auc=T)
+	plot.roc(subset(d,d$senseful==0),alpha,beta,calc.auc=T,rocn=10)
 	dev.off()
 
-#	filename<-sprintf("result-roc-a%d-b%d-senseful.pdf",alpha*100,beta*100)
-#	pdf(file=filename,height=9,width=9)
-#	par(cex=1.3,cex.main=1.2,lwd=2)
-#	plot.roc(subset(d,d$senseful==1),alpha,beta,calc.auc=T)
-#	dev.off()
+	filename<-sprintf("result-roc-a%d-b%d-senseful.pdf",alpha*100,beta*100)
+	pdf(file=filename,height=9,width=9)
+	par(cex=1.3,cex.main=1.2,lwd=2)
+	plot.roc(subset(d,d$senseful==1),alpha,beta,calc.auc=T,rocn=10)
+	dev.off()
 
 #	filename<-sprintf("result-roc-a%d-b%d-no-restriction.pdf",alpha*100,beta*100)
 #	pdf(file=filename,height=9,width=9)
@@ -259,14 +284,14 @@ lapply(s,function(d) {
 	filename<-sprintf("result-precall-a%d-b%d.pdf",alpha*100,beta*100)
 	pdf(file=filename,height=9,width=9)
 	par(cex=1.3,cex.main=1.2,lwd=2)
-	plot.roc(d,alpha,beta,y.axis="prec",x.axis="rec",legend.place="topright")
+	plot.roc(subset(d,d$senseful==0),alpha,beta,y.axis="prec",x.axis="rec",legend.place="topright")
 	dev.off()
 
-#	filename<-sprintf("result-precall-a%d-b%d-senseful.pdf",alpha*100,beta*100)
-#	pdf(file=filename,height=9,width=9)
-#	par(cex=1.3,cex.main=1.2,lwd=2)
-#	plot.roc(subset(d,d$senseful==1),alpha,beta,y.axis="prec",x.axis="rec",legend.place="topright")
-#	dev.off()
+	filename<-sprintf("result-precall-a%d-b%d-senseful.pdf",alpha*100,beta*100)
+	pdf(file=filename,height=9,width=9)
+	par(cex=1.3,cex.main=1.2,lwd=2)
+	plot.roc(subset(d,d$senseful==1),alpha,beta,y.axis="prec",x.axis="rec",legend.place="topright")
+	dev.off()
 
 #	filename<-sprintf("result-precall-a%d-b%d-no-restriction.pdf",alpha*100,beta*100)
 #	pdf(file=filename,height=9,width=9)
@@ -277,18 +302,17 @@ lapply(s,function(d) {
 
 
 #
-# ROC50
+# ROCn
 #
-
 lapply(s,function(d) {
 
 	alpha<-unique(d$alpha)
 	beta<-unique(d$beta)
 
-	filename<-sprintf("result-roc5-a%d-b%d.pdf",alpha*100,beta*100)
+	filename<-sprintf("result-roc50-a%d-b%d.pdf",alpha*100,beta*100)
 	pdf(file=filename,height=9,width=9)
 	par(cex=1.3,cex.main=1.2,lwd=2)
-	plot.roc(d,alpha,beta,calc.auc=T,rocn=5)
+	plot.roc(d,alpha,beta,calc.auc=T,rocn=50)
 	dev.off()
 });
 
