@@ -9,10 +9,8 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 import java.util.Map.Entry;
 
-import ontologizer.AbstractStudySetResult;
 import ontologizer.ByteString;
 import ontologizer.FileCache;
 import ontologizer.GODOTWriter;
@@ -31,9 +29,61 @@ import ontologizer.go.TermID;
 import ontologizer.go.TermRelation;
 import ontologizer.statistics.AbstractTestCorrection;
 import ontologizer.statistics.Bonferroni;
-import ontologizer.statistics.None;
 import ontologizer.worksets.WorkSet;
 import ontologizer.worksets.WorkSetLoadThread;
+
+/**
+ * The base class of bayes2go Score.
+ *
+ * @author Sebastian Bauer
+ */
+abstract class Bayes2GOScore
+{
+	protected double score;
+
+	/**
+	 *
+	 * @return
+	 */
+	public double getScore()
+	{
+		return score;
+	}
+
+	public double proposeState()
+	{
+		return score;
+	}
+
+	public void undoProposal()
+	{
+	}
+
+	public int neighbourhoodSize()
+	{
+		return 0;
+	}
+}
+
+/**
+ * Score of a setting in which alpha and beta are known.
+ *
+ * @author Sebastian Bauer
+ *
+ */
+class VariableAlphaBetaScore extends Bayes2GOScore
+{
+}
+
+/**
+ * Score of a setting in which alpha and beta are not known.
+ *
+ * @author Sebastian Bauer
+ */
+class FixedAlphaBetaScore extends Bayes2GOScore
+{
+
+}
 
 /**
  *
