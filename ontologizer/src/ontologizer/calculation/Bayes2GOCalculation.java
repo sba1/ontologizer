@@ -38,9 +38,8 @@ class B2GTestParameter
 {
 	static double ALPHA = 0.35;
 	static double BETA = 0.35;
-	static int MCMC_STEPS = 3000000;
+	static int MCMC_STEPS = 500000;
 }
-
 
 /**
  * The base class of bayes2go Score.
@@ -488,7 +487,6 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 	@Override
 	public double getScore()
 	{
-//		double beta = 0.1;
 		double alpha;
 		double beta;
 		
@@ -502,11 +500,8 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 		
 		if (!Double.isNaN(p))
 			newScore2 += Math.log(p)*activeTerms.size() + Math.log(1-p)*(termsArray.length - activeTerms.size());
-		
+
 //		newScore2 -= Math.log(alpha) * observedActiveGenes.size() + Math.log(1-beta)* (population.size() - observedActiveGenes.size());
-		
-		
-		
 		return newScore2;
 	}
 	
@@ -603,10 +598,8 @@ public class Bayes2GOCalculation implements ICalculation
 	public double alpha = Double.NaN;
 	public double beta = Double.NaN;
 	public double defaultP = Double.NaN;
-
-
+	public boolean takePopulationAsReference = false;
 	public long seed = 0;
-	public boolean parameterEstimation = true;
 	
 	public ICalculationProgress calculationProgress;
 
@@ -622,8 +615,8 @@ public class Bayes2GOCalculation implements ICalculation
 		this.alpha = calc.alpha;
 		this.beta = calc.beta;
 		this.seed = calc.seed;
-		this.parameterEstimation = calc.parameterEstimation;
 		this.calculationProgress = calc.calculationProgress;
+		this.takePopulationAsReference = takePopulationAsReference;
 	}
 
 	/**
@@ -729,7 +722,15 @@ public class Bayes2GOCalculation implements ICalculation
 			HashMap<ByteString, Double> llr,
 			double p)
 	{
-		List<TermID> allTerms = populationEnumerator.getAllAnnotatedTermsAsList();
+		List<TermID> allTerms;
+		
+		if (takePopulationAsReference)
+		{
+			allTerms = populationEnumerator.getAllAnnotatedTermsAsList();
+		} else
+		{
+			allTerms = studyEnumerator.getAllAnnotatedTermsAsList();
+		}
 
 		Random rnd;
 		if (seed != 0)
