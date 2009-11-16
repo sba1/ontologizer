@@ -31,6 +31,7 @@ import java.util.zip.ZipOutputStream;
 import ontologizer.calculation.CalculationRegistry;
 import ontologizer.go.GOGraph;
 import ontologizer.go.Subset;
+import ontologizer.go.Term;
 import ontologizer.gui.swt.support.SWTUtil;
 import ontologizer.statistics.TestCorrectionRegistry;
 import ontologizer.worksets.WorkSet;
@@ -617,11 +618,26 @@ public class MainWindow extends ApplicationWindow
 									public void run()
 									{
 										GOGraph graph = WorkSetLoadThread.getGraph(currentWorkSet.getOboPath());
-										String [] choices = new String[graph.getAvailableSubsets().size()];
-										int i=0;
-										for (Subset s : graph.getAvailableSubsets())
-											choices[i++] = s.getName();
-										settingsComposite.setRestrictionChoices(choices);
+
+										if (graph != null)
+										{
+											String [] subsetChoices = new String[graph.getAvailableSubsets().size()];
+											int i=0;
+											for (Subset s : graph.getAvailableSubsets())
+												subsetChoices[i++] = s.getName();
+											settingsComposite.setRestrictionChoices(subsetChoices);
+
+											String [] subontologyChoices = new String[graph.getLevel1Terms().size()];
+											i = 0;
+											for (Term t : graph.getLevel1Terms())
+												subontologyChoices[i++] = t.getName();
+											settingsComposite.setConsiderChoices(subontologyChoices);
+										} else
+										{
+											settingsComposite.setRestrictionChoices(new String[]{});
+											settingsComposite.setConsiderChoices(new String[]{});
+
+										}
 									}
 								});
 							}});

@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.Text;
 public class FileGridCompositeWidgets
 {
 	private Label label;
+	private Button labelButton;
 	private Text text;
 	private Button button;
 	private String[] filterExts;
@@ -30,12 +31,41 @@ public class FileGridCompositeWidgets
 	 * Constructor.
 	 *
 	 * @param parent
-	 * @param style
 	 */
 	public FileGridCompositeWidgets(final Composite parent)
 	{
-		label = new Label(parent,0);
-		label.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+		this(parent,false);
+	}
+
+	/**
+	 * Constructor.
+	 *
+	 * @param parent
+	 * @param checkable
+	 */
+	public FileGridCompositeWidgets(final Composite parent, boolean checkable)
+	{
+		if (checkable)
+		{
+			labelButton = new Button(parent,checkable?SWT.CHECK:0);
+			labelButton.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+
+			labelButton.addSelectionListener(new SelectionAdapter()
+			{
+				@Override
+				public void widgetSelected(SelectionEvent e)
+				{
+					updateEnabledState();
+				}
+			});
+
+		} else
+		{
+			label = new Label(parent,0);
+			label.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+		}
+
+
 		text = new Text(parent,SWT.BORDER);
 		text.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL|GridData.GRAB_HORIZONTAL));
 		button = new Button(parent,0);
@@ -60,6 +90,16 @@ public class FileGridCompositeWidgets
 			}
 		});
 
+		updateEnabledState();
+	}
+
+	private void updateEnabledState()
+	{
+		if (labelButton != null)
+		{
+			text.setEnabled(labelButton.getSelection());
+			button.setEnabled(labelButton.getSelection());
+		}
 	}
 
 	/**
@@ -69,7 +109,13 @@ public class FileGridCompositeWidgets
 	 */
 	public void setPath(String path)
 	{
+		if (path == null) path = "";
 		text.setText(path);
+
+		if (labelButton != null)
+			labelButton.setSelection(path.length() > 0);
+
+		updateEnabledState();
 	}
 
 	/**
@@ -79,12 +125,16 @@ public class FileGridCompositeWidgets
 	 */
 	public String getPath()
 	{
+		if (labelButton != null && !labelButton.getSelection())
+			return "";
+
 		return text.getText();
 	}
 
 	public void setLabel(String labelString)
 	{
-		label.setText(labelString);
+		if (label != null) label.setText(labelString);
+		else labelButton.setText(labelString);
 	}
 
 	public void setFilterExtensions(String [] filterExts)
@@ -100,14 +150,16 @@ public class FileGridCompositeWidgets
 	public void setToolTipText(String string)
 	{
 		text.setToolTipText(string);
-		label.setToolTipText(string);
+		if (label != null) label.setToolTipText(string);
+		else labelButton.setToolTipText(string);
 		button.setToolTipText(string);
 	}
 
 	public void setEnabled(boolean state)
 	{
 		text.setEnabled(state);
-		label.setEnabled(state);
+		if (label != null) label.setEnabled(state);
+		else labelButton.setEnabled(state);
 		button.setEnabled(state);
 	}
 }

@@ -23,6 +23,58 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 import sonumina.swt.ISimpleAction;
+import sonumina.swt.SWTUtil;
+
+class Expander extends Composite
+{
+	private Composite control;
+	private Button expandButton;
+
+	private boolean visible;
+
+	public Expander(Composite parent, int style)
+	{
+		super(parent, style);
+
+		this.setLayout(SWTUtil.newEmptyMarginGridLayout(1));
+
+		expandButton = new Button(this,0);
+		expandButton.addSelectionListener(new SelectionAdapter()
+		{
+			@Override
+			public void widgetSelected(SelectionEvent e)
+			{
+				control.setVisible(!control.getVisible());
+
+				visible = control.getVisible();
+				updateButtonText();
+
+			}
+		});
+		updateButtonText();
+	}
+
+	public void setText(String text)
+	{
+		expandButton.setText(text);
+	}
+
+	public void setControl(Composite control)
+	{
+		this.control = control;
+		control.setVisible(visible);
+		control.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL|GridData.FILL_BOTH));
+	}
+
+	private void updateButtonText()
+	{
+		if (!visible)
+			expandButton.setText("Show Advanced Options >>");
+		else
+			expandButton.setText("<< Hide Advanced Options");
+		expandButton.pack(true);
+	}
+}
 
 /**
  * The Composite of project settings.
@@ -37,8 +89,11 @@ public class ProjectSettingsComposite extends Composite
 	private FileGridCompositeWidgets ontologyFileGridCompositeWidgets = null;
 	private FileGridCompositeWidgets assocFileGridCompositeWidgets = null;
 	private FileGridCompositeWidgets mappingFileGridCompositeWidgets = null;
-	private Combo restrictToCombo;
-	private Button mappingCheckBox;
+	private Combo subsetCombo;
+	private Combo considerCombo;
+
+	private Button subsetCheckbox;
+	private Button considerCheckbox;
 
 	private ArrayList<ISimpleAction> definitionChangedList = new ArrayList<ISimpleAction>();
 
@@ -73,48 +128,89 @@ public class ProjectSettingsComposite extends Composite
 		ontologyFileGridCompositeWidgets.setFilterExtensions(new String[]{"*.obo","*.*"});
 		ontologyFileGridCompositeWidgets.setFilterNames(new String[]{"OBO File","All files"});
 
-		Label restrictLabel = new Label(this,0);
-		restrictLabel.setText("Restrict to");
-		restrictLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-		restrictToCombo = new Combo(this,SWT.BORDER);
-		gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalSpan = 2;
-		restrictToCombo.setLayoutData(gd);
-		restrictToCombo.setEnabled(false);
-
 		assocFileGridCompositeWidgets = new FileGridCompositeWidgets(this);
 		assocFileGridCompositeWidgets.setLabel("Annotations");
 		assocFileGridCompositeWidgets.setToolTipText("Specifies the annotation (association) file, which assigns GO terms to the names of the gene products.");
 		assocFileGridCompositeWidgets.setFilterExtensions(new String[]{"gene_association.*","*.csv","*.*"});
 		assocFileGridCompositeWidgets.setFilterNames(new String[]{"Association File","Affymetrix","All files"});
 
+/* TODO: Use ExpandableComposite comp of JFace */
+
+
+		Expander advancedExpander = new Expander(this,0);
+		gd = new GridData(GridData.FILL_HORIZONTAL|GridData.GRAB_HORIZONTAL);
+		gd.horizontalSpan = 3;
+		advancedExpander.setLayoutData(gd);
+
+		Composite mappingComposite = new Composite(advancedExpander, 0);
+		mappingComposite.setLayout(SWTUtil.newEmptyMarginGridLayout(3));
+		advancedExpander.setControl(mappingComposite);
+
+		subsetCheckbox = new Button(mappingComposite,SWT.CHECK);
+		subsetCheckbox.setText("Use Subset of Ontology");
+		subsetCheckbox.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+		subsetCheckbox.setEnabled(false);
+		subsetCheckbox.addSelectionListener(new SelectionAdapter()
+		{
+			@Override
+			public void widgetSelected(SelectionEvent e)
+			{
+				updateSubsetEnabled();
+			}
+		});
+
+		subsetCombo = new Combo(mappingComposite,SWT.BORDER);
+		gd = new GridData(GridData.FILL_HORIZONTAL|GridData.GRAB_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		subsetCombo.setLayoutData(gd);
+		subsetCombo.setEnabled(false);
+
+		considerCheckbox = new Button(mappingComposite,SWT.CHECK);
+		considerCheckbox.setText("Consider Terms from");
+		considerCheckbox.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+		considerCheckbox.setEnabled(false);
+		considerCheckbox.addSelectionListener(new SelectionAdapter()
+		{
+			@Override
+			public void widgetSelected(SelectionEvent e)
+			{
+				updateConsiderEnabled();
+			}
+		});
+		considerCombo = new Combo(mappingComposite,SWT.BORDER);
+		considerCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL|GridData.GRAB_HORIZONTAL));
+		Label subOntologyLabel = new Label(mappingComposite,0);
+		subOntologyLabel.setText("Subontology");
+		considerCombo.setEnabled(false);
+
 		if (mapping)
 		{
-			new Label(this,0);
+//			new Label(mappingComposite,0);
+//			mappingCheckBox = new Button(mappingComposite,SWT.CHECK);
+//			mappingCheckBox.setText("Use Mapping");
+//			gd = new GridData();
+//			gd.horizontalSpan = 2;
+//
+//			mappingCheckBox.setLayoutData(gd);
+//			mappingCheckBox.addSelectionListener(new SelectionAdapter()
+//			{
+//				@Override
+//				public void widgetSelected(SelectionEvent e)
+//				{
+//					updateMappingEnabled();
+//				}
+//			});
 
-			mappingCheckBox = new Button(this,SWT.CHECK);
-			mappingCheckBox.setText("Use Mapping");
-			gd = new GridData();
-			gd.horizontalSpan = 2;
-			mappingCheckBox.setLayoutData(gd);
-			mappingCheckBox.addSelectionListener(new SelectionAdapter()
-			{
-				@Override
-				public void widgetSelected(SelectionEvent e)
-				{
-					updateMappingEnabled();
-				}
-			});
-
-			mappingFileGridCompositeWidgets = new FileGridCompositeWidgets(this);
+			mappingFileGridCompositeWidgets = new FileGridCompositeWidgets(mappingComposite,true);
 			mappingFileGridCompositeWidgets.setLabel("Mapping");
 			mappingFileGridCompositeWidgets.setToolTipText("Specifies an additional mapping file in which each line consits of a single name mapping. The name of the first column is mapped to the name of the second column before the annotation process begins. Columns should be tab-separated.");
 			mappingFileGridCompositeWidgets.setFilterExtensions(new String[]{"*.*"});
 			mappingFileGridCompositeWidgets.setFilterNames(new String[]{"All files"});
 
-
-			updateMappingEnabled();
+//			updateMappingEnabled();
 		}
+
+
 
 		/* If a new work set has been selected */
 		workSetCombo.addSelectionListener(new SelectionAdapter()
@@ -132,19 +228,25 @@ public class ProjectSettingsComposite extends Composite
 					}
 				}
 			}
-/*			public void act()
-			{
-			}*/
 		});
 	}
 
 	/**
-	 * Updates the enable status of the mapping widgets in accordance to
+	 * Updates the enable status of the subset widget in accordance to
 	 * the current state of the checkbox.
 	 */
-	protected void updateMappingEnabled()
+	private void updateSubsetEnabled()
 	{
-		mappingFileGridCompositeWidgets.setEnabled(mappingCheckBox.getSelection());
+		subsetCombo.setEnabled(subsetCheckbox.getSelection() && considerCombo.getItemCount() > 0);
+	}
+
+	/**
+	 * Updates the enable status of the consider widget in accordance to
+	 * the current state of the checkbox.
+	 */
+	private void updateConsiderEnabled()
+	{
+		considerCombo.setEnabled(considerCheckbox.getSelection() && considerCombo.getItemCount() > 0);
 	}
 
 	public String getDefinitionFileString()
@@ -178,8 +280,6 @@ public class ProjectSettingsComposite extends Composite
 	 */
 	public String getMappingFileString()
 	{
-		if (!mappingCheckBox.getSelection())
-			return "";
 		return mappingFileGridCompositeWidgets.getPath();
 	}
 
@@ -192,13 +292,6 @@ public class ProjectSettingsComposite extends Composite
 	{
 		string = string!=null?string:"";
 		mappingFileGridCompositeWidgets.setPath(string);
-
-		if (string.length()==0)
-			mappingCheckBox.setSelection(false);
-		else
-			mappingCheckBox.setSelection(true);
-
-		updateMappingEnabled();
 	}
 
 	/**
@@ -244,7 +337,18 @@ public class ProjectSettingsComposite extends Composite
 	public void setRestrictionChoices(String[] choices)
 	{
 		if (choices == null) choices = new String[0];
-		restrictToCombo.setEnabled(choices.length > 0);
-		restrictToCombo.setItems(choices);
+		subsetCheckbox.setEnabled(choices.length > 0);
+//		subsetCombo.setEnabled(choices.length > 0);
+		subsetCombo.setItems(choices);
+		updateSubsetEnabled();
+	}
+
+	public void setConsiderChoices(String [] choices)
+	{
+		if (choices == null) choices = new String[0];
+		considerCheckbox.setEnabled(choices.length > 0);
+//		considerCombo.setEnabled(choices.length > 0);
+		considerCombo.setItems(choices);
+		updateConsiderEnabled();
 	}
 }
