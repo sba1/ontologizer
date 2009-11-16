@@ -131,11 +131,78 @@ abstract class Bayes2GOScore
 		return score;
 	}
 
+	public abstract double proposeNewState(long rand);
 	public double proposeNewState()
 	{
-
-		return score;
+		return proposeNewState(rnd.nextLong());
 	}
+
+	public abstract void hiddenGeneActivated(ByteString gene);
+	public abstract void hiddenGeneDeactivated(ByteString gene);
+
+	public void switchState(int toSwitch)
+	{
+		TermID t = termsArray[toSwitch];
+		isActive[toSwitch] = !isActive[toSwitch];
+		if (isActive[toSwitch])
+		{
+			/* A term is added */
+			activeTerms.add(t);
+
+			/* Update hiddenActiveGenes */
+			for (ByteString gene : populationEnumerator.getAnnotatedGenes(t).totalAnnotated)
+			{
+				Integer cnt = activeHiddenGenes.get(gene);
+				if (cnt == null)
+				{
+					hiddenGeneActivated(gene);
+					activeHiddenGenes.put(gene, 1);
+				} else
+				{
+					activeHiddenGenes.put(gene, cnt + 1);
+				}
+			}
+
+			int inactiveIndex = term2InactiveTermsIdx.get(t);
+
+			if (inactiveIndex != (numInactiveTerms - 1))
+			{
+				inactiveTermsArray[inactiveIndex] = inactiveTermsArray[numInactiveTerms - 1];
+				term2InactiveTermsIdx.put(inactiveTermsArray[inactiveIndex], inactiveIndex);
+			}
+
+			term2InactiveTermsIdx.remove(t);
+			numInactiveTerms--;
+		} else
+		{
+			/* Remove a term */
+			activeTerms.remove(t);
+
+			/* Update hiddenActiveGenes */
+			for (ByteString gene : populationEnumerator.getAnnotatedGenes(t).totalAnnotated)
+			{
+				int cnt = activeHiddenGenes.get(gene);
+				cnt--;
+				if (cnt == 0)
+				{
+					activeHiddenGenes.remove(gene);
+					hiddenGeneDeactivated(gene);
+				} else activeHiddenGenes.put(gene, cnt);
+			}
+
+			/* Append the new term at the end of the index list */
+			inactiveTermsArray[numInactiveTerms] = t;
+			term2InactiveTermsIdx.put(t, numInactiveTerms);
+			numInactiveTerms++;
+		}
+	}
+
+	public void exchange(TermID t1, TermID t2)
+	{
+		switchState(term2TermsIdx.get(t1));
+		switchState(term2TermsIdx.get(t2));
+	}
+
 
 	public void undoProposal()
 	{
@@ -184,8 +251,18 @@ class VariableAlphaBetaScore extends Bayes2GOScore
 	private TermID proposalT1;
 	private TermID proposalT2;
 
+	public void hiddenGeneActivated(ByteString gene)
+	{
+		score += llr.get(gene);
+	}
+
+	public void hiddenGeneDeactivated(ByteString gene)
+	{
+		score -= llr.get(gene);
+	}
+
 	@Override
-	public double proposeNewState()
+	public double proposeNewState(long rand)
 	{
 		long oldPossibilities = getNeighborhoodSize();
 
@@ -193,7 +270,7 @@ class VariableAlphaBetaScore extends Bayes2GOScore
 		proposalT1 = null;
 		proposalT2 = null;
 
-		long choose = Math.abs(rnd.nextLong()) % oldPossibilities;
+		long choose = Math.abs(rand) % oldPossibilities;
 
 		if (choose < termsArray.length)
 		{
@@ -223,74 +300,10 @@ class VariableAlphaBetaScore extends Bayes2GOScore
 		else exchange(proposalT2, proposalT1);
 	}
 
-	public void switchState(int toSwitch)
-	{
-		TermID t = termsArray[toSwitch];
-		isActive[toSwitch] = !isActive[toSwitch];
-		if (isActive[toSwitch])
-		{
-			/* A term is added */
-			activeTerms.add(t);
-
-			/* Update hiddenActiveGenes */
-			for (ByteString gene : populationEnumerator.getAnnotatedGenes(t).totalAnnotated)
-			{
-				Integer cnt = activeHiddenGenes.get(gene);
-				if (cnt == null)
-				{
-					score += llr.get(gene);
-					activeHiddenGenes.put(gene, 1);
-				} else
-				{
-					activeHiddenGenes.put(gene, cnt + 1);
-				}
-			}
-
-			int inactiveIndex = term2InactiveTermsIdx.get(t);
-
-			if (inactiveIndex != (numInactiveTerms - 1))
-			{
-				inactiveTermsArray[inactiveIndex] = inactiveTermsArray[numInactiveTerms - 1];
-				term2InactiveTermsIdx.put(inactiveTermsArray[inactiveIndex], inactiveIndex);
-			}
-
-			term2InactiveTermsIdx.remove(t);
-			numInactiveTerms--;
-		} else
-		{
-			/* Remove a term */
-			activeTerms.remove(t);
-
-			/* Update hiddenActiveGenes */
-			for (ByteString gene : populationEnumerator.getAnnotatedGenes(t).totalAnnotated)
-			{
-				int cnt = activeHiddenGenes.get(gene);
-				cnt--;
-				if (cnt == 0)
-				{
-					activeHiddenGenes.remove(gene);
-					score -= llr.get(gene);
-				} else activeHiddenGenes.put(gene, cnt);
-			}
-
-			/* Append the new term at the end of the index list */
-			inactiveTermsArray[numInactiveTerms] = t;
-			term2InactiveTermsIdx.put(t, numInactiveTerms);
-			numInactiveTerms++;
-		}
-	}
-
-	public void exchange(TermID t1, TermID t2)
-	{
-		switchState(term2TermsIdx.get(t1));
-		switchState(term2TermsIdx.get(t2));
-	}
-
 	public long getNeighborhoodSize()
 	{
 		return termsArray.length + activeTerms.size() * numInactiveTerms;
 	}
-
 }
 
 /**
@@ -300,9 +313,90 @@ class VariableAlphaBetaScore extends Bayes2GOScore
  */
 class FixedAlphaBetaScore extends Bayes2GOScore
 {
+	private int proposalSwitch;
+	private TermID proposalT1;
+	private TermID proposalT2;
+
 	public FixedAlphaBetaScore(Random rnd, List<TermID> termList, GOTermEnumerator populationEnumerator, Set<ByteString> observedActiveGenes)
 	{
 		super(rnd, termList, populationEnumerator, observedActiveGenes);
+	}
+
+	@Override
+	public void hiddenGeneActivated(ByteString gene)
+	{
+	}
+
+	@Override
+	public void hiddenGeneDeactivated(ByteString gene)
+	{
+	}
+
+	@Override
+	public double proposeNewState(long rand)
+	{
+		long oldPossibilities = getNeighborhoodSize();
+
+		proposalSwitch = -1;
+		proposalT1 = null;
+		proposalT2 = null;
+
+		long choose = Math.abs(rand) % oldPossibilities;
+
+		if (choose < termsArray.length)
+		{
+			/* on/off */
+			proposalSwitch = (int)choose;
+			switchState(proposalSwitch);
+		}	else
+		{
+			long base = choose - termsArray.length;
+
+			int activeTermPos = (int)(base / numInactiveTerms);
+			int inactiveTermPos = (int)(base % numInactiveTerms);
+
+			for (TermID tid : activeTerms)
+				if (activeTermPos-- == 0) proposalT1 = tid;
+			proposalT2 = inactiveTermsArray[inactiveTermPos];
+
+			exchange(proposalT1, proposalT2);
+		}
+		return score;
+	}
+
+	@Override
+	public double getScore()
+	{
+		double alpha = 0.1;
+		double beta = 0.1;
+
+		HashSet<ByteString> activeAgreement = new HashSet<ByteString>(activeHiddenGenes.keySet());
+		activeAgreement.retainAll(observedActiveGenes);
+
+		int n11 = activeAgreement.size();
+		int n10 = observedActiveGenes.size() - n11;
+
+		HashSet<ByteString> inactiveAgreement = new HashSet<ByteString>(population);
+		inactiveAgreement.removeAll(observedActiveGenes);
+		inactiveAgreement.removeAll(activeHiddenGenes.keySet());
+
+		int n00 = inactiveAgreement.size();
+		int n01 = population.size() - observedActiveGenes.size() - n00;
+
+		double newScore2 = Math.log(alpha) * n10 + Math.log(1-alpha)*n11 + Math.log(1-beta)*n00 + Math.log(beta)*n01;
+		newScore2 -= Math.log(alpha) * observedActiveGenes.size() + Math.log(1-beta)* (population.size() - observedActiveGenes.size());
+		return newScore2;
+	}
+
+	public void undoProposal()
+	{
+		if (proposalSwitch != -1)	switchState(proposalSwitch);
+		else exchange(proposalT2, proposalT1);
+	}
+
+	public long getNeighborhoodSize()
+	{
+		return termsArray.length + activeTerms.size() * numInactiveTerms;
 	}
 }
 
@@ -657,10 +751,9 @@ public class Bayes2GOCalculation implements ICalculation
 		else rnd = new Random();
 
 		VariableAlphaBetaScore bayesScore = new VariableAlphaBetaScore(rnd, allTerms, populationEnumerator, studySet.getAllGeneNames(), alpha, beta);
-
+		FixedAlphaBetaScore fBayesScore = new FixedAlphaBetaScore(rnd, allTerms, populationEnumerator,  studySet.getAllGeneNames());
 
 //		score.
-
 //		State state = new State(allTerms, populationEnumerator);
 //		state.llr = llr;
 //		state.observedGenes = observedGenes;
@@ -728,11 +821,14 @@ public class Bayes2GOCalculation implements ICalculation
 			}
 
 			long oldPossibilities = bayesScore.getNeighborhoodSize();
-			bayesScore.proposeNewState();
+			long r = rnd.nextLong();
+			bayesScore.proposeNewState(r);
+			fBayesScore.proposeNewState(r);
 			double newScore = bayesScore.getScore();
+			double newScore2 = fBayesScore.getScore();
 			long newPossibilities = bayesScore.getNeighborhoodSize();
 
-
+			System.out.println(newScore + "  " + newScore2);
 //
 //			long oldPossibilities;
 //
@@ -813,6 +909,7 @@ public class Bayes2GOCalculation implements ICalculation
 //					state.exchange(t2, t1);
 //				}
 				bayesScore.undoProposal();
+				fBayesScore.undoProposal();
 				numRejects++;
 			} else
 			{
