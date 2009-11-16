@@ -95,15 +95,13 @@ public class CalculationRegistry
 		registerCalculation(new ParentChildCutCalculation());
 		registerCalculation(new TopCalculation());
 		registerCalculation(new TopologyWeightedCalculation());
+		registerCalculation(new Bayes2GOCalculation());
 
 		if (experimentalActivated())
 		{
 			System.err.println("Enabled experimental calculations");
 			registerCalculation(new ProbabilisticCalculation());
-			registerCalculation(new Bayes2GOCalculation());
 		}
-//		registerCalculation(new NewApproachCalculation());
-//		registerCalculation(new ChiSquareQCalculation());
 	}
 
 }
