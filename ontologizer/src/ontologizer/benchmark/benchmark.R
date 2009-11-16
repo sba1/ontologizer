@@ -1,6 +1,6 @@
 ########################################
 # This is the R script used to analyze #
-# the results fo Benchmark.java        #
+# the results of Benchmark.java        #
 ########################################
 
 # Here, you can specify where the input file
