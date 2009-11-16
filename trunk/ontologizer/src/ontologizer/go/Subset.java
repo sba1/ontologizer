@@ -24,7 +24,7 @@ public class Subset
 	@Override
 	public boolean equals(Object obj)
 	{
-		return equals(((Subset)obj).name);
+		return name.equals(((Subset)obj).name);
 	}
 
 	@Override

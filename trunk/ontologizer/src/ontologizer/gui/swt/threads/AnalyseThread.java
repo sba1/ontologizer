@@ -212,8 +212,8 @@ public class AnalyseThread extends AbstractOntologizerThread
 			display.asyncExec(new ResultAppendLogRunnable("Building GO graph"));
 			TermContainer goTerms = new TermContainer(oboParser.getTermMap(), oboParser.getFormatVersion(), oboParser.getDate());
 			GOGraph goGraph = new GOGraph(goTerms);
-			if (subsetName != null) goGraph.selectRelevantSubset(subsetName);
-			if (subontologyName != null) goGraph.selectRelevantSubontology(subontologyName);
+			if (subsetName != null) goGraph.setRelevantSubset(subsetName);
+			if (subontologyName != null) goGraph.setRelevantSubontology(subontologyName);
 
 			if (mappingFile != null)
 			{

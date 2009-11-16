@@ -301,6 +301,7 @@ public class ProjectSettingsComposite extends Composite
 	 */
 	public String getSubsetString()
 	{
+		if (!subsetCheckbox.getSelection()) return "";
 		int idx = subsetCombo.getSelectionIndex();
 		if (idx >= 0)
 			return subsetCombo.getItems()[idx];
@@ -313,6 +314,8 @@ public class ProjectSettingsComposite extends Composite
 	 */
 	public String getSubontologyString()
 	{
+		if (!considerCheckbox.getSelection()) return "";
+
 		int idx = considerCombo.getSelectionIndex();
 		if (idx >= 0)
 			return considerCombo.getItems()[idx];
