@@ -38,9 +38,9 @@ import ontologizer.worksets.WorkSetLoadThread;
 
 class B2GTestParameter
 {
-	static double ALPHA = 0.1;
-	static double BETA = 0.4;
-	static int MCMC_STEPS = 200000;
+	static double ALPHA = 0.225;
+	static double BETA = 0.25;
+	static int MCMC_STEPS = 500000;
 }
 
 /**
@@ -380,11 +380,15 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 
 //	private double [] ALPHA = new double[] {0.0001,0.01,0.05,0.1,0.15,0.2,0.25,0.3};
 
-	private double [] ALPHA = new double[] {0.1,0.15,0.2,0.25,0.3};
+	private double [] ALPHA = new double[] {0.05, 0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5};
 	private int alphaIdx = 0;
 	private int oldAlphaIdx;
-
 	protected int totalAlpha[] = new int[ALPHA.length];
+
+	private double [] BETA = ALPHA;
+	private int betaIdx = 0;
+	private int oldBetaIdx;
+	protected int totalBeta[] = new int[BETA.length];
 
 	protected double alpha = Double.NaN;
 	protected double beta = Double.NaN;
@@ -456,7 +460,7 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 		proposalT2 = null;
 		oldAlphaIdx = -1;
 
-		if (true)//rnd.nextBoolean())
+		if (rnd.nextBoolean())
 		{
 			long choose = Math.abs(rand) % oldPossibilities;
 
@@ -496,7 +500,9 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 			alpha = ALPHA[alphaIdx];
 		else alpha = this.alpha;
 
-		beta = this.beta;
+		if (Double.isNaN(this.beta))
+			beta = BETA[betaIdx];
+		else beta = this.beta;
 
 		double newScore2 = Math.log(alpha) * n10 + Math.log(1-alpha)*n00 + Math.log(1-beta)*n11 + Math.log(beta)*n01;
 
@@ -754,12 +760,12 @@ public class Bayes2GOCalculation implements ICalculation
 
 		int maxIter;
 
-		if (Double.isNaN(alpha))
-		{
-			alpha = 0.4;
-			doAlphaEm = true;
-			doEm = true;
-		}
+//		if (Double.isNaN(alpha))
+//		{
+//			alpha = 0.4;
+//			doAlphaEm = true;
+//			doEm = true;
+//		}
 		if (Double.isNaN(beta))
 		{
 			beta = 0.4;
@@ -906,8 +912,8 @@ public class Bayes2GOCalculation implements ICalculation
 				System.out.println(tid.toString() + "/" + graph.getGOTerm(tid).getName());
 			}
 
-//			for (int j=0;j<bayesScore.totalAlpha.length;j++)
-//				System.out.println("Total " + (double)bayesScore.totalAlpha[j] / bayesScore.numRecords);
+			for (int j=0;j<bayesScore.totalAlpha.length;j++)
+				System.out.println("Total " + (double)bayesScore.totalAlpha[j] / bayesScore.numRecords);
 
 
 		}
@@ -1168,10 +1174,10 @@ public class Bayes2GOCalculation implements ICalculation
 //		ParentChildCalculation calc = new ParentChildCalculation();
 		Bayes2GOCalculation calc = new Bayes2GOCalculation();
 ////		calc.setNoPrior(true);
-//		calc.setP(p);
+		calc.setP(p);
 		calc.setSeed(1);
 //		calc.setAlpha(realAlpha);
-//		calc.setBeta(realBeta);
+		calc.setBeta(realBeta);
 //		calc.setAlpha(alphaStudySet);
 //		calc.setBeta(betaStudySet);
 
