@@ -1,9 +1,29 @@
-library(ROCR)
+########################################
+# This is the R script used to analyze #
+# the results fo Benchmark.java        #
+########################################
 
+# Here, you can specify where the input file
+# can be found and which which columns should
+# be extracted
 dir<-"."
 filename<-"result-fp.txt"
+v<-matrix(ncol=2,byrow=T,
+          c("p.tft","Term for Term",
+		    "p.pcu", "Parent Child",
+		    "p.tweight","Topology Weighted",
+			"p.gg", "GenGO",
+			"p.b2g.ideal.pop", "B2G: Known Parameter",
+			"p.b2g.mcmc.pop", "B2G: Unknown Parameter",
+			"p.b2g.ideal.pop.nop", "B2G: No Prior, Known Parameter",
+			"p.b2g.ideal.pop.random", "B2G: Known, Random"
+           ))
 
 
+# Libraries that we need
+library(ROCR)
+
+# Read the input file. Ignore any 0 term.
 full.filename<-file.path(dir,filename)
 d<-read.table(full.filename,h=T)
 d<-subset(d,d$term!=0)
@@ -61,17 +81,6 @@ plot.roc<-function(d,alpha=NA,beta=NA,calc.auc=F,y.axis="tpr",x.axis="fpr",xlim=
 	}
 	
 	l<-list();
-
-	v<-matrix(ncol=2,byrow=T,
-	              c("p.tft","Term for Term",
-				    "p.pcu", "Parent Child",
-				    "p.tweight","Topology Weighted",
-					"p.gg", "GenGO",
-					"p.b2g.ideal.pop", "B2G: Known Parameter",
-					"p.b2g.mcmc.pop", "B2G: Unknown Parameter",
-					"p.b2g.ideal.pop.nop", "B2G: No Prior, Known Parameter",
-					"p.b2g.ideal.pop.random", "B2G: Known, Random"
-	               ))
 
 	colnames(v)<-c("short","full")
 	colors<-rainbow(nrow(v))
