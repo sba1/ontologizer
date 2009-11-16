@@ -14,6 +14,10 @@ public final class GlobalPreferences
 	private static int proxyPort;
 	private static int wrapColumn = 30;
 
+	private static double b2gAlpha = 0.1;
+	private static double b2gBeta = 0.25;
+	private static double b2gDT = 4;
+
 	static
 	{
 		/* Initialize default values */

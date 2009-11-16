@@ -13,9 +13,11 @@ import ontologizer.association.AssociationContainer;
 import ontologizer.association.AssociationParser;
 import ontologizer.association.IAssociationParserProgress;
 import ontologizer.calculation.AbstractGOTermsResult;
+import ontologizer.calculation.Bayes2GOCalculation;
 import ontologizer.calculation.CalculationRegistry;
 import ontologizer.calculation.EnrichedGOTermsResult;
 import ontologizer.calculation.ICalculation;
+import ontologizer.calculation.ICalculationProgress;
 import ontologizer.go.GOGraph;
 import ontologizer.go.IOBOParserProgress;
 import ontologizer.go.OBOParser;
@@ -40,8 +42,11 @@ public class AnalyseThread extends AbstractOntologizerThread
 	private PopulationSet populationSet;
 	private StudySetList studySetList;
 	private int numberOfPermutations;
+	
+	private double alpha, beta;
+	private int expectedNumber;
 
-	public AnalyseThread(Display display, Runnable calledWhenFinished, ResultWindow result, String definitionFile, String associationsFile, String mappingFile, PopulationSet populationSet, StudySetList studySetList, String methodName, String mtcName, int noP)
+	public AnalyseThread(Display display, Runnable calledWhenFinished, ResultWindow result, String definitionFile, String associationsFile, String mappingFile, PopulationSet populationSet, StudySetList studySetList, String methodName, String mtcName, int noP, double alpha, double beta, int expectedNumber)
 	{
 		super("Analyze Thread",calledWhenFinished,display,result);
 
@@ -53,6 +58,9 @@ public class AnalyseThread extends AbstractOntologizerThread
 		this.methodName = methodName;
 		this.mtcName = mtcName;
 		this.numberOfPermutations = noP;
+		this.alpha = alpha;
+		this.beta = beta;
+		this.expectedNumber = expectedNumber;
 
 		setPriority(Thread.MIN_PRIORITY);
 	}
@@ -106,6 +114,40 @@ public class AnalyseThread extends AbstractOntologizerThread
 			if (calculation == null)
 				calculation = CalculationRegistry.getDefault();
 	
+			if (calculation instanceof Bayes2GOCalculation)
+			{
+				Bayes2GOCalculation b2g = (Bayes2GOCalculation)calculation;
+				b2g.setAlpha(alpha);
+				b2g.setBeta(beta);
+				b2g.setExpectedNumber(expectedNumber);
+				b2g.setProgress(new ICalculationProgress()
+				{
+					public void init(final int max)
+					{
+						display.asyncExec(new Runnable() {
+							public void run()
+							{
+								if (!result.isDisposed())
+									result.initProgress(max);
+							}});
+					}
+
+					public void update(final int current)
+					{
+						/* Abort condition */
+						if (isInterrupted())
+							throw new AbortCalculationException();
+
+						display.asyncExec(new Runnable() {
+							public void run()
+							{
+								if (!result.isDisposed())
+									result.updateProgress(current);
+							}});
+					}
+				});
+			}
+
 			/* Set the desired test correction or set the default */
 			AbstractTestCorrection testCorrection = TestCorrectionRegistry.getCorrectionByName(mtcName);
 			if (testCorrection == null)
