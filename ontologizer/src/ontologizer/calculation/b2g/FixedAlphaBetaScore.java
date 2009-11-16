@@ -1,17 +1,11 @@
 package ontologizer.calculation.b2g;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
 import ontologizer.ByteString;
 import ontologizer.GOTermEnumerator;
-import ontologizer.StudySet;
-import ontologizer.association.AssociationContainer;
-import ontologizer.calculation.EnrichedGOTermsResult;
-import ontologizer.go.GOGraph;
 import ontologizer.go.TermID;
 
 /**
@@ -25,16 +19,16 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 	private TermID proposalT1;
 	private TermID proposalT2;
 
-	protected final double [] ALPHA = new double[] {0.0000001,0.05, 0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5, 0.55,0.6,0.65,0.7,0.75,0.8,0.85,0.9,0.95};
+	protected  double [] ALPHA;// = new double[] {0.0000001,0.05, 0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5, 0.55,0.6,0.65,0.7,0.75,0.8,0.85,0.9,0.95};
 	private int alphaIdx = 0;
 	private int oldAlphaIdx;
-	protected int totalAlpha[] = new int[ALPHA.length];
+	protected int [] totalAlpha;// = new int[ALPHA.length];
 	private boolean doAlphaMCMC = true;
 
-	protected final double [] BETA = ALPHA;
+	protected double [] BETA;// = ALPHA;
 	private int betaIdx = 0;
 	private int oldBetaIdx;
-	protected int totalBeta[] = new int[BETA.length];
+	protected int totalBeta[];// = new int[BETA.length];
 	private boolean doBetaMCMC = true;
 
 	protected final int [] EXPECTED_NUMBER_OF_TERMS = new int[]{1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20};
@@ -76,9 +70,45 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 		doExpMCMC = Double.isNaN(terms);
 	}
 
+	public void setMaxAlpha(double maxAlpha)
+	{
+		int span;
+
+		if (maxAlpha < 0.01) maxAlpha = 0.01;
+		if (maxAlpha > 0.99999999) span = 20;
+		else span = 19;
+
+		ALPHA = new double[20];
+		totalAlpha = new int[20];
+
+		ALPHA[0] = 0.0000001;
+		for (int i=1;i<20;i++)
+			ALPHA[i] = i * maxAlpha / span;
+	}
+
+	public void setMaxBeta(double maxBeta)
+	{
+		int span;
+
+		if (maxBeta < 0.01) maxBeta = 0.01;
+		if (maxBeta > 0.99999999) span = 20;
+		else span = 19;
+
+		BETA = new double[20];
+		totalBeta = new int[20];
+
+		BETA[0] = 0.0000001;
+		for (int i=1;i<20;i++)
+			BETA[i] = i * maxBeta / span;
+
+	}
+
 	public FixedAlphaBetaScore(Random rnd, List<TermID> termList, GOTermEnumerator populationEnumerator, Set<ByteString> observedActiveGenes)
 	{
 		super(rnd, termList, populationEnumerator, observedActiveGenes);
+
+		setMaxAlpha(1.);
+		setMaxBeta(1.);
 
 		n10 = observedActiveGenes.size();
 		n00 = population.size() - n10;
