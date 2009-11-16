@@ -227,13 +227,12 @@ public class StudySet implements Iterable<ByteString>
 	}
 
 	/**
-	 * Add an additional gene to the population set.
-	 * 
-	 * NOTE: After a gene has been added, countGOTerms() should
-	 * be called again.
+	 * Add an additional gene to the study set.
 	 * 
 	 * @param geneName
 	 * @param description
+	 * @note  After a gene has been added, countGOTerms() should
+	 * be called again.
 	 */
 	public void addGene(ByteString geneName, String description)
 	{
@@ -242,6 +241,18 @@ public class StudySet implements Iterable<ByteString>
 		
 		gene2Attribute.put(geneName,attr);
 
+		resetCounterAndEnumerator();
+	}
+
+	/**
+	 * Add an additional gene to the study set.
+	 * 
+	 * @param geneName
+	 * @param attribute
+	 */
+	public void addGene(ByteString geneName, ItemAttribute attribute)
+	{
+		gene2Attribute.put(geneName, attribute);
 		resetCounterAndEnumerator();
 	}
 
