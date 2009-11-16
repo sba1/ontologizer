@@ -230,6 +230,7 @@ GlobalPreferences.setProxyHost("realproxy.charite.de");
 		final AssociationContainer assoc = df.assoc;
 		final GOGraph graph = df.graph;
 
+//		df.graph.setRelevantSubontology("biological_process");
 		Set<ByteString> allAnnotatedGenes = assoc.getAllAnnotatedGenes();
 
 		final PopulationSet completePop = new PopulationSet();
@@ -240,11 +241,18 @@ GlobalPreferences.setProxyHost("realproxy.charite.de");
 		completePop.countGOTerms(graph, assoc);
 
 		final GOTermEnumerator completePopEnumerator = completePop.enumerateGOTerms(graph, assoc);
+
+		for (TermID tid : completePopEnumerator)
+		{
+			if (tid.id == 8150)
+				System.out.println(tid + " " + completePopEnumerator.getAnnotatedGenes(tid).totalAnnotatedCount() + " " + graph.getGOTerm(tid).getNamespaceAsString());
+		}
+
 		final ByteString [] allGenesArray = completePop.getGenes();
-		final TermID root = graph.getRootGOTerm().getID();
+		final TermID root = /*graph.getGOTerm("GO:0008150").getID();//*/graph.getRootGOTerm().getID();
 		final int rootGenes = completePopEnumerator.getAnnotatedGenes(root).totalAnnotatedCount();
 
-		System.out.println("Population set conists of " + allGenesArray.length + " genes. Root term has " + rootGenes + " associated genes");
+		System.out.println("Population set consits of " + allGenesArray.length + " genes. Root term has " + rootGenes + " associated genes");
 		if (allGenesArray.length != rootGenes)
 		{
 			System.out.println("Gene count doesn't match! Aborting.");
