@@ -538,8 +538,6 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 				/* Always full brightness */
 				brightness = 1.0f;
 
-				System.out.println(prop.goTerm.getNamespace());
-
 				/* Hue depends on namespace */
 				switch (Namespace.getNamespaceEnum(prop.goTerm.getNamespace()))
 				{
@@ -784,9 +782,11 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 		significanceLabel = new Label(significanceComposite,SWT.NONE);
 		significanceLabel.setText("Significance Level");
 		significanceSpinner = new Spinner(significanceComposite,SWT.BORDER);
-		significanceSpinner.setMaximum(SIGNIFICANCE_RESOLUTION + 1);
+		significanceSpinner.setMaximum(SIGNIFICANCE_RESOLUTION);
 		significanceSpinner.setDigits(4);
-		significanceSpinner.setSelection(1000);
+		significanceSpinner.setSelection(SIGNIFICANCE_RESOLUTION/10);
+		significanceSpinner.setIncrement(10);
+		significanceSpinner.setPageIncrement(1);
 		significanceSpinner.setToolTipText("The significance level determines the threshold of terms\nthat are considered as significantly enriched, and thus\nbeing colored.");
 		significanceSpinner.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e)
