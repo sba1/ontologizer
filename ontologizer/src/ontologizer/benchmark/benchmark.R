@@ -9,14 +9,12 @@
 dir<-"."
 filename<-"result-fp.txt"
 v<-matrix(ncol=2,byrow=T,
-          c("p.tft","Term for Term",
-		    "p.pcu", "Parent Child",
-		    "p.tweight","Topology Weighted",
+          c("p.tft","TfT",
+		    "p.pcu", "PCU",
+		    "p.tweight","TopW",
 			"p.gg", "GenGO",
-			"p.b2g.ideal.pop", "B2G: Known Parameter",
-			"p.b2g.mcmc.pop", "B2G: Unknown Parameter",
-			"p.b2g.ideal.pop.nop", "B2G: No Prior, Known Parameter",
-			"p.b2g.ideal.pop.random", "B2G: Known, Random"
+			"p.b2g.ideal.pop", expression(B2G^"*"),
+			"p.b2g.mcmc.pop", "B2G"
            ))
 
 
@@ -157,13 +155,13 @@ lapply(s,function(d) {
 	beta<-unique(d$beta)
 
 	filename<-sprintf("result-roc-a%d-b%d.pdf",alpha*100,beta*100)
-	pdf(file=filename,height=9,width=9)
+	pdf(file=filename,height=8,width=8)
 	par(cex=1.3,cex.main=1.2,lwd=2)
 	plot.roc(subset(d,d$senseful==0),alpha,beta,calc.auc=T,rocn=10)
 	dev.off()
 
 	filename<-sprintf("result-roc-a%d-b%d-senseful.pdf",alpha*100,beta*100)
-	pdf(file=filename,height=9,width=9)
+	pdf(file=filename,height=8,width=8)
 	par(cex=1.3,cex.main=1.2,lwd=2)
 	plot.roc(subset(d,d$senseful==1),alpha,beta,calc.auc=T,rocn=10)
 	dev.off()
@@ -178,13 +176,13 @@ lapply(s,function(d) {
 	beta<-unique(d$beta)
 
 	filename<-sprintf("result-precall-a%d-b%d.pdf",alpha*100,beta*100)
-	pdf(file=filename,height=9,width=9)
+	pdf(file=filename,height=8,width=8)
 	par(cex=1.3,cex.main=1.2,lwd=2)
 	plot.roc(subset(d,d$senseful==0),alpha,beta,y.axis="prec",x.axis="rec",legend.place="topright")
 	dev.off()
 
 	filename<-sprintf("result-precall-a%d-b%d-senseful.pdf",alpha*100,beta*100)
-	pdf(file=filename,height=9,width=9)
+	pdf(file=filename,height=8,width=8)
 	par(cex=1.3,cex.main=1.2,lwd=2)
 	plot.roc(subset(d,d$senseful==1),alpha,beta,y.axis="prec",x.axis="rec",legend.place="topright")
 	dev.off()
