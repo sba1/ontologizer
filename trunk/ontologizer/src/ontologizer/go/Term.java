@@ -249,7 +249,7 @@ public class Term
 
 		if (nameSpace.equalsIgnoreCase("biological_process")) return "B";
 		if (nameSpace.equalsIgnoreCase("molecular_function")) return "M";
-		if (nameSpace.equalsIgnoreCase("cellular_compoment")) return "C";
+		if (nameSpace.equalsIgnoreCase("cellular_component")) return "C";
 		return nameSpace;
 	}
 
