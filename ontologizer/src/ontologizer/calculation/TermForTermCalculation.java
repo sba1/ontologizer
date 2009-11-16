@@ -1,6 +1,7 @@
 package ontologizer.calculation;
 
 import ontologizer.GOTermCounter;
+import ontologizer.GOTermEnumerator;
 import ontologizer.PopulationSet;
 import ontologizer.StudySet;
 import ontologizer.association.AssociationContainer;
@@ -66,22 +67,28 @@ public class TermForTermCalculation extends AbstractHypergeometricCalculation
 
 			private PValue [] calculatePValues(StudySet studySet)
 			{
-				GOTermCounter studyTermCounter = studySet.countGOTerms(graph,goAssociations);
-				GOTermCounter populationTermCounter = populationSet.countGOTerms(graph,goAssociations);
+//				GOTermCounter studyTermCounter = studySet.countGOTerms(graph,goAssociations);
+//				GOTermCounter populationTermCounter = populationSet.countGOTerms(graph,goAssociations);
+
+				GOTermEnumerator studyTermEnumerator = studySet.enumerateGOTerms(graph, goAssociations);
+				GOTermEnumerator populationTermEnumerator = populationSet.enumerateGOTerms(graph, goAssociations);
+
+//				System.out.println(" studyCount="+studyTermCounter.getTotalNumberOfAnnotatedTerms() + " studyEnum=" + studyTermEnumerator.getTotalNumberOfAnnotatedTerms());
+
 				int i = 0;
 
-				PValue p [] = new PValue[populationTermCounter.getTotalNumberOfAnnotatedTerms()];
+				PValue p [] = new PValue[studyTermEnumerator.getTotalNumberOfAnnotatedTerms()];//populationTermCounter.getTotalNumberOfAnnotatedTerms()];
 				TermForTermGOTermProperties myP;
 
-				for(TermID term : populationTermCounter)
+				for(TermID term : studyTermEnumerator)//populationTermCounter)
 				{
-					int goidAnnotatedPopGeneCount = populationTermCounter.getCount(term);
+					int goidAnnotatedPopGeneCount = populationTermEnumerator.getAnnotatedGenes(term).totalAnnotatedCount();//populationTermCounter.getCount(term);
 					int popGeneCount = populationSet.getGeneCount();
 					int studyGeneCount = studySet.getGeneCount();
-					int goidAnnotatedStudyGeneCount = studyTermCounter.getCount(term);
+					int goidAnnotatedStudyGeneCount = studyTermEnumerator.getAnnotatedGenes(term).totalAnnotatedCount();//studyTermCounter.getCount(term);
 
 					myP = new TermForTermGOTermProperties();
-					myP.goTerm = graph.getGoTermContainer().get(term);
+					myP.goTerm = graph.getGOTerm(term);
 					myP.annotatedStudyGenes = goidAnnotatedStudyGeneCount;
 					myP.annotatedPopulationGenes = goidAnnotatedPopGeneCount;
 
