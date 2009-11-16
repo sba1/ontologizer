@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import ontologizer.calculation.b2g.Bayes2GOCalculation;
+
 /**
  * 
  * 

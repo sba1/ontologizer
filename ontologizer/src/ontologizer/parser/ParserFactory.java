@@ -78,7 +78,7 @@ public final class ParserFactory
 				{
 					try
 					{
-						Double val = Double.parseDouble(splitted[1]);
+						Double.parseDouble(splitted[1]);
 						type = "plain-valued";
 					} catch (NumberFormatException ex) {}
 				}
