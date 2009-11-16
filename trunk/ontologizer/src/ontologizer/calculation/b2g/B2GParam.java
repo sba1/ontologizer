@@ -1,4 +1,4 @@
-package ontologizer.calculation;
+package ontologizer.calculation.b2g;
 
 /**
  * A basic class to represent different settings parameter.
