@@ -1205,7 +1205,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 	 */
 	public void latexSave(String path)
 	{
-		EnrichedGOTermsResultLatexWriter.write(result,new File(path));
+		EnrichedGOTermsResultLatexWriter.write(result,new File(path),getCheckedTermsCollection());
 	}
 
 	/**
