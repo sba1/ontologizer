@@ -41,9 +41,6 @@ import ontologizer.worksets.WorkSetLoadThread;
  */
 abstract class Bayes2GOScore
 {
-	/** Current score */
-//	protected double score;
-	
 	/** Source of randomness */
 	protected Random rnd;
 	
@@ -68,7 +65,10 @@ abstract class Bayes2GOScore
 	
 	/** The current number of inactive terms */
 	protected int numInactiveTerms;
-	
+
+	protected int numRecords;
+	protected int [] termActivationCounts;
+
 	/**
 	 * An array representing the inactive terms.
 	 * 
@@ -83,6 +83,7 @@ abstract class Bayes2GOScore
 	 */
 	protected HashMap<TermID,Integer> term2InactiveTermsIdx = new HashMap<TermID,Integer>();
 
+	protected double p = Double.NaN;
 
 	public Bayes2GOScore(List<TermID> termList, GOTermEnumerator populationEnumerator, Set<ByteString> observedActiveGenes)
 	{
@@ -99,6 +100,7 @@ abstract class Bayes2GOScore
 		termsArray = new TermID[termList.size()];
 		inactiveTermsArray = new TermID[termList.size()];
 		numInactiveTerms = termList.size();
+		termActivationCounts = new int[termList.size()];
 		i=0;
 		for (TermID tid : termList)
 		{
@@ -120,6 +122,11 @@ abstract class Bayes2GOScore
 		this.observedActiveGenes = observedActiveGenes;
 	}
 
+	public void setP(double p)
+	{
+		this.p = p;
+	}
+	
 	public double score(Collection<TermID> activeTerms)
 	{
 		ArrayList<TermID> oldTerms = new ArrayList<TermID>(this.activeTerms);
@@ -228,6 +235,17 @@ abstract class Bayes2GOScore
 	public abstract void undoProposal();
 	
 	public abstract long getNeighborhoodSize();
+
+	/**
+	 * Records the current settings.
+	 */
+	public void record()
+	{
+		for (TermID tid : activeTerms)
+			termActivationCounts[term2TermsIdx.get(tid)]++;
+
+		numRecords++;
+	}
 }
 
 /**
@@ -313,7 +331,7 @@ class VariableAlphaBetaScore extends Bayes2GOScore
 	@Override
 	public double getScore()
 	{
-		return score;
+		return score + activeTerms.size() * Math.log(p/(1.0-p));
 	}
 	
 	@Override
@@ -341,9 +359,8 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 	private TermID proposalT1;
 	private TermID proposalT2;
 
-	private double [] ALPHA = new double[] {0.05,0.1,0.15,0.2,0.25,0.3};
-//	private double alpha = 0.05;
-//	private double oldAlpha;
+//	private double [] ALPHA = new double[] {0.0001,0.01,0.05,0.1,0.15,0.2,0.25,0.3};
+	private double [] ALPHA = new double[] {0.1};
 	private int alphaIdx = 0;
 	private int oldAlphaIdx;
 
@@ -398,7 +415,7 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 		proposalT2 = null;
 		oldAlphaIdx = -1;
 
-		if (rnd.nextBoolean())
+		if (true)//rnd.nextBoolean())
 		{
 			long choose = Math.abs(rand) % oldPossibilities;
 	
@@ -431,12 +448,18 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 	@Override
 	public double getScore()
 	{
-//		double alpha = 0.1;
 		double beta = 0.1;
 		double alpha = ALPHA[alphaIdx];
 
 		double newScore2 = Math.log(alpha) * n10 + Math.log(1-alpha)*n11 + Math.log(1-beta)*n00 + Math.log(beta)*n01;
-		newScore2 -= Math.log(alpha) * observedActiveGenes.size() + Math.log(1-beta)* (population.size() - observedActiveGenes.size());
+		
+		if (!Double.isNaN(p))
+			newScore2 += Math.log(p)*activeTerms.size() + Math.log(1-p)*(termsArray.length - activeTerms.size());
+		
+//		newScore2 -= Math.log(alpha) * observedActiveGenes.size() + Math.log(1-beta)* (population.size() - observedActiveGenes.size());
+		
+		
+		
 		return newScore2;
 	}
 	
@@ -611,9 +634,10 @@ public class Bayes2GOCalculation implements ICalculation
 		FixedAlphaBetaScore bayesScore = new FixedAlphaBetaScore(rnd, allTerms, populationEnumerator,  studySet.getAllGeneNames());
 
 		result.setScore(bayesScore);
+		if (!noPrior) bayesScore.setP(p);
 
 		/* Stores the terms activation counts */
-		int [] activeCount = new int[allTerms.size()];
+//		int [] activeCount = new int[allTerms.size()];
 
 //		/* Initialize initially active terms randomly */
 //		for (int i=0;i<allTermsArrayList.size();i++)
@@ -632,7 +656,6 @@ public class Bayes2GOCalculation implements ICalculation
 
 		int maxSteps = 320000;
 		int burnin = 20000;
-		int samplesTaken = 0;
 		int numAccepts = 0;
 		int numRejects = 0;
 
@@ -643,7 +666,7 @@ public class Bayes2GOCalculation implements ICalculation
 
 		double score = bayesScore.getScore();
 		
-		double maxScore = Double.MIN_VALUE;
+		double maxScore = Double.NEGATIVE_INFINITY;
 		ArrayList<TermID> maxScoredTerms = new ArrayList<TermID>();
 		
 		System.out.println("Initial score: " + score);
@@ -678,8 +701,6 @@ public class Bayes2GOCalculation implements ICalculation
 			double newScore = bayesScore.getScore();
 			long newPossibilities = bayesScore.getNeighborhoodSize();
 
-			if (!noPrior) newScore += bayesScore.activeTerms.size() * Math.log(p/(1.0-p));
-
 			double acceptProb = Math.exp(newScore - score)*(double)oldPossibilities/(double)newPossibilities; /* last quotient is the hasting ratio */
 
 			boolean DEBUG = false;
@@ -699,11 +720,7 @@ public class Bayes2GOCalculation implements ICalculation
 			if (DEBUG) System.out.println();
 
 			if (t>burnin)
-			{
-				for (TermID tid : bayesScore.activeTerms)
-					activeCount[bayesScore.term2TermsIdx.get(tid)]++;
-				samplesTaken++;
-			}
+				bayesScore.record();
 		}
 
 		for (TermID t : allTerms)
@@ -715,7 +732,7 @@ public class Bayes2GOCalculation implements ICalculation
 			prop.annotatedPopulationGenes = populationEnumerator.getAnnotatedGenes(t).totalAnnotatedCount();
 			
 			/* We reverse the probability as the framework assumes that low p values are important */
-			prop.p = 1 - ((double)activeCount[bayesScore.term2TermsIdx.get(t)] / samplesTaken);
+			prop.p = 1 - ((double)bayesScore.termActivationCounts[bayesScore.term2TermsIdx.get(t)] / bayesScore.numRecords);
 			prop.p_adjusted = prop.p;
 			prop.p_min = 0.001;
 			result.addGOTermProperties(prop);
@@ -1005,7 +1022,7 @@ public class Bayes2GOCalculation implements ICalculation
 			{
 				Bayes2GOEnrichedGOTermsResult b2gResult = (Bayes2GOEnrichedGOTermsResult)result;
 				double wantedScore = b2gResult.getScore().score(wantedActiveTerms);
-				if (!(((Bayes2GOCalculation)calc).noPrior)) wantedScore += wantedActiveTerms.size() * Math.log(p/(1.0-p));
+//				if (!(((Bayes2GOCalculation)calc).noPrior)) wantedScore += wantedActiveTerms.size() * Math.log(p/(1.0-p));
 				System.out.println("Score of the optimal set is " + wantedScore);
 			}
 			pIsReverseMarginal = true;
