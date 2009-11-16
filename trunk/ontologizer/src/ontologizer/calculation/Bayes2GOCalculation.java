@@ -381,6 +381,7 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 	private BigInteger totalN01 = new BigInteger("0");
 	private BigInteger totalN10 = new BigInteger("0");
 	private BigInteger totalN11 = new BigInteger("0");
+	private BigInteger totalT = new BigInteger("0");
 
 	public void setAlpha(double alpha)
 	{
@@ -514,6 +515,8 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 		totalN11 = totalN11.add(new BigInteger(new String(n11 +"")));
 		
 		totalAlpha[alphaIdx]++;
+		
+		totalT = totalT.add(new BigInteger(new String(activeTerms.size() + "")));
 	}
 
 	public int getAvgN00()
@@ -538,6 +541,12 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 	{
 		BigInteger avgN11 = new BigInteger(totalN11.toString());
 		return avgN11.divide(new BigInteger(Integer.toString(numRecords))).intValue();
+	}
+	
+	public int getAvgT()
+	{
+		BigInteger avgT = new BigInteger(totalT.toString());
+		return avgT.divide(new BigInteger(Integer.toString(numRecords))).intValue();
 	}
 }
 
@@ -574,12 +583,28 @@ public class Bayes2GOCalculation implements ICalculation
 	private boolean noPrior = false;
 	
 	private int expectedNumber = -1;
-	public double alpha = 0.1;
-	public double beta = 0.1;
+	public double alpha = Double.NaN;
+	public double beta = Double.NaN;
 	public long seed = 0;
 	public boolean parameterEstimation = true;
-
+	
 	public ICalculationProgress calculationProgress;
+
+	public Bayes2GOCalculation()
+	{
+	}
+
+	public Bayes2GOCalculation(Bayes2GOCalculation calc)
+	{
+		this.defaultP = calc.defaultP;
+		this.noPrior = calc.noPrior;
+		this.expectedNumber = calc.expectedNumber;
+		this.alpha = calc.alpha;
+		this.beta = calc.beta;
+		this.seed = calc.seed;
+		this.parameterEstimation = calc.parameterEstimation;
+		this.calculationProgress = calc.calculationProgress;
+	}
 
 	/**
 	 * Sets the seed of the random calculation.
@@ -693,9 +718,10 @@ public class Bayes2GOCalculation implements ICalculation
 			System.err.println("Created random number generator with seed of " + seed);
 		}
 		else rnd = new Random();
-
+		
 		alpha = 0.4;
 		beta = 0.3;
+		p = 0.0001;
 
 		for (int i=0;i<10;i++)
 		{
@@ -784,6 +810,10 @@ public class Bayes2GOCalculation implements ICalculation
 			double newBeta = (double)bayesScore.getAvgN01()/(bayesScore.getAvgN01() + bayesScore.getAvgN00());
 			System.out.println("beta=" + beta + "  newBeta=" + newBeta);
 			beta = newBeta;
+			
+			double newP = (double)bayesScore.getAvgT() / bayesScore.termsArray.length;
+			System.out.println("p=" + p + "  newP=" + newP);
+			p = newP;
 
 			if (i==9)
 			for (TermID t : allTerms)
