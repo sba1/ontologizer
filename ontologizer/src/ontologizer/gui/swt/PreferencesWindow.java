@@ -40,6 +40,7 @@ public class PreferencesWindow extends ApplicationWindow
 	private Spinner alphaSpinner;
 	private Spinner betaSpinner;
 	private Spinner expectedNumberSpinner;
+	private final static int ALPHA_BETA_DIGITS = 4;
 
 	/**
 	 * Constructor.
@@ -120,16 +121,18 @@ public class PreferencesWindow extends ApplicationWindow
 			alphaSpinner = new Spinner(composite,SWT.BORDER);
 			alphaSpinner.setLayoutData(new GridData(SWT.FILL,0,true,false,2,1));
 			alphaSpinner.setMinimum(1);
-			alphaSpinner.setMaximum(50);
-			alphaSpinner.setSelection(10);
+			alphaSpinner.setMaximum(50*(int)Math.pow(10, ALPHA_BETA_DIGITS));
+			alphaSpinner.setSelection(10*(int)Math.pow(10, ALPHA_BETA_DIGITS));
+			alphaSpinner.setDigits(ALPHA_BETA_DIGITS);
 
 			Label betaLabel = new Label(composite,0);
 			betaLabel.setText("Beta (in percent)");
 			betaSpinner = new Spinner(composite,SWT.BORDER);
 			betaSpinner.setLayoutData(new GridData(SWT.FILL,0,true,false,2,1));
 			betaSpinner.setMinimum(1);
-			betaSpinner.setMaximum(50);
-			betaSpinner.setSelection(25);
+			betaSpinner.setMaximum(50*(int)Math.pow(10, ALPHA_BETA_DIGITS));
+			betaSpinner.setSelection(25*(int)Math.pow(10, ALPHA_BETA_DIGITS));
+			betaSpinner.setDigits(ALPHA_BETA_DIGITS);
 
 			Label priorLabel = new Label(composite,0);
 			priorLabel.setText("Expected number of terms");
@@ -284,16 +287,22 @@ public class PreferencesWindow extends ApplicationWindow
 
 	public double getAlpha()
 	{
-		return alphaSpinner.getSelection() / 100.0;
+		if (alphaSpinner != null)
+			return alphaSpinner.getSelection() / Math.pow(10, ALPHA_BETA_DIGITS) / 100.0;
+		return 0.1;
 	}
 
 	public double getBeta()
 	{
-		return betaSpinner.getSelection() / 100.0;
+		if (betaSpinner != null)
+			return betaSpinner.getSelection() / Math.pow(10, ALPHA_BETA_DIGITS) / 100.0;
+		return 0.1;
 	}
 
 	public int getExpectedNumberOfTerms()
 	{
-		return expectedNumberSpinner.getSelection();
+		if (expectedNumberSpinner != null)
+			return expectedNumberSpinner.getSelection();
+		return 1;
 	}
 }
