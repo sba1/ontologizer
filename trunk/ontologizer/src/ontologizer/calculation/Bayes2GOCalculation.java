@@ -13,6 +13,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import ontologizer.ByteString;
 import ontologizer.FileCache;
@@ -476,7 +477,7 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 	private TermID proposalT1;
 	private TermID proposalT2;
 
-	protected final double [] ALPHA = new double[] {0.05, 0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5};
+	protected final double [] ALPHA = new double[] {0.0000001,0.05, 0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5};
 	private int alphaIdx = 0;
 	private int oldAlphaIdx;
 	protected int totalAlpha[] = new int[ALPHA.length];
@@ -756,6 +757,8 @@ class Bayes2GOEnrichedGOTermsResult extends EnrichedGOTermsResult
  */
 public class Bayes2GOCalculation implements ICalculation
 {
+	private static Logger logger = Logger.getLogger(Bayes2GOCalculation.class.getCanonicalName());
+
 	private long seed = 0;
 
 	private boolean usePrior = true;
@@ -802,6 +805,8 @@ public class Bayes2GOCalculation implements ICalculation
 	 */
 	public void setAlpha(double alpha)
 	{
+		if (alpha < 0.000001) alpha = 0.000001;
+		if (alpha > 0.999999) alpha = 0.999999;
 		this.alpha.setValue(alpha);
 	}
 
@@ -812,6 +817,8 @@ public class Bayes2GOCalculation implements ICalculation
 	 */
 	public void setBeta(double beta)
 	{
+		if (beta < 0.000001) beta = 0.000001;
+		if (beta > 0.999999) beta = 0.999999;
 		this.beta.setValue(beta);
 	}
 
@@ -885,20 +892,12 @@ public class Bayes2GOCalculation implements ICalculation
 		GOTermEnumerator populationEnumerator = populationSet.enumerateGOTerms(graph, goAssociations);
 		GOTermEnumerator studyEnumerator = studySet.enumerateGOTerms(graph, goAssociations);
 
-//		HashMap<ByteString, Double> llr = calcLLR(populationSet, studySet);
-//		if (expectedNumber != -1)
-//		{
-//			p = expectedNumber / (double)studyEnumerator.getTotalNumberOfAnnotatedTerms();
-//			System.out.println("Parameter p has been overwritten by expected number.");
-//		}
-
-		System.out.println("Starting calculation: expectedNumberOfTerms=" + expectedNumberOfTerms + " alpha=" + alpha + " beta=" + beta);
+		System.out.println("Starting calculation: expectedNumberOfTerms=" + expectedNumberOfTerms + " alpha=" + alpha + " beta=" + beta + "  numberOfPop=" + populationEnumerator.getGenes().size() + " numberOfStudy=" + studyEnumerator.getGenes().size());
 
 		long start = System.nanoTime();
 		calculateByMCMC(graph, result, populationEnumerator, studyEnumerator, populationSet, studySet);//, llr);
 		long end = System.nanoTime();
 		System.out.println(((end - start)/1000) + "ms");
-
 //		calculateByOptimization(graph, result, populationEnumerator, studyEnumerator, llr);
 
 		/** Print out the results **/
@@ -999,7 +998,7 @@ public class Bayes2GOCalculation implements ICalculation
 		for (int i=0;i<maxIter;i++)
 		{
 //			VariableAlphaBetaScore bayesScore = new VariableAlphaBetaScore(rnd, allTerms, populationEnumerator, studySet.getAllGeneNames(), alpha, beta);
-			FixedAlphaBetaScore bayesScore = new FixedAlphaBetaScore(rnd, allTerms, populationEnumerator,  studySet.getAllGeneNames());
+			FixedAlphaBetaScore bayesScore = new FixedAlphaBetaScore(rnd, allTerms, populationEnumerator,  studyEnumerator.getGenes());
 
 			if (doEm)
 			{
@@ -1046,7 +1045,7 @@ public class Bayes2GOCalculation implements ICalculation
 				long now = System.currentTimeMillis();
 				if (now - start > 5000)
 				{
-					System.out.println((t*100/maxSteps) + "% (score=" + score +" maxScore=" + maxScore + " #terms="+bayesScore.activeTerms.size()+
+					logger.info((t*100/maxSteps) + "% (score=" + score +" maxScore=" + maxScore + " #terms="+bayesScore.activeTerms.size()+
 										" accept/reject=" + String.format("%g",(double)numAccepts / (double)numRejects) +
 										" accept/steps=" + String.format("%g",(double)numAccepts / (double)t) +
 										" exp=" + expectedNumberOfTerms + " usePrior=" + usePrior + ")");
@@ -1087,6 +1086,8 @@ public class Bayes2GOCalculation implements ICalculation
 			if (doAlphaEm)
 			{
 				double newAlpha = (double)bayesScore.getAvgN10()/(bayesScore.getAvgN00() + bayesScore.getAvgN10());
+				if (newAlpha < 0.0000001) newAlpha = 0.0000001;
+				if (newAlpha > 0.9999999) newAlpha = 0.9999999;
 				System.out.println("alpha=" + alpha + "  newAlpha=" + newAlpha);
 				alpha = newAlpha;
 			}
@@ -1094,6 +1095,8 @@ public class Bayes2GOCalculation implements ICalculation
 			if (doBetaEm)
 			{
 				double newBeta = (double)bayesScore.getAvgN01()/(bayesScore.getAvgN01() + bayesScore.getAvgN11());
+				if (newBeta < 0.0000001) newBeta = 0.0000001;
+				if (newBeta > 0.9999999) newBeta = 0.9999999;
 				System.out.println("beta=" + beta + "  newBeta=" + newBeta);
 				beta = newBeta;
 			}
@@ -1101,8 +1104,10 @@ public class Bayes2GOCalculation implements ICalculation
 			if (doPEm)
 			{
 				double newExpectedNumberOfTerms = (double)bayesScore.getAvgT();
+				if (newExpectedNumberOfTerms < 0.0000001) newExpectedNumberOfTerms = 0.0000001;
 				System.out.println("expectedNumberOfTerms=" + expectedNumberOfTerms + "  newExpectedNumberOfTerms=" + newExpectedNumberOfTerms);
 				expectedNumberOfTerms = newExpectedNumberOfTerms;
+
 //				double newP = (double)bayesScore.getAvgT() / bayesScore.termsArray.length;
 //				System.out.println("p=" + p + "  newP=" + newP);
 //				p = newP;
@@ -1298,6 +1303,8 @@ public class Bayes2GOCalculation implements ICalculation
 		wantedActiveTerms.add(new TermID("GO:0001505")); /* regulation of neuro transmitter levels */
 		wantedActiveTerms.add(new TermID("GO:0035237")); /* corazonin receptor activity */
 
+//		wantedActiveTerms.add(new TermID("GO:0006797"));
+
 //		createInternalOntology(1);
 //		wantedActiveTerms.add(new TermID("GO:0000010"));
 //		wantedActiveTerms.add(new TermID("GO:0000004"));
@@ -1415,7 +1422,7 @@ public class Bayes2GOCalculation implements ICalculation
 
 		calc.setAlpha(realAlpha);
 		calc.setBeta(realBeta);
-		calc.setExpectedNumber(4);
+		calc.setExpectedNumber(wantedActiveTerms.size());
 
 //		calc.setMcmcSteps(500000);
 //		calc.setAlpha(B2GParam.Type.MCMC);
@@ -1610,6 +1617,8 @@ public class Bayes2GOCalculation implements ICalculation
 		final WorkSet ws = new WorkSet("Test");
 		ws.setOboPath("http://www.geneontology.org/ontology/gene_ontology_edit.obo");
 		ws.setAssociationPath("http://cvsweb.geneontology.org/cgi-bin/cvsweb.cgi/go/gene-associations/gene_association.fb.gz?rev=HEAD");
+//		ws.setAssociationPath("http://cvsweb.geneontology.org/cgi-bin/cvsweb.cgi/go/gene-associations/gene_association.sgd.gz?rev=HEAD");
+
 		final Object notify = new Object();
 
 		synchronized (notify)
