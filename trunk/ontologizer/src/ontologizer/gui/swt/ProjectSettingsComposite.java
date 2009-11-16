@@ -316,8 +316,9 @@ public class ProjectSettingsComposite extends Composite
 
 		int idx = considerCombo.getSelectionIndex();
 		if (idx >= 0)
-			return considerCombo.getItems()[idx];
-		return "";
+			return considerCombo.getItem(idx);
+
+		return considerCombo.getText();
 
 	}
 
