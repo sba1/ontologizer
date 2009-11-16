@@ -324,14 +324,15 @@ public class ProbabilisticCalculation implements ICalculation
 			double pNext = (double)(data.ag) / (data.ag + data.sg);
 			double qNext = (double)(data.an) / (data.an + data.sn);
 
+			if (!Double.isNaN(defaultP) && !Double.isNaN(defaultQ))
+				break;
+
 			if (Double.isNaN(pNext) || Double.isNaN(qNext))
 			{
 				System.err.println("Breaked: #terms=" + data.activeTerms.size() + " ag=" + data.ag + " sg="+data.sg);
 				break;
 			}
 
-			if (!Double.isNaN(defaultP) && !Double.isNaN(defaultQ))
-				break;
 
 //			System.out.println("p=" + data.p + " q=" + data.q + "  pNext="+pNext + " qNext="+qNext);
 
