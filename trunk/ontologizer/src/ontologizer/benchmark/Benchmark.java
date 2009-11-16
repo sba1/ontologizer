@@ -3,6 +3,7 @@ package ontologizer.benchmark;
 import java.io.File;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -343,9 +344,19 @@ GlobalPreferences.setProxyHost("realproxy.charite.de");
 		ArrayList<Combination> combinationList = new ArrayList<Combination>();
 		for (int i=MIN_TERMS;i<=MAX_TERMS;i++)
 		{
-			ArrayList<TermID> termCombis;
+			Collection<ArrayList<TermID>> termCombis;
 
-			for (ArrayList<TermID> termCombi : kSubsetSampler.sampleManyOrderedWithoutReplacement(i,TERMS_PER_RUN))
+			if (i==0)
+			{
+				termCombis = new ArrayList<ArrayList<TermID>>(TERMS_PER_RUN);
+				for (int j=0;j<TERMS_PER_RUN;j++)
+					termCombis.add(new ArrayList<TermID>());
+			} else
+			{
+				termCombis = kSubsetSampler.sampleManyOrderedWithoutReplacement(i,TERMS_PER_RUN);
+			}
+
+			for (ArrayList<TermID> termCombi : termCombis)
 			{
 				Combination comb = new Combination();
 				comb.termCombi = termCombi;
@@ -367,7 +378,19 @@ GlobalPreferences.setProxyHost("realproxy.charite.de");
 		KSubsetSampler<TermID> kSensefulSubsetSampler = new KSubsetSampler<TermID>(sensefulTerms,rnd);
 		for (int i=MIN_TERMS;i<=MAX_TERMS;i++)
 		{
-			for (ArrayList<TermID> termCombi : kSensefulSubsetSampler.sampleManyOrderedWithoutReplacement(i,SENSEFUL_TERMS_PER_RUN))
+			Collection<ArrayList<TermID>> termCombis;
+
+			if (i==0)
+			{
+				termCombis = new ArrayList<ArrayList<TermID>>(TERMS_PER_RUN);
+				for (int j=0;j<TERMS_PER_RUN;j++)
+					termCombis.add(new ArrayList<TermID>());
+			} else
+			{
+				termCombis = kSensefulSubsetSampler.sampleManyOrderedWithoutReplacement(i,TERMS_PER_RUN);
+			}
+
+			for (ArrayList<TermID> termCombi : termCombis)
 			{
 				Combination comb = new Combination();
 				comb.termCombi = termCombi;
