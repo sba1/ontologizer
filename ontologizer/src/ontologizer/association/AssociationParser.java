@@ -261,7 +261,7 @@ public class AssociationParser
 					{
 						System.err.println("Skipping association of Gene " 
 								+ assoc.getObjectSymbol() + " to GO:id " + currentGOid 
-								+ " because the term has not been found!");
+								+ " because the term was not found!");
 						System.err.println("(Are the obo file and the association "
 								+ "file both up-to-date?)");
 						skipped++;
