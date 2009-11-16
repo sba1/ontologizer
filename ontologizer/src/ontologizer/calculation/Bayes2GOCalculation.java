@@ -378,14 +378,12 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 	private TermID proposalT1;
 	private TermID proposalT2;
 
-//	private double [] ALPHA = new double[] {0.0001,0.01,0.05,0.1,0.15,0.2,0.25,0.3};
-
-	private double [] ALPHA = new double[] {0.05, 0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5};
+	protected final double [] ALPHA = new double[] {0.05, 0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,0.5};
 	private int alphaIdx = 0;
 	private int oldAlphaIdx;
 	protected int totalAlpha[] = new int[ALPHA.length];
 
-	private double [] BETA = ALPHA;
+	protected final double [] BETA = ALPHA;
 	private int betaIdx = 0;
 	private int oldBetaIdx;
 	protected int totalBeta[] = new int[BETA.length];
@@ -459,8 +457,9 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 		proposalT1 = null;
 		proposalT2 = null;
 		oldAlphaIdx = -1;
+		oldBetaIdx = -1;
 
-		if (rnd.nextBoolean())
+		if (!Double.isNaN(alpha) || rnd.nextBoolean())
 		{
 			long choose = Math.abs(rand) % oldPossibilities;
 
@@ -484,9 +483,17 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 			}
 		} else
 		{
-			int choose = Math.abs((int)rand) % ALPHA.length;
-			oldAlphaIdx = alphaIdx;
-			alphaIdx = choose;
+			int choose = Math.abs((int)rand) % (ALPHA.length + BETA.length);
+
+			if (choose >= ALPHA.length)
+			{
+				oldBetaIdx = betaIdx;
+				betaIdx = choose - ALPHA.length;
+			} else
+			{
+				oldAlphaIdx = alphaIdx;
+				alphaIdx = choose;
+			}
 		}
 	}
 
@@ -517,7 +524,9 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 	{
 		if (proposalSwitch != -1)	switchState(proposalSwitch);
 		else if (proposalT1 != null) exchange(proposalT2, proposalT1);
-		else alphaIdx = oldAlphaIdx;
+		else if (oldAlphaIdx != -1) alphaIdx = oldAlphaIdx;
+		else if (oldBetaIdx != -1) betaIdx = oldBetaIdx;
+		else throw new RuntimeException("Wanted to undo a proposal that wasn't proposed");
 	}
 
 	public long getNeighborhoodSize()
@@ -537,6 +546,7 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 		totalN11 = totalN11.add(new BigInteger(new String(n11 +"")));
 
 		totalAlpha[alphaIdx]++;
+		totalBeta[betaIdx]++;
 
 		totalT = totalT.add(new BigInteger(new String(activeTerms.size() + "")));
 	}
@@ -607,7 +617,11 @@ public class Bayes2GOCalculation implements ICalculation
 	public double beta = Double.NaN;
 	public double defaultP = Double.NaN;
 	public boolean takePopulationAsReference = false;
+
 	public long seed = 0;
+
+	/** Indicates whether a full MCMC should be performed */
+	private boolean doFullMCMC = false;
 
 	public ICalculationProgress calculationProgress;
 
@@ -624,7 +638,7 @@ public class Bayes2GOCalculation implements ICalculation
 		this.beta = calc.beta;
 		this.seed = calc.seed;
 		this.calculationProgress = calc.calculationProgress;
-		this.takePopulationAsReference = takePopulationAsReference;
+		this.takePopulationAsReference = calc.takePopulationAsReference;
 	}
 
 	/**
@@ -650,6 +664,11 @@ public class Bayes2GOCalculation implements ICalculation
 	public void setBeta(double beta)
 	{
 		this.beta = beta;
+	}
+
+	public void setDoFullMCMC(boolean doFullMCMC)
+	{
+		this.doFullMCMC = doFullMCMC;
 	}
 
 	public void setTakePopulationAsReference(boolean takePopulationAsReference)
@@ -760,17 +779,20 @@ public class Bayes2GOCalculation implements ICalculation
 
 		int maxIter;
 
-//		if (Double.isNaN(alpha))
-//		{
-//			alpha = 0.4;
-//			doAlphaEm = true;
-//			doEm = true;
-//		}
-		if (Double.isNaN(beta))
+		if (!doFullMCMC)
 		{
-			beta = 0.4;
-			doBetaEm = true;
-			doEm = true;
+			if (Double.isNaN(alpha))
+			{
+				alpha = 0.4;
+				doAlphaEm = true;
+				doEm = true;
+			}
+			if (Double.isNaN(beta))
+			{
+				beta = 0.4;
+				doBetaEm = true;
+				doEm = true;
+			}
 		}
 		if (Double.isNaN(p))
 		{
@@ -787,10 +809,16 @@ public class Bayes2GOCalculation implements ICalculation
 //			VariableAlphaBetaScore bayesScore = new VariableAlphaBetaScore(rnd, allTerms, populationEnumerator, studySet.getAllGeneNames(), alpha, beta);
 			FixedAlphaBetaScore bayesScore = new FixedAlphaBetaScore(rnd, allTerms, populationEnumerator,  studySet.getAllGeneNames());
 
-			System.out.println("EM-Iter("+i+")" + alpha + "  " + beta + "  " + p);
+			if (!doFullMCMC)
+			{
+				System.out.println("EM-Iter("+i+")" + alpha + "  " + beta + "  " + p);
 
-			bayesScore.setAlpha(alpha);
-			bayesScore.setBeta(beta);
+				bayesScore.setAlpha(alpha);
+				bayesScore.setBeta(beta);
+			} else
+			{
+				System.out.println("Doing a full MCMC.");
+			}
 			if (!noPrior) bayesScore.setP(p);
 
 			result.setScore(bayesScore);
@@ -912,8 +940,14 @@ public class Bayes2GOCalculation implements ICalculation
 				System.out.println(tid.toString() + "/" + graph.getGOTerm(tid).getName());
 			}
 
-			for (int j=0;j<bayesScore.totalAlpha.length;j++)
-				System.out.println("Total " + (double)bayesScore.totalAlpha[j] / bayesScore.numRecords);
+			if (doFullMCMC)
+			{
+				for (int j=0;j<bayesScore.totalAlpha.length;j++)
+					System.out.println("alpha(" + bayesScore.ALPHA[j] + ")=" + (double)bayesScore.totalAlpha[j] / bayesScore.numRecords);
+
+				for (int j=0;j<bayesScore.totalBeta.length;j++)
+					System.out.println("beta(" + bayesScore.BETA[j] + ")=" + (double)bayesScore.totalBeta[j] / bayesScore.numRecords);
+			}
 
 
 		}
@@ -1176,8 +1210,10 @@ public class Bayes2GOCalculation implements ICalculation
 ////		calc.setNoPrior(true);
 		calc.setP(p);
 		calc.setSeed(1);
+		calc.setDoFullMCMC(true);
 //		calc.setAlpha(realAlpha);
-		calc.setBeta(realBeta);
+//		calc.setBeta(realBeta);
+
 //		calc.setAlpha(alphaStudySet);
 //		calc.setBeta(betaStudySet);
 
