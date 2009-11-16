@@ -355,7 +355,7 @@ public class ResultWindow extends ApplicationWindow
 			{
 				Menu menu = new Menu(parent);
 				final MenuItem menuItem1 = new MenuItem(menu,SWT.NULL);
-				menuItem1.setText("Save Result Table...");
+				menuItem1.setText("Save Result as ASCII Table...");
 				menuItem1.addSelectionListener(new SelectionAdapter()
 				{
 					@Override
@@ -376,6 +376,19 @@ public class ResultWindow extends ApplicationWindow
 					{
 						tableActionNum = 1;
 						processMenuEvent(saveTableItem,menuItem2);
+						performAction();
+					}
+				});
+
+				final MenuItem menuItem4 = new MenuItem(menu,SWT.NULL);
+				menuItem4.setText("Save Result as Latex Document...");
+				menuItem4.addSelectionListener(new SelectionAdapter()
+				{
+					@Override
+					public void widgetSelected(SelectionEvent e)
+					{
+						tableActionNum = 3;
+						processMenuEvent(saveTableItem,menuItem4);
 						performAction();
 					}
 				});
@@ -414,6 +427,13 @@ public class ResultWindow extends ApplicationWindow
 							case 0: tblAction.tableSave(path); break;
 							case 1: tblAction.htmlSave(path); break;
 							case 2: tblAction.tableAnnotatedSetSave(path); break;
+							case 3:
+							{
+								if (!path.endsWith(".tex"))
+									path = path + ".tex";
+								tblAction.latexSave(path);
+								break;
+							}
 						}
 					}
 				}
@@ -442,7 +462,7 @@ public class ResultWindow extends ApplicationWindow
 				});
 
 				final MenuItem menuItem1 = new MenuItem(menu,SWT.NULL);
-				menuItem1.setText("Save Graph As PNG...");
+				menuItem1.setText("Save Graph as PNG...");
 				menuItem1.addSelectionListener(new SelectionAdapter()
 				{
 					@Override
@@ -455,7 +475,7 @@ public class ResultWindow extends ApplicationWindow
 				});
 
 				final MenuItem menuItem2 = new MenuItem(menu,SWT.NULL);
-				menuItem2.setText("Save Graph As SVG...");
+				menuItem2.setText("Save Graph as SVG...");
 				menuItem2.addSelectionListener(new SelectionAdapter()
 				{
 					@Override
@@ -468,7 +488,7 @@ public class ResultWindow extends ApplicationWindow
 				});
 
 				final MenuItem menuItem3 = new MenuItem(menu,SWT.NULL);
-				menuItem3.setText("Save Graph As DOT...");
+				menuItem3.setText("Save Graph as DOT...");
 				menuItem3.addSelectionListener(new SelectionAdapter()
 				{
 					@Override
@@ -481,7 +501,7 @@ public class ResultWindow extends ApplicationWindow
 				});
 
 				final MenuItem menuItem4 = new MenuItem(menu,SWT.NULL);
-				menuItem4.setText("Save Graph As PS...");
+				menuItem4.setText("Save Graph as PS...");
 				menuItem4.addSelectionListener(new SelectionAdapter()
 				{
 					@Override
