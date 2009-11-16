@@ -3,7 +3,6 @@ package ontologizer.calculation;
 import java.io.File;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -38,9 +37,150 @@ import ontologizer.worksets.WorkSetLoadThread;
 
 class B2GTestParameter
 {
-	static double ALPHA = 0.225;
-	static double BETA = 0.25;
+	static double ALPHA = 0.10;
+	static double BETA = 0.10;
 	static int MCMC_STEPS = 500000;
+}
+
+/**
+ * A basic class to represent different settings parameter.
+ *
+ * @author sba
+ *
+ */
+abstract class B2GParam
+{
+	static public enum Type
+	{
+		FIXED,
+		EM,
+		MCMC
+	}
+
+	private Type type;
+
+	B2GParam(Type type)
+	{
+		this.type = type;
+	}
+
+	B2GParam(B2GParam p)
+	{
+		this.type = p.type;
+	}
+
+	public Type getType()
+	{
+		return type;
+	}
+
+	public boolean isFixed()
+	{
+		return type == Type.FIXED;
+	}
+
+	public boolean isMCMC()
+	{
+		return type == Type.MCMC;
+	}
+
+	public boolean isEM()
+	{
+		return type == Type.EM;
+	}
+
+	public void setType(Type type)
+	{
+		this.type = type;
+	}
+}
+
+class DoubleParam extends B2GParam
+{
+	private double val;
+
+	public DoubleParam(Type type, double val)
+	{
+		super(type);
+
+		this.val = val;
+	}
+
+	public DoubleParam(DoubleParam p)
+	{
+		super(p);
+
+		this.val = p.val;
+	}
+
+	public DoubleParam(Type type)
+	{
+		super(type);
+
+		if (type == Type.FIXED) throw new IllegalArgumentException("Parameter could not be instanciated of type Fixed.");
+	}
+
+	double getValue()
+	{
+		return val;
+	}
+
+	void setValue(double newVal)
+	{
+		this.val = newVal;
+		setType(Type.FIXED);
+	}
+
+	@Override
+	public String toString()
+	{
+		if (isFixed()) return String.format("%g",val);
+		return getType().toString();
+	}
+}
+
+class IntegerParam extends B2GParam
+{
+	private int val;
+
+	public IntegerParam(Type type, int val)
+	{
+		super(type);
+
+		this.val = val;
+	}
+
+	public IntegerParam(Type type)
+	{
+		super(type);
+
+		if (type == Type.FIXED) throw new IllegalArgumentException("Parameter could not be instanciated of type Fixed.");
+	}
+
+	public IntegerParam(IntegerParam p)
+	{
+		super(p);
+
+		this.val = p.val;
+	}
+
+	int getValue()
+	{
+		return val;
+	}
+
+	void setValue(int newVal)
+	{
+		this.val = newVal;
+		setType(Type.FIXED);
+	}
+
+	@Override
+	public String toString()
+	{
+		if (isFixed()) return String.format("%d",val);
+		return getType().toString();
+	}
 }
 
 /**
@@ -133,9 +273,9 @@ abstract class Bayes2GOScore
 		this.observedActiveGenes = observedActiveGenes;
 	}
 
-	public void setP(double p)
+	public void setExpectedNumberOfTerms(double terms)
 	{
-		this.p = p;
+		p = (double)terms / termsArray.length;
 	}
 
 	public double score(Collection<TermID> activeTerms)
@@ -382,11 +522,13 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 	private int alphaIdx = 0;
 	private int oldAlphaIdx;
 	protected int totalAlpha[] = new int[ALPHA.length];
+	private boolean doAlphaMCMC = true;
 
 	protected final double [] BETA = ALPHA;
 	private int betaIdx = 0;
 	private int oldBetaIdx;
 	protected int totalBeta[] = new int[BETA.length];
+	private boolean doBetaMCMC = true;
 
 	protected double alpha = Double.NaN;
 	protected double beta = Double.NaN;
@@ -405,11 +547,21 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 	public void setAlpha(double alpha)
 	{
 		this.alpha = alpha;
+
+		doAlphaMCMC = Double.isNaN(alpha);
 	}
 
 	public void setBeta(double beta)
 	{
 		this.beta = beta;
+
+		doBetaMCMC = Double.isNaN(beta);
+	}
+
+	@Override
+	public void setExpectedNumberOfTerms(double terms)
+	{
+		super.setExpectedNumberOfTerms(terms);
 	}
 
 	public FixedAlphaBetaScore(Random rnd, List<TermID> termList, GOTermEnumerator populationEnumerator, Set<ByteString> observedActiveGenes)
@@ -459,7 +611,7 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 		oldAlphaIdx = -1;
 		oldBetaIdx = -1;
 
-		if (!Double.isNaN(alpha) || rnd.nextBoolean())
+		if ((!doAlphaMCMC && !doBetaMCMC) || rnd.nextBoolean())
 		{
 			long choose = Math.abs(rand) % oldPossibilities;
 
@@ -483,16 +635,23 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 			}
 		} else
 		{
-			int choose = Math.abs((int)rand) % (ALPHA.length + BETA.length);
+			int max = 0;
 
-			if (choose >= ALPHA.length)
-			{
-				oldBetaIdx = betaIdx;
-				betaIdx = choose - ALPHA.length;
-			} else
+			if (doAlphaMCMC) max += ALPHA.length;
+			if (doBetaMCMC) max += BETA.length;
+
+			int choose = Math.abs((int)rand) % max;
+
+			if (doAlphaMCMC && choose < ALPHA.length)
 			{
 				oldAlphaIdx = alphaIdx;
 				alphaIdx = choose;
+			} else
+			{
+				choose -= ALPHA.length;
+
+				oldBetaIdx = betaIdx;
+				betaIdx = choose;
 			}
 		}
 	}
@@ -612,16 +771,16 @@ public class Bayes2GOCalculation implements ICalculation
 {
 	private boolean noPrior = false;
 
-	private int expectedNumber = -1;
-	public double alpha = Double.NaN;
-	public double beta = Double.NaN;
-	public double defaultP = Double.NaN;
+	DoubleParam alpha = new DoubleParam(B2GParam.Type.EM);
+	DoubleParam beta = new DoubleParam(B2GParam.Type.EM);
+	IntegerParam expectedNumberOfTerms = new IntegerParam(B2GParam.Type.EM);
+
 	public boolean takePopulationAsReference = false;
 
 	public long seed = 0;
 
 	/** Indicates whether a full MCMC should be performed */
-	private boolean doFullMCMC = false;
+//	private boolean doFullMCMC = false;
 
 	public ICalculationProgress calculationProgress;
 
@@ -631,11 +790,10 @@ public class Bayes2GOCalculation implements ICalculation
 
 	public Bayes2GOCalculation(Bayes2GOCalculation calc)
 	{
-		this.defaultP = calc.defaultP;
 		this.noPrior = calc.noPrior;
-		this.expectedNumber = calc.expectedNumber;
-		this.alpha = calc.alpha;
-		this.beta = calc.beta;
+		this.expectedNumberOfTerms = new IntegerParam(calc.expectedNumberOfTerms);
+		this.alpha = new DoubleParam(calc.alpha);
+		this.beta = new DoubleParam(calc.beta);
 		this.seed = calc.seed;
 		this.calculationProgress = calc.calculationProgress;
 		this.takePopulationAsReference = calc.takePopulationAsReference;
@@ -651,25 +809,37 @@ public class Bayes2GOCalculation implements ICalculation
 		this.seed = seed;
 	}
 
-	public void setP(double defaultP)
-	{
-		this.defaultP = defaultP;
-	}
-
 	public void setAlpha(double alpha)
 	{
-		this.alpha = alpha;
+		this.alpha.setValue(alpha);
 	}
 
 	public void setBeta(double beta)
 	{
-		this.beta = beta;
+		this.beta.setValue(beta);
 	}
 
-	public void setDoFullMCMC(boolean doFullMCMC)
+	public void setAlpha(B2GParam.Type alpha)
 	{
-		this.doFullMCMC = doFullMCMC;
+		this.alpha.setType(alpha);
 	}
+
+	public void setBeta(B2GParam.Type beta)
+	{
+		this.beta.setType(beta);
+	}
+
+	public void setExpectedNumber(int expectedNumber)
+	{
+		this.expectedNumberOfTerms.setValue(expectedNumber);
+	}
+
+//	public void setDoFullMCMC(boolean doFullMCMC)
+//	{
+//		this.doFullMCMC = doFullMCMC;
+//
+//
+//	}
 
 	public void setTakePopulationAsReference(boolean takePopulationAsReference)
 	{
@@ -678,25 +848,24 @@ public class Bayes2GOCalculation implements ICalculation
 
 	public EnrichedGOTermsResult calculateStudySet(GOGraph graph,
 			AssociationContainer goAssociations, PopulationSet populationSet,
-			StudySet studySet, double p)
+			StudySet studySet)
 	{
 		Bayes2GOEnrichedGOTermsResult result = new Bayes2GOEnrichedGOTermsResult(graph,goAssociations,studySet,populationSet.getGeneCount());
 
 		GOTermEnumerator populationEnumerator = populationSet.enumerateGOTerms(graph, goAssociations);
 		GOTermEnumerator studyEnumerator = studySet.enumerateGOTerms(graph, goAssociations);
 
-		HashMap<ByteString, Double> llr = calcLLR(populationSet, studySet);
+//		HashMap<ByteString, Double> llr = calcLLR(populationSet, studySet);
+//		if (expectedNumber != -1)
+//		{
+//			p = expectedNumber / (double)studyEnumerator.getTotalNumberOfAnnotatedTerms();
+//			System.out.println("Parameter p has been overwritten by expected number.");
+//		}
 
-		if (expectedNumber != -1)
-		{
-			p = expectedNumber / (double)studyEnumerator.getTotalNumberOfAnnotatedTerms();
-			System.out.println("Parameter p has been overwritten by expected number.");
-		}
-
-		System.out.println("Starting calculation: p=" + p + " alpha=" + alpha + " beta=" + beta);
+		System.out.println("Starting calculation: expectedNumberOfTerms=" + expectedNumberOfTerms + " alpha=" + alpha + " beta=" + beta);
 
 		long start = System.nanoTime();
-		calculateByMCMC(graph, result, populationEnumerator, studyEnumerator, populationSet, studySet, llr, p);
+		calculateByMCMC(graph, result, populationEnumerator, studyEnumerator, populationSet, studySet);//, llr);
 		long end = System.nanoTime();
 		System.out.println(((end - start)/1000) + "ms");
 
@@ -715,29 +884,24 @@ public class Bayes2GOCalculation implements ICalculation
 		return result;
 	}
 
-	public HashMap<ByteString, Double> calcLLR(PopulationSet populationSet, StudySet studySet)
-	{
-		HashMap<ByteString,Double> llr = new HashMap<ByteString,Double>();
-		for (ByteString g : populationSet)
-		{
-			if (studySet.contains(g))
-				llr.put(g, Math.log(1-beta) - Math.log(alpha)); // P(oi=1|h=1) - P(oi=1|h=0)
-			else
-				llr.put(g, Math.log(beta) - Math.log(1-alpha)); // P(oi=0|h=1) - P(oi=0|h=0)
-		}
-		return llr;
-	}
+//	public HashMap<ByteString, Double> calcLLR(PopulationSet populationSet, StudySet studySet)
+//	{
+//		HashMap<ByteString,Double> llr = new HashMap<ByteString,Double>();
+//		for (ByteString g : populationSet)
+//		{
+//			if (studySet.contains(g))
+//				llr.put(g, Math.log(1-beta) - Math.log(alpha)); // P(oi=1|h=1) - P(oi=1|h=0)
+//			else
+//				llr.put(g, Math.log(beta) - Math.log(1-alpha)); // P(oi=0|h=1) - P(oi=0|h=0)
+//		}
+//		return llr;
+//	}
 
 	public EnrichedGOTermsResult calculateStudySet(GOGraph graph,
 			AssociationContainer goAssociations, PopulationSet populationSet,
 			StudySet studySet, AbstractTestCorrection testCorrection)
 	{
-		return calculateStudySet(graph, goAssociations, populationSet, studySet, defaultP);
-	}
-
-	public void setExpectedNumber(int expectedNumber)
-	{
-		this.expectedNumber = expectedNumber;
+		return calculateStudySet(graph, goAssociations, populationSet, studySet);
 	}
 
 	public void setNoPrior(boolean noPrior)
@@ -750,9 +914,7 @@ public class Bayes2GOCalculation implements ICalculation
 			GOTermEnumerator populationEnumerator,
 			GOTermEnumerator studyEnumerator,
 			PopulationSet populationSet,
-			StudySet studySet,
-			HashMap<ByteString, Double> llr,
-			double p)
+			StudySet studySet)
 	{
 		List<TermID> allTerms;
 
@@ -775,31 +937,59 @@ public class Bayes2GOCalculation implements ICalculation
 		boolean doAlphaEm = false;
 		boolean doBetaEm = false;
 		boolean doPEm = false;
-		boolean doEm = false;
 
 		int maxIter;
 
-		if (!doFullMCMC)
+		double alpha;
+		double beta;
+		double expectedNumberOfTerms;
+
+		switch (this.alpha.getType())
 		{
-			if (Double.isNaN(alpha))
-			{
-				alpha = 0.4;
-				doAlphaEm = true;
-				doEm = true;
-			}
-			if (Double.isNaN(beta))
-			{
-				beta = 0.4;
-				doBetaEm = true;
-				doEm = true;
-			}
+			case	EM: alpha = 0.4; doAlphaEm = true; break;
+			case	MCMC: alpha = Double.NaN; break;
+			default: alpha = this.alpha.getValue(); break;
 		}
-		if (Double.isNaN(p))
+
+		switch (this.beta.getType())
 		{
-			p = (double)1 / allTerms.size();
-			doPEm = true;
-			doEm = true;
+			case	EM: beta = 0.4; doBetaEm = true; break;
+			case	MCMC: beta = Double.NaN; break;
+			default: beta = this.beta.getValue(); break;
 		}
+
+
+		switch (this.expectedNumberOfTerms.getType())
+		{
+			case	EM: expectedNumberOfTerms = 1; doPEm = true; break;
+			case	MCMC: expectedNumberOfTerms = Double.NaN; break;
+			default: expectedNumberOfTerms = this.expectedNumberOfTerms.getValue(); break;
+		}
+
+//		System.out.println(doAlphaEm + "  " + doBetaEm + " " + doPEm);
+		boolean doEm = doAlphaEm || doBetaEm || doPEm;
+
+//		if (!doFullMCMC)
+//		{
+//			if (Double.isNaN(alpha))
+//			{
+//				alpha = 0.4;
+//				doAlphaEm = true;
+//				doEm = true;
+//			}
+//			if (Double.isNaN(beta))
+//			{
+//				beta = 0.4;
+//				doBetaEm = true;
+//				doEm = true;
+//			}
+//		}
+//		if (Double.isNaN(p))
+//		{
+//			p = (double)1 / allTerms.size();
+//			doPEm = true;
+//			doEm = true;
+//		}
 
 		if (doEm) maxIter = 10;
 		else maxIter = 1;
@@ -809,17 +999,18 @@ public class Bayes2GOCalculation implements ICalculation
 //			VariableAlphaBetaScore bayesScore = new VariableAlphaBetaScore(rnd, allTerms, populationEnumerator, studySet.getAllGeneNames(), alpha, beta);
 			FixedAlphaBetaScore bayesScore = new FixedAlphaBetaScore(rnd, allTerms, populationEnumerator,  studySet.getAllGeneNames());
 
-			if (!doFullMCMC)
+			if (doEm)
 			{
-				System.out.println("EM-Iter("+i+")" + alpha + "  " + beta + "  " + p);
-
-				bayesScore.setAlpha(alpha);
-				bayesScore.setBeta(beta);
+				System.out.println("EM-Iter("+i+")" + alpha + "  " + beta + "  " + expectedNumberOfTerms);
 			} else
 			{
-				System.out.println("Doing a full MCMC.");
+				System.out.println("MCMC only: " + alpha + "  " + beta + "  " + expectedNumberOfTerms);
+
 			}
-			if (!noPrior) bayesScore.setP(p);
+
+			bayesScore.setAlpha(alpha);
+			bayesScore.setBeta(beta);
+			if (!noPrior) bayesScore.setExpectedNumberOfTerms(expectedNumberOfTerms);
 
 			result.setScore(bayesScore);
 
@@ -857,7 +1048,7 @@ public class Bayes2GOCalculation implements ICalculation
 					System.out.println((t*100/maxSteps) + "% (score=" + score +" maxScore=" + maxScore + " #terms="+bayesScore.activeTerms.size()+
 										" accept/reject=" + String.format("%g",(double)numAccepts / (double)numRejects) +
 										" accept/steps=" + String.format("%g",(double)numAccepts / (double)t) +
-										" p=" + p + " noPrior=" + noPrior + ")");
+										" exp=" + expectedNumberOfTerms + " noPrior=" + noPrior + ")");
 					start = now;
 
 					if (calculationProgress != null)
@@ -908,9 +1099,12 @@ public class Bayes2GOCalculation implements ICalculation
 
 			if (doPEm)
 			{
-				double newP = (double)bayesScore.getAvgT() / bayesScore.termsArray.length;
-				System.out.println("p=" + p + "  newP=" + newP);
-				p = newP;
+				double newExpectedNumberOfTerms = (double)bayesScore.getAvgT();
+				System.out.println("expectedNumberOfTerms=" + expectedNumberOfTerms + "  newExpectedNumberOfTerms=" + newExpectedNumberOfTerms);
+				expectedNumberOfTerms = newExpectedNumberOfTerms;
+//				double newP = (double)bayesScore.getAvgT() / bayesScore.termsArray.length;
+//				System.out.println("p=" + p + "  newP=" + newP);
+//				p = newP;
 			}
 
 			if (i==maxIter - 1)
@@ -940,11 +1134,14 @@ public class Bayes2GOCalculation implements ICalculation
 				System.out.println(tid.toString() + "/" + graph.getGOTerm(tid).getName());
 			}
 
-			if (doFullMCMC)
+			if (Double.isNaN(alpha))
 			{
 				for (int j=0;j<bayesScore.totalAlpha.length;j++)
 					System.out.println("alpha(" + bayesScore.ALPHA[j] + ")=" + (double)bayesScore.totalAlpha[j] / bayesScore.numRecords);
+			}
 
+			if (Double.isNaN(beta))
+			{
 				for (int j=0;j<bayesScore.totalBeta.length;j++)
 					System.out.println("beta(" + bayesScore.BETA[j] + ")=" + (double)bayesScore.totalBeta[j] / bayesScore.numRecords);
 			}
@@ -1207,25 +1404,28 @@ public class Bayes2GOCalculation implements ICalculation
 //		TermForTermCalculation calc = new TermForTermCalculation();
 //		ParentChildCalculation calc = new ParentChildCalculation();
 		Bayes2GOCalculation calc = new Bayes2GOCalculation();
-////		calc.setNoPrior(true);
-		calc.setP(p);
 		calc.setSeed(1);
-		calc.setDoFullMCMC(true);
 //		calc.setAlpha(realAlpha);
 //		calc.setBeta(realBeta);
+//		calc.setAlpha(B2GParam.Type.MCMC);
+//		calc.setBeta(B2GParam.Type.MCMC);
+		calc.setAlpha(B2GParam.Type.EM);
+		calc.setBeta(B2GParam.Type.EM);
 
+		calc.setExpectedNumber(4);
+////	calc.setNoPrior(true);
 //		calc.setAlpha(alphaStudySet);
 //		calc.setBeta(betaStudySet);
 
 
-		evaluate(wantedActiveTerms, allGenes, newStudyGenes, allEnumerator, studySetEnumerator, calc, p);
+		evaluate(wantedActiveTerms, allGenes, newStudyGenes, allEnumerator, studySetEnumerator, calc);
 	}
 
 	private static void evaluate(final HashSet<TermID> wantedActiveTerms,
 			PopulationSet allGenes, StudySet newStudyGenes,
 			final GOTermEnumerator allEnumerator,
 			final GOTermEnumerator studySetEnumerator,
-			ICalculation calc, double p)
+			ICalculation calc)
 	{
 		final EnrichedGOTermsResult result = calc.calculateStudySet(graph, assoc, allGenes, newStudyGenes, new Bonferroni());
 
