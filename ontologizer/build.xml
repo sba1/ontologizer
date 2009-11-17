@@ -1,11 +1,32 @@
 <!-- build.xml file for the Ontologizer -->
-<!-- (c) 2005-2008 Ontologizer Development Team -->
+<!-- (c) 2005-2009 Ontologizer Development Team -->
 
 <project name="Ontologizer" default="compile" basedir=".">
 	<description>Ant file to build the Ontologizer.
      Try ant -projecthelp if you are new to ant.
     </description>
 
+	<!-- Target for building the version containing class. Requires svnant. -->
+	<target name="version">
+		<typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpath="svnant.jar"/>
+		
+		<svn>
+			<status path="${basedir}/src" revisionProperty="svn.revision" />
+		</svn>
+		<tstamp>
+		    <format property="DATE" pattern="yyyyMMdd" locale="ENGLISH, GERMANY"/>
+		</tstamp>
+		
+		<echo file="${basedir}/src/ontologizer/BuildInfo.java">
+package ontologizer;
+
+public class BuildInfo {
+	public static final String revisionNumber="${svn.revision}";
+	public static final String date ="${DATE}";
+}
+		</echo>
+
+	</target>
 
 	<!-- INITIALIZE BUILD -->
 
