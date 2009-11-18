@@ -46,11 +46,8 @@ import ontologizer.parser.ValuedItemAttribute;
 import ontologizer.statistics.AbstractTestCorrection;
 import ontologizer.statistics.Bonferroni;
 import ontologizer.statistics.None;
-import ontologizer.util.Util;
 import ontologizer.worksets.WorkSet;
 import ontologizer.worksets.WorkSetLoadThread;
-import sonumina.math.combinatorics.SubsetGenerator;
-import sonumina.math.combinatorics.SubsetGenerator.Subset;
 
 class B2GTestParameter
 {
