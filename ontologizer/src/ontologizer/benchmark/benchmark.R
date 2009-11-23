@@ -292,7 +292,128 @@ plot.pr<-function(d,main="Comparision",alpha=NA,beta=NA,xlim=c(0,1),ylim=c(0,1),
 }
 
 
+# Brings the results to a managable form
+evaluate<-function(d)
+{
+	nruns<-length(unique(d$run))
+	
+	if (nrow(d)==0)
+	{
+		return()
+	}
+	
+	res<-list();
+
+	colnames(v)<-c("short","full")
+	colors<-rainbow(nrow(v))
+	pchs<-1:nrow(v)
+	
+	for (i in (1:nrow(v)))
+	{
+		ord<-order(d[,v[i,1]])
+
+		# data is orderd. Threshold is such that the values
+		# above an element are flagged as positive (inclusive)
+		# and values below an element as negative.
+		values<-d[ord,v[i,1]]
+		labels<-d[ord,]$label
+
+		tps<-cumsum(labels)					# true positves
+		fps<-(1:length(labels)) - tps		# false postives
+
+		tpr<-tps / tps[length(tps)]			# true positves rate
+		fpr<-fps / fps[length(fps)]			# false postives rate
+		prec<-tps/(1:length(values))		# number of true positives / (number of all positives = (true positives + false negatives))
+		recall<-tps/sum(labels)      		# number of true positives / (true positives + false negatives = all positive samples)
+
+		l<-list(name=v[i,2],short=v[i,1])
+		
+		# precision/recall values
+		idx.dots<-cumsum(hist(recall,plot=F,breaks=25)$counts)
+		idx.lines<-cumsum(hist(recall,plot=F,breaks=300)$counts)
+		l<-c(l,prec.lines=list(prec[idx.lines]),recall.lines=list(recall[idx.lines]))
+		l<-c(l,prec.dots =list(prec[idx.dots]), recall.dots =list(recall[idx.dots]))
+
+		#
+		# true positive / false postive
+		#
+		idx.dots<-cumsum(hist(fpr,plot=F,breaks=25)$counts)
+		idx.lines<-c(1,cumsum(hist(fpr,plot=F,breaks=300)$counts))
+		
+		# For AUROC scores we request a higher resolution 
+		idx.auroc<-c(1,cumsum(hist(fpr,plot=F,breaks=1000)$counts))
+		
+		# calculate the AUROC. Note that diff() returns the difference of
+		# consecutive elements. We calculate the lower bound of the area.
+		auroc<-sum(c(diff(fpr[idx.lines]),0) * tpr[idx.lines])
+
+		l<-c(l,fpr.lines=list(fpr[idx.lines]), tpr.lines=list(tpr[idx.lines]))
+		l<-c(l,fpr.dots= list(fpr[idx.dots]),  tpr.dots= list(tpr[idx.dots]))
+		l<-c(l,auroc=auroc)
+			
+		res<-c(res,list(l));
+	}
+	
+	return(res)
+}
+
+
 s<-split(d,list(d$alpha,d$beta))
+
+#
+# Plot all gfx
+#
+lapply(s, function(d) {
+	alpha<-unique(d$alpha)
+	beta<-unique(d$beta)
+
+	r<-evaluate(subset(d,d$senseful==0))
+	colors<-hcl(c(0,60,120,180,240,300),l=45)
+	pchs<-1:length(r)
+
+	# Pre/Recall plots
+	filename<-sprintf("result-precall-a%d-b%d.pdf",alpha*100,beta*100)
+	pdf(file=filename,height=8,width=8)
+	par(cex=1.3,cex.main=1.3,lwd=2)
+	title<-bquote(paste("Precision/Recall: ", alpha,"=",.(alpha),",",beta,"=",.(beta)))
+	plot(main=title,ylab="Precision",xlab="Recall",xlim=c(0,1),ylim=c(0,1),0.5,0.5,type="n") # fake invisible point such that the next loop can be simplified
+	for (i in 1:length(r))
+	{
+		lines(y=r[[i]]$prec.lines, x=r[[i]]$recall.lines, col=colors[i],pch=pchs[i],type="l")
+		points(y=r[[i]]$prec.dots, x=r[[i]]$recall.dots,  col=colors[i],pch=pchs[i],type="p")	
+	}
+	legend("topright", col=colors, pch=pchs, legend = sapply(r,function(x){return(x$name)}))
+	dev.off()
+	
+
+	# ROC plots
+	filename<-sprintf("result-roc-a%d-b%d.pdf",alpha*100,beta*100)
+	pdf(file=filename,height=8,width=8)
+	par(cex=1.3,cex.main=1.3,lwd=2)
+	title<-bquote(paste("ROC: ", alpha,"=",.(alpha),",",beta,"=",.(beta)))
+	plot(main=title,ylab="True postive rate",xlab="False positive rate",xlim=c(0,1),ylim=c(0,1),0.5,0.5,type="n") # fake invisible point such that the next loop can be simplified
+	for (i in 1:length(r))
+	{
+		lines(y=r[[i]]$tpr.lines, x=r[[i]]$fpr.lines, col=colors[i],pch=pchs[i],type="l")
+		points(y=r[[i]]$tpr.dots, x=r[[i]]$fpr.dots,  col=colors[i],pch=pchs[i],type="p")	
+	}
+	legend("bottomright", col=colors, pch=pchs, legend = sapply(r,function(x){return(sprintf("%s (%.3g)",x$name,x$auroc))}))
+	dev.off()
+
+	# Bar plots
+	filename<-sprintf("result-bar-a%d-b%d.pdf",alpha*100,beta*100)
+	pdf(file=filename,height=8,width=8)
+	par(cex=1.3,cex.main=1.3,lwd=2)
+	title<-bquote(paste("Precision at Recall of 0.2: ", alpha,"=",.(alpha),",",beta,"=",.(beta)))
+	heights<-sapply(r,function(x){ idx<-which(x$recall.lines>0.199)[1]; return(x$prec.lines[idx]) })
+	names(heights)<-sapply(r,function(x){return(x$name)})
+	barplot(main=title,heights,col=colors)
+	dev.off()
+});
+
+
+
+
 
 #
 # ROC
