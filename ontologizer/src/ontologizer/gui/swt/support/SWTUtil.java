@@ -71,7 +71,7 @@ public final class SWTUtil
 		}
 		build.append("Exception \"");
 		build.append(e.getClass().getCanonicalName());
-		build.append("\" catched\n\n");
+		build.append("\" caught\n\n");
 		build.append("Error message: ");
 		build.append(e.getLocalizedMessage());
 		build.append("\n\nStack Trace:\n");
