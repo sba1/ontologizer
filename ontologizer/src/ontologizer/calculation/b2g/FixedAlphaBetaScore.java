@@ -156,6 +156,7 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 		proposalT2 = null;
 		oldAlphaIdx = -1;
 		oldBetaIdx = -1;
+		oldExpIdx = -1;
 
 		if ((!doAlphaMCMC && !doBetaMCMC && !doExpMCMC)|| rnd.nextBoolean())
 		{
@@ -212,7 +213,7 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 			}
 
 			if (!doExpMCMC)
-				throw new RuntimeException("MCMC requested but no proposal possible");
+				throw new RuntimeException("MCMC requested proposal but no proposal is possible");
 
 			oldExpIdx = expIdx;
 			expIdx = choose;
