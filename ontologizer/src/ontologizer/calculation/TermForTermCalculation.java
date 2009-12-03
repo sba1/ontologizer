@@ -67,25 +67,20 @@ public class TermForTermCalculation extends AbstractHypergeometricCalculation
 
 			private PValue [] calculatePValues(StudySet studySet)
 			{
-//				GOTermCounter studyTermCounter = studySet.countGOTerms(graph,goAssociations);
-//				GOTermCounter populationTermCounter = populationSet.countGOTerms(graph,goAssociations);
-				
 				GOTermEnumerator studyTermEnumerator = studySet.enumerateGOTerms(graph, goAssociations);
 				GOTermEnumerator populationTermEnumerator = populationSet.enumerateGOTerms(graph, goAssociations);
 
-//				System.out.println(" studyCount="+studyTermCounter.getTotalNumberOfAnnotatedTerms() + " studyEnum=" + studyTermEnumerator.getTotalNumberOfAnnotatedTerms());
-				
 				int i = 0;
 
-				PValue p [] = new PValue[studyTermEnumerator.getTotalNumberOfAnnotatedTerms()];//populationTermCounter.getTotalNumberOfAnnotatedTerms()];
+				PValue p [] = new PValue[populationTermEnumerator.getTotalNumberOfAnnotatedTerms()];
 				TermForTermGOTermProperties myP;
 
-				for(TermID term : studyTermEnumerator)//populationTermCounter)
+				for(TermID term : populationTermEnumerator)
 				{
-					int goidAnnotatedPopGeneCount = populationTermEnumerator.getAnnotatedGenes(term).totalAnnotatedCount();//populationTermCounter.getCount(term);
+					int goidAnnotatedPopGeneCount = populationTermEnumerator.getAnnotatedGenes(term).totalAnnotatedCount();
 					int popGeneCount = populationSet.getGeneCount();
 					int studyGeneCount = studySet.getGeneCount();
-					int goidAnnotatedStudyGeneCount = studyTermEnumerator.getAnnotatedGenes(term).totalAnnotatedCount();//studyTermCounter.getCount(term);
+					int goidAnnotatedStudyGeneCount = studyTermEnumerator.getAnnotatedGenes(term).totalAnnotatedCount();
 
 					myP = new TermForTermGOTermProperties();
 					myP.goTerm = graph.getGOTerm(term);
