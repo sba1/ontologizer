@@ -182,8 +182,9 @@ public class GOGraph implements Iterable<Term>
 		/* Now add the edges, i.e. link the terms */
 		for (Term term : goTermContainer)
 		{
-			for (Subset s : term.getSubsets())
-				availableSubsets.add(s);
+			if (term.getSubsets() != null)
+				for (Subset s : term.getSubsets())
+					availableSubsets.add(s);
 
 			for (ParentTermID parent : term.getParents())
 			{
