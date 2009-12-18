@@ -2,14 +2,18 @@ package ontologizer.go;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.logging.Logger;
+import java.util.zip.GZIPInputStream;
 
 
 /*
@@ -178,8 +182,11 @@ public class OBOParser
 			if (currentID == null || currentName == null
 					|| currentNamespace == null) {
 				
-				logger.severe("Error parsing stanza: " + currentStanza.toString());
-				throw new IllegalArgumentException("Missing ID, Name or Namespace of for current stanza!");
+				logger.warning("Error parsing stanza: " + currentStanza.toString());
+
+				resetCurrentStanza();
+
+				return;
 
 			}
 
@@ -195,6 +202,11 @@ public class OBOParser
 			numberOfRelations += currentParents.size();
 		}
 
+		resetCurrentStanza();
+	}
+
+	private void resetCurrentStanza()
+	{
 		/* Now reset... */
 		currentID = null;
 		currentName = null;
@@ -232,21 +244,34 @@ public class OBOParser
 		int currentTerm = 0;
 		long millis = 0;
 
-		File file = new File(filename);
-		BufferedReader reader = new BufferedReader(new FileReader(file));
+		BufferedReader reader;
+		FileInputStream fis = new FileInputStream(filename);
+		
+		try
+		{
+			reader = new BufferedReader(new InputStreamReader(new GZIPInputStream(fis)));
+		} catch (IOException exp)
+		{
+			fis = new FileInputStream(filename);
+			reader = new BufferedReader(new InputStreamReader(fis));
+		}
+
+		FileChannel fc = fis.getChannel();
 
 		if (progress != null)
-			progress.init((int)file.length());
+			progress.init((int)fc.size());
 
 		for (linenum = 1; (line = reader.readLine()) != null; linenum++)
 		{
+			System.out.println(line);
+
 			/* Progress support, call only every quarter second */
 			if (progress != null)
 			{
 				long newMillis = System.currentTimeMillis();
 				if (newMillis - millis > 250)
 				{
-					progress.update(bytesRead,currentTerm);
+					progress.update((int)fc.position(),currentTerm);
 					millis = newMillis;
 				}
 			}
@@ -339,9 +364,9 @@ public class OBOParser
 			}
 		} // for
 		enterNewTerm(); // Get very last stanza after loop!
-		reader.close();
 		if (progress != null)
-			progress.update((int)file.length(),currentTerm);
+			progress.update((int)fc.size(),currentTerm);
+		reader.close();
 
 		logger.info("Got " + terms.size() + " terms and " + numberOfRelations + " relations");
 		return this.getParseDiagnostics();
