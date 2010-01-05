@@ -347,6 +347,7 @@ public class ProbabilisticCalculation implements ICalculation
 		/* TODO: Fix  MTC issue */
 		TermForTermCalculation tftc = new TermForTermCalculation();
 		EnrichedGOTermsResult results = tftc.calculateStudySet(graph, goAssociations, populationSet, studySet, testCorrection);
+		results.setCalculationName("GenGO");
 
 		/* Merge results and flag all inactive terms as insignificant */
 		
@@ -357,6 +358,7 @@ public class ProbabilisticCalculation implements ICalculation
 			if (!data.activeTerms.contains(prop.goTerm.getID()))
 			{
 				prop.p = prop.p_adjusted = 1;
+				prop.ignoreAtMTC = true;
 			}
 //			System.out.println(prop.goTerm.toString() + "  " + prop.p_adjusted);
 		}
