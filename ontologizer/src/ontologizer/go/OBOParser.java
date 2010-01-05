@@ -263,8 +263,6 @@ public class OBOParser
 
 		for (linenum = 1; (line = reader.readLine()) != null; linenum++)
 		{
-			System.out.println(line);
-
 			/* Progress support, call only every quarter second */
 			if (progress != null)
 			{
