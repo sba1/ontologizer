@@ -558,9 +558,14 @@ public class GeneEditor extends Composite
 	 */
 	private String getGeneName(String line)
 	{
+		/* If full line is gene name than we accept it as gene name */
+		if (assoc.containsGene(new ByteString(line.trim())))
+			return line;
+
 		int pos = line.indexOf(' ');
 		if (pos == -1) pos = line.indexOf('\t');
 		if (pos != -1) line = line.substring(0, pos);
+
 		return line;
 	}
 
