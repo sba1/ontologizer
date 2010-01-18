@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import ontologizer.ByteString;
 import ontologizer.GOTermEnumerator;
@@ -634,10 +635,12 @@ public class Benchmark
 
 
 		es.shutdown();
+		while (!es.awaitTermination(60, TimeUnit.SECONDS));
 		System.out.println("Finish");
 
 		synchronized (out) {
 			out.flush();
+			out.close();
 		}
 
 		OntologizerThreadGroups.workerThreadGroup.interrupt();
