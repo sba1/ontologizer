@@ -305,8 +305,6 @@ evaluate<-function(d)
 	res<-list();
 
 	colnames(v)<-c("short","full")
-	colors<-rainbow(nrow(v))
-	pchs<-1:nrow(v)
 	
 	for (i in (1:nrow(v)))
 	{
@@ -369,12 +367,13 @@ lapply(s, function(d) {
 
 	r<-evaluate(subset(d,d$senseful==0))
 	colors<-hcl(c(0,60,120,180,240,300),l=45)
+	colors2<-hcl(c(0,60,120,180,240,300),l=55)
 	pchs<-1:length(r)
 
 	# Pre/Recall plots
 	filename<-sprintf("result-precall-a%d-b%d.pdf",alpha*100,beta*100)
 	pdf(file=filename,height=8,width=8)
-	par(cex=1.3,cex.main=1.3,lwd=2)
+	par(cex=1.4,cex.main=1.5,lwd=2)
 	title<-bquote(paste("Precision/Recall: ", alpha,"=",.(alpha),",",beta,"=",.(beta)))
 	plot(main=title,ylab="Precision",xlab="Recall",xlim=c(0,1),ylim=c(0,1),0.5,0.5,type="n") # fake invisible point such that the next loop can be simplified
 	for (i in 1:length(r))
@@ -389,7 +388,7 @@ lapply(s, function(d) {
 	# ROC plots
 	filename<-sprintf("result-roc-a%d-b%d.pdf",alpha*100,beta*100)
 	pdf(file=filename,height=8,width=8)
-	par(cex=1.3,cex.main=1.3,lwd=2)
+	par(cex=1.4,cex.main=1.5,lwd=2)
 	title<-bquote(paste("ROC: ", alpha,"=",.(alpha),",",beta,"=",.(beta)))
 	plot(main=title,ylab="True postive rate",xlab="False positive rate",xlim=c(0,1),ylim=c(0,1),0.5,0.5,type="n") # fake invisible point such that the next loop can be simplified
 	for (i in 1:length(r))
@@ -400,17 +399,143 @@ lapply(s, function(d) {
 	legend("bottomright", col=colors, pch=pchs, legend = sapply(r,function(x){return(sprintf("%s (%.3g)",x$name,x$auroc))}))
 	dev.off()
 
-	# Bar plots
+	# Bar plots for prec/recall
 	filename<-sprintf("result-bar-a%d-b%d.pdf",alpha*100,beta*100)
 	pdf(file=filename,height=8,width=8)
-	par(cex=1.3,cex.main=1.3,lwd=2)
+	par(cex=1.4,cex.main=1.5,lwd=2)
 	title<-bquote(paste("Precision at Recall of 0.2: ", alpha,"=",.(alpha),",",beta,"=",.(beta)))
 	heights<-sapply(r,function(x){ idx<-which(x$recall.lines>0.199)[1]; return(x$prec.lines[idx]) })
 	names(heights)<-sapply(r,function(x){return(x$name)})
-	barplot(main=title,heights,col=colors)
+	barplot2(main=title,heights,col=colors)
+	dev.off()
+	
+	# Bar plots for AUROC and prec/recall
+	filename<-sprintf("result-bar-prauroc-a%d-b%d.pdf",alpha*100,beta*100)
+	pdf(file=filename,height=8,width=8)
+	par(cex=1.4,cex.main=1.5,lwd=2)
+	title<-bquote(paste("AUROC and Precision at Recall of 0.2: ", alpha,"=",.(alpha),",",beta,"=",.(beta)))
+	heights.prec<-sapply(r,function(x){ idx<-which(x$recall.lines>0.199)[1]; return(x$prec.lines[idx]) })
+	heights.auroc<-sapply(r,function(x){ return(x$auroc) })
+	heights<-rbind(heights.auroc,heights.prec)
+	colnames(heights)<-sapply(r,function(x){return(x$name)})
+	barplot2(main=title,heights,col=rbind(colors2,colors),beside=T)
+	dev.off()
+
+	# Bar plots for modAUROC and prec/recall
+	filename<-sprintf("result-bar-prmodauroc-a%d-b%d.pdf",alpha*100,beta*100)
+	pdf(file=filename,height=8,width=8)
+	par(cex=1.4,cex.main=1.5,lwd=2)
+	title<-bquote(paste("ModAUROC and Precision at Recall of 0.2: ", alpha,"=",.(alpha),",",beta,"=",.(beta)))
+	heights.prec<-sapply(r,function(x){ idx<-which(x$recall.lines>0.199)[1]; return(x$prec.lines[idx]) })
+	heights.auroc<-sapply(r,function(x){ return(abs(x$auroc - 0.5)*2) })
+	heights<-rbind(heights.auroc,heights.prec)
+	colnames(heights)<-sapply(r,function(x){return(x$name)})
+	barplot2(main=title,heights,col=rbind(colors2,colors),beside=T)
+	dev.off()
+
+});
+
+
+
+
+#
+# Evaluate
+#
+r.all<-lapply(s, function(d) {
+	alpha<-unique(d$alpha)
+	beta<-unique(d$beta)
+
+	r<-evaluate(subset(d,d$senseful==0))
+
+	# keep results and alpha/beta entries in a new list	
+	r<-list(r=r,alpha=alpha,beta=beta)
+	
+	return(r)
+})
+
+#
+# Plot all gfx. Take pre evaluated r.all.
+#
+lapply(r.all, function(r.one) {
+	alpha<-r.one$alpha
+	beta<-r.one$beta
+	r<-r.one$r
+
+	o<-c(4,5,6,3,2,1)
+	r<-r[o]
+
+	colors<-c(hcl(c(0,60),l=60,alpha=0.9),hcl(c(60,120,180,240),l=45))
+	sp<-c(0.25,0.25,0.5,0.25,0.25,0.25)
+	dens<-c(-1,-1,-1,-1,-1,-1)
+	
+	pchs<-1:length(r)
+
+	# Pre/Recall plots
+	filename<-sprintf("result-precall-a%d-b%d.pdf",alpha*100,beta*100)
+	pdf(file=filename,height=8,width=8)
+	par(cex=1.4,cex.main=1.5,lwd=2)
+	title<-bquote(paste("Precision/Recall: ", alpha,"=",.(alpha),",",beta,"=",.(beta)))
+	plot(main=title,ylab="Precision",xlab="Recall",xlim=c(0,1),ylim=c(0,1),0.5,0.5,type="n") # fake invisible point such that the next loop can be simplified
+	for (i in 1:length(r))
+	{
+		lines(y=r[[i]]$prec.lines, x=r[[i]]$recall.lines, col=colors[i],pch=pchs[i],type="l")
+		points(y=r[[i]]$prec.dots, x=r[[i]]$recall.dots,  col=colors[i],pch=pchs[i],type="p")	
+	}
+	legend("topright", col=colors, pch=pchs, legend = sapply(r,function(x){return(x$name)}))
+	dev.off()
+	
+
+	# ROC plots
+	filename<-sprintf("result-roc-a%d-b%d.pdf",alpha*100,beta*100)
+	pdf(file=filename,height=8,width=8)
+	par(cex=1.4,cex.main=1.5,lwd=2)
+	title<-bquote(paste("ROC: ", alpha,"=",.(alpha),",",beta,"=",.(beta)))
+	plot(main=title,ylab="True postive rate",xlab="False positive rate",xlim=c(0,1),ylim=c(0,1),0.5,0.5,type="n") # fake invisible point such that the next loop can be simplified
+	for (i in 1:length(r))
+	{
+		lines(y=r[[i]]$tpr.lines, x=r[[i]]$fpr.lines, col=colors[i],pch=pchs[i],type="l")
+		points(y=r[[i]]$tpr.dots, x=r[[i]]$fpr.dots,  col=colors[i],pch=pchs[i],type="p")	
+	}
+	legend("bottomright", col=colors, pch=pchs, legend = sapply(r,function(x){return(sprintf("%s (%.3g)",x$name,x$auroc))}))
+	dev.off()
+
+	# Bar plots for prec/recall
+	filename<-sprintf("result-bar-a%d-b%d.pdf",alpha*100,beta*100)
+	pdf(file=filename,height=8,width=8)
+	par(cex=1.36,cex.main=1.5,lwd=2)
+	title<-bquote(paste("Precision at Recall of 0.2: ", alpha,"=",.(alpha),",",beta,"=",.(beta)))
+	heights<-sapply(r,function(x){ idx<-which(x$recall.lines>0.199)[1]; return(x$prec.lines[idx]) })
+	names(heights)<-sapply(r,function(x){return(x$name)})
+	barplot2(main=title,heights,col=colors,ylim=c(0,0.1),plot.grid=T,space=sp,density=dens)
 	dev.off()
 });
 
+
+
+	
+	# Bar plots for AUROC and prec/recall
+#	filename<-sprintf("result-bar-prauroc-a%d-b%d.pdf",alpha*100,beta*100)
+#	pdf(file=filename,height=8,width=8)
+#	par(cex=1.4,cex.main=1.5,lwd=2)
+#	title<-bquote(paste("AUROC and Precision at Recall of 0.2: ", alpha,"=",.(alpha),",",beta,"=",.(beta)))
+#	heights.prec<-sapply(r,function(x){ idx<-which(x$recall.lines>0.199)[1]; return(x$prec.lines[idx]) })
+#	heights.auroc<-sapply(r,function(x){ return(x$auroc) })
+#	heights<-rbind(heights.auroc,heights.prec)
+#	colnames(heights)<-sapply(r,function(x){return(x$name)})
+#	barplot2(main=title,heights,col=rbind(colors2,colors),beside=T)
+#	dev.off()
+
+	# Bar plots for modAUROC and prec/recall
+#	filename<-sprintf("result-bar-prmodauroc-a%d-b%d.pdf",alpha*100,beta*100)
+#	pdf(file=filename,height=8,width=8)
+#	par(cex=1.4,cex.main=1.5,lwd=2)
+#	title<-bquote(paste("ModAUROC and Precision at Recall of 0.2: ", alpha,"=",.(alpha),",",beta,"=",.(beta)))
+#	heights.prec<-sapply(r,function(x){ idx<-which(x$recall.lines>0.199)[1]; return(x$prec.lines[idx]) })
+#	heights.auroc<-sapply(r,function(x){ return(abs(x$auroc - 0.5)*2) })
+#	heights<-rbind(heights.auroc,heights.prec)
+#	colnames(heights)<-sapply(r,function(x){return(x$name)})
+#	barplot2(main=title,heights,col=rbind(colors2,colors),beside=T)
+#	dev.off()
 
 
 
