@@ -12,6 +12,7 @@ import ontologizer.go.Term;
 import ontologizer.go.TermID;
 import ontologizer.gui.swt.result.GraphGenerationThread;
 import ontologizer.gui.swt.support.GraphCanvas;
+import ontologizer.gui.swt.support.IGraphCanvas;
 import ontologizer.gui.swt.support.IGraphGenerationFinished;
 import ontologizer.util.Util;
 
@@ -25,7 +26,7 @@ import org.eclipse.swt.widgets.MessageBox;
 
 class GraphWindow extends ApplicationWindow
 {
-	private GraphCanvas graphCanvas;
+	private IGraphCanvas graphCanvas;
 	
 	public GraphWindow(Display display)
 	{
