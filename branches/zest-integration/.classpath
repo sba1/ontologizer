@@ -13,5 +13,8 @@
 	<classpathentry kind="lib" path="log4j-1.2.15.jar"/>
 	<classpathentry kind="var" path="SWT_LIB" sourcepath="/SWT_SRC"/>
 	<classpathentry kind="src" path="/javautil"/>
+	<classpathentry kind="lib" path="/home/sba/eclipse-3.5/plugins/org.eclipse.zest.layouts_1.1.0.v20090504-1850.jar" sourcepath="/home/sba/eclipse-3.5/plugins/org.eclipse.zest.layouts.source_1.1.0.v20090504-1850.jar"/>
+	<classpathentry kind="lib" path="/home/sba/eclipse-3.5/plugins/org.eclipse.zest.core_1.1.0.v20090504-1850.jar" sourcepath="/home/sba/eclipse-3.5/plugins/org.eclipse.zest.core.source_1.1.0.v20090504-1850.jar"/>
+	<classpathentry kind="lib" path="/home/sba/eclipse-3.5/plugins/org.eclipse.draw2d_3.5.2.v20091126-1908.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

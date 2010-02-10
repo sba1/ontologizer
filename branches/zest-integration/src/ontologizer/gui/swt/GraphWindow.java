@@ -14,6 +14,7 @@ import ontologizer.gui.swt.result.GraphGenerationThread;
 import ontologizer.gui.swt.support.GraphCanvas;
 import ontologizer.gui.swt.support.IGraphCanvas;
 import ontologizer.gui.swt.support.IGraphGenerationFinished;
+import ontologizer.gui.swt.support.ZestGraphCanvas;
 import ontologizer.util.Util;
 
 import org.eclipse.swt.SWT;
@@ -44,7 +45,7 @@ class GraphWindow extends ApplicationWindow
 
 		shell.getShell().setLayout(new FillLayout());
 		shell.setText("Ontologizer - Graph");
-		graphCanvas = new GraphCanvas(shell,0);
+		graphCanvas = new ZestGraphCanvas(shell,0);
 
 		shell.pack();
 		Rectangle rect = shell.getBounds();
