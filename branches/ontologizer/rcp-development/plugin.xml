@@ -3,7 +3,7 @@
 <plugin>
 
    <extension
-         id="application"
+         id="ontologizer.application"
          point="org.eclipse.core.runtime.applications">
       <application>
          <run
@@ -18,6 +18,18 @@
             class="ontologizer.rcp.Perspective"
             id="ontologizer.rcp.perspective">
       </perspective>
+   </extension>
+   <extension
+         id="product"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="ontologizer.application"
+            name="Ontologizer">
+         <property
+               name="appName"
+               value="Ontologizer">
+         </property>
+      </product>
    </extension>
 
 </plugin>
