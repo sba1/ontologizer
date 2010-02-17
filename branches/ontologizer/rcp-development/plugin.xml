@@ -31,5 +31,33 @@
          </property>
       </product>
    </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="ontologizer.rcp.editors.ItemEditor"
+            contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
+            default="true"
+            extensions="list"
+            icon="icons/sample.gif"
+            id="ontologizer.rcp.editors.itemEditor"
+            name="ItemEditor">
+      </editor>
+   </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            id="ontologizer"
+            name="Ontologizer">
+      </category>
+      <wizard
+            category="ontologizer"
+            class="ontologizer.rcp.wizards.NewOntologizerProjectWizard"
+            hasPages="true"
+            icon="icons/sample.gif"
+            id="ontologizer.rcp.wizards.NewOntologizerProjectWizard"
+            name="Ontologizer Project"
+            project="true">
+      </wizard>
+   </extension>
 
 </plugin>

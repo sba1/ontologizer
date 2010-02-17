@@ -1,5 +1,6 @@
 package ontologizer.rcp;
 
+import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -20,9 +21,11 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 	// them
 	// in the fill methods. This ensures that the actions aren't recreated
 	// when fillActionBars is called with FILL_PROXY.
+	private IWorkbenchAction newAction;
 	private IWorkbenchAction exitAction;
 
-	public ApplicationActionBarAdvisor(IActionBarConfigurer configurer) {
+	public ApplicationActionBarAdvisor(IActionBarConfigurer configurer)
+	{
 		super(configurer);
 	}
 
@@ -34,14 +37,26 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 		// Registering also provides automatic disposal of the actions when
 		// the window is closed.
 
+		
+		newAction = ActionFactory.NEW.create(window);
+		register(newAction);
+		newAction.setText("New Resource...");
+
 		exitAction = ActionFactory.QUIT.create(window);
 		register(exitAction);
+		
 	}
 
 	protected void fillMenuBar(IMenuManager menuBar) {
-		MenuManager fileMenu = new MenuManager("&File",
-				IWorkbenchActionConstants.M_FILE);
+		MenuManager fileMenu = new MenuManager("&File", IWorkbenchActionConstants.M_FILE);
+//		MenuManager newMenu = new MenuManager("&File", IWorkbenchActionConstants.NEW_EXT);
+
 		menuBar.add(fileMenu);
+//		fileMenu.add(newMenu);
+		
+		fileMenu.add(newAction);
+		fileMenu.add(new GroupMarker( IWorkbenchActionConstants.NEW_EXT ));
+
 		fileMenu.add(exitAction);
 	}
 
