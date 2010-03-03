@@ -282,6 +282,26 @@ public class PreferencesWindow extends ApplicationWindow
 			upperBetaSpinner.setSelection((int)(GlobalPreferences.getUpperBeta() * Math.pow(10, ALPHA_BETA_DIGITS) * 100 ));
 			mcmcStepsSpinner.setSelection(GlobalPreferences.getMcmcSteps());
 
+			if (!Double.isNaN(GlobalPreferences.getAlpha()))
+			{
+				alphaSpinner.setSelection((int)(GlobalPreferences.getAlpha() * Math.pow(10, ALPHA_BETA_DIGITS) * 100));
+				alphaSpinner.setEnabled(true);
+				alphaAutoButton.setSelection(false);
+			}
+			if (!Double.isNaN(GlobalPreferences.getBeta()))
+			{
+				betaSpinner.setSelection((int)(GlobalPreferences.getBeta() * Math.pow(10, ALPHA_BETA_DIGITS) * 100));
+				betaSpinner.setEnabled(true);
+				betaAutoButton.setSelection(false);
+			}
+
+			if (GlobalPreferences.getExpectedNumber() > 0)
+			{
+				expectedNumberSpinner.setSelection(GlobalPreferences.getExpectedNumber());
+				expectedNumberSpinner.setEnabled(true);
+				expectedNumberAutoButton.setSelection(false);
+			}
+
 			int wc = GlobalPreferences.getWrapColumn();
 			if (wc == -1)
 				wrapColumnCheckbox.setSelection(false);
