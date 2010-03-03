@@ -268,9 +268,9 @@ public class Ontologizer
 						populationSet,studySetList,methodName,mtcName,
 						subsetName,subontologyName,
 						GlobalPreferences.getNumberOfPermutations(),
-						prefs.getAlpha(),GlobalPreferences.getUpperAlpha(),
-						prefs.getBeta(),GlobalPreferences.getUpperBeta(),
-						prefs.getExpectedNumberOfTerms(), GlobalPreferences.getMcmcSteps());
+						GlobalPreferences.getAlpha(),GlobalPreferences.getUpperAlpha(),
+						GlobalPreferences.getBeta(),GlobalPreferences.getUpperBeta(),
+						GlobalPreferences.getExpectedNumber(), GlobalPreferences.getMcmcSteps());
 				result.addCloseAction(new ISimpleAction(){public void act()
 				{
 					newThread.interrupt();
@@ -388,8 +388,11 @@ public class Ontologizer
 			p.put("dotCMD",GlobalPreferences.getDOTPath());
 			p.put("numberOfPermutations",Integer.toString(GlobalPreferences.getNumberOfPermutations()));
 			p.put("wrapColumn", Integer.toString(GlobalPreferences.getWrapColumn()));
+			p.put("alpha", Double.toString(GlobalPreferences.getAlpha()));
 			p.put("upperAlpha", Double.toString(GlobalPreferences.getUpperAlpha()));
+			p.put("beta", Double.toString(GlobalPreferences.getBeta()));
 			p.put("upperBeta", Double.toString(GlobalPreferences.getUpperBeta()));
+			p.put("expectedNumberOfTerms", Integer.toString(GlobalPreferences.getExpectedNumber()));
 			p.put("mcmcSteps", Integer.toString(GlobalPreferences.getMcmcSteps()));
 			if (GlobalPreferences.getProxyHost() != null)
 			{
@@ -430,7 +433,10 @@ public class Ontologizer
 				GlobalPreferences.setProxyPort(prefs.getProxyPort());
 				GlobalPreferences.setWrapColumn(prefs.getWrapColumn());
 				GlobalPreferences.setUpperAlpha(prefs.getUpperAlpha());
+				GlobalPreferences.setAlpha(prefs.getAlpha());
 				GlobalPreferences.setUpperBeta(prefs.getUpperBeta());
+				GlobalPreferences.setBeta(prefs.getBeta());
+				GlobalPreferences.setExpectedNumber(prefs.getExpectedNumberOfTerms());
 				GlobalPreferences.setMcmcSteps(prefs.getNumberOfMCMCSteps());
 			}
 		});
@@ -451,8 +457,11 @@ public class Ontologizer
 		GlobalPreferences.setProxyPort(p.get("proxyPort", "8888"));
 		GlobalPreferences.setProxyHost(p.get("proxyHost", ""));
 		GlobalPreferences.setWrapColumn(p.getInt("wrapColumn", 30));
+		GlobalPreferences.setAlpha(p.getDouble("alpha", Double.NaN));
 		GlobalPreferences.setUpperAlpha(p.getDouble("upperAlpha", 1));
+		GlobalPreferences.setBeta(p.getDouble("beta", Double.NaN));
 		GlobalPreferences.setUpperBeta(p.getDouble("upperBeta", 1));
+		GlobalPreferences.setExpectedNumber(p.getInt("expectedNumberOfTerms", -1));
 		GlobalPreferences.setMcmcSteps(p.getInt("mcmcSteps", 500000));
 
 		/* Prepare workspace */
