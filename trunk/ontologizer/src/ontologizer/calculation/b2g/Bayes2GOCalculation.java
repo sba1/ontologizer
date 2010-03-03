@@ -370,6 +370,8 @@ public class Bayes2GOCalculation implements ICalculation
 		if (doEm) maxIter = 12;
 		else maxIter = 1;
 
+		logger.info(allTerms.size() + " terms in consideration.");
+
 		for (int i=0;i<maxIter;i++)
 		{
 			FixedAlphaBetaScore bayesScore = new FixedAlphaBetaScore(rnd, allTerms, populationEnumerator,  studyEnumerator.getGenes());
