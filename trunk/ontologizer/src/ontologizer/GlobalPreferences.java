@@ -16,8 +16,8 @@ public final class GlobalPreferences
 	private static int mcmcSteps = 500000;
 
 	private static double b2gAlpha = Double.NaN;
-	private static double b2gBeta =Double.NaN;
-	private static double b2gDT = -1;
+	private static double b2gBeta = Double.NaN;
+	private static int b2gDT = -1;
 	private static double upperAlpha = 1.;
 	private static double upperBeta = 1.;
 
@@ -178,4 +178,40 @@ public final class GlobalPreferences
 	public static int getMcmcSteps() {
 		return mcmcSteps;
 	}
+
+	public static void setAlpha(double alpha)
+	{
+		GlobalPreferences.b2gAlpha = alpha;
+	}
+
+	public static double getAlpha()
+	{
+		return b2gAlpha;
+	}
+
+	public static void setBeta(double beta)
+	{
+		GlobalPreferences.b2gBeta = beta;
+	}
+
+	public static double getBeta()
+	{
+		return b2gBeta;
+	}
+
+	public static void setExpectedNumber(int terms)
+	{
+		b2gDT = terms;
+	}
+
+	/**
+	 * Returns the expected number of terms setting for MGSA.
+	 *
+	 * @return
+	 */
+	public static int getExpectedNumber()
+	{
+		return b2gDT;
+	}
+
 }
