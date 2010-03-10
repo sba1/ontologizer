@@ -302,21 +302,21 @@ public class EnrichedGOTermsResult extends AbstractGOTermsResult
 	 * @param goTerms
 	 * @param graph
 	 * @param file
-	 * @param alpha
+	 * @param thresh
 	 * @param counts
 	 * @param rootTerm
 	 */
-	public void writeDOT(TermContainer goTerms, GOGraph graph, File file, double alpha, boolean counts, TermID rootTerm)
+	public void writeDOT(TermContainer goTerms, GOGraph graph, File file, double thresh, boolean counts, TermID rootTerm)
 	{
 		HashSet<TermID> nodes = new HashSet<TermID>();
 
 		for(AbstractGOTermProperties props : this)
 		{
-			if (props.p_adjusted < alpha)
+			if (props.isSignificant(thresh))
 				nodes.add(props.goTerm.getID());
 		}
 
-		writeDOT(goTerms,graph,file,alpha,counts,rootTerm,nodes);
+		writeDOT(goTerms,graph,file,thresh,counts,rootTerm,nodes);
 	}
 
 	public Iterator<AbstractGOTermProperties> iterator()
