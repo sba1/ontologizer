@@ -8,11 +8,19 @@
 
 	<!-- Target for building the version containing class. Requires svnant. -->
 	<target name="version">
-		<typedef resource="org/tigris/subversion/svnant/svnantlib.xml" classpath="svnant.jar"/>
+
+		<exec executable="svn" outputproperty="svn.info">
+			<arg value="info"/>
+			<arg path="${basedir}/src"/>
+		</exec>
+		<exec executable="grep" outputproperty="grep.out" inputstring="${svn.info}">
+			<arg value="^Revision:"/>
+		</exec>
+
+		<exec executable="sed" outputproperty="svn.revision" inputstring="${grep.out}">
+			<arg value="s/Revision: //"/>
+		</exec>
 		
-		<svn>
-			<status path="${basedir}/src" revisionProperty="svn.revision" />
-		</svn>
 		<tstamp>
 		    <format property="DATE" pattern="yyyyMMdd" locale="ENGLISH, GERMANY"/>
 		</tstamp>
