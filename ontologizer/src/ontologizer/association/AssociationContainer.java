@@ -138,6 +138,39 @@ public class AssociationContainer
 	}
 
 	/**
+	 * Returns whether the given name is a object symbol. 
+	 * 
+	 * @param name
+	 * @return
+	 */
+	public boolean isObjectSymbol(ByteString name)
+	{
+		return gene2assocs.containsKey(name);
+	}
+	
+	/**
+	 * Returns whether the given name is an object id. 
+	 * 
+	 * @param name
+	 * @return
+	 */
+	public boolean isObjectID(ByteString name)
+	{
+		return dbObject2gene.containsKey(name);
+	}
+	
+	/**
+	 * Returns whether the given name is a synonym.
+	 * 
+	 * @param name
+	 * @return
+	 */
+	public boolean isSynonym(ByteString name)
+	{
+		return synonym2gene.containsKey(name);
+	}
+
+	/**
 	 * A way to get all annotated genes in the container
 	 * 
 	 * @author Steffen Grossmann
