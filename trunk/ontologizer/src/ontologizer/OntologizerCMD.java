@@ -128,11 +128,11 @@ public class OntologizerCMD
 			options.addOption(new Option("i","ignore",false,"Ignore genes to which no association exist within the calculation."));
 			options.addOption(new Option("c","calculation",true,calHelpString));
 			options.addOption(new Option("m","mtc",true,mtcHelpString));
-			options.addOption(new Option("d","dot",true, "For every studyset analysis write out an additional .dot file (GraphViz) containing "+
-														 "the Term graph with significant nodes. The optional argument in range between 0 and 0.5 "+
-														 "specifies the maximum level on which a term is considered as significantly enriched. "+
+			options.addOption(new Option("d","dot",true, "For every study set analysis write out an additional .dot file (GraphViz) containing "+
+														 "the graph that is induced by interesting nodes. The optional argument in range between 0 and 1 "+
+														 "specifies the threshold used to identify interesting nodes. "+
 														 "By appending a GO Term identifier (separated by a comma) the output is restriced to the " +
-														 "subgraph originating at this GO Term."));
+														 "subgraph originating at this GO term."));
 			options.addOption(new Option("n","annotation",false,"Create an additional file per study set which contains the annotations."));
 			options.addOption(new Option("f","filter",true,"Filter the gene names by appling rules in a given file (currently only mapping supported)."));
 			options.addOption(new Option("o","outdir",true,"Specfies the directory in which the results will be placed."));
@@ -143,27 +143,6 @@ public class OntologizerCMD
 						"the size of the resampled study sets are allowed to differ"));
 			}
 			options.addOption(new Option("v","version",false,"Shows version information and exits"));
-
-					/*		System.out.print("\nUsage: java -jar Ontologizer.jar -g gofile -a associationFile -d directoryWithClusterFiles");
-					System.out.print("  \\\n [-f filter] [-o name_of_main_output_file]");
-					System.out.println(" [-r name_of_output_directory][-m min_count][-x]");
-					System.out.println("\t-g: GO terms file (\"go_YYYYMM-termdb.xml\")");
-					System.out.println("\t-a: GO association file (\"gene_association.XXX\")");
-					System.out.println("\t-d: Directory containing the file(s) with gene (gene product) names");
-					System.out.println("\t\tComplete path must be indicated for "
-							+ "directory and files if they are not in the current directory");
-					System.out.println("\nThe following switches are optional:");
-					System.out.println("\t-f: An optional filter for the suffix of the files containing the gene/gene product names");
-					System.out.println("\t\tFiles with other suffixes will be ignored.");
-					System.out.println("\t\t: \".fa\": FASTA files, the first word following each \">\" will be interpreted as a gene name");
-					System.out.println("\t\t: \".txt\" or other suffix: First word on each line will be interpreted as gene (product) name.");
-					System.out.println("\t-x: Output XML instead of HTML");
-					System.out.println("\t-o filename: name of main output file name (default: \"ontologizer\")");
-					System.out.println("\t-r dirname: name of directory for output (default: \"Associations\")");
-					System.out.println("\t-m integer_value: minimum count for reporting in output (default: \"0\")");
-					System.out.println("\t-s create GraphViz (dot) files; -sl: include all level 2 terms. Only valid if");
-					System.out.println("\t\tstatistical analysis is done");*/
-
 
 			Parser parser = new GnuParser();
 			CommandLine cmd = parser.parse(options,args);
@@ -176,9 +155,9 @@ public class OntologizerCMD
 
 			if (cmd.hasOption("v"))
 			{
-				System.out.println("Ontologizer 2.0");
+				System.out.println("Ontologizer 2.0 (Build: " + BuildInfo.date + "-" + BuildInfo.revisionNumber + ")");
 				System.out.println();
-				System.out.println("Copyright (C) 2004-2006 Ontologizer Development Team.");
+				System.out.println("Copyright (C) 2004-2010 Ontologizer Development Team.");
 				System.exit(0);
 			}
 
