@@ -331,14 +331,22 @@ public class StudySet implements Iterable<ByteString>
 	 */
 	public void filterOutAssociationlessGenes(AssociationContainer associationContainer)
 	{
+		int numObjectSymbol = 0;
+		int numObjectID = 0;
+		int numSynonyms = 0;
+
 		/* Iterate over all gene names and put those who doesn't have an association
 		 * into the unannotatedGeneNames list */
 		for (ByteString geneName : gene2Attribute.keySet())
 		{
 			Gene2Associations gene2Association = associationContainer.get(geneName);
 			if (gene2Association == null)
-			{
 				unannotatedGeneNames.add(geneName);
+			else
+			{
+				if (associationContainer.isObjectSymbol(geneName)) numObjectSymbol++;
+				else if (associationContainer.isObjectID(geneName)) numObjectID++;
+				else if (associationContainer.isSynonym(geneName)) numSynonyms++;
 			}
 		}
 
@@ -347,7 +355,8 @@ public class StudySet implements Iterable<ByteString>
 		for (ByteString geneName : unannotatedGeneNames)
 			gene2Attribute.remove(geneName);
 
-		logger.info(unannotatedGeneNames.size() + " genes of " + getName() + " without any association have been filtered out. Now there are " + gene2Attribute.size() + " genes");
+		logger.info(unannotatedGeneNames.size() + " genes of " + getName() + " without any association have been filtered out. Now there are " + gene2Attribute.size() + " genes, of which " +
+				   numObjectSymbol + " can be resolved using Object Symbols, " + numObjectID + " using Object IDs, and " + numSynonyms + " using Synonyms.");
 
 		/* Reset counter and enumerator */
 		this.resetCounterAndEnumerator();
@@ -398,7 +407,8 @@ public class StudySet implements Iterable<ByteString>
 		for (ByteString geneName : gene2Attribute.keySet())
 		{
 			Gene2Associations geneAssociations = associationContainer.get(geneName);
-			if (geneAssociations != null) goTermEnumerator.push(geneAssociations);
+			if (geneAssociations != null)
+				goTermEnumerator.push(geneAssociations);
 		}
 
 		return goTermEnumerator;
