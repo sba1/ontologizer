@@ -370,7 +370,7 @@ public class Bayes2GOCalculation implements ICalculation
 		if (doEm) maxIter = 12;
 		else maxIter = 1;
 
-		logger.info(allTerms.size() + " terms in consideration.");
+		logger.info(allTerms.size() + " terms and " + populationEnumerator.getGenes().size() + " genes in consideration.");
 
 		for (int i=0;i<maxIter;i++)
 		{
