@@ -1,10 +1,11 @@
 package ontologizer.collections;
 
 /**
- * This is a implementation of a tiny queue avoiding bloat as much as possible.
+ * This is an implementation of a tiny queue avoiding bloat as much as possible.
  * It minimizes the allocation of entries as it marks the memory of
- * dequeued elements as unused. Only use it for temporary queues of which elements
- * are inserted or removed in high frequency.
+ * dequeued elements as unused. This should unload the garbage collector.
+ * Only use it for temporary queues of which elements are inserted or removed
+ * in high frequency.
  *
  * @author Sebastian Bauer
  */
@@ -27,9 +28,9 @@ public class TinyQueue<Type>
 	TinyElement<Type> headOfFree;
 
 	/**
-	 * Internal function to allocate a new element. If there is
-	 * any left it gets it from the free list. Note that t field of
-	 * the returned element is garbage.
+	 * Internal function to allocate a new element. Unless there are no
+	 * free elements left a new one is allocated. Note that the t field
+	 * of the returned element is garbage.
 	 *
 	 * @return the new element.
 	 */
@@ -97,4 +98,3 @@ public class TinyQueue<Type>
 		return head == null;
 	}
 }
-
