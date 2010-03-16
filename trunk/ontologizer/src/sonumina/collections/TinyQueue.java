@@ -1,4 +1,4 @@
-package ontologizer.collections;
+package sonumina.collections;
 
 /**
  * This is an implementation of a tiny queue avoiding bloat as much as possible.
