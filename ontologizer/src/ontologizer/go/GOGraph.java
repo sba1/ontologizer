@@ -10,10 +10,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import ontologizer.graph.DirectedGraph;
-import ontologizer.graph.Edge;
-import ontologizer.graph.DirectedGraph.IDistanceVisitor;
 import sonumina.collections.TinyQueue;
+import sonumina.graph.DirectedGraph;
+import sonumina.graph.Edge;
+import sonumina.graph.DirectedGraph.IDistanceVisitor;
 
 /**
  * An edge in the go graph
