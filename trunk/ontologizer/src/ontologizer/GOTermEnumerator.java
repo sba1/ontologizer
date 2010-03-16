@@ -225,7 +225,7 @@ public class GOTermEnumerator implements Iterable<TermID>
 		for (TermID curTerm : map.keySet())
 		{
 			/* Ignore terms on the same path */
-			if (graph.isRootGOTermID(curTerm)) continue;
+			if (graph.isRootTerm(curTerm)) continue;
 			if (curTerm.equals(goTermID)) continue;
 			if (graph.existsPath(curTerm,goTermID) || graph.existsPath(goTermID,curTerm))
 				continue;

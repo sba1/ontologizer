@@ -21,7 +21,7 @@ public class TopologyWeightedCalculation extends AbstractHypergeometricCalculati
 
 	private void computeTermSig(PopulationSet populationSet, StudySet studySet, GOGraph graph, TermID u, Set<TermID> children, EnrichedGOTermsResult studySetResult, GOTermEnumerator studyTermEnumerator, GOTermEnumerator populationTermEnumerator)
 	{
-		if (graph.isRootGOTermID(u)) return;
+		if (graph.isRootTerm(u)) return;
 
 		/* Execute Fisher */
 		TopologyWeightGOTermProperties prop = wFisher(populationSet, studySet, graph, u, studySetResult, studyTermEnumerator, populationTermEnumerator);
@@ -62,9 +62,9 @@ public class TopologyWeightedCalculation extends AbstractHypergeometricCalculati
 		{
 			double w = weights.get(child);
 
-			Set<TermID> upper = graph.getTermsOfInducedGraph(graph.getRootGOTerm().getID(), u);
+			Set<TermID> upper = graph.getTermsOfInducedGraph(graph.getRootTerm().getID(), u);
 			upper.remove(u);
-			upper.remove(graph.getRootGOTerm().getID());
+			upper.remove(graph.getRootTerm().getID());
 
 			for (TermID up : upper)
 			{
