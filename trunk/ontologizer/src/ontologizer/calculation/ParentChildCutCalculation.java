@@ -118,7 +118,7 @@ public class ParentChildCutCalculation extends
 				prop.annotatedPopulationGenes = popTermCount;
 				prop.annotatedStudyGenes = studyTermCount;
 
-				if (graph.isRootGOTermID(term))
+				if (graph.isRootTerm(term))
 				{
 					prop.nparents = 0;
 					prop.ignoreAtMTC = true;

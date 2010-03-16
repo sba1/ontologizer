@@ -99,7 +99,7 @@ public class TopCalculation extends AbstractHypergeometricCalculation
 
 			if (myP.p < SIGNIFICANCE_LEVEL)
 			{
-				Set<TermID> upperTerms = graph.getTermsOfInducedGraph(graph.getRootGOTerm().getID(), term);
+				Set<TermID> upperTerms = graph.getTermsOfInducedGraph(graph.getRootTerm().getID(), term);
 				for (TermID up : upperTerms)
 				{
 					HashSet<ByteString> marked = markedGenesMap.get(up);
