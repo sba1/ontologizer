@@ -307,7 +307,7 @@ public class SemanticSimilarityComposite extends Composite implements IGraphActi
 			StringBuilder attributes = new StringBuilder();
 			attributes.append("label=\"");
 
-			if (result.g.isRootGOTermID(id))
+			if (result.g.isRootTerm(id))
 			{
 				attributes.append("Gene Ontology");
 			} else

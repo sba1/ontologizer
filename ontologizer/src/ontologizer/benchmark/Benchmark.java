@@ -266,7 +266,7 @@ public class Benchmark
 		}
 
 		final ByteString [] allGenesArray = completePop.getGenes();
-		final TermID root = /*graph.getGOTerm("GO:0008150").getID();//*/graph.getRootGOTerm().getID();
+		final TermID root = /*graph.getGOTerm("GO:0008150").getID();//*/graph.getRootTerm().getID();
 		final int rootGenes = completePopEnumerator.getAnnotatedGenes(root).totalAnnotatedCount();
 
 		System.out.println("Population set consits of " + allGenesArray.length + " genes. Root term has " + rootGenes + " associated genes");

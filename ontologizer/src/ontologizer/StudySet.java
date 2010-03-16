@@ -549,7 +549,7 @@ public class StudySet implements Iterable<ByteString>
 //				if (goTermID.equals(graph.getBpTerm().getID())) return;
 //				if (goTermID.equals(graph.getMfTerm().getID())) return;
 //				if (goTermID.equals(graph.getCcTerm().getID())) return;
-				if (graph.isRootGOTermID(goTermID)) return;
+				if (graph.isRootTerm(goTermID)) return;
 
 				set.add(goTermID);
 			}
@@ -563,7 +563,7 @@ public class StudySet implements Iterable<ByteString>
 		ArrayList<TermID> terms = new ArrayList<TermID>();
 		for (TermID t : enumerator)
 		{
-			if (!graph.isRootGOTermID(t))
+			if (!graph.isRootTerm(t))
 				terms.add(t);
 		}
 
