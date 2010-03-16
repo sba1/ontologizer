@@ -11,9 +11,9 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import sonumina.collections.TinyQueue;
-import sonumina.graph.DirectedGraph;
-import sonumina.graph.Edge;
-import sonumina.graph.DirectedGraph.IDistanceVisitor;
+import sonumina.math.graph.DirectedGraph;
+import sonumina.math.graph.Edge;
+import sonumina.math.graph.DirectedGraph.IDistanceVisitor;
 
 /**
  * An edge in the go graph
