@@ -437,7 +437,7 @@ public class GOGraph implements Iterable<Term>
 			 * source node
 			 */
 
-			if (true)
+/*			if (true)
 			{
 				Object [] ancestors = graph.getAncestors(head);
 				for (int i=0;i<ancestors.length;i++)
@@ -450,7 +450,7 @@ public class GOGraph implements Iterable<Term>
 						vistingVertex.visiting(ancestor.getID());
 					}
 				}
-			} else
+			} else*/
 			{
 				Iterator<Edge<Term>> edgeIter = graph.getInEdges(head);
 				while (edgeIter.hasNext())
