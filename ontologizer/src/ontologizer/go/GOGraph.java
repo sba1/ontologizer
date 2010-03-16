@@ -56,10 +56,10 @@ public class GOGraph implements Iterable<Term>
 	private DirectedGraph<Term> graph;
 
 	/** We also pack a TermContainer */
-	private TermContainer goTermContainer;
+	private TermContainer termContainer;
 
 	/** The (possibly) artificial root term */
-	private Term rootGOTerm;
+	private Term rootTerm;
 
 	/** Level 1 terms */
 	private List<Term> level1terms = new ArrayList<Term>();
@@ -70,20 +70,20 @@ public class GOGraph implements Iterable<Term>
 	/**
 	 * Construct the GO Graph.
 	 * 
-	 * @param goTermContainer
+	 * @param termContainer
 	 */
-	public GOGraph(TermContainer goTermContainer)
+	public GOGraph(TermContainer newTermContainer)
 	{
-		this.goTermContainer = goTermContainer;
+		this.termContainer = newTermContainer;
 
 		graph = new DirectedGraph<Term>();
 
 		/* At first add all goterms to the graph */
-		for (Term goTerm : goTermContainer)
+		for (Term goTerm : newTermContainer)
 			graph.addVertex(goTerm);
 
 		/* Now add the edges, i.e. link the terms */
-		for (Term term : goTermContainer)
+		for (Term term : newTermContainer)
 		{
 			if (term.getSubsets() != null)
 				for (Subset s : term.getSubsets())
@@ -97,7 +97,7 @@ public class GOGraph implements Iterable<Term>
 					logger.info("Detected self-loop in the definition of the ontology (term "+ term.getIDAsString()+"). This link has been ignored.");
 					continue;
 				}
-				graph.addEdge(new GOEdge(goTermContainer.get(parent.termid), term, parent.relation));
+				graph.addEdge(new GOEdge(newTermContainer.get(parent.termid), term, parent.relation));
 			}
 		}
 
@@ -125,20 +125,20 @@ public class GOGraph implements Iterable<Term>
 
 			logger.info("Ontology contains multiple level-one terms: " + level1StringBuilder.toString() + ". Adding artificial root term.");
 
-			rootGOTerm = new Term("GO:0000000", "root");
-			rootGOTerm.setSubsets(new ArrayList<Subset>(availableSubsets));
-			graph.addVertex(rootGOTerm);
+			rootTerm = new Term("GO:0000000", "root");
+			rootTerm.setSubsets(new ArrayList<Subset>(availableSubsets));
+			graph.addVertex(rootTerm);
 
 			for (Term lvl1 : level1terms)
 			{
-				graph.addEdge(new GOEdge(rootGOTerm, lvl1,TermRelation.UNKOWN));
+				graph.addEdge(new GOEdge(rootTerm, lvl1,TermRelation.UNKOWN));
 			}
 		} else
 		{
 			if (level1terms.size() == 1)
 			{
 				logger.info("Ontology contains a single level-one term.");
-				rootGOTerm = level1terms.get(0);
+				rootTerm = level1terms.get(0);
 			}
 		}
 	}
@@ -149,9 +149,9 @@ public class GOGraph implements Iterable<Term>
 	 * 
 	 * @return The root vertex as a GOVertex object
 	 */
-	public boolean isRootGOTermID(TermID id)
+	public boolean isRootTerm(TermID id)
 	{
-		return id.equals(rootGOTerm.getID());
+		return id.equals(rootTerm.getID());
 	}
 
 	/**
@@ -159,9 +159,9 @@ public class GOGraph implements Iterable<Term>
 	 * 
 	 * @return The term representing to root
 	 */
-	public Term getRootGOTerm()
+	public Term getRootTerm()
 	{
-		return rootGOTerm;
+		return rootTerm;
 	}
 
 	/**
@@ -183,10 +183,10 @@ public class GOGraph implements Iterable<Term>
 	public Set<String> getTermsDescendantsAsStrings(String goTermID)
 	{
 		Term goTerm;
-		if (goTermID.equals(rootGOTerm.getIDAsString()))
-			goTerm = rootGOTerm;
+		if (goTermID.equals(rootTerm.getIDAsString()))
+			goTerm = rootTerm;
 		else
-			goTerm = goTermContainer.get(goTermID);
+			goTerm = termContainer.get(goTermID);
 
 		HashSet<String> terms = new HashSet<String>();
 		Iterator<Edge<Term>> edgeIter = graph.getOutEdges(goTerm);
@@ -204,10 +204,10 @@ public class GOGraph implements Iterable<Term>
 	public Set<String> getTermsAncestorsAsStrings(String goTermID)
 	{
 		Term goTerm;
-		if (goTermID.equals(rootGOTerm.getIDAsString()))
-			goTerm = rootGOTerm;
+		if (goTermID.equals(rootTerm.getIDAsString()))
+			goTerm = rootTerm;
 		else
-			goTerm = goTermContainer.get(goTermID);
+			goTerm = termContainer.get(goTermID);
 
 		HashSet<String> terms = new HashSet<String>();
 
@@ -226,10 +226,10 @@ public class GOGraph implements Iterable<Term>
 	public Set<TermID> getTermsDescendants(TermID goTermID)
 	{
 		Term goTerm;
-		if (rootGOTerm.getID().id == goTermID.id)
-			goTerm = rootGOTerm;
+		if (rootTerm.getID().id == goTermID.id)
+			goTerm = rootTerm;
 		else
-			goTerm = goTermContainer.get(goTermID);
+			goTerm = termContainer.get(goTermID);
 
 		HashSet<TermID> terms = new HashSet<TermID>();
 		Iterator<Edge<Term>> edgeIter = graph.getOutEdges(goTerm);
@@ -247,14 +247,14 @@ public class GOGraph implements Iterable<Term>
 	public Set<TermID> getTermsAncestors(TermID goTermID)
 	{
 		HashSet<TermID> terms = new HashSet<TermID>();
-		if (rootGOTerm.getID().id == goTermID.id)
+		if (rootTerm.getID().id == goTermID.id)
 			return terms;
 
 		Term goTerm;
-		if (goTermID.equals(rootGOTerm.getIDAsString()))
-			goTerm = rootGOTerm;
+		if (goTermID.equals(rootTerm.getIDAsString()))
+			goTerm = rootTerm;
 		else
-			goTerm = goTermContainer.get(goTermID);
+			goTerm = termContainer.get(goTermID);
 
 		Iterator<Edge<Term>> edgeIter = graph.getInEdges(goTerm);
 		while (edgeIter.hasNext())
@@ -272,14 +272,14 @@ public class GOGraph implements Iterable<Term>
 	public Set<ParentTermID> getTermsAncestorsWithRelation(TermID goTermID)
 	{
 		HashSet<ParentTermID> terms = new HashSet<ParentTermID>();
-		if (rootGOTerm.getID().id == goTermID.id)
+		if (rootTerm.getID().id == goTermID.id)
 			return terms;
 
 		Term goTerm;
-		if (goTermID.equals(rootGOTerm.getIDAsString()))
-			goTerm = rootGOTerm;
+		if (goTermID.equals(rootTerm.getIDAsString()))
+			goTerm = rootTerm;
 		else
-			goTerm = goTermContainer.get(goTermID);
+			goTerm = termContainer.get(goTermID);
 
 		Iterator<Edge<Term>> edgeIter = graph.getInEdges(goTerm);
 		while (edgeIter.hasNext())
@@ -302,9 +302,9 @@ public class GOGraph implements Iterable<Term>
 	public boolean existsPath(TermID sourceID, TermID destID)
 	{
 		/* Some special cases because of the artificial root */
-		if (isRootGOTermID(destID))
+		if (isRootTerm(destID))
 		{
-			if (isRootGOTermID(sourceID))
+			if (isRootTerm(sourceID))
 				return true;
 			return false;
 		}
@@ -315,8 +315,8 @@ public class GOGraph implements Iterable<Term>
 		 */
 
 		/* TODO: Make this a method of DirectedGraph */
-		Term source = goTermContainer.get(sourceID);
-		Term dest = goTermContainer.get(destID);
+		Term source = termContainer.get(sourceID);
+		Term dest = termContainer.get(destID);
 
 		HashSet<Term> visited = new HashSet<Term>();
 
@@ -417,7 +417,7 @@ public class GOGraph implements Iterable<Term>
 		TinyQueue<Term> queue = new TinyQueue<Term>();
 		for (TermID id : goTermIDSet)
 		{
-			Term t = goTermContainer.get(id);
+			Term t = termContainer.get(id);
 			assert (t != null);
 
 			queue.offer(t);
@@ -509,7 +509,7 @@ public class GOGraph implements Iterable<Term>
 		TinyQueue<Term> queue = new TinyQueue<Term>();
 		for (TermID id : goTermIDSet)
 		{
-			Term t = goTermContainer.get(id);
+			Term t = termContainer.get(id);
 			assert (t != null);
 			queue.offer(t);
 			visited.add(t);
@@ -543,7 +543,7 @@ public class GOGraph implements Iterable<Term>
 
 	public TermContainer getGoTermContainer()
 	{
-		return goTermContainer;
+		return termContainer;
 	}
 
 	/**
@@ -554,7 +554,7 @@ public class GOGraph implements Iterable<Term>
 	 */
 	public Term getGOTerm(String term)
 	{
-		Term go = goTermContainer.get(term);
+		Term go = termContainer.get(term);
 		if (go == null)
 		{
 			/* GO Term Container doesn't include the root term so we have to handle
@@ -563,8 +563,8 @@ public class GOGraph implements Iterable<Term>
 			try
 			{
 				TermID id = new TermID(term);
-				if (id.id == rootGOTerm.getID().id)
-					return rootGOTerm;
+				if (id.id == rootTerm.getID().id)
+					return rootTerm;
 			} catch (IllegalArgumentException iea)
 			{
 			}
@@ -574,9 +574,9 @@ public class GOGraph implements Iterable<Term>
 
 	public Term getGOTerm(TermID id)
 	{
-		Term go = goTermContainer.get(id);
-		if (go == null && id.id == rootGOTerm.getID().id)
-			return rootGOTerm;
+		Term go = termContainer.get(id);
+		if (go == null && id.id == rootTerm.getID().id)
+			return rootTerm;
 		return go;
 	}
 
@@ -606,7 +606,7 @@ public class GOGraph implements Iterable<Term>
 
 				public void visiting(TermID goTermID)
 				{
-					if (rootTerm != null && !graph.isRootGOTermID(rootTerm))
+					if (rootTerm != null && !graph.isRootTerm(rootTerm))
 					{
 						/*
 						 * Only add the goterm if there exists a path
@@ -616,7 +616,7 @@ public class GOGraph implements Iterable<Term>
 						 * TODO: Instead of existsPath() implement
 						 * walkToGoTerm() to speed up the whole stuff
 						 */
-						if (rootTerm.equals(goTermID) || (!graph.isRootGOTermID(goTermID) && graph.existsPath(rootTerm, goTermID)))
+						if (rootTerm.equals(goTermID) || (!graph.isRootTerm(goTermID) && graph.existsPath(rootTerm, goTermID)))
 							nodeSet.add(goTermID);
 					} else
 						nodeSet.add(goTermID);
@@ -749,7 +749,7 @@ public class GOGraph implements Iterable<Term>
 	{
 		final GOLevels levels = new GOLevels();
 		
-		graph.singleSourceLongestPath(rootGOTerm, new IDistanceVisitor<Term>()
+		graph.singleSourceLongestPath(rootTerm, new IDistanceVisitor<Term>()
 				{
 					public boolean visit(Term vertex, List<Term> path,
 							int distance)
@@ -765,7 +765,7 @@ public class GOGraph implements Iterable<Term>
 	public int numberOfTerms()
 	{
 		/* Don't forget the artificial term */
-		return goTermContainer.termCount() + 1; 
+		return termContainer.termCount() + 1; 
 	}
 
 	/**
@@ -777,7 +777,7 @@ public class GOGraph implements Iterable<Term>
 	{
 		int id=0;
 
-		for (Term t : goTermContainer)
+		for (Term t : termContainer)
 		{
 			if (t.getID().id > id)
 				id = t.getID().id;
@@ -791,7 +791,7 @@ public class GOGraph implements Iterable<Term>
 	 */
 	public Iterator<Term> iterator()
 	{
-		return goTermContainer.iterator();
+		return termContainer.iterator();
 	}
 
 	private Subset relevantSubset;
@@ -827,7 +827,7 @@ public class GOGraph implements Iterable<Term>
 	public void setRelevantSubontology(String subontologyName)
 	{
 		/* FIXME: That's so slow */
-		for (Term t : goTermContainer)
+		for (Term t : termContainer)
 		{
 			if (t.getName().equals(subontologyName))
 			{
@@ -879,8 +879,8 @@ public class GOGraph implements Iterable<Term>
 	public boolean isRelevantTermID(TermID goTermID)
 	{
 		Term t;
-		if (isRootGOTermID(goTermID)) t = rootGOTerm;
-		else t = goTermContainer.get(goTermID);
+		if (isRootTerm(goTermID)) t = rootTerm;
+		else t = termContainer.get(goTermID);
 		
 		return isRelevantTerm(t);
 	}

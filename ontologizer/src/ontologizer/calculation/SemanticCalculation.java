@@ -450,7 +450,7 @@ public class SemanticCalculation
 			allGenesStudy.addGene(gene,"");
 
 		enumerator = allGenesStudy.enumerateGOTerms(graph, goAssociations);
-		totalAnnotated = enumerator.getAnnotatedGenes(graph.getRootGOTerm().getID()).totalAnnotated.size();
+		totalAnnotated = enumerator.getAnnotatedGenes(graph.getRootTerm().getID()).totalAnnotated.size();
 
 		cache = new IntHashMapForDoubles[g.maximumTermID()];
 

@@ -314,7 +314,7 @@ public class SVDGOTermsComposite extends AbstractResultComposite
 
 				attrString.append("label=\"");
 
-				if (go.isRootGOTermID(id))
+				if (go.isRootTerm(id))
 				{
 					attrString.append("Gene Ontology");
 				} else

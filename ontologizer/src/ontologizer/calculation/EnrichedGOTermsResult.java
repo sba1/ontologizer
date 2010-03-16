@@ -211,7 +211,7 @@ public class EnrichedGOTermsResult extends AbstractGOTermsResult
 				StringBuilder attributes = new StringBuilder();
 				attributes.append("label=\"");
 
-				if (graph.isRootGOTermID(id))
+				if (graph.isRootTerm(id))
 				{
 					attributes.append("Gene Ontology");
 				} else
