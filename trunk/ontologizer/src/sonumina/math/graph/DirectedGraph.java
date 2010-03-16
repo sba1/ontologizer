@@ -1,23 +1,19 @@
 package sonumina.math.graph;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
-import java.util.Set;
 import java.util.Map.Entry;
 
-class VertexAttributes<VertexType>
+final class VertexAttributes<VertexType>
 {
 	/** All edges where the vertex is appearing as dest */
 	public ArrayList<Edge<VertexType>> inEdges = new ArrayList<Edge<VertexType>>();
-
-	/** Array of ancestors, build on demand and cached for quick access */
-	public Object [] ancestorsArray;
 
 	/** All edges where the vertex is appearing as source */
 	public ArrayList<Edge<VertexType>> outEdges = new ArrayList<Edge<VertexType>>();
@@ -29,31 +25,12 @@ class VertexAttributes<VertexType>
  * @author Sebastian Bauer
  *
  */
-public class DirectedGraph<VertexType> implements Iterable<VertexType>
+public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> implements Iterable<VertexType>
 {
 	/** Contains the vertices associated to meta information (edges) */
-	private HashMap<VertexType,VertexAttributes<VertexType>> vertices;
+	private LinkedHashMap<VertexType,VertexAttributes<VertexType>> vertices;
 
-	/**
-	 * This interface is used as a callback mechanism by different search
-	 * methods.
-	 *
-	 * @author Sebastian Bauer
-	 */
-	public static interface IVisitor<VertexType>
-	{
-		/**
-		 * Called for every vertex visited by the algorithm.
-		 *
-		 * @param goTermID
-		 *
-		 * @return false if algorithm should be stopped (i.e. no further
-		 *         calls to this method will be issued) otherwise true
-		 */
-		boolean visited(VertexType vertex);
-	}
-
-	public static interface IDistanceVisitor<VertexType>
+	public interface IDistanceVisitor<VertexType>
 	{
 		boolean visit(VertexType vertex, List<VertexType> path, int distance);
 	}
@@ -63,7 +40,7 @@ public class DirectedGraph<VertexType> implements Iterable<VertexType>
 	 */
 	public DirectedGraph()
 	{
-		vertices = new HashMap<VertexType,VertexAttributes<VertexType>>();
+		vertices = new LinkedHashMap<VertexType,VertexAttributes<VertexType>>();
 	}
 
 	/**
@@ -82,12 +59,61 @@ public class DirectedGraph<VertexType> implements Iterable<VertexType>
 	}
 
 	/**
+	 * Returns the vertices as an iterable object.
+	 *
+	 * @return
+	 */
+	public Iterable<VertexType> getVertices()
+	{
+		return vertices.keySet();
+	}
+
+	/**
+	 * Returns a copy of the graph.
+     *
+     * @return the duplicated graph.
+     */
+	public DirectedGraph<VertexType> copyGraph()
+	{
+		DirectedGraph<VertexType> copy = new DirectedGraph<VertexType>();
+		Iterator<VertexType> nodeIt = this.getVertexIterator();
+		while (nodeIt.hasNext())
+		{
+			copy.addVertex(nodeIt.next());
+		}
+
+		nodeIt = this.getVertexIterator();
+		while (nodeIt.hasNext())
+		{
+			VertexType node = nodeIt.next();
+			Iterator<VertexType> descIt = this.getDescendantNodes(node);
+			while (descIt.hasNext())
+			{
+				copy.addEdge(new Edge<VertexType>(node,descIt.next()));
+			}
+		}
+		return copy;
+	}
+
+	public int getNumberEdges()
+	{
+		int sum = 0;
+		Iterator<VertexType> nodeIt = this.getVertexIterator();
+		while (nodeIt.hasNext()){
+			VertexType node = nodeIt.next();
+			sum += vertices.get(node).outEdges.size();
+		}
+		return sum;
+	}
+
+	/**
 	 * Add a new edge into the graph.
 	 *
 	 * @param edge the edge which links two vertices.
 	 *
-	 * @throws IllegalArgumentException if the edge links vertices
-	 *         which haven't been added to the graph.
+	 * @throws IllegalArgumentException if the edge
+	 * 			is a link between two vertices which
+	 * 			haven't been added to the graph.
 	 */
 	public void addEdge(Edge<VertexType> edge)
 	{
@@ -95,14 +121,123 @@ public class DirectedGraph<VertexType> implements Iterable<VertexType>
 		VertexAttributes<VertexType> vaDest = vertices.get(edge.getDest());
 
 		/* Ensure that the arguments are valid, i.e. both source
-		 * and dest must be vertices within the graph */
+		 * and destination must be vertices within the graph  */
 		if (vaSource == null || vaDest == null)
 			throw new IllegalArgumentException();
 
 		vaSource.outEdges.add(edge);
-
 		vaDest.inEdges.add(edge);
-		vaDest.ancestorsArray = null;
+	}
+
+	public void removeConnections(VertexType source, VertexType dest)
+	{
+		VertexAttributes<VertexType> vaSource = vertices.get(source);
+		VertexAttributes<VertexType> vaDest = vertices.get(dest);
+//		System.out.println("remove all edges between "+source + " and "+ dest);
+		if (vaSource == null || vaDest == null)
+			throw new IllegalArgumentException();
+
+//		System.out.print("start removing -->  ");
+		HashSet<Edge<VertexType>> deleteMe = new HashSet<Edge<VertexType>>();
+		for (Edge<VertexType> edge : vaSource.outEdges){
+			if (edge.getDest().equals(dest)){
+				deleteMe.add(edge);
+			}
+		}
+		if (deleteMe.size() > 1)
+			throw new RuntimeException(" found more than one edge to delete ("+deleteMe.size()+") --> "+deleteMe);
+		for (Edge<VertexType> edge : deleteMe){
+//			System.out.print("rem: "+edge.getSource()+" -> "+edge.getDest());
+			vaSource.outEdges.remove(edge);
+		}
+//		System.out.print(" ok 1 - ");
+		deleteMe.clear();
+
+		for (Edge<VertexType> edge : vaSource.inEdges){
+			if (edge.getSource().equals(dest)){
+				deleteMe.add(edge);
+			}
+		}
+		if (deleteMe.size() > 1)
+			throw new RuntimeException(" found more than one edge to delete ("+deleteMe.size()+") --> "+deleteMe);
+		for (Edge<VertexType> edge : deleteMe){
+//			System.out.print("rem: "+edge.getSource()+" -> "+edge.getDest());
+			vaSource.inEdges.remove(edge);
+		}
+//		System.out.print(" ok 2 - ");
+		deleteMe.clear();
+		for (Edge<VertexType> edge : vaDest.outEdges){
+			if (edge.getDest().equals(source)){
+				deleteMe.add(edge);
+			}
+		}
+		if (deleteMe.size() > 1)
+			throw new RuntimeException(" found more than one edge to delete ("+deleteMe.size()+") --> "+deleteMe);
+		for (Edge<VertexType> edge : deleteMe){
+//			System.out.print("rem: "+edge.getSource()+" -> "+edge.getDest());
+			vaDest.outEdges.remove(edge);
+		}
+//		System.out.print(" ok 3 - ");
+		deleteMe.clear();
+
+
+		for (Edge<VertexType> edge : vaDest.inEdges){
+			if (edge.getSource().equals(source)){
+				deleteMe.add(edge);
+			}
+		}
+		if (deleteMe.size() > 1)
+			throw new RuntimeException(" found more than one edge to delete! ("+deleteMe.size()+") --> "+deleteMe);
+		for (Edge<VertexType> edge : deleteMe){
+//			System.out.print("rem: "+edge.getSource()+" -> "+edge.getDest());
+			vaDest.inEdges.remove(edge);
+		}
+//		System.out.println(" ok 4 ");
+	}
+
+	/**
+	 * Returns the iterator which can be used for conveniently
+	 * iterating over all vertices contained within the graph.
+	 *
+	 * @return the iterator.
+	 */
+	public Iterator<VertexType> getVertexIterator()
+	{
+		return vertices.keySet().iterator();
+	}
+
+
+	/**
+	 * Returns the edge connecting source to dest. As multi graphs are not
+	 * supported this is unique.
+     *
+	 * @param source
+	 * @param dest
+	 * @return the edge or null if there is no edge between the specified nodes.
+	 */
+	public Edge<VertexType> getEdge(VertexType source, VertexType dest)
+	{
+		VertexAttributes<VertexType> va = vertices.get(source);
+
+		for (Edge<VertexType> e : va.outEdges)
+		{
+			if (e.getDest().equals(dest))
+				return e;
+		}
+		return null;
+	}
+
+	/**
+	 * Returns the number of in-edges of the given vertex.
+	 *
+	 * @param v
+	 * @return the number of in-edges
+	 */
+	public int getNumberOfInEdges(VertexType v)
+	{
+		VertexAttributes<VertexType> va = vertices.get(v);
+		assert(va != null);
+		return va.inEdges.size();
 	}
 
 	/**
@@ -121,30 +256,94 @@ public class DirectedGraph<VertexType> implements Iterable<VertexType>
 		return va.inEdges.iterator();
 	}
 
+	public Iterator<VertexType> getAncestorNodes(VertexType vt)
+	{
+		VertexAttributes<VertexType> va = vertices.get(vt);
+		assert(va != null);
+
+		List<VertexType> ancestors = new LinkedList<VertexType>();
+		for (Edge<VertexType> e : va.inEdges)
+			ancestors.add(e.getSource());
+		return ancestors.iterator();
+	}
 
 	/**
-	 * Returns the direct ancestors of the graph as an array.
+	 * Returns the number of in-edges of the given vertex.
 	 *
-	 * This method is fast when called multiple times.
-	 *
-	 * @param node
-	 * @return
+	 * @param v
+	 * @return the number of out-edges
 	 */
-	public Object [] getAncestors(VertexType node)
+	public int getNumberOfOutEdges(VertexType v)
 	{
-		VertexAttributes<VertexType> va = vertices.get(node);
+		VertexAttributes<VertexType> va = vertices.get(v);
 		assert(va != null);
-		if (va.ancestorsArray != null) return va.ancestorsArray;
-
-		va.ancestorsArray = new Object[va.inEdges.size()];
-
-		int i = 0;
-
-		for (Edge<VertexType> edge : va.inEdges)
-			va.ancestorsArray[i++] = edge.getSource();
-
-		return va.ancestorsArray;
+		return va.outEdges.size();
 	}
+
+	/**
+	 * Returns clustering coefficient as described in the paper
+	 * by Watts and Strogatz (1998 Nature).
+	 *
+	 * @param v
+	 * @return The clustering coefficient of the vertex.
+	 */
+	public double getClusteringCoefficient(VertexType v)
+	{
+		VertexAttributes<VertexType> va = vertices.get(v);
+		assert(va != null);
+
+		/*
+		 * Determine the neighborhood of provided vertex.
+		 */
+		HashSet<VertexType> neighborhood  = new HashSet<VertexType>();
+
+		Iterator<VertexType> neighborsIt = getDescendantNodes(v);
+		while (neighborsIt.hasNext())
+			neighborhood.add( neighborsIt.next() );
+
+		int numberNeighbors = neighborhood.size();
+
+		/*
+		 * For isolated nodes we set the CC to 0. This is kind of standard,
+		 * even though in Brandes & Erlebach (Network Analysis) 2005 these
+		 * are set to one. A discussion of this can be found in:
+		 * Marcus Kaiser; New Journal of Physics (2008); "Mean clustering coefficients:
+		 * the role of isolated nodes and leafs on clustering measures for small-world
+		 * networks"
+		 */
+		if (numberNeighbors < 2)
+			return 0;
+		/*
+		 * Now determine the number of links
+		 * inside the neighborhood.
+		 */
+		int numEdgesNeighborhood = 0;
+		for (VertexType neighbor : neighborhood){
+			/*
+			 * Get all nodes reachable from this node
+			 */
+			Iterator<VertexType> neighborsNeighborsIt = getDescendantNodes(neighbor);
+			while (neighborsNeighborsIt.hasNext()){
+				VertexType neighborsNeighbor = neighborsNeighborsIt.next();
+
+				if (neighborsNeighbor == v)
+					continue;
+				if (neighborsNeighbor == neighbor)
+					continue;
+
+				if (neighborhood.contains(neighborsNeighbor))
+					++numEdgesNeighborhood;
+			}
+		}
+
+		/*
+		 * Calculate clustering coefficient
+		 */
+		double denominator = (double)(numberNeighbors*(numberNeighbors-1));
+		double C = (double)numEdgesNeighborhood / denominator;
+		return C;
+	}
+
 
 	/**
 	 * Returns the iterator to iterate through all edges going
@@ -162,100 +361,44 @@ public class DirectedGraph<VertexType> implements Iterable<VertexType>
 		return va.outEdges.iterator();
 	}
 
-	/**
-	 * Performs a breadth-first search onto the graph starting at a given
-	 * set of vertices. Vertices occurring in loops are visited only once.
-	 *
-	 * @param vertex defines the vertex to start with.
-	 *
-	 * @param againstFlow the bfs in done against the direction of the edges.
-	 *
-	 * @param visitor a object of a class implementing IVisitor. For every
-	 *        vertex visited by the algorithm the visitor.visited() method is
-	 *        called. Note that the method is called also for the  vertices
-	 *        specified by initialSet (in arbitrary order)
-	 *
-	 * @see IVisitor
-	 */
-	public void bfs(VertexType vertex, boolean againstFlow, IVisitor<VertexType> visitor)
+	public Iterator<VertexType> getDescendantNodes(VertexType vt)
 	{
-		ArrayList<VertexType> set = new ArrayList<VertexType>(1);
-		set.add(vertex);
-		bfs(set,againstFlow,visitor);
+		VertexAttributes<VertexType> va = vertices.get(vt);
+		assert(va != null);
+
+		List<VertexType> descendant = new LinkedList<VertexType>();
+		for (Edge<VertexType> e : va.outEdges)
+			descendant.add(e.getDest());
+		return descendant.iterator();
 	}
 
 	/**
-	 * Performs a breadth-first search onto the graph starting at a given
-	 * set of vertices. Vertices occurring in loops are visited only once.
+	 * Returns the vertices in an Iterable that are connected by the given node.
 	 *
-	 * @param initialSet defines the set of vertices to start with.
-	 *
-	 * @param againstFlow the bfs in done against the direction of the edges.
-	 *
-	 * @param visitor a object of a class implementing IVisitor. For every
-	 *        vertex visited by the algorithm the visitor.visited() method is
-	 *        called. Note that the method is called also for the  vertices
-	 *        specified by initialSet (in arbitrary order)
-	 *
-	 * @see IVisitor
+	 * @param vt
+	 * @return
 	 */
-	public void bfs(Collection<VertexType> initialSet, boolean againstFlow, IVisitor<VertexType> visitor)
+	public Iterable<VertexType> getDescendantVertices(VertexType vt)
 	{
-		HashSet<VertexType> visited = new HashSet<VertexType>();
+		VertexAttributes<VertexType> va = vertices.get(vt);
+		assert(va != null);
 
-		/* Add all terms to the queue */
-		LinkedList<VertexType> queue = new LinkedList<VertexType>();
-		for (VertexType vertex  : initialSet)
-		{
-			queue.offer(vertex);
-			visited.add(vertex);
-			if (!visitor.visited(vertex))
-				return;
-		}
-
-		while (!queue.isEmpty())
-		{
-			/* Remove head of the queue */
-			VertexType head = queue.poll();
-
-			/* Add not yet visited neighbours of old head to the queue
-			 * and mark them as visited. If bfs is done against flow
-			 * neighbours can be found via the ingoing edges otherwise
-			 * via the outgoing edges */
-			Iterator<Edge<VertexType>> edgeIter;
-
-			if (againstFlow) edgeIter = getInEdges(head);
-			else edgeIter = getOutEdges(head);
-
-			while (edgeIter.hasNext())
-			{
-				Edge<VertexType> edge = edgeIter.next();
-				VertexType neighbour;
-
-				if (againstFlow) neighbour = edge.getSource();
-				else neighbour = edge.getDest();
-
-				if (!visited.contains(neighbour))
-				{
-					queue.offer(neighbour);
-					visited.add(neighbour);
-					if (!visitor.visited(neighbour))
-						return;
-				}
-			}
-		}
+		List<VertexType> descendant = new ArrayList<VertexType>(va.outEdges.size());
+		for (Edge<VertexType> e : va.outEdges)
+			descendant.add(e.getDest());
+		return descendant;
 	}
 
 	/**
 	 * Calculates the shortest path from the given vertex to all vertices. Note that
 	 * negative weights are not supported!
 	 *
-	 * @param source defines the source
+	 * @param vertex defines the source
 	 * @param againstFlow if specified the path is walked against the direction of the graph
 	 * @param visitor object implementing IDistanceVisitor which can be used to process the
 	 *        results
 	 */
-	public void singleSourceShortestPath(VertexType source, boolean againstFlow, IDistanceVisitor<VertexType> visitor)
+	public void singleSourceShortestPath(VertexType vertex, boolean againstFlow, IDistanceVisitor<VertexType> visitor)
 	{
 		/**
 		 * This class implements some meta information needed by Dijkstra's
@@ -265,11 +408,16 @@ public class DirectedGraph<VertexType> implements Iterable<VertexType>
 		 */
 		class VertexExtension implements Comparable<VertexExtension>
 		{
+			/** The vertex */
 			public VertexType vertex;
+
+			/** The current distance of the vertex (to the source vertex) */
 			public int distance;
+
+			/** The current parent of the vertex */
 			public VertexType parent;
 
-			public VertexExtension(VertexType vertex, int distance, VertexType parent)
+			VertexExtension(VertexType vertex, int distance, VertexType parent)
 			{
 				this.vertex = vertex;
 				this.distance = distance;
@@ -281,31 +429,37 @@ public class DirectedGraph<VertexType> implements Iterable<VertexType>
 				return distance - arg0.distance;
 			}
 
-			@Override
 			public int hashCode()
 			{
 				return vertex.hashCode();
 			}
 		}
 
+		if (!vertices.containsKey(vertex))
+			throw new IllegalArgumentException(vertex + " not found.");
+
 		/* This is the implementation of the Dijkstra algorithm */
 
-		/* TODO: Get rid of PriorityQueue by using a better suited data structure */
+		/* Within the priority queue we maintain the vertices which has been already
+		 * discovered by the algorithm.
+		 *
+		 * TODO: Get rid of Java's PriorityQueue by using a better suited data structure */
 		PriorityQueue<VertexExtension> queue = new PriorityQueue<VertexExtension>();
 		HashMap<VertexType,VertexExtension> map = new HashMap<VertexType,VertexExtension>();
 
-		/* place the first node into the priority queue */
-		VertexExtension ve = new VertexExtension(source,0,null);
+		/* Place the starting node into the priorty queue. It has a distance of 0 and no parent */
+		VertexExtension ve = new VertexExtension(vertex,0,null);
 		queue.offer(ve);
-		map.put((VertexType)ve.vertex,ve); /* FIXME: (VertexType) is for the java compiler */
+		map.put((VertexType)ve.vertex,ve);
 
 		while (!queue.isEmpty())
 		{
+			/* Take a node which has minimal distance to the starting node */
 			VertexExtension next = queue.poll();
 
+			/* We iterate over the edges of the chosen node to find the neighbours */
 			Iterator<Edge<VertexType>> edgeIter;
-
-			if (againstFlow) edgeIter = getInEdges((VertexType)(next.vertex));
+			if (againstFlow) edgeIter = getInEdges((VertexType)next.vertex);
 			else edgeIter = getOutEdges((VertexType)next.vertex);
 
 			while (edgeIter.hasNext())
@@ -348,22 +502,14 @@ public class DirectedGraph<VertexType> implements Iterable<VertexType>
 			VertexExtension curVe = v.getValue();
 			do
 			{
-				ll.addFirst((VertexType)curVe.vertex); /* FIXME: (VertexType) is for the java compiler */
+				ll.addFirst((VertexType)curVe.vertex);
 				curVe = map.get(curVe.parent);
 			} while (curVe != null);
 
-			if (!visitor.visit((VertexType)v.getValue().vertex,ll,v.getValue().distance))  /* FIXME: (VertexType) is for the java compiler */
+			if (!visitor.visit((VertexType)v.getValue().vertex,ll,v.getValue().distance))
 				return;
 		}
 	}
-
-	public ArrayList<VertexType> topologicalOrder()
-	{
-		ArrayList<VertexType> list = new ArrayList<VertexType>(vertices.size());
-
-		return list;
-	}
-
 
 	/**
 	 * The bellman-ford algorithm,
@@ -397,7 +543,6 @@ public class DirectedGraph<VertexType> implements Iterable<VertexType>
 				return distance - arg0.distance;
 			}
 
-			@Override
 			public int hashCode()
 			{
 				return vertex.hashCode();
@@ -498,6 +643,48 @@ public class DirectedGraph<VertexType> implements Iterable<VertexType>
 				});
 	}
 
+	/**
+	 * Returns the number of distinct paths from source to dest.
+	 *
+	 * @param source where to start.
+	 * @param dest where to end.
+	 * @return the number of paths.
+	 * @note The implementation uses ugly recursion.
+	 */
+	public int getNumberOfPaths(VertexType source, VertexType dest)
+	{
+		if (source.equals(dest))
+			return 1;
+
+		int paths = 0;
+		for (VertexType next : getDescendantVertices(source))
+			paths += getNumberOfPaths(next,dest);
+		return paths;
+	}
+
+	/**
+	 * Returns an arbitrary node of the graph
+	 *
+	 * @return
+	 */
+	public VertexType getArbitaryNode()
+	{
+		return vertices.entrySet().iterator().next().getKey();
+	}
+
+	/**
+	 * Returns the number of vertices.
+	 *
+	 * @return
+	 */
+	public int getNumberOfVertices()
+	{
+		return vertices.size();
+	}
+
+	/**
+	 * Allows convenient iteration.
+	 */
 	public Iterator<VertexType> iterator()
 	{
 		return vertices.keySet().iterator();
@@ -528,4 +715,40 @@ public class DirectedGraph<VertexType> implements Iterable<VertexType>
 		if (va == null) return -1;
 		return va.outEdges.size();
 	}
+
+	public int getMaxDegree()
+	{
+		int max = Integer.MIN_VALUE;
+		for (VertexType vertex : vertices.keySet())
+		{
+			int degreeOut = this.getNumberOfOutEdges(vertex);
+			int degreeIn = this.getNumberOfInEdges(vertex);
+			if (degreeIn != degreeOut)
+				throw new RuntimeException("Vertex "+vertex+" has indegree:"+degreeIn+" and outdegree:"+degreeOut);
+			if (degreeOut > max)
+				max = degreeOut;
+		}
+		return max;
+	}
+
+	public boolean areNeighbors(VertexType node1, VertexType node2) {
+
+		if (node1.equals(node2))
+			return true;
+
+		VertexAttributes<VertexType> va = vertices.get(node1);
+		for (Edge<VertexType> e : va.inEdges){
+			VertexType ancestor = e.getSource();
+			if (ancestor.equals(node2))
+				return true;
+		}
+		for (Edge<VertexType> e : va.outEdges){
+			VertexType desc = e.getDest();
+			if (desc.equals(node2))
+				return true;
+		}
+		return false;
+	}
+
+
 }
