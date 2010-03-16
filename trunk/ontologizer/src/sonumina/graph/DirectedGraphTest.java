@@ -4,14 +4,14 @@
  * To change the template for this generated file go to
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
-package ontologizer.graph;
+package sonumina.graph;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
-import ontologizer.graph.DirectedGraph.IDistanceVisitor;
+import sonumina.graph.DirectedGraph.IDistanceVisitor;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
