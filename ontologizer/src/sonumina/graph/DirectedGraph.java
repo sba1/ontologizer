@@ -1,4 +1,4 @@
-package ontologizer.graph;
+package sonumina.graph;
 
 import java.util.ArrayList;
 import java.util.Collection;
