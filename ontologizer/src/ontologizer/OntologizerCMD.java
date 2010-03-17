@@ -328,7 +328,7 @@ public class OntologizerCMD
 				{
 					String dotName = "view-" + outBasename + ".dot";
 					File outFile = new File(outputDirectoryName,dotName);
-					studySetResult.writeDOT(controller.getGoTerms(),controller.getGoGraph(),outFile,alpha,true,dotRootID);
+					studySetResult.writeDOT(controller.getGoGraph(),outFile,alpha,true,dotRootID);
 				}
 				
 				if (createAnnotations)

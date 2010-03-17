@@ -161,7 +161,6 @@ public class EnrichedGOTermsResult extends AbstractGOTermsResult
 	 * representing the specified terms up to the given rootTerm node are
 	 * included. 
 	 * 
-	 * @param goTerms
 	 * @param graph
 	 * @param file
 	 * 			defines the file in which the output is written to.
@@ -179,7 +178,7 @@ public class EnrichedGOTermsResult extends AbstractGOTermsResult
 	 * 			defines which terms should be included within the
 	 *          graphs.
 	 */
-	public void writeDOT(TermContainer goTerms, final GOGraph graph, File file,
+	public void writeDOT(final GOGraph graph, File file,
 			final double alpha, final boolean counts, TermID rootTerm, HashSet<TermID> terms)
 	{
 		/* Build the props Array and count the number significant p values */
@@ -300,14 +299,13 @@ public class EnrichedGOTermsResult extends AbstractGOTermsResult
 	/**
 	 * Writes out a basic dot file which can be used within graphviz.
 	 * 
-	 * @param goTerms
 	 * @param graph
 	 * @param file
 	 * @param thresh
 	 * @param counts
 	 * @param rootTerm
 	 */
-	public void writeDOT(TermContainer goTerms, GOGraph graph, File file, double thresh, boolean counts, TermID rootTerm)
+	public void writeDOT(GOGraph graph, File file, double thresh, boolean counts, TermID rootTerm)
 	{
 		HashSet<TermID> nodes = new HashSet<TermID>();
 		
@@ -317,7 +315,7 @@ public class EnrichedGOTermsResult extends AbstractGOTermsResult
 				nodes.add(props.goTerm.getID());
 		}
 		
-		writeDOT(goTerms,graph,file,thresh,counts,rootTerm,nodes);
+		writeDOT(graph,file,thresh,counts,rootTerm,nodes);
 	}
 	
 	public Iterator<AbstractGOTermProperties> iterator()
