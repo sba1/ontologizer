@@ -9,6 +9,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import sonumina.collections.TinyQueue;
+
 /**
  * An abstract class for graphs. 
  * 
@@ -155,7 +157,7 @@ abstract public class AbstractGraph<VertexType>
 		HashSet<VertexType> visited = new HashSet<VertexType>();
 
 		/* Add all nodes into the queue */
-		LinkedList<VertexType> queue = new LinkedList<VertexType>();
+		TinyQueue<VertexType> queue = new TinyQueue<VertexType>();
 		for (VertexType vertex  : initial)
 		{
 			queue.offer(vertex);
@@ -169,7 +171,7 @@ abstract public class AbstractGraph<VertexType>
 			/* Remove head of the queue */
 			VertexType head = queue.poll();
 
-			/* Add not yet visited neighbours of old head to the queue
+			/* Add not yet visited neighbors of old head to the queue
 			 * and mark them as visited. */
 			Iterator<VertexType> neighbours = grabber.grabNeighbours(head);
 
