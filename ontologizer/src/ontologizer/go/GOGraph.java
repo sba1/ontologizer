@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 import sonumina.collections.TinyQueue;
 import sonumina.math.graph.DirectedGraph;
 import sonumina.math.graph.Edge;
+import sonumina.math.graph.AbstractGraph.IVisitor;
 import sonumina.math.graph.DirectedGraph.IDistanceVisitor;
 
 /**
@@ -355,21 +356,12 @@ public class GOGraph implements Iterable<Term>
 	}
 
 	/**
-	 * This interface is used as a callback mechanisim by the walkToRoot()
-	 * method.
+	 * This interface is used as a callback mechanisim by the walkToSource()
+	 * and walkToSinks() methods.
 	 *
-	 * @see walkToRoot
 	 * @author Sebastian Bauer
 	 */
-	public interface IVisitingGOVertex
-	{
-		/**
-		 * Called for every Term vistited by the algorithm.
-		 *
-		 * @param goTermID
-		 */
-		void visiting(TermID goTermID);
-	};
+	public interface IVisitingGOVertex extends IVisitor<Term>{};
 
 	/**
 	 * Starting at the vertex representing goTermID walk to the source of the
@@ -390,84 +382,39 @@ public class GOGraph implements Iterable<Term>
 	}
 
 	/**
+	 * Convert a collection of termids to a list of terms.
+	 *
+	 * @param termIDSet
+	 * @return
+	 */
+	private ArrayList<Term> termIDsToTerms(Collection<TermID> termIDSet)
+	{
+		ArrayList<Term> termList = new ArrayList<Term>(termIDSet.size());
+		for (TermID id : termIDSet)
+		{
+			Term t = termContainer.get(id);
+			assert (t != null);
+			termList.add(t);
+		}
+		return termList;
+	}
+
+	/**
 	 * Starting at the vertices within the goTermIDSet walk to the source of the
 	 * DAG (ontology vertex) and call the method visiting of given object
 	 * Implementing IVisitingGOVertex.
 	 *
-	 * @param goTermIDSet
+	 * @param termIDSet
 	 *            the set of go TermsIDs to start with (note that visiting() is
 	 *            also called for those vertices/terms)
 	 *
 	 * @param vistingVertex
 	 */
-	public void walkToSource(Collection<TermID> goTermIDSet,
-			IVisitingGOVertex vistingVertex)
+	public void walkToSource(Collection<TermID> termIDSet, IVisitingGOVertex vistingVertex)
 	{
-		/*
-		 * We walk from the destination to the source (ontology vertex) against
-		 * the graph direction. Basically a breadth-first search is done.
-		 *
-		 * TODO: Unification with exitsPath() method and make this a method of
-		 * DirectedGraph.
-		 */
-
-		HashSet<Term> visited = new HashSet<Term>();
-
-		/* Add all terms to the queue */
-		TinyQueue<Term> queue = new TinyQueue<Term>();
-		for (TermID id : goTermIDSet)
-		{
-			Term t = termContainer.get(id);
-			assert (t != null);
-
-			queue.offer(t);
-			visited.add(t);
-			vistingVertex.visiting(id);
-		}
-
-		while (!queue.isEmpty())
-		{
-			/* Remove head of the queue */
-			Term head = queue.poll();
-
-			/*
-			 * Add not yet visited neighbours of old head to the queue and mark
-			 * them as visited. Note that as we have a DAG with a single source
-			 * (ontology vertex) we don't need to perform any checks about the
-			 * source node
-			 */
-
-/*			if (true)
-			{
-				Object [] ancestors = graph.getAncestors(head);
-				for (int i=0;i<ancestors.length;i++)
-				{
-					Term ancestor = (Term)ancestors[i];
-					if (!visited.contains(ancestor))
-					{
-						visited.add(ancestor);
-						queue.offer(ancestor);
-						vistingVertex.visiting(ancestor.getID());
-					}
-				}
-			} else*/
-			{
-				Iterator<Edge<Term>> edgeIter = graph.getInEdges(head);
-				while (edgeIter.hasNext())
-				{
-					Edge<Term> edge = edgeIter.next();
-					Term ancestor = edge.getSource();
-
-					if (!visited.contains(ancestor))
-					{
-						visited.add(ancestor);
-						queue.offer(ancestor);
-						vistingVertex.visiting(ancestor.getID());
-					}
-				}
-			}
-		}
+		graph.bfs(termIDsToTerms(termIDSet), true, vistingVertex);
 	}
+
 
 	/**
 	 * Starting at the vertices within the goTermIDSet walk to the sinks of the
@@ -499,48 +446,16 @@ public class GOGraph implements Iterable<Term>
 	 *
 	 * @param vistingVertex
 	 */
-	public void walkToSinks(Collection<TermID> goTermIDSet,
-			IVisitingGOVertex vistingVertex)
+	public void walkToSinks(Collection<TermID> goTermIDSet, IVisitingGOVertex vistingVertex)
 	{
-		/* Implemented as breadth-first search */
-		HashSet<Term> visited = new HashSet<Term>();
-
-		/* Add all terms to the queue */
-		TinyQueue<Term> queue = new TinyQueue<Term>();
-		for (TermID id : goTermIDSet)
-		{
-			Term t = termContainer.get(id);
-			assert (t != null);
-			queue.offer(t);
-			visited.add(t);
-			vistingVertex.visiting(id);
-		}
-
-		while (!queue.isEmpty())
-		{
-			/* Remove head of the queue */
-			Term head = queue.poll();
-
-			/*
-			 * Add not yet visited neighbours of old head to the queue and mark
-			 * them as visited
-			 */
-			Iterator<Edge<Term>> edgeIter = graph.getOutEdges(head);
-			while (edgeIter.hasNext())
-			{
-				Edge<Term> edge = edgeIter.next();
-				Term successor = edge.getDest();
-
-				if (!visited.contains(successor))
-				{
-					visited.add(successor);
-					queue.offer(successor);
-					vistingVertex.visiting(successor.getID());
-				}
-			}
-		}
+		graph.bfs(termIDsToTerms(goTermIDSet), false, vistingVertex);
 	}
 
+	/**
+	 * Returns the term container attached to this ontology graph.
+	 *
+	 * @return
+	 */
 	public TermContainer getGoTermContainer()
 	{
 		return termContainer;
@@ -581,55 +496,53 @@ public class GOGraph implements Iterable<Term>
 	}
 
 	/**
-	 * Returns a set of induced terms, that are the terms of the induced go graph.
+	 * Returns a set of induced terms that are the terms of the induced graph.
 	 *
 	 * @param rootTerm the root term (all terms up to this are included)
 	 * @param term the inducing term.
 	 * @return
 	 */
-	public Set<TermID> getTermsOfInducedGraph(TermID rootTerm, TermID term)
+	public Set<TermID> getTermsOfInducedGraph(final TermID rootTermID, TermID termID)
 	{
 		HashSet<TermID> nodeSet = new HashSet<TermID>();
 
-		if (!nodeSet.contains(term))
+		/**
+		 * Visitor which simply add all nodes to the nodeSet.
+		 *
+		 * @author Sebastian Bauer
+		 */
+		class Visitor implements IVisitingGOVertex
 		{
-			/**
-			 * Visitor which simply add all nodes to the nodeSet.
-			 *
-			 * @author Sebastian Bauer
-			 */
-			class Visitor implements IVisitingGOVertex
+			public GOGraph graph;
+			public HashSet<TermID> nodeSet;
+
+			public boolean visited(Term term)
 			{
-				public GOGraph graph;
-				public TermID rootTerm;
-				public HashSet<TermID> nodeSet;
-
-				public void visiting(TermID goTermID)
+				if (rootTermID != null && !graph.isRootTerm(rootTermID))
 				{
-					if (rootTerm != null && !graph.isRootTerm(rootTerm))
-					{
-						/*
-						 * Only add the goterm if there exists a path
-						 * from the requested root term to the visited
-						 * term.
-						 *
-						 * TODO: Instead of existsPath() implement
-						 * walkToGoTerm() to speed up the whole stuff
-						 */
-						if (rootTerm.equals(goTermID) || (!graph.isRootTerm(goTermID) && graph.existsPath(rootTerm, goTermID)))
-							nodeSet.add(goTermID);
-					} else
-						nodeSet.add(goTermID);
-				}
-			};
+					/*
+					 * Only add the term if there exists a path
+					 * from the requested root term to the visited
+					 * term.
+					 *
+					 * TODO: Instead of existsPath() implement
+					 * walkToGoTerm() to speed up the whole stuff
+					 */
+					if (term.getID().equals(rootTermID) || graph.existsPath(rootTermID, term.getID()))
+						nodeSet.add(term.getID());
+				} else
+					nodeSet.add(term.getID());
 
-			Visitor visitor = new Visitor();
-			visitor.rootTerm = rootTerm;
-			visitor.nodeSet = nodeSet;
-			visitor.graph = this;
+				return true;
+			}
+		};
 
-			walkToSource(term, visitor);
-		}
+		Visitor visitor = new Visitor();
+		visitor.nodeSet = nodeSet;
+		visitor.graph = this;
+
+		walkToSource(termID, visitor);
+
 		return nodeSet;
 	}
 
@@ -655,12 +568,14 @@ public class GOGraph implements Iterable<Term>
 		final Set<TermID> p1 = getTermsOfInducedGraph(null,t1);
 
 		final ArrayList<TermID> sharedParents = new ArrayList<TermID>();
+
 		walkToSource(t2, new IVisitingGOVertex()
 		{
-			public void visiting(TermID t2)
+			public boolean visited(Term t2)
 			{
-				if (p1.contains(t2))
-					sharedParents.add(t2);
+				if (p1.contains(t2.getID()))
+					sharedParents.add(t2.getID());
+				return true;
 			}
 		});
 

@@ -68,9 +68,10 @@ public class GOTermCounter implements Iterable<TermID>
 		final HashSet<TermID> allTerms = new HashSet<TermID>();
 		graph.walkToSource(ids, new IVisitingGOVertex()
 		{
-			public void visiting(TermID goTermID)
+			public boolean visited(Term term)
 			{
-				allTerms.add(goTermID);
+				allTerms.add(term.getID());
+				return true;
 			}
 		});
 

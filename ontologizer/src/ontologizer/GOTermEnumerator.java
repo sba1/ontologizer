@@ -14,6 +14,7 @@ import java.util.Map.Entry;
 import ontologizer.association.Association;
 import ontologizer.association.Gene2Associations;
 import ontologizer.go.GOGraph;
+import ontologizer.go.Term;
 import ontologizer.go.TermID;
 import ontologizer.go.GOGraph.IVisitingGOVertex;
 
@@ -152,19 +153,20 @@ public class GOTermEnumerator implements Iterable<TermID>
 				this.geneName = geneName;
 			}
 
-			public void visiting(TermID goTermID)
+			public boolean visited(Term term)
 			{
-				if (graph.isRelevantTermID(goTermID))
+				if (graph.isRelevantTermID(term.getID()))
 				{
-					GOTermAnnotatedGenes termGenes = map.get(goTermID);
+					GOTermAnnotatedGenes termGenes = map.get(term.getID());
 
 					if (termGenes == null)
 					{
 						termGenes = new GOTermAnnotatedGenes();
-						map.put(goTermID,termGenes);
+						map.put(term.getID(),termGenes);
 					}
 					termGenes.totalAnnotated.add(geneName);
 				}
+				return true;
 			}
 		};
 
