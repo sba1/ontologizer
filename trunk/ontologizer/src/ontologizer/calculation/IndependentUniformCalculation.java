@@ -71,10 +71,10 @@ public class IndependentUniformCalculation implements ICalculation
 			{
 				int i = 0;
 
-				PValue p[] = new PValue[graph.getGoTermContainer().termCount()];
+				PValue p[] = new PValue[graph.numberOfTerms()];
 				TermForTermGOTermProperties myP;
 
-				for (Term goterm : graph.getGoTermContainer())
+				for (Term goterm : graph)
 				{
 					String term = goterm.getIDAsString();
 						

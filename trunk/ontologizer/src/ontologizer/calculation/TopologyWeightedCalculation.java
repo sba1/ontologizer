@@ -155,7 +155,7 @@ public class TopologyWeightedCalculation extends AbstractHypergeometricCalculati
 			GOTermAnnotatedGenes studyAnnotatedGenes = studyTermEnumerator.getAnnotatedGenes(u);
 
 			prop = new TopologyWeightGOTermProperties();
-			prop.goTerm = graph.getGoTermContainer().get(u);
+			prop.goTerm = graph.getGOTerm(u);
 			prop.annotatedStudyGenes = studyAnnotatedGenes.totalAnnotatedCount();
 			prop.annotatedPopulationGenes = populationAnnotatedGenes.totalAnnotatedCount();
 			studySetResult.addGOTermProperties(prop);
