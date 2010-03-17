@@ -34,7 +34,7 @@ public class EnrichedGraphGenerationThread extends NewGraphGenerationThread
 	{
 		public void writeDOT(File dotFile)
 		{
-			result.writeDOT( go.getGoTermContainer(), go, dotFile,
+			result.writeDOT(go, dotFile,
 					significanceLevel, true,
 					emanatingTerm != null ? emanatingTerm.getID() : null,
 					leafTerms);
