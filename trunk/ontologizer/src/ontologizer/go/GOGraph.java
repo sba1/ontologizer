@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import sonumina.collections.TinyQueue;
 import sonumina.math.graph.DirectedGraph;
 import sonumina.math.graph.Edge;
+import sonumina.math.graph.SlimDirectedGraphView;
 import sonumina.math.graph.AbstractGraph.IVisitor;
 import sonumina.math.graph.DirectedGraph.IDistanceVisitor;
 
@@ -102,6 +102,45 @@ public class GOGraph implements Iterable<Term>
 			}
 		}
 
+		createLevel1TermsAndFixRoot();
+	}
+
+	/**
+	 * Returns the induced subgraph which contains the terms with the given ids.
+	 * 
+	 * @param termIDs
+	 * @return
+	 */
+	public GOGraph getInducedGraph(Collection<TermID> termIDs)
+	{
+		GOGraph subgraph = new GOGraph();
+		HashSet<Term> allTerms = new HashSet<Term>();
+		
+		for (TermID tid : termIDs)
+			for (TermID tid2 : getTermsOfInducedGraph(null, tid))
+				allTerms.add(getGOTerm(tid2));
+		
+		subgraph.availableSubsets = availableSubsets;
+		subgraph.graph = graph.subGraph(allTerms);
+		subgraph.termContainer = termContainer;
+		subgraph.availableSubsets = availableSubsets;
+		subgraph.createLevel1TermsAndFixRoot();
+		
+		return subgraph;
+	}
+
+	/**
+	 * Returns a slim representation of the ontology.
+	 * 
+	 * @return
+	 */
+	public SlimDirectedGraphView<Term> getSlimGraphView()
+	{
+		return new SlimDirectedGraphView<Term>(graph);
+	}
+	
+	private void createLevel1TermsAndFixRoot()
+	{
 		level1terms = new ArrayList<Term>(); 
 
 		/* Find the terms without any ancestors */
@@ -144,6 +183,7 @@ public class GOGraph implements Iterable<Term>
 		}
 	}
 
+	private GOGraph() { }
 	/**
 	 * Determines whether the given id is the id of the (possible artifactial)
 	 * root term
@@ -460,7 +500,7 @@ public class GOGraph implements Iterable<Term>
 	{
 		return termContainer;
 	}
-
+	
 	/**
 	 * Returns the term to a given term string or null.
 	 * 
