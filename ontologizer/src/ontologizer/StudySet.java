@@ -18,6 +18,7 @@ import ontologizer.association.Association;
 import ontologizer.association.AssociationContainer;
 import ontologizer.association.Gene2Associations;
 import ontologizer.go.GOGraph;
+import ontologizer.go.Term;
 import ontologizer.go.TermID;
 import ontologizer.go.GOGraph.IVisitingGOVertex;
 import ontologizer.parser.ItemAttribute;
@@ -542,16 +543,17 @@ public class StudySet implements Iterable<ByteString>
 			private HashSet<TermID> set = new HashSet<TermID>();
 
 
-			public void visiting(TermID goTermID)
+			public boolean visited(Term term)
 			{
 
 //	TODO:
 //				if (goTermID.equals(graph.getBpTerm().getID())) return;
 //				if (goTermID.equals(graph.getMfTerm().getID())) return;
 //				if (goTermID.equals(graph.getCcTerm().getID())) return;
-				if (graph.isRootTerm(goTermID)) return;
-
-				set.add(goTermID);
+				if (!graph.isRootTerm(term.getID()))
+					set.add(term.getID());
+				
+				return true;
 			}
 			
 			public HashSet<TermID> getSet()
@@ -729,10 +731,12 @@ public class StudySet implements Iterable<ByteString>
 					/* indirect associations are those located upstream (nearer to the root) */
 					graph.walkToSource(direct, new IVisitingGOVertex()
 					{
-						public void visiting(TermID goTermID)
+						public boolean visited(Term term)
 						{
-							if (!direct.contains(goTermID))
-								indirect.add(goTermID);
+							if (!direct.contains(term.getID()))
+								indirect.add(term.getID());
+							
+							return true;
 						}
 					});
 

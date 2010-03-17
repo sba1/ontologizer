@@ -114,16 +114,17 @@ public class SubTermLister
 				{
 					public BufferedWriter out;
 					
-					public void visiting(TermID goTermID)
+					public boolean visited(Term term)
 					{
 						try
 						{
-							out.write(goTermID.toString());
+							out.write(term.toString());
 							out.write('\n');
 						} catch (IOException e)
 						{
 							e.printStackTrace();
 						}
+						return true;
 					}
 				}
 

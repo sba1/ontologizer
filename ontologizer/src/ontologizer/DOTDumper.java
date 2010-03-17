@@ -236,19 +236,18 @@ public class DOTDumper
 			cols = nCols;
 		}
 		
-		public void visiting(TermID goTermID)
+		public boolean visited(Term term)
 		{
-			Term goTerm = graph.getGOTerm(goTermID);
-
-			if (goTerm != null && !nodeMap.containsKey(goTerm))
+			if (term != null && !nodeMap.containsKey(term))
 			{
 //				TermID rootTerm = new TermID(8150);
 //				if (rootTerm.equals(goTermID) || (!graph.isRootGOTermID(goTermID) && graph.existsPath(rootTerm,goTermID)))
 				{
-					MultResultNode newNode = new MultResultNode(goTerm,rows, cols);
-					nodeMap.put(goTerm,newNode);
+					MultResultNode newNode = new MultResultNode(term,rows, cols);
+					nodeMap.put(term,newNode);
 				}
 			}
+			return true;
 		}
 	}
 

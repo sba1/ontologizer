@@ -71,9 +71,10 @@ public class GOGraphTest extends TestCase
 		{
 			public int count = 0;
 
-			public void visiting(TermID goTermID)
+			public boolean visited(Term term)
 			{
 				count++;
+				return true;
 			}
 
 			public void resetCount()

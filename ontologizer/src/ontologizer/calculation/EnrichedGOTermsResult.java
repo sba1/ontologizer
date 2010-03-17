@@ -246,11 +246,12 @@ public class EnrichedGOTermsResult extends AbstractGOTermsResult
 					{
 						public boolean isExtremal = true;
 
-						public void visiting(TermID goTermID)
+						public boolean visited(Term term)
 						{
-							AbstractGOTermProperties subtermProp = getGOTermProperties(goTermID);
+							AbstractGOTermProperties subtermProp = getGOTermProperties(term.getID());
 							if (subtermProp != null && subtermProp.p_adjusted < alpha)
 								isExtremal = false;
+							return true;
 						}
 					}
 
