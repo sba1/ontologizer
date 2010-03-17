@@ -123,7 +123,7 @@ public class NewApproachCalculation extends AbstractHypergeometricCalculation
 					}
 
 					myP = new TermForTermGOTermProperties();
-					myP.goTerm = graph.getGoTermContainer().get(term);
+					myP.goTerm = graph.getGOTerm(term);
 					myP.annotatedStudyGenes = studyTermAnnotatedGeneCount;
 					myP.annotatedPopulationGenes = populationTermAnnotatedGeneCount;
 
