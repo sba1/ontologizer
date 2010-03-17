@@ -1,6 +1,7 @@
 package sonumina.math.graph;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -8,6 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
+import java.util.Set;
 import java.util.Map.Entry;
 
 final class VertexAttributes<VertexType>
@@ -731,7 +733,8 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 		return max;
 	}
 
-	public boolean areNeighbors(VertexType node1, VertexType node2) {
+	public boolean areNeighbors(VertexType node1, VertexType node2)
+	{
 
 		if (node1.equals(node2))
 			return true;
@@ -750,5 +753,52 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 		return false;
 	}
 
+	/**
+	 * Returns a subgraph of the graph that includes all given vertices.
+	 *
+	 * @param verticesToBeIncluded
+	 * @return
+	 */
+	public DirectedGraph<VertexType> subGraph(Collection<VertexType> verticesToBeIncluded)
+	{
+		return subGraph(new HashSet<VertexType>(verticesToBeIncluded));
+	}
 
+	/**
+	 * Returns a subgraph of the graph that includes all given vertices.
+	 *
+	 * @param verticesToBeIncluded
+	 * @return
+	 */
+	public DirectedGraph<VertexType>subGraph(Set<VertexType> verticesToBeIncluded)
+	{
+		DirectedGraph<VertexType> graph = new DirectedGraph<VertexType>();
+
+		/* Add vertices that should be contained in the subgraph */
+		for (VertexType v : verticesToBeIncluded)
+			graph.addVertex(v);
+
+		/* Add edges */
+		for (VertexType v : verticesToBeIncluded)
+		{
+			Iterator<Edge<VertexType>> edges = getInEdges(v);
+			while (edges.hasNext())
+			{
+				Edge<VertexType> e = edges.next();
+				if (verticesToBeIncluded.contains(e.getSource()))
+					graph.addEdge(e);
+			}
+
+			edges = getOutEdges(v);
+			while (edges.hasNext())
+			{
+				Edge<VertexType> e = edges.next();
+				if (verticesToBeIncluded.contains(e.getDest()))
+					graph.addEdge(e);
+			}
+
+		}
+
+		return graph;
+	}
 }
