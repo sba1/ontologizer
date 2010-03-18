@@ -102,7 +102,7 @@ public class GOGraph implements Iterable<Term>
 			}
 		}
 
-		createLevel1TermsAndFixRoot();
+		assignLevel1TermsAndFixRoot();
 	}
 
 	/**
@@ -124,7 +124,7 @@ public class GOGraph implements Iterable<Term>
 		subgraph.graph = graph.subGraph(allTerms);
 		subgraph.termContainer = termContainer;
 		subgraph.availableSubsets = availableSubsets;
-		subgraph.createLevel1TermsAndFixRoot();
+		subgraph.assignLevel1TermsAndFixRoot();
 		
 		return subgraph;
 	}
@@ -139,7 +139,11 @@ public class GOGraph implements Iterable<Term>
 		return new SlimDirectedGraphView<Term>(graph);
 	}
 	
-	private void createLevel1TermsAndFixRoot()
+	/**
+	 * Finds about level 1 terms and fix the root as we assume here
+	 * that there is only a single root.
+	 */
+	private void assignLevel1TermsAndFixRoot()
 	{
 		level1terms = new ArrayList<Term>(); 
 
@@ -163,9 +167,11 @@ public class GOGraph implements Iterable<Term>
 				level1StringBuilder.append("\"");
 			}
 
-			logger.info("Ontology contains multiple level-one terms: " + level1StringBuilder.toString() + ". Adding artificial root term.");
+			rootTerm = new Term(level1terms.get(0).getID().getPrefix().toString()+":0000000", "root");
 
-			rootTerm = new Term("GO:0000000", "root");
+			System.out.println(level1terms.get(0).getID().getPrefix().toString()+":0000000" + "  " + rootTerm.toString());
+			logger.info("Ontology contains multiple level-one terms: " + level1StringBuilder.toString() + ". Adding artificial root term \"" + rootTerm.getID().toString() + "\".");
+
 			rootTerm.setSubsets(new ArrayList<Subset>(availableSubsets));
 			graph.addVertex(rootTerm);
 
