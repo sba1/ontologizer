@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 
@@ -327,8 +328,8 @@ public class OBOParser
 						pair = unescape(line, ':', 0, true);
 					} catch (OBOParserException ex)
 					{
-						System.err.println("ERROR FIX ME");
-						break;
+						ex.linenum = linenum;
+						throw ex;
 					}
 
 					String name = pair.str;
@@ -470,7 +471,7 @@ public class OBOParser
 			int typeIndex = findUnescaped(value, ' ', 0, value.length());
 			String type = value.substring(0, typeIndex).trim();
 			if (typeIndex == -1)
-				throw new OBOParserException("No id specified for" + " relationship.", line, linenum);
+				throw new OBOParserException("No id specified for" + " relationship", line, linenum);
 			int endoffset = findUnescaped(value, '[',
 					typeIndex + type.length(), value.length());
 			String id;
@@ -483,7 +484,7 @@ public class OBOParser
 
 			if (id.length() == 0)
 				throw new OBOParserException("Empty id specified for"
-						+ " relationship.", line, linenum);
+						+ " relationship", line, linenum);
 			readRelationship(type,id);
 		} else if (name.equals("is_obsolete"))
 		{
@@ -569,8 +570,8 @@ public class OBOParser
 				c = str.charAt(i);
 				Character mapchar = (Character) escapeChars.get(new Character(c));
 				if (mapchar == null)
-					throw new OBOParserException("Unrecognized escape" + " character "
-							+ c + " found.", null, -1);
+					throw new OBOParserException("Unrecognized escape character \""
+							+ c + "\" found.", null, -1);
 				out.append(mapchar);
 			} else if (c == toChar)
 			{
@@ -583,7 +584,7 @@ public class OBOParser
 		}
 		if (endValue == -1 && mustFindChar)
 		{
-			throw new OBOParserException("Expected " + toChar + ".", str, -1);
+			throw new OBOParserException("Expected to read a \"" + toChar + "\" but did not find one", str, -1);
 		}
 		return new SOPair(out.toString(), endValue);
 	}

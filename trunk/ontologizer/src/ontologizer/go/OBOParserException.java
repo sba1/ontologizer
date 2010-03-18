@@ -20,12 +20,14 @@ public class OBOParserException extends Exception
 
 	protected int linenum;
 	protected String line;
+	protected String filename;
 
 	public OBOParserException(String message, String line, int linenum)
 	{
 		super(message);
 		this.line = line;
 		this.linenum = linenum;
+		this.filename = "<tempfile>";
 	}
 
 	public String getLine()
@@ -40,7 +42,13 @@ public class OBOParserException extends Exception
 
 	public String toString()
 	{
-		return "Error: " + getMessage() + "\n" + "on line: " + linenum
-				+ "\nline: " + line;
+		String loc;
+
+		if (linenum >= 0) loc = filename + ":" + linenum;
+		else loc = filename;
+
+		if (line != null)
+			return loc + " obo parser error: " + getMessage() + " in \""+ line + "\".";
+		return loc + " obo parser error: " + getMessage() + ".";
 	}
 }
