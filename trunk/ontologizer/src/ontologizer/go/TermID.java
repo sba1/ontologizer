@@ -79,6 +79,16 @@ public class TermID
 	}
 
 	/**
+	 * Returns the term's prefix.
+	 *
+	 * @return
+	 */
+	public Prefix getPrefix()
+	{
+		return prefix;
+	}
+
+	/**
 	 * Return the string representation of this GO ID
 	 */
 	public String toString()
