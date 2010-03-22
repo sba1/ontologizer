@@ -156,4 +156,15 @@ public class SlimDirectedGraphView<VertexType>
 	{
 		return (VertexType)vertices[index];
 	}
+	
+	/**
+	 * Returns the index of the given vertex.
+	 * 
+	 * @param v
+	 * @return
+	 */
+	public int getVertexIndex(VertexType v)
+	{
+		return vertex2Index.get(v);
+	}
 }
