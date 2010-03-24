@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Map.Entry;
 
 import sonumina.collections.TinyQueue;
 
@@ -188,6 +189,60 @@ abstract public class AbstractGraph<VertexType>
 				}
 			}
 		}
+	}
+
+	/**
+	 * Returns the vertices in a topological order.
+	 *
+	 * If the length of the returned differs from the number of vertices we have a cycle.
+	 *
+	 * @return
+	 */
+	public ArrayList<VertexType> topologicalOrder()
+	{
+		/* Gather structure */
+		HashMap<VertexType,LinkedList<VertexType>> vertexParents = new HashMap<VertexType,LinkedList<VertexType>>();
+		for (VertexType v : getVertices())
+		{
+			LinkedList<VertexType> vpar = new LinkedList<VertexType>();
+			Iterator<VertexType> parentIterator = getAncestorNodes(v);
+			while (parentIterator.hasNext())
+				vpar.add(parentIterator.next());
+			vertexParents.put(v, vpar);
+		}
+
+		int nNodes = vertexParents.size();
+
+		ArrayList<VertexType> order = new ArrayList<VertexType>(nNodes);
+
+		HashMap<VertexType,Integer> node2Parents = new HashMap<VertexType,Integer>();
+		LinkedList<VertexType> noParents = new LinkedList<VertexType>();
+
+		/* Find out about the nodes which have no parents at all */
+		for (Entry<VertexType, LinkedList<VertexType>> vp : vertexParents.entrySet())
+		{
+			if (vp.getValue().size() == 0) noParents.offer(vp.getKey());
+			else node2Parents.put(vp.getKey(),vp.getValue().size());
+		}
+
+		/* Take the first node in the queue noParents and to every
+		 * node to which node this node is a parent decrease its current
+		 * number of parents value.
+		 */
+		while (!noParents.isEmpty())
+		{
+			VertexType top = noParents.poll();
+			order.add(top);
+
+			for (VertexType p : vertexParents.get(top))
+			{
+				int newNumParents = node2Parents.get(p)-1;
+				node2Parents.put(p,newNumParents);
+				if (newNumParents == 0) noParents.offer(p);
+			}
+		}
+
+		return order;
 	}
 
 	/**
