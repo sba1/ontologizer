@@ -201,44 +201,44 @@ abstract public class AbstractGraph<VertexType>
 	public ArrayList<VertexType> topologicalOrder()
 	{
 		/* Gather structure */
-		HashMap<VertexType,LinkedList<VertexType>> vertexParents = new HashMap<VertexType,LinkedList<VertexType>>();
+		HashMap<VertexType,LinkedList<VertexType>> vertex2Parents = new HashMap<VertexType,LinkedList<VertexType>>();
 		for (VertexType v : getVertices())
 		{
 			LinkedList<VertexType> vpar = new LinkedList<VertexType>();
 			Iterator<VertexType> parentIterator = getAncestorNodes(v);
 			while (parentIterator.hasNext())
 				vpar.add(parentIterator.next());
-			vertexParents.put(v, vpar);
+			vertex2Parents.put(v, vpar);
 		}
 
-		int nNodes = vertexParents.size();
+		int numOfVertices = vertex2Parents.size();
 
-		ArrayList<VertexType> order = new ArrayList<VertexType>(nNodes);
+		ArrayList<VertexType> order = new ArrayList<VertexType>(numOfVertices);
 
-		HashMap<VertexType,Integer> node2Parents = new HashMap<VertexType,Integer>();
-		LinkedList<VertexType> noParents = new LinkedList<VertexType>();
+		HashMap<VertexType,Integer> vertex2NumParents = new HashMap<VertexType,Integer>();
+		LinkedList<VertexType> verticesWithNoParents = new LinkedList<VertexType>();
 
-		/* Find out about the nodes which have no parents at all */
-		for (Entry<VertexType, LinkedList<VertexType>> vp : vertexParents.entrySet())
+		/* Find out about the nodes that have no parents at all */
+		for (Entry<VertexType, LinkedList<VertexType>> vp : vertex2Parents.entrySet())
 		{
-			if (vp.getValue().size() == 0) noParents.offer(vp.getKey());
-			else node2Parents.put(vp.getKey(),vp.getValue().size());
+			if (vp.getValue().size() == 0) verticesWithNoParents.offer(vp.getKey());
+			else vertex2NumParents.put(vp.getKey(),vp.getValue().size());
 		}
 
-		/* Take the first node in the queue noParents and to every
-		 * node to which node this node is a parent decrease its current
-		 * number of parents value.
+		/* Take the first vertex in the queue verticesWithNoParents and to every
+		 * vertex to which vertex is a parent decrease its current number of parents
+		 * value by one.
 		 */
-		while (!noParents.isEmpty())
+		while (!verticesWithNoParents.isEmpty())
 		{
-			VertexType top = noParents.poll();
+			VertexType top = verticesWithNoParents.poll();
 			order.add(top);
 
-			for (VertexType p : vertexParents.get(top))
+			for (VertexType p : vertex2Parents.get(top))
 			{
-				int newNumParents = node2Parents.get(p)-1;
-				node2Parents.put(p,newNumParents);
-				if (newNumParents == 0) noParents.offer(p);
+				int newNumParents = vertex2NumParents.get(p)-1;
+				vertex2NumParents.put(p,newNumParents);
+				if (newNumParents == 0) verticesWithNoParents.offer(p);
 			}
 		}
 
