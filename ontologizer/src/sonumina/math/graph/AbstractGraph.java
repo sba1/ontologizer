@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Map.Entry;
 
 import sonumina.collections.TinyQueue;
 
@@ -201,29 +200,35 @@ abstract public class AbstractGraph<VertexType>
 	public ArrayList<VertexType> topologicalOrder()
 	{
 		/* Gather structure */
-		HashMap<VertexType,LinkedList<VertexType>> vertex2Parents = new HashMap<VertexType,LinkedList<VertexType>>();
-		for (VertexType v : getVertices())
-		{
-			LinkedList<VertexType> vpar = new LinkedList<VertexType>();
-			Iterator<VertexType> parentIterator = getAncestorNodes(v);
-			while (parentIterator.hasNext())
-				vpar.add(parentIterator.next());
-			vertex2Parents.put(v, vpar);
-		}
-
-		int numOfVertices = vertex2Parents.size();
-
-		ArrayList<VertexType> order = new ArrayList<VertexType>(numOfVertices);
-
+		HashMap<VertexType,LinkedList<VertexType>> vertex2Children = new HashMap<VertexType,LinkedList<VertexType>>();
 		HashMap<VertexType,Integer> vertex2NumParents = new HashMap<VertexType,Integer>();
 		LinkedList<VertexType> verticesWithNoParents = new LinkedList<VertexType>();
 
-		/* Find out about the nodes that have no parents at all */
-		for (Entry<VertexType, LinkedList<VertexType>> vp : vertex2Parents.entrySet())
+		for (VertexType v : getVertices())
 		{
-			if (vp.getValue().size() == 0) verticesWithNoParents.offer(vp.getKey());
-			else vertex2NumParents.put(vp.getKey(),vp.getValue().size());
+			/* Build list of children */
+			LinkedList<VertexType> vChild = new LinkedList<VertexType>();
+			Iterator<VertexType> childrenIterator = getDescendantNodes(v);
+			while (childrenIterator.hasNext())
+				vChild.add(childrenIterator.next());
+			vertex2Children.put(v, vChild);
+
+			/* Determine the number of parents for each node */
+			int numParents = 0;
+			Iterator<VertexType> parentIterator = getAncestorNodes(v);
+			while (parentIterator.hasNext())
+			{
+				parentIterator.next();
+				numParents++;
+			}
+
+			if (numParents == 0) verticesWithNoParents.add(v);
+			else vertex2NumParents.put(v,numParents);
 		}
+
+		int numOfVertices = vertex2Children.size();
+
+		ArrayList<VertexType> order = new ArrayList<VertexType>(numOfVertices);
 
 		/* Take the first vertex in the queue verticesWithNoParents and to every
 		 * vertex to which vertex is a parent decrease its current number of parents
@@ -234,7 +239,7 @@ abstract public class AbstractGraph<VertexType>
 			VertexType top = verticesWithNoParents.poll();
 			order.add(top);
 
-			for (VertexType p : vertex2Parents.get(top))
+			for (VertexType p : vertex2Children.get(top))
 			{
 				int newNumParents = vertex2NumParents.get(p)-1;
 				vertex2NumParents.put(p,newNumParents);
