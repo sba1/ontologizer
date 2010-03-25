@@ -130,6 +130,16 @@ public class GOGraph implements Iterable<Term>
 	}
 
 	/**
+	 * Returns the term in topological order.
+	 *
+	 * @return
+	 */
+	public ArrayList<Term> getTermsInTopologicalOrder()
+	{
+		return graph.topologicalOrder();
+	}
+
+	/**
 	 * Returns a slim representation of the ontology.
 	 *
 	 * @return
