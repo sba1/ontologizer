@@ -1,6 +1,7 @@
 package sonumina.math.graph;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -166,5 +167,24 @@ public class SlimDirectedGraphView<VertexType>
 	public int getVertexIndex(VertexType v)
 	{
 		return vertex2Index.get(v);
+	}
+	
+	/**
+	 * Returns the indices of the given vertices in a basic
+	 * array.
+	 * 
+	 * @param vertices
+	 * @return
+	 */
+	public int [] getVertexIndices(Collection<VertexType> vertices)
+	{
+		int i;
+		int [] vertexArray = new int[vertices.size()];
+
+		i = 0;
+		for (VertexType v : vertices)
+			vertexArray[i++] = vertex2Index.get(v);
+		
+		return vertexArray;
 	}
 }
