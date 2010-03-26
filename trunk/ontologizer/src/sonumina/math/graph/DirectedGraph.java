@@ -778,7 +778,7 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 		for (VertexType v : verticesToBeIncluded)
 			graph.addVertex(v);
 
-		/* Add edges */
+		/* Add edges (only one class of edges needs to be added) */
 		for (VertexType v : verticesToBeIncluded)
 		{
 			Iterator<Edge<VertexType>> edges = getInEdges(v);
@@ -788,15 +788,6 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 				if (verticesToBeIncluded.contains(e.getSource()))
 					graph.addEdge(e);
 			}
-
-			edges = getOutEdges(v);
-			while (edges.hasNext())
-			{
-				Edge<VertexType> e = edges.next();
-				if (verticesToBeIncluded.contains(e.getDest()))
-					graph.addEdge(e);
-			}
-
 		}
 
 		return graph;
