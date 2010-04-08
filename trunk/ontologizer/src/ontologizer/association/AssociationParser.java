@@ -198,7 +198,6 @@ public class AssociationParser
 	private void importAssociationFile(BufferedReader is, FileInputStream fis, HashSet<ByteString> names, TermContainer terms, IAssociationParserProgress progress) throws IOException
 	{
 		String buf;
-		String currentTermName = "";
 		int good = 0;
 		int bad = 0;
 		int skipped = 0;
@@ -282,8 +281,6 @@ public class AssociationParser
 						continue;
 					}
 
-					currentTermName = terms.getGOName(currentGOid);
-					
 					ByteString [] synonyms;
 
 					/* populate synonym string field */
