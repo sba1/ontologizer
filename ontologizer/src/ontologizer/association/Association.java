@@ -63,6 +63,9 @@ public class Association
 	/** A unique symbol such as a gene name (primary id) */
 	private ByteString DB_Object_Symbol;
 
+	/** The aspect */
+	private ByteString aspect;
+
 	/** e.g., GO:0015888 */
 	private TermID termID;
 
@@ -167,6 +170,8 @@ public class Association
 		 */
 		this.DB_Object_Symbol = new ByteString(fields[DBOBJECTSYMBOLFIELD].trim());
 
+		this.aspect = new ByteString(fields[ASPECTFIELD].trim());
+		
 		/* TODO: There are new fields (colocalizes_with (a component) and 
 		 * contributes_to (a molecular function term) ), checkout how
 		 * these should be fitted into this framework */
@@ -240,5 +245,15 @@ public class Association
 	public ByteString getDB_Object()
 	{
 		return DB_Object;
+	}
+	
+	/**
+	 * Returns the aspect.
+	 * 
+	 * @return
+	 */
+	public ByteString getAspect()
+	{
+		return aspect;
 	}
 }
