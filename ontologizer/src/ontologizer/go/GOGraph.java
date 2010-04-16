@@ -130,6 +130,23 @@ public class GOGraph implements Iterable<Term>
 	}
 
 	/**
+	 * Returns terms that have no descendants.
+	 *
+	 * @return
+	 */
+	public ArrayList<Term> getLeafTerms()
+	{
+		ArrayList<Term> leafTerms = new ArrayList<Term>();
+		for (Term t : graph.getVertices())
+		{
+			if (graph.getOutDegree(t) == 0)
+				leafTerms.add(t);
+		}
+
+		return leafTerms;
+	}
+
+	/**
 	 * Returns the term in topological order.
 	 *
 	 * @return
