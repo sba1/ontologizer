@@ -72,6 +72,13 @@ class Expander extends Composite
 			expandButton.setText("<< Hide Advanced Options");
 		expandButton.pack(true);
 	}
+
+	void setExpandedState(boolean visible)
+	{
+		this.visible = visible;
+		control.setVisible(visible);
+		updateButtonText();
+	}
 }
 
 /**
@@ -89,6 +96,7 @@ public class ProjectSettingsComposite extends Composite
 	private FileGridCompositeWidgets mappingFileGridCompositeWidgets = null;
 	private Combo subsetCombo;
 	private Combo considerCombo;
+	private Expander advancedExpander;
 
 	private Button subsetCheckbox;
 	private Button considerCheckbox;
@@ -135,7 +143,7 @@ public class ProjectSettingsComposite extends Composite
 /* TODO: Use ExpandableComposite comp of JFace */
 
 
-		Expander advancedExpander = new Expander(this,0);
+		advancedExpander = new Expander(this,0);
 		gd = new GridData(GridData.FILL_HORIZONTAL|GridData.GRAB_HORIZONTAL);
 		gd.horizontalSpan = 3;
 		advancedExpander.setLayoutData(gd);
@@ -235,7 +243,7 @@ public class ProjectSettingsComposite extends Composite
 	 */
 	private void updateSubsetEnabled()
 	{
-		subsetCombo.setEnabled(subsetCheckbox.getSelection() && considerCombo.getItemCount() > 0);
+		subsetCombo.setEnabled(subsetCheckbox.getSelection() && subsetCombo.getItemCount() > 0);
 	}
 
 	/**
@@ -303,7 +311,7 @@ public class ProjectSettingsComposite extends Composite
 		int idx = subsetCombo.getSelectionIndex();
 		if (idx >= 0)
 			return subsetCombo.getItems()[idx];
-		return "";
+		return subsetCombo.getText();
 	}
 
 	/**
@@ -384,5 +392,18 @@ public class ProjectSettingsComposite extends Composite
 		considerCombo.setText(subontology);
 		considerCheckbox.setSelection(subontology.length() > 0);
 		updateConsiderEnabled();
+
+		if (subontology.length() > 0)
+			advancedExpander.setExpandedState(true);
+	}
+
+	public void setRestriction(String subset)
+	{
+		subsetCombo.setText(subset);
+		subsetCheckbox.setSelection(subset.length() > 0);
+		updateSubsetEnabled();
+
+		if (subset.length() > 0)
+			advancedExpander.setExpandedState(true);
 	}
 }
