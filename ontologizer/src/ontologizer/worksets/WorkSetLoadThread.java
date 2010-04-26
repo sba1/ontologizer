@@ -403,7 +403,7 @@ public class WorkSetLoadThread extends Thread
 			}
 		} catch (Exception e)
 		{
-			logger.log(Level.SEVERE, "loadFiles", e);
+			logger.log(Level.SEVERE, "Failed to load files", e);
 		}
 	}
 
