@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
@@ -143,7 +144,8 @@ public class Ontologizer
 			@Override
 			public void publish(LogRecord record)
 			{
-				log(record.getLevel().getName(),record.getMessage());
+				log(record.getLevel().getName(),record.getMessage(), record.getThrown());
+
 			}
 			@Override
 			protected void reportError(String msg, Exception ex, int code)
@@ -658,11 +660,24 @@ public class Ontologizer
 		main.addProject(project);
 	}
 
+	/************************************************************************/
+
 	public static void log(String name, String message)
+	{
+		log(name,message,null);
+	}
+
+	public static void log(String name, String message, Throwable thrown)
 	{
 		SimpleDateFormat sdf = new SimpleDateFormat();
 		String date = sdf.format(new Date(System.currentTimeMillis()));
-		final String line = "(" + date + ") " + "[" + name + "] " + message + "\n";
+		final String line;
+
+		String exceptionMessage = "";
+		if (thrown != null)
+			exceptionMessage = ": " + thrown.getLocalizedMessage();
+
+		line = "(" + date + ") " + "[" + name + "] " + message + exceptionMessage + "\n" ;
 
 		if (main != null && !main.getShell().isDisposed())
 		{
