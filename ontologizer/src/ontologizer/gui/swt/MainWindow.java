@@ -18,7 +18,6 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.InvalidPropertiesFormatException;
 import java.util.LinkedList;
@@ -57,7 +56,6 @@ import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.events.TreeEvent;
 import org.eclipse.swt.events.TreeListener;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -84,6 +82,7 @@ class Settings
 	public String ontologyFileName;
 	public String annotationsFileName;
 	public String mappingFileName;
+	public String subset;
 	public String subontology;
 	public boolean isClosed;
 
@@ -95,7 +94,7 @@ class Settings
 		prop.setProperty("mappingFileName",mappingFileName);
 		prop.setProperty("isClosed", Boolean.toString(isClosed));
 		prop.setProperty("subontology",subontology);
-		
+		prop.setProperty("subset",subset);
 		return prop;
 	}
 };
@@ -145,9 +144,6 @@ public class MainWindow extends ApplicationWindow
 	private Menu submenu1 = null;
 
 	private ProjectSettingsComposite settingsComposite;
-
-	/** Subontology that should be considered. Forwared to  settingsComposite when ontology has been loaded */
-	private String subontology;
 
 	private Text statusText = null;
 	private ProgressBar statusProgressBar = null;
@@ -240,6 +236,7 @@ public class MainWindow extends ApplicationWindow
 					tid.settings.ontologyFileName = prop.getProperty("ontologyFileName",getDefinitionFileString());
 					tid.settings.mappingFileName = prop.getProperty("mappingFileName",getMappingFileString());
 					tid.settings.subontology = prop.getProperty("subontology", getSubontologyString());
+					tid.settings.subset = prop.getProperty("subset",getSubsetString());
 					tid.settings.isClosed = Boolean.parseBoolean(prop.getProperty("isClosed","false"));
 				} catch (InvalidPropertiesFormatException e)
 				{
@@ -514,6 +511,7 @@ public class MainWindow extends ApplicationWindow
 				tid.settings.mappingFileName = getMappingFileString();
 				tid.settings.isClosed = !currentSelectedItem.getExpanded();
 				tid.settings.subontology = getSubontologyString();
+				tid.settings.subset = getSubsetString();
 				storeProjectSettings(tid);
 				return;
 			}
@@ -616,11 +614,16 @@ public class MainWindow extends ApplicationWindow
 				setDefinitonFileString(settings.ontologyFileName);
 				setMappingFileString(settings.mappingFileName);
 				setSubontology(settings.subontology);
+				setSubset(settings.subset);
+
+				final String subontology = settings.subontology;
+				final String subset = settings.subset;
 
 				if (currentWorkSet != null) WorkSetLoadThread.releaseDatafiles(currentWorkSet);
 				currentWorkSet = settingsComposite.getSelectedWorkset();				
 				
 				settingsComposite.setRestrictionChoices(null);
+				settingsComposite.setConsiderChoices(null);
 				
 				WorkSetLoadThread.obtainDatafiles(currentWorkSet,
 						new Runnable(){
@@ -639,6 +642,7 @@ public class MainWindow extends ApplicationWindow
 											for (Subset s : graph.getAvailableSubsets())
 												subsetChoices[i++] = s.getName();
 											settingsComposite.setRestrictionChoices(subsetChoices);
+											settingsComposite.setRestriction(subset);
 											
 											String [] subontologyChoices = new String[graph.getLevel1Terms().size()];
 											i = 0;
@@ -1882,6 +1886,11 @@ public class MainWindow extends ApplicationWindow
 		return settingsComposite.getSelectedWorkset();
 	}
 
+	/**
+	 * Returns the currently selected subontology.
+	 * 
+	 * @return
+	 */
 	public String getSubontologyString()
 	{
 		return settingsComposite.getSubontologyString();
@@ -1889,7 +1898,12 @@ public class MainWindow extends ApplicationWindow
 
 	public void setSubontology(String subontology)
 	{
-		this.subontology = subontology;
+		settingsComposite.setConsider(subontology);
+	}
+
+	public void setSubset(String subset)
+	{
+		settingsComposite.setRestriction(subset);
 	}
 
 	public String getSubsetString()
