@@ -12,6 +12,8 @@ import java.util.Map.Entry;
 
 import ontologizer.calculation.AbstractGOTermProperties;
 import ontologizer.calculation.EnrichedGOTermsResult;
+import ontologizer.calculation.b2g.Bayes2GOEnrichedGOTermsResult;
+import ontologizer.calculation.b2g.Bayes2GOGOTermProperties;
 import ontologizer.go.TermID;
 import ontologizer.gui.swt.support.GraphPaint;
 
@@ -67,6 +69,8 @@ public class EnrichedGOTermsResultLatexWriter
 	{
 		try
 		{
+			boolean showMarginals = result instanceof Bayes2GOEnrichedGOTermsResult;
+
 			PrintWriter out = new PrintWriter(texFile);
 
 			out.println("\\documentclass{article}");
@@ -76,9 +80,20 @@ public class EnrichedGOTermsResultLatexWriter
 			out.println("\\begin{table}[th]");
 			out.println("\\begin{center}");
 			out.println("\\begin{footnotesize}");
-			out.println("\\begin{tabular}{llllll}");
+
+			if (!showMarginals)
+				out.println("\\begin{tabular}{llllll}");
+			else
+				out.println("\\begin{tabular}{lllll}");
+
 			out.println("\\hline\\\\[-2ex]");
-			out.println("ID & Name & p-Value & p-Value (Adj) & Study Count & Population Count \\\\");
+
+			/* We should query for the names here but the system does not yet allow to change the order and so on */
+			if (!showMarginals)
+				out.println("ID & Name & p-Value & p-Value (Adj) & Study Count & Population Count \\\\");
+			else
+				out.println("ID & Name & Marginal & Study Count & Population Count \\\\");
+
 			out.println("\\hline\\\\[-2ex]");
 
 			AbstractGOTermProperties [] sortedProps = new AbstractGOTermProperties[result.getSize()];
@@ -98,12 +113,20 @@ public class EnrichedGOTermsResultLatexWriter
 				String name = props.goTerm.getName();
 				name = name.replaceAll("_", " ");
 				out.print(name);
-
 				out.print(" & $");
-				out.print(toLatex(props.p));
-				out.println("$ & $");
-				out.print(toLatex(props.p_adjusted));
-				out.println("$ & ");
+
+				if (!showMarginals)
+				{
+					out.print(toLatex(props.p));
+					out.println("$ & $");
+					out.print(toLatex(props.p_adjusted));
+					out.println("$ & ");
+				} else
+				{
+					out.print(toLatex(((Bayes2GOGOTermProperties)props).marg));
+					out.println("$ & ");
+				}
+
 				out.println(props.annotatedStudyGenes);
 				out.println(" & ");
 				out.println(props.annotatedPopulationGenes);
@@ -116,8 +139,10 @@ public class EnrichedGOTermsResultLatexWriter
 			out.println("\\end{footnotesize}");
 			out.println("\\end{center}");
 			out.println(String.format("\\caption{" +
-					                  "GO overrepresentation analysis using Ontologizer~\\cite{Ontologizer2008} with settings \"%s/%s\". " +
-					                  "For this analysis, a total of %d genes were in the population set, of which a total of %d genes were in the study set.}",result.getCalculationName(),result.getCorrectionName(),result.getPopulationGeneCount(),result.getStudyGeneCount()));
+					                  "GO overrepresentation analysis using Ontologizer~\\cite{Ontologizer2008} with settings \"%s%s\". " +
+					                  "For this analysis, a total of %d genes were in the population set, of which a total of %d genes were in the study set.}",
+					                  	result.getCalculationName(),result.getCorrectionName()!=null?("/"+result.getCorrectionName()):"",
+					                  	result.getPopulationGeneCount(),result.getStudyGeneCount()));
 			out.println("\\end{table}");
 			out.println("\\begin{thebibliography}{1}");
 			out.println("\\bibitem{Ontologizer2008} Sebastian Bauer, Steffen Grossmann, Martin Vingron, Peter N. Robinson. Ontologizer 2.0 -- a multifunctional tool for GO term enrichment analysis and data exploration. \\emph{Bioinformatics}, \\textbf{24}(14): 1650--1651.");
