@@ -39,6 +39,34 @@ public class GODOTWriter
 	 */
 	public static void writeDOT(GOGraph graph, File file, TermID rootTerm, Set<TermID> terms, IDotNodeAttributesProvider provider)
 	{
+		writeDOT(graph, file, rootTerm, terms, provider, true, false);
+	}
+
+	/**
+	 * Writes out a basic dot file which can be used within graphviz. All terms
+	 * of the terms parameter are included in the graph if they are within the
+	 * sub graph originating at the rootTerm. In other words, all nodes
+	 * representing the specified terms up to the given rootTerm node are
+	 * included.
+	 *
+	 * @param goTerms
+	 * @param graph
+	 * @param file
+	 * 			defines the file in which the output is written to.
+	 * @param rootTerm
+	 *          defines the first term of the sub graph which should
+	 *          be considered.
+	 *
+	 * @param terms
+	 * 			defines which terms should be included within the
+	 *          graphs.
+	 * @param provider
+	 *          should provide for every property an appropiate id.
+	 * @param reverseDirection spec
+	 * @param edgeLabels
+	 */
+	public static void writeDOT(GOGraph graph, File file, TermID rootTerm, Set<TermID> terms, IDotNodeAttributesProvider provider, boolean reverseDirection, boolean edgeLabels)
+	{
 		/* Collect terms starting from the terms upto the root term and place them into nodeSet */
 		HashSet<TermID> nodeSet = new HashSet<TermID>();
 		for (TermID term : terms)
@@ -64,6 +92,13 @@ public class GODOTWriter
 				out.write(id.id + "[" + attributes + "];\n");
 			}
 
+			String direction;
+
+			if (!reverseDirection)
+				direction = " dir=\"back\"";
+			else
+				direction = "";
+
 			/* Write out the edges */
 			for (TermID destID : nodeSet)
 			{
@@ -77,11 +112,14 @@ public class GODOTWriter
 						out.write(source.termid.id + " -> " + destID.id);
 
 						if (source.relation == TermRelation.PART_OF_A)
-							out.write("[color=blue, tooltip=\"" + destName + " is part of " + sourceName + "\"]");
-						else if (source.relation == TermRelation.REGULATES)
-							out.write("[color=green, tooltip=\"" + destName + " regulates " + sourceName + "\"]");
+							out.write("[color=blue, tooltip=\"" + destName + " is part of " + sourceName + "\"" + direction + (edgeLabels?"label=\"part of\"":"") + " ]");
+						else if (source.relation == TermRelation.REGULATES || source.relation == TermRelation.POSITIVELY_REGULATES || source.relation == TermRelation.NEGATIVELY_REGULATES)
+							out.write("[color=green, tooltip=\"" + destName + " regulates " + sourceName + "\"" + direction + (edgeLabels?"label=\"regulates\"":"") + " ]");
 						else if (source.relation == TermRelation.IS_A)
-							out.write("[color=black, tooltip=\"" + destName + " is a " + sourceName + "\"]");
+							out.write("[color=black, tooltip=\"" + destName + " is a " + sourceName + "\"" + direction + (edgeLabels?"label=\"is a\"":"") + "]");
+						else
+							out.write("[" + direction + "]");
+
 						out.write(";\n");
 					}
 				}
