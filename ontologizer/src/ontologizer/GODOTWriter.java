@@ -39,9 +39,9 @@ public class GODOTWriter
 	 */
 	public static void writeDOT(GOGraph graph, File file, TermID rootTerm, Set<TermID> terms, IDotNodeAttributesProvider provider)
 	{
-		writeDOT(graph, file, rootTerm, terms, provider, true, false);
+		writeDOT(graph, file, rootTerm, terms, provider, "nodesep=0.4;", true, false);
 	}
-	
+
 	/**
 	 * Writes out a basic dot file which can be used within graphviz. All terms
 	 * of the terms parameter are included in the graph if they are within the
@@ -65,7 +65,7 @@ public class GODOTWriter
 	 * @param reverseDirection spec
 	 * @param edgeLabels
 	 */
-	public static void writeDOT(GOGraph graph, File file, TermID rootTerm, Set<TermID> terms, IDotNodeAttributesProvider provider, boolean reverseDirection, boolean edgeLabels)
+	public static void writeDOT(GOGraph graph, File file, TermID rootTerm, Set<TermID> terms, IDotNodeAttributesProvider provider, String graphAttrs, boolean reverseDirection, boolean edgeLabels)
 	{
 		/* Collect terms starting from the terms upto the root term and place them into nodeSet */
 		HashSet<TermID> nodeSet = new HashSet<TermID>();
@@ -80,8 +80,8 @@ public class GODOTWriter
 		{
 			FileWriter out = new FileWriter(file);
 
-			out.write("digraph G {nodesep=0.4;\n");
-
+			out.write("digraph G { " + (graphAttrs!=null?graphAttrs:""));
+			out.write("\n");
 			/* Title */
 //			out.write("title[label=\"" + file.getName() + "\",shape=plaintext]\n");
 
