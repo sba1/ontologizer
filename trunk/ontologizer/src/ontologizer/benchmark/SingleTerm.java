@@ -430,11 +430,7 @@ public class SingleTerm
 
 			System.out.println("The terms found by the algorithm:");
 
-			for (TermID wanted : wantedActiveTerms.keySet())
-			{
-				System.out.println(graph.getTermsDescendants(wanted).toString());
-			}
-
+			int numSig = 0;
 			rank = 1;
 			for (AbstractGOTermProperties prop : resultList)
 			{
@@ -449,18 +445,27 @@ public class SingleTerm
 					}
 				}
 
-				if (prop.isSignificant(0.05)) //|| propIsChild)
+				if (prop.isSignificant(0.05))
 				{
 					if (rank <= 10 || propIsChild)
 					{
 						terms.add(prop.goTerm.getID());
 						System.out.println(" " + prop.goTerm.getIDAsString() + "/" + prop.goTerm.getName() + "   " + (/*1.0f - */prop.p_adjusted) + " rank=" + rank);
 					}
+
+					numSig++;
 				}
 				rank++;
 			}
 
+			System.out.println("A total of " + numSig + " terms where significant");
+
 			terms.addAll(wantedActiveTerms.keySet());
+
+			String preamble = "d2tfigpreamble=\"\\pgfdeclareradialshading{verylightsphere}{\\pgfpoint{-0.5cm}{0.5cm}}{rgb(0cm)=(0.99,0.99,0.99);rgb(0.7cm)=(0.96,0.96,0.96);rgb(1cm)=(0.93,0.93,0.93);rgb(1.05cm)=(1,1,1)}"+
+			                                   "\\pgfdeclareradialshading{lightsphere}{\\pgfpoint{-0.5cm}{0.5cm}}{rgb(0cm)=(0.99,0.99,0.99);rgb(0.7cm)=(0.95,0.95,0.95);rgb(1cm)=(0.9,0.9,0.9);rgb(1.05cm)=(1,1,1)}"+
+			                                   "\\pgfdeclareradialshading{darksphere}{\\pgfpoint{-0.5cm}{0.5cm}}{gray(0cm)=(0.95);gray(0.7cm)=(0.9);gray(1cm)=(0.85);gray(2cm)=(0.85)}"+
+			                                   "\\pgfdeclareradialshading{verydarksphere}{\\pgfpoint{-0.5cm}{0.5cm}}{gray(0cm)=(0.9);gray(0.7cm)=(0.85);gray(1cm)=(0.8);gray(2cm)=(0.8)}\"";
 
 			GODOTWriter.writeDOT(graph, new File("localization-tft.dot"), graph.getRelevantSubontology(), terms, new IDotNodeAttributesProvider()
 			{
@@ -469,15 +474,20 @@ public class SingleTerm
 					double val = result.getGOTermProperties(id).p_adjusted;
 
 					StringBuilder str = new StringBuilder(200);
-					str.append("margin=\"-0.1,0\" shape=\"box\" label=\"");
+					str.append("margin=\"0\" shape=\"box\" label=\"");
 					str.append("\\scriptsize$\\begin{array}{c}");
 
-					str.append("\\textnormal{");
+					str.append("\\emph{");
+					if (wantedActiveTerms.containsKey(id))
+						str.append("\\underline{");
 					str.append(graph.getGOTerm(id).getName().replace("_", " "));
+					if (wantedActiveTerms.containsKey(id))
+						str.append("}");
 					str.append("} \\\\\\ ");
 					str.append(studySetEnumerator.getAnnotatedGenes(id).totalAnnotatedCount() + "/" + allEnumerator.getAnnotatedGenes(id).totalAnnotatedCount() + " \\\\\\ ");
 
-					if (result.getGOTermProperties(id) != null)
+					AbstractGOTermProperties prop = result.getGOTermProperties(id);
+					if (prop != null)
 					{
 						String valStr = EnrichedGOTermsResultLatexWriter.toLatex(val);
 						if (!valStr.startsWith("<")) valStr = "=" + valStr;
@@ -490,10 +500,18 @@ public class SingleTerm
 
 					if (wantedActiveTerms.containsKey(id))
 					{
-						str.append("style=\"rounded,filled\" color=\"gray\"");
+						str.append("style=\"rounded corners,top color=white,bottom color=black!15,draw=black!50,very thick\"");
 					} else
 					{
-						str.append("style=\"rounded\"");
+						if (prop.isSignificant(0.05))
+						{
+							str.append("style=\"rounded corners,top color=white,bottom color=black!15,draw=black!50,very thick\"");
+						} else
+						{
+							str.append("style=\"rounded corners,color=black!50\"");
+						}
+
+
 					}
 
 //					if (result.getGOTermProperties(id) != null && result.getGOTermProperties(id).p_adjusted < 0.999)
@@ -503,7 +521,7 @@ public class SingleTerm
 					return str.toString();
 				}
 			},
-			"nodesep=0.05; ranksep=0.1;",false,false);
+			"nodesep=0.05; ranksep=0.1;" + preamble,false,false);
 
 		}
 	}
