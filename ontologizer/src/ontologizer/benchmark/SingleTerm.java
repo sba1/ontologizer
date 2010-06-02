@@ -25,6 +25,7 @@ import ontologizer.calculation.TermForTermCalculation;
 import ontologizer.go.GOGraph;
 import ontologizer.go.Term;
 import ontologizer.go.TermID;
+import ontologizer.gui.swt.result.EnrichedGOTermsResultLatexWriter;
 import ontologizer.statistics.Bonferroni;
 
 class B2GTestParameter
@@ -465,9 +466,11 @@ public class SingleTerm
 			{
 				public String getDotNodeAttributes(TermID id)
 				{
+					double val = result.getGOTermProperties(id).p_adjusted;
+
 					StringBuilder str = new StringBuilder(200);
-					str.append("shape=\"box\" label=\"");
-					str.append("$\\begin{array}{c}");
+					str.append("margin=\"-0.1,0\" shape=\"box\" label=\"");
+					str.append("\\scriptsize$\\begin{array}{c}");
 
 					str.append("\\textnormal{");
 					str.append(graph.getGOTerm(id).getName().replace("_", " "));
@@ -475,7 +478,12 @@ public class SingleTerm
 					str.append(studySetEnumerator.getAnnotatedGenes(id).totalAnnotatedCount() + "/" + allEnumerator.getAnnotatedGenes(id).totalAnnotatedCount() + " \\\\\\ ");
 
 					if (result.getGOTermProperties(id) != null)
-						str.append(String.format("p=%g", /*1-*/result.getGOTermProperties(id).p_adjusted));
+					{
+						String valStr = EnrichedGOTermsResultLatexWriter.toLatex(val);
+						if (!valStr.startsWith("<")) valStr = "=" + valStr;
+						str.append("p");
+						str.append(valStr);
+					}
 
 					str.append("\\end{array}$");
 					str.append("\"");
@@ -494,7 +502,8 @@ public class SingleTerm
 //					}
 					return str.toString();
 				}
-			},false,false);
+			},
+			"nodesep=0.05; ranksep=0.1;",false,false);
 
 		}
 	}
