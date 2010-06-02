@@ -43,9 +43,12 @@ public class EnrichedGOTermsResultLatexWriter
 	 * @param val
 	 * @return
 	 */
-	private static String toLatex(double val)
+	public static String toLatex(double val)
 	{
+		if (val < 1e-300)
+			return "<1.0 \\times 10^{300}";
 		double e = Math.log(val)/Math.log(10);
+
 		if (Math.abs(e) > 3)
 		{
 			int exp = (int)Math.floor(e);
