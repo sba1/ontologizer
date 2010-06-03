@@ -825,7 +825,18 @@ public class GOGraph implements Iterable<Term>
 		}
 		throw new IllegalArgumentException("Subontology \"" + subontologyName + "\" couldn't be found!");
 	}
-	
+
+	/**
+	 * Gets the relevant subontology.
+	 * 
+	 * @return
+	 */
+	public TermID getRelevantSubontology()
+	{
+		if (relevantSubontology != null) return relevantSubontology.getID();
+		return rootTerm.getID();
+	}
+
 	/**
 	 * Returns whether the given term is relevant (i.e., is contained in a relevant sub ontology and subset).
 	 * 
