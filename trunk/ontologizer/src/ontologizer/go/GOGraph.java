@@ -827,6 +827,17 @@ public class GOGraph implements Iterable<Term>
 	}
 
 	/**
+	 * Gets the relevant subontology.
+	 *
+	 * @return
+	 */
+	public TermID getRelevantSubontology()
+	{
+		if (relevantSubontology != null) return relevantSubontology.getID();
+		return rootTerm.getID();
+	}
+
+	/**
 	 * Returns whether the given term is relevant (i.e., is contained in a relevant sub ontology and subset).
 	 *
 	 * @param term
