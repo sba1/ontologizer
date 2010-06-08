@@ -431,6 +431,9 @@ public class SingleTerm
 			System.out.println("The terms found by the algorithm:");
 
 			int numSig = 0;
+			int numDescentantsSig = 0;
+			HashSet<TermID> children = new HashSet<TermID>();
+
 			rank = 1;
 			for (AbstractGOTermProperties prop : resultList)
 			{
@@ -438,9 +441,14 @@ public class SingleTerm
 
 				for (TermID wanted : wantedActiveTerms.keySet())
 				{
+					children.addAll(graph.getTermsDescendants(wanted));
 					if (graph.getTermsDescendants(wanted).contains(prop.goTerm.getID()))
-					{
 						propIsChild = true;
+					
+					if (graph.existsPath(wanted, prop.goTerm.getID()) && !wanted.equals(prop.goTerm.getID()))
+					{
+						if (prop.isSignificant(0.05))
+							numDescentantsSig++;
 						break;
 					}
 				}
@@ -458,7 +466,9 @@ public class SingleTerm
 				rank++;
 			}
 
-			System.out.println("A total of " + numSig + " terms where significant");
+			System.out.println("A total of " + numSig + " terms were significant");
+			System.out.println("A total of " + numDescentantsSig + " descentant term were significant");
+			System.out.println("Terms have " + children.size() + " direct children");
 			
 			terms.addAll(wantedActiveTerms.keySet());
 			
