@@ -763,17 +763,24 @@ public class FileCache
 		}
 	}
 
-	public static void invalidate(String selectedAddress)
+	public static void invalidate(String url)
 	{
 		synchronized (downloadHashMap)
 		{
-			if (getState(selectedAddress) == FileState.CACHED)
+			if (getState(url) == FileState.CACHED)
 			{
-				CachedFile cf = fileCache.get(selectedAddress);
+				CachedFile cf = fileCache.get(url);
 				if (cf != null)
 				{
 					new File(cf.cachedFilename).delete();
-					fileCache.remove(selectedAddress);
+					fileCache.remove(url);
+
+					/* Notify the global updates */
+					synchronized (cacheUpdateCallbackList)
+					{
+						for (FileCacheUpdateCallback fcuc : cacheUpdateCallbackList)
+							fcuc.update(url);
+					}
 				}
 			}
 		}
