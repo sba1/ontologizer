@@ -413,6 +413,15 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 						str.append("</div>");
 					}
 
+					Set<TermID> siblings = go.getTermsSiblings(goTerm.getID());
+					if (siblings != null)
+					{
+						str.append("<br />Siblings: ");
+						str.append("<div style=\"margin-left:20px;\">");
+						str.append(createTermString(siblings));
+						str.append("</div>");
+					}
+
 					Set<TermID> descendants = go.getTermsDescendants(goTerm.getID());
 					if (descendants != null)
 					{
