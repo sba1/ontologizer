@@ -23,11 +23,13 @@ import java.util.InvalidPropertiesFormatException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
+import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
+import ontologizer.association.AssociationParser;
 import ontologizer.calculation.CalculationRegistry;
 import ontologizer.go.GOGraph;
 import ontologizer.go.Subset;
@@ -122,6 +124,9 @@ class TreeItemData
  */
 public class MainWindow extends ApplicationWindow
 {
+	/** The logger */
+	private static Logger logger = Logger.getLogger(MainWindow.class.getCanonicalName());
+
 	public static final String PROJECT_SETTINGS_NAME = ".project";
 
 	/* Manually added attributes */
@@ -213,6 +218,14 @@ public class MainWindow extends ApplicationWindow
 	public void addProject(File projectDirectory)
 	{
 		String [] names = projectDirectory.list();
+
+		if (names == null)
+		{
+			logger.warning("Listing the contents of " + projectDirectory.getPath() + " failed");
+			return;
+		}
+		
+
 		TreeItem projectTreeItem = newProjectItem(projectDirectory,projectDirectory.getName());
 		
 		for (String name : names)
