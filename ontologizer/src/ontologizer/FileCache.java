@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
@@ -233,6 +234,8 @@ public class FileCache
 	};
 
 	private static Map<String,CachedFile> fileCache;
+
+	/** Also used the arbitrate access to fileCache and other stuff */
 	private static Map<String,DownloadThread> downloadHashMap;
 	private static List<FileCacheUpdateCallback> cacheUpdateCallbackList;
 
@@ -300,9 +303,21 @@ public class FileCache
 			}
 		} catch (FileNotFoundException e)
 		{
+			logger.log(Level.WARNING, "", e);
 		} catch (IOException e)
 		{
+			logger.log(Level.WARNING, "", e);
 		}
+	}
+
+	/**
+	 * Returns the full path of the cache directory.
+	 *
+	 * @return
+	 */
+	public static String getCacheDirectory()
+	{
+		return cacheDirectory;
 	}
 
 	/**
@@ -764,4 +779,26 @@ public class FileCache
 		}
 	}
 
+	/**
+	 * Visitor interface for browsing all files in the cache.
+	 *
+	 * @author sba
+	 *
+	 */
+	public static interface IFileVisitor
+	{
+		public boolean visit(String filename, String url, String info, String downloadedAt);
+	};
+
+	public static void visitFiles(IFileVisitor visitor)
+	{
+		synchronized (downloadHashMap)
+		{
+			for (String name : fileCache.keySet())
+			{
+				CachedFile file = fileCache.get(name);
+				visitor.visit(file.cachedFilename, file.url, getPathInfo(file.url), getDownloadTime(file.url));
+			}
+		}
+	}
 }
