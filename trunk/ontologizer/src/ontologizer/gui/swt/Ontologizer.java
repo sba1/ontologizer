@@ -43,6 +43,7 @@ import ontologizer.worksets.WorkSet;
 import ontologizer.worksets.WorkSetList;
 
 import org.eclipse.swt.graphics.DeviceData;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
@@ -64,6 +65,7 @@ public class Ontologizer
 	private static AboutWindow about;
 	private static HelpWindow help;
 	private static LogWindow log;
+	private static FileCacheWindow fileCache;
 	private static WorkSetWindow workSet;
 	private static NewProjectWizard newProjectWizard;
 	private static GraphWindow graph;
@@ -81,7 +83,6 @@ public class Ontologizer
 		workSetList.add("Human","http://www.geneontology.org/ontology/gene_ontology_edit.obo","http://cvsweb.geneontology.org/cgi-bin/cvsweb.cgi/go/gene-associations/gene_association.goa_human.gz?rev=HEAD");
 		workSetList.add("Protein Data Bank","http://www.geneontology.org/ontology/gene_ontology_edit.obo","http://cvsweb.geneontology.org/cgi-bin/cvsweb.cgi/go/gene-associations/gene_association.goa_pdb.gz?rev=HEAD");
 		workSetList.add("Rice", "http://www.geneontology.org/ontology/gene_ontology_edit.obo", "http://cvsweb.geneontology.org/cgi-bin/cvsweb.cgi/go/gene-associations/gene_association.gramene_oryza.gz?rev=HEAD");
-//		workSetList.add("UniProt", "http://www.geneontology.org/ontology/gene_ontology_edit.obo", "http://cvsweb.geneontology.org/cgi-bin/cvsweb.cgi/go/gene-associations/gene_association.goa_uniprot.gz?rev=HEAD");
 		workSetList.add("Yeast","http://www.geneontology.org/ontology/gene_ontology_edit.obo","http://cvsweb.geneontology.org/cgi-bin/cvsweb.cgi/go/gene-associations/gene_association.sgd.gz?rev=HEAD");
 	}
 
@@ -113,7 +114,7 @@ public class Ontologizer
 			{
 				if (workSet.getSelectedAddress() == null) return;
 				FileCache.invalidate(workSet.getSelectedAddress());
-				workSet.updateWorkSetList(workSetList);
+//				workSet.updateWorkSetList(workSetList);
 			}
 		};
 
@@ -217,6 +218,7 @@ public class Ontologizer
 		about = new AboutWindow(display);
 		help = new HelpWindow(display,helpFolder);
 		log = new LogWindow(display);
+		fileCache = new FileCacheWindow(display);
 		workSet = new WorkSetWindow(display);
 		graph = new GraphWindow(display);
 		newProjectWizard = new NewProjectWizard(display);
@@ -340,6 +342,12 @@ public class Ontologizer
 			public void act() { prefs.open(); }
 		});
 
+		/* On a opening the filecache window  event */
+		main.addOpenFileCacheAction(new ISimpleAction()
+		{
+			public void act() { fileCache.open(); }
+		});
+
 		/* On opening the log window event */
 		main.addOpenLogWindowAction(new ISimpleAction()
 		{
@@ -406,14 +414,42 @@ public class Ontologizer
 		workSet.addDownloadAction(downloadAction);
 		workSet.addInvalidateAction(invalidateAction);
 
+		fileCache.addRemoveAction(new ISimpleAction()
+		{
+			public void act() 
+			{
+				String url = fileCache.getSelectedURL();
+				if (url != null)
+				{
+					FileCache.invalidate(url);
+					fileCache.updateView();
+				}
+			}
+		});
+
 		FileCache.addUpdateCallback(new FileCacheUpdateCallback(){
+			private boolean pendingRefresh;
+			private Object lock = new Object();
+
 			public void update(String url)
 			{
+				synchronized (lock) {
+					if (pendingRefresh)
+						return;
+					pendingRefresh = true;
+				}
+
 				main.getShell().getDisplay().asyncExec(new Runnable()
 				{
 					public void run()
 					{
 						workSet.updateWorkSetList(workSetList);
+						fileCache.updateView();
+						
+						synchronized (lock)
+						{
+							pendingRefresh = false;
+						}
 					}
 				});
 			}
@@ -477,6 +513,7 @@ public class Ontologizer
 
 		/* Prepare the file cache */
 		FileCache.setCacheDirectory(new File(workspace,".cache").getAbsolutePath());
+		fileCache.setDirectoryText(FileCache.getCacheDirectory());
 
 		Shell shell = main.getShell();
 		shell.open();
@@ -540,7 +577,8 @@ public class Ontologizer
 			e.printStackTrace();
 		}
 
-		display.dispose();
+		if (!display.isDisposed())
+			display.dispose();
 	}
 
 	private static PopulationSet getPopulationSetFromList(List<Set> list)

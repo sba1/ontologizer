@@ -29,7 +29,6 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
-import ontologizer.association.AssociationParser;
 import ontologizer.calculation.CalculationRegistry;
 import ontologizer.go.GOGraph;
 import ontologizer.go.Subset;
@@ -171,6 +170,7 @@ public class MainWindow extends ApplicationWindow
 	private MenuItem preferencesMenuItem;
 	private MenuItem helpContentsMenuItem;
 	private MenuItem workSetsMenuItem;
+	private MenuItem fileCacheMenutItem;
 	private MenuItem helpAboutMenuItem;
 	private MenuItem exportMenuItem;
 	private MenuItem logMenuItem;
@@ -965,6 +965,25 @@ public class MainWindow extends ApplicationWindow
 			}
 		});
 	}
+	
+	/**
+	 * Add a new action which is executed on selecting the workset window
+	 * menu item.
+	 *  
+	 * @param a
+	 */
+	public void addOpenFileCacheAction(final ISimpleAction a)
+	{
+		fileCacheMenutItem.addSelectionListener(new SelectionAdapter()
+		{
+			@Override
+			public void widgetSelected(SelectionEvent e)
+			{
+				a.act();
+			}
+		});
+	}
+
 
 	/**
 	 * Add a new action which is executed on selecting the workset window
@@ -1181,6 +1200,8 @@ public class MainWindow extends ApplicationWindow
 		windowSubMenuItem.setText("Window");
 		Menu windowSubMenu = new Menu(windowSubMenuItem);
 		windowSubMenuItem.setMenu(windowSubMenu);
+		fileCacheMenutItem = new MenuItem(windowSubMenu, SWT.PUSH);
+		fileCacheMenutItem.setText("File Cache...");
 		workSetsMenuItem = new MenuItem(windowSubMenu, SWT.PUSH);
 		workSetsMenuItem.setText("File Sets...");
 		preferencesMenuItem = new MenuItem(windowSubMenu, SWT.PUSH);
