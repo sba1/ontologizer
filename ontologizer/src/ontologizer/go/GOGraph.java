@@ -365,6 +365,22 @@ public class GOGraph implements Iterable<Term>
 		return terms;
 	}
 
+	/**
+	 * Returns the siblings of the term, i.e., terms that are also children of the
+	 * parents.
+	 *
+	 * @param tid
+	 * @return
+	 */
+	public Set<TermID> getTermsSiblings(TermID tid)
+	{
+		Set<TermID> parentTerms = getTermsAncestors(tid);
+		HashSet<TermID> siblings = new HashSet<TermID>();
+		for (TermID p : parentTerms)
+			siblings.addAll(getTermsDescendants(p));
+		siblings.remove(tid);
+		return siblings;
+	}
 
 	/**
 	 * Determines if there exists a directed path from sourceID to destID on the
