@@ -10,7 +10,7 @@ import ontologizer.gui.swt.ResultWindow;
 import org.eclipse.swt.widgets.Display;
 
 /**
- * This is the parent call of all Ontologizer analyse threads.
+ * This is the parent class of all Ontologizer analyse threads.
  *
  * @author Sebastian Bauer
  *

@@ -663,18 +663,16 @@ public class MainWindow extends ApplicationWindow
 												subontologyChoices[i++] = t.getName();
 											settingsComposite.setConsiderChoices(subontologyChoices);
 											settingsComposite.setConsider(subontology);
+											settingsComposite.setOntologyErrorString(null);
 										} else
 										{
 											settingsComposite.setRestrictionChoices(new String[]{});
 											settingsComposite.setConsiderChoices(new String[]{});
-
+											settingsComposite.setOntologyErrorString("Error in obtaining the definition file.");
 										}
 									}
 								});
 							}});
-
-
-
 			}
 
 			if (isTreeItemProject(currentSelectedItem))

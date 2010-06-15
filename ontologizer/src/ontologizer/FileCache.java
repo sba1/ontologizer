@@ -140,7 +140,7 @@ class DownloadThread extends Thread
 			if (proxy != null) urlConnection = u.openConnection(proxy);
 			else urlConnection = u.openConnection();
 
-			urlConnection.setConnectTimeout(30000);
+			urlConnection.setConnectTimeout(10000);
 
 			int cl = urlConnection.getContentLength();
 
@@ -172,6 +172,7 @@ class DownloadThread extends Thread
 			downloadCallback.ready(null, destFile.getCanonicalPath());
 		} catch (Exception e)
 		{
+			logger.log(Level.SEVERE, "Exception while downloading a file.", e);
 			/* Forward ready status */
 			downloadCallback.ready(e, null);
 		}
@@ -684,7 +685,8 @@ public class FileCache
 			}
 
 			CachedFile cf = fileCache.get(url);
-			if (cf != null && new File(cf.cachedFilename).exists()) return FileState.CACHED;
+			if (cf != null && new File(cf.cachedFilename).exists())
+				return FileState.CACHED;
 		}
 
 		return FileState.NOT_CACHED;
