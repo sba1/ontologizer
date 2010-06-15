@@ -3,8 +3,11 @@ package ontologizer.gui.swt.support;
 import java.io.File;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -27,6 +30,10 @@ public class FileGridCompositeWidgets
 	private String[] filterExts;
 	private String[] filterNames;
 	
+	private Color errorColor;
+	private Color textBackgroundColor;
+	private String tooltip;
+
 	/**
 	 * Constructor.
 	 * 
@@ -90,6 +97,18 @@ public class FileGridCompositeWidgets
 			}
 		});
 
+		textBackgroundColor = text.getBackground();
+		textBackgroundColor = new Color(parent.getDisplay(),textBackgroundColor.getRGB());
+		errorColor = new Color(parent.getDisplay(), 255, 160, 160);
+
+		parent.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				textBackgroundColor.dispose();
+				errorColor.dispose();
+			}
+		});
+		
+
 		updateEnabledState();
 	}
 
@@ -147,12 +166,18 @@ public class FileGridCompositeWidgets
 		this.filterNames = filterNames;
 	}
 
-	public void setToolTipText(String string)
+	private void reallySetToolTipText(String string)
 	{
 		text.setToolTipText(string);
 		if (label != null) label.setToolTipText(string);
 		else labelButton.setToolTipText(string);
 		button.setToolTipText(string);
+	}
+
+	public void setToolTipText(String string)
+	{
+		tooltip = string;
+		reallySetToolTipText(string);
 	}
 
 	public void setEnabled(boolean state)
@@ -161,5 +186,19 @@ public class FileGridCompositeWidgets
 		if (label != null) label.setEnabled(state);
 		else labelButton.setEnabled(state);
 		button.setEnabled(state);
+	}
+	
+	public void setErrorString(String error)
+	{
+		if (error != null && error.length() > 0)
+		{
+			text.setBackground(errorColor);
+			reallySetToolTipText(tooltip + "\n\n" + error);
+		}
+		else
+		{
+			text.setBackground(textBackgroundColor);
+			reallySetToolTipText(tooltip);
+		}
 	}
 }
