@@ -428,6 +428,11 @@ public class Ontologizer
 		});
 
 		FileCache.addUpdateCallback(new FileCacheUpdateCallback(){
+
+			/**
+			 * Indicates that a refresh is pending (no need to issue this
+			 * twice)
+			 */
 			private boolean pendingRefresh;
 			private Object lock = new Object();
 

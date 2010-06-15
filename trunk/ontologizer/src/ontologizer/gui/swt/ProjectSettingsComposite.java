@@ -261,7 +261,9 @@ public class ProjectSettingsComposite extends Composite
 	}
 
 	/**
-	 * Add a action that is invoked if
+	 * Add an action that is invoked if the definition file
+	 * has been changed.
+	 *
 	 * @param act
 	 */
 	public void addDefinitionChanged(ISimpleAction act)
@@ -280,7 +282,7 @@ public class ProjectSettingsComposite extends Composite
 	}
 
 	/**
-	 * Retunrs the mapping file string.
+	 * Returns the mapping file string.
 	 *
 	 * @return
 	 */
@@ -405,5 +407,10 @@ public class ProjectSettingsComposite extends Composite
 
 		if (subset.length() > 0)
 			advancedExpander.setExpandedState(true);
+	}
+
+	public void setOntologyErrorString(String error)
+	{
+		ontologyFileGridCompositeWidgets.setErrorString(error);
 	}
 }

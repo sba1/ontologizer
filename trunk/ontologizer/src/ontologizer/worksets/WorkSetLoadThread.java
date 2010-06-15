@@ -51,6 +51,9 @@ public class WorkSetLoadThread extends Thread
 		public String obo;
 		public String assoc;
 
+		public boolean oboDownloaded;
+		public boolean assocDownloaded;
+
 		private List<Runnable> callbacks = new LinkedList<Runnable>();
 		private List<IWorkSetProgress> progresses = new LinkedList<IWorkSetProgress>();
 
@@ -208,41 +211,75 @@ public class WorkSetLoadThread extends Thread
 		/* Our callback function */
 		fileCacheUpdateCallback = new FileCacheUpdateCallback()
 		{
-			public void update(final String url)
+			/**
+			 * This runnable has to be called from the workset load thread.
+			 * It is called whenever a new state of an URL is given. Here,
+			 * we check whether this URL affects any download tasks, and, if so
+			 * handle this event.
+			 */
+			class CleanupTasksRunnable implements Runnable
+			{
+				private String url;
+				private Exception exception;
+
+				public CleanupTasksRunnable(String url)
+				{
+					this.url = url;
+				}
+
+				public CleanupTasksRunnable(Exception exception, String url)
+				{
+					this.url = url;
+					this.exception = exception;
+				}
+
+				public void run()
+				{
+					/* This is performed inside the work set load thread */
+					List <Task> toBeRemoved = new LinkedList<Task>();
+
+					/* Go through all task, check whether the URL affects any tasks */
+					for (Task t : taskList)
+					{
+						if (url.equals(t.obo))
+							t.oboDownloaded = true;
+						if (url.equals(t.assoc))
+							t.assocDownloaded = true;
+
+						if (t.assocDownloaded && t.oboDownloaded)
+						{
+							/* Both, the definition and the assoc file for this task has been at least tried to be downloaded */
+
+							if (FileCache.isNonBlocking(t.obo) && FileCache.isNonBlocking(t.assoc))
+							{
+								loadFiles(FileCache.getLocalFileName(t.obo), FileCache.getLocalFileName(t.assoc), dummyWorkSetProgress);
+							}
+
+							t.issueCallbacks();
+							toBeRemoved.add(t);
+						}
+					}
+
+					taskList.removeAll(toBeRemoved);
+
+					/* We are not interested in further events */
+					if (taskList.size() == 0)
+						FileCache.removeUpdateCallback(fileCacheUpdateCallback);
+				}
+			}
+
+			public void update(String url)
 			{
 				if (FileCache.getState(url) == FileCache.FileState.CACHED)
 				{
-					execAsync(new Runnable()
-					{
-						public void run()
-						{
-							/* This is performed inside the work set load thread */
-							List <Task> toBeRemoved = new LinkedList<Task>();
-
-							for (Task t : taskList)
-							{
-								if (url.equals(t.obo) || url.equals(t.assoc))
-								{
-									if (FileCache.isNonBlocking(t.obo) && FileCache.isNonBlocking(t.assoc))
-									{
-										loadFiles(FileCache.getLocalFileName(t.obo), FileCache.getLocalFileName(t.assoc), dummyWorkSetProgress);
-										t.issueCallbacks();
-										toBeRemoved.add(t);
-									}
-								}
-							}
-
-							taskList.removeAll(toBeRemoved);
-							if (taskList.size() == 0)
-								FileCache.removeUpdateCallback(fileCacheUpdateCallback);
-						}
-					});
+					execAsync(new CleanupTasksRunnable(url));
 				}
 			}
 
 			public void exception(Exception exception, String url)
 			{
-				logger.log(Level.SEVERE, "exception", exception);
+				/* An error occurred when downloading the specified URL */
+				execAsync(new CleanupTasksRunnable(exception, url));
 			}
 		};
 
@@ -288,7 +325,9 @@ public class WorkSetLoadThread extends Thread
 							}
 						}
 
-						/* Check whether files have already been downloaded */
+						/* open() returns null, if files are about to be downloaded, otherwise
+						 * it returns the local file cache. We can check that way whether files have already
+						 * been downloaded */
 						String oboName = FileCache.open(ws.getOboPath());
 						String assocName = FileCache.open(ws.getAssociationPath());
 
@@ -302,7 +341,9 @@ public class WorkSetLoadThread extends Thread
 						/* Task wasn't found. The file weren't loaded yet. Create a new task. */
 						Task newTask = new Task();
 						newTask.assoc = ws.getAssociationPath();
+						newTask.assocDownloaded = assocName != null;
 						newTask.obo = ws.getOboPath();
+						newTask.oboDownloaded = oboName != null;
 						newTask.addCallback(owsm.callback);
 						addTask(newTask);
 					} else
