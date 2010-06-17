@@ -1,6 +1,7 @@
 package ontologizer.worksets;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -20,6 +21,7 @@ import ontologizer.association.IAssociationParserProgress;
 import ontologizer.go.GOGraph;
 import ontologizer.go.IOBOParserProgress;
 import ontologizer.go.OBOParser;
+import ontologizer.go.OBOParserException;
 import ontologizer.go.TermContainer;
 import ontologizer.util.MemoryWarningSystem;
 
@@ -246,17 +248,34 @@ public class WorkSetLoadThread extends Thread
 						if (url.equals(t.assoc))
 							t.assocDownloaded = true;
 
-						if (t.assocDownloaded && t.oboDownloaded)
-						{
-							/* Both, the definition and the assoc file for this task has been at least tried to be downloaded */
 
-							if (FileCache.isNonBlocking(t.obo) && FileCache.isNonBlocking(t.assoc))
+						if (t.oboDownloaded)
+						{
+							try
 							{
-								loadFiles(FileCache.getLocalFileName(t.obo), FileCache.getLocalFileName(t.assoc), dummyWorkSetProgress);
+								if (FileCache.isNonBlocking(t.obo))
+								{
+									loadGraph(FileCache.getLocalFileName(t.obo), dummyWorkSetProgress);
+								}
+							} catch (Exception ex)
+							{
+
 							}
 
-							t.issueCallbacks();
-							toBeRemoved.add(t);
+							if (t.assocDownloaded)
+							{
+								/* Both, the definition and the assoc file for this task has been at least downloaded.
+								 * Note that loading the graph is double-work here but it is not as it is cached.
+								 * TODO: Load only the assoc here. */
+
+								if (FileCache.isNonBlocking(t.obo) && FileCache.isNonBlocking(t.assoc))
+								{
+									loadFiles(FileCache.getLocalFileName(t.obo), FileCache.getLocalFileName(t.assoc), dummyWorkSetProgress);
+								}
+
+								t.issueCallbacks();
+								toBeRemoved.add(t);
+							}
 						}
 					}
 
@@ -379,6 +398,48 @@ public class WorkSetLoadThread extends Thread
 	}
 
 	/**
+	 * Load the graph.
+	 *
+	 * @param oboName
+	 * @param workSetProgress
+	 * @return
+	 * @throws IOException
+	 * @throws OBOParserException
+	 */
+	private GOGraph loadGraph(String oboName, final IWorkSetProgress workSetProgress) throws IOException, OBOParserException
+	{
+		GOGraph graph;
+		if (!graphMap.containsKey(oboName))
+		{
+			OBOParser oboParser = new OBOParser(oboName);
+			workSetProgress.message("Parsing OBO file");
+			oboParser.doParse(new IOBOParserProgress()
+			{
+
+				public void init(int max)
+				{
+					workSetProgress.initGauge(max);
+				}
+
+				public void update(int current, int terms)
+				{
+					workSetProgress.message("Parsing OBO file ("+terms+")");
+					workSetProgress.updateGauge(current);
+				}
+			});
+			TermContainer goTerms = new TermContainer(oboParser.getTermMap(), oboParser.getFormatVersion(), oboParser.getDate());
+			workSetProgress.message("Building GO graph");
+			graph = new GOGraph(goTerms);
+			graphMap.put(oboName,graph);
+		} else
+		{
+			graph = graphMap.get(oboName);
+		}
+		return graph;
+	}
+
+
+	/**
 	 * Load the given files. Add them as loaded.
 	 *
 	 * @param oboName real file names
@@ -392,33 +453,7 @@ public class WorkSetLoadThread extends Thread
 
 		try
 		{
-			GOGraph graph;
-			if (!graphMap.containsKey(oboName))
-			{
-				OBOParser oboParser = new OBOParser(oboName);
-				workSetProgress.message("Parsing OBO file");
-				oboParser.doParse(new IOBOParserProgress()
-				{
-
-					public void init(int max)
-					{
-						workSetProgress.initGauge(max);
-					}
-
-					public void update(int current, int terms)
-					{
-						workSetProgress.message("Parsing OBO file ("+terms+")");
-						workSetProgress.updateGauge(current);
-					}
-				});
-				TermContainer goTerms = new TermContainer(oboParser.getTermMap(), oboParser.getFormatVersion(), oboParser.getDate());
-				workSetProgress.message("Building GO graph");
-				graph = new GOGraph(goTerms);
-				graphMap.put(oboName,graph);
-			} else
-			{
-				graph = graphMap.get(oboName);
-			}
+			GOGraph graph = loadGraph(oboName, workSetProgress);
 
 			if (!assocMap.containsKey(assocName))
 			{

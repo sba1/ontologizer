@@ -29,6 +29,7 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
+import ontologizer.association.AssociationContainer;
 import ontologizer.calculation.CalculationRegistry;
 import ontologizer.go.GOGraph;
 import ontologizer.go.Subset;
@@ -647,6 +648,7 @@ public class MainWindow extends ApplicationWindow
 									public void run()
 									{
 										GOGraph graph = WorkSetLoadThread.getGraph(currentWorkSet.getOboPath());
+										AssociationContainer assoc = WorkSetLoadThread.getAssociations(currentWorkSet.getAssociationPath());
 
 										if (graph != null)
 										{
@@ -669,6 +671,14 @@ public class MainWindow extends ApplicationWindow
 											settingsComposite.setRestrictionChoices(new String[]{});
 											settingsComposite.setConsiderChoices(new String[]{});
 											settingsComposite.setOntologyErrorString("Error in obtaining the definition file.");
+										}
+
+										if (assoc == null)
+										{
+											settingsComposite.setAssociationErrorString("Error in obtaining the association file.");
+										} else
+										{
+											settingsComposite.setAssociationErrorString(null);
 										}
 									}
 								});
@@ -1445,25 +1455,6 @@ public class MainWindow extends ApplicationWindow
 			public void widgetSelected(SelectionEvent e)
 			{
 				storeGenes();
-
-				/* Create a new project, ensure that it doesn't exists before */
-/*				File f;
-				int i = 1;
-				do
-				{
-					String name = "New Project";
-					if (i!=1) name += " ("+i+")";
-					f = new File(workspaceDirectory,name);
-					i++;
-				} while (f.exists());
-
-				if (f.mkdir())
-				{
-					TreeItem newProjectItem = newProjectItem(f,f.getName());
-					workspaceTree.setSelection(new TreeItem[]{newProjectItem});
-				}
-
-				updateGenes();*/
 			}
 		});
 
@@ -1617,7 +1608,7 @@ public class MainWindow extends ApplicationWindow
 
 		/* Second details page */
 		GridData gridData10 = new org.eclipse.swt.layout.GridData();
-		gridData10.grabExcessHorizontalSpace = true;  // Generated
+		gridData10.grabExcessHorizontalSpace = true;
 		gridData10.horizontalAlignment = org.eclipse.swt.layout.GridData.FILL;
 		gridData10.verticalAlignment = org.eclipse.swt.layout.GridData.CENTER;
 		GridData settingsSeparatorLineGridData = new GridData();
@@ -1627,6 +1618,22 @@ public class MainWindow extends ApplicationWindow
 
 		settingsComposite = new ProjectSettingsComposite(stackComposite, SWT.NONE);
 		settingsComposite.setLayoutData(gridData10);
+
+		/* TODO: Move the controller logic into Ontologizer class */
+		settingsComposite.addOntologyChangedAction(new ISimpleAction()
+		{
+			public void act() {
+				storeGenes();
+				updateGenes();
+			}
+		});
+		settingsComposite.addAssociationChangedAction(new ISimpleAction()
+		{
+			public void act() {
+				storeGenes();
+				updateGenes();
+			}
+		});
 	}
 
 	/**
