@@ -142,6 +142,8 @@ public class SingleTerm
 //
 //		System.out.println("Considering a total of " + allEnumerator.getAllAnnotatedTermsAsList().size() + " terms");
 
+		writeBasicExample();
+
 		for (TermID t : wantedActiveTerms.keySet())
 		{
 			if (graph.getGOTerm(t) == null)
@@ -368,6 +370,52 @@ public class SingleTerm
 //			}
 //		});
 		OntologizerThreadGroups.workerThreadGroup.interrupt();
+	}
+
+	/**
+	 * Writes out a basic example graph.
+	 */
+	private static void writeBasicExample()
+	{
+		HashSet<TermID> terms = new HashSet<TermID>();
+		terms.add(new TermID("GO:0000278"));
+		terms.add(new TermID("GO:0048523"));
+		terms.add(new TermID("GO:0022402"));
+
+//		String preamble = "d2tfigpreamble=\"\\pgfdeclareradialshading{verylightsphere}{\\pgfpoint{-0.5cm}{0.5cm}}{rgb(0cm)=(0.99,0.99,0.99);rgb(0.7cm)=(0.96,0.96,0.96);rgb(1cm)=(0.93,0.93,0.93);rgb(1.05cm)=(1,1,1)}"+
+//        "\\pgfdeclareradialshading{lightsphere}{\\pgfpoint{-0.5cm}{0.5cm}}{rgb(0cm)=(0.99,0.99,0.99);rgb(0.7cm)=(0.95,0.95,0.95);rgb(1cm)=(0.9,0.9,0.9);rgb(1.05cm)=(1,1,1)}"+
+//        "\\pgfdeclareradialshading{darksphere}{\\pgfpoint{-0.5cm}{0.5cm}}{gray(0cm)=(0.95);gray(0.7cm)=(0.9);gray(1cm)=(0.85);gray(2cm)=(0.85)}"+
+//        "\\pgfdeclareradialshading{verydarksphere}{\\pgfpoint{-0.5cm}{0.5cm}}{gray(0cm)=(0.9);gray(0.7cm)=(0.85);gray(1cm)=(0.8);gray(2cm)=(0.8)}\"";
+
+
+		String preamble = "d2tfigpreamble=\"\\ifthenelse{\\isundefined{\\myboxlen}}{\\newlength{\\myboxlen}}{}"+
+		  "\\newcommand*{\\maxbox}[3]{\\settowidth{\\myboxlen}{#2}"+
+		  "\\ifdim#1<\\myboxlen" +
+		  "\\parbox{#1}{\\centering#3}"+
+		  "\\else"+
+		  "\\parbox{\\myboxlen}{\\centering#3}"+
+		  "\\fi}\"";
+
+		GODOTWriter.writeDOT(graph, new File("goexample.dot"), graph.getRelevantSubontology(), terms, new IDotNodeAttributesProvider()
+		{
+			public String getDotNodeAttributes(TermID id)
+			{
+				String label;
+
+				label = "\\small " + graph.getGOTerm(id).getName().replace("_", " ");
+
+				StringBuilder str = new StringBuilder(200);
+				str.append("margin=\"0\" shape=\"box\" label=\"");
+				str.append("\\maxbox{3.3cm}{" + label + "}{" + label + "}");
+				str.append("\"");
+
+				str.append("style=\"rounded corners,top color=white,bottom color=black!15,draw=black!50,very thick\"");
+				return str.toString();
+			}
+		},
+		"nodesep=0.05; ranksep=0.05;" + preamble,false,true);
+
+
 	}
 
 	private static void evaluate(final HashMap<TermID,Double> wantedActiveTerms,
