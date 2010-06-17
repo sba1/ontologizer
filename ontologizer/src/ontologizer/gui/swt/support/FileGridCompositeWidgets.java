@@ -1,6 +1,9 @@
 package ontologizer.gui.swt.support;
 
 import java.io.File;
+import java.util.LinkedList;
+
+import ontologizer.gui.swt.ISimpleAction;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -33,6 +36,8 @@ public class FileGridCompositeWidgets
 	private Color errorColor;
 	private Color textBackgroundColor;
 	private String tooltip;
+	
+	private LinkedList<ISimpleAction> actions = new LinkedList<ISimpleAction>();
 
 	/**
 	 * Constructor.
@@ -75,6 +80,13 @@ public class FileGridCompositeWidgets
 
 		text = new Text(parent,SWT.BORDER);
 		text.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL|GridData.GRAB_HORIZONTAL));
+		text.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				for (ISimpleAction act : actions)
+					act.act();
+			}
+		});
 		button = new Button(parent,0);
 		button.setText("Browse...");
 		button.addSelectionListener(new SelectionAdapter(){
@@ -93,7 +105,11 @@ public class FileGridCompositeWidgets
 
 				String fileName = fileDialog.open();
 				if (fileName != null)
+				{
 					text.setText(fileName);
+					for (ISimpleAction act : actions)
+						act.act();
+				}
 			}
 		});
 
@@ -200,5 +216,15 @@ public class FileGridCompositeWidgets
 			text.setBackground(textBackgroundColor);
 			reallySetToolTipText(tooltip);
 		}
+	}
+	
+	/**
+	 * Add an action that is called when the contens changes.
+	 * 
+	 * @param act
+	 */
+	public void addTextChangedAction(ISimpleAction act)
+	{
+		actions.add(act);
 	}
 }
