@@ -409,8 +409,33 @@ public class ProjectSettingsComposite extends Composite
 			advancedExpander.setExpandedState(true);
 	}
 
+	/**
+	 * Sets the error string of the ontology field.
+	 *
+	 * @param error can be null or "" to indicate a no-error state.
+	 */
 	public void setOntologyErrorString(String error)
 	{
 		ontologyFileGridCompositeWidgets.setErrorString(error);
+	}
+
+	public void addOntologyChangedAction(ISimpleAction act)
+	{
+		ontologyFileGridCompositeWidgets.addTextChangedAction(act);
+	}
+
+	/**
+	 * Sets the association error string.
+	 *
+	 * @param error can be null or "" to indicate a no-error state.
+	 */
+	public void setAssociationErrorString(String error)
+	{
+		assocFileGridCompositeWidgets.setErrorString(error);
+	}
+
+	public void addAssociationChangedAction(ISimpleAction act)
+	{
+		assocFileGridCompositeWidgets.addTextChangedAction(act);
 	}
 }
