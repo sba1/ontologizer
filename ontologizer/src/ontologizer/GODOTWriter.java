@@ -37,7 +37,7 @@ public class GODOTWriter
 	 * @param provider
 	 *          should provide for every property an appropiate id.
 	 */
-	public static void writeDOT(GOGraph graph, File file, TermID rootTerm, Set<TermID> terms, IDotNodeAttributesProvider provider)
+	public static void writeDOT(GOGraph graph, File file, TermID rootTerm, Set<TermID> terms, IDotAttributesProvider provider)
 	{
 		writeDOT(graph, file, rootTerm, terms, provider, "nodesep=0.4;", true, false);
 	}
@@ -65,7 +65,7 @@ public class GODOTWriter
 	 * @param reverseDirection spec
 	 * @param edgeLabels
 	 */
-	public static void writeDOT(GOGraph graph, File file, TermID rootTerm, Set<TermID> terms, IDotNodeAttributesProvider provider, String graphAttrs, boolean reverseDirection, boolean edgeLabels)
+	public static void writeDOT(GOGraph graph, File file, TermID rootTerm, Set<TermID> terms, IDotAttributesProvider provider, String graphAttrs, boolean reverseDirection, boolean edgeLabels)
 	{
 		/* Collect terms starting from the terms upto the root term and place them into nodeSet */
 		HashSet<TermID> nodeSet = new HashSet<TermID>();

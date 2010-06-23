@@ -13,7 +13,7 @@ import ontologizer.ByteString;
 import ontologizer.GODOTWriter;
 import ontologizer.GOTermEnumerator;
 import ontologizer.GlobalPreferences;
-import ontologizer.IDotNodeAttributesProvider;
+import ontologizer.IDotAttributesProvider;
 import ontologizer.OntologizerThreadGroups;
 import ontologizer.PopulationSet;
 import ontologizer.StudySet;
@@ -207,7 +207,7 @@ public class SingleTerm
 
 			final GOTermEnumerator studySetEnumerator = newStudyGenes.enumerateGOTerms(graph, assoc);
 
-			GODOTWriter.writeDOT(graph, new File("toy-all.dot"), null, allTermIDs, new IDotNodeAttributesProvider()
+			GODOTWriter.writeDOT(graph, new File("toy-all.dot"), null, allTermIDs, new IDotAttributesProvider()
 			{
 				public String getDotNodeAttributes(TermID id)
 				{
@@ -225,7 +225,7 @@ public class SingleTerm
 				}
 			});
 			
-			GODOTWriter.writeDOT(graph, new File("toy-induced.dot"), null, wantedActiveTerms.keySet(), new IDotNodeAttributesProvider()
+			GODOTWriter.writeDOT(graph, new File("toy-induced.dot"), null, wantedActiveTerms.keySet(), new IDotAttributesProvider()
 			{
 				public String getDotNodeAttributes(TermID id)
 				{
@@ -396,7 +396,7 @@ public class SingleTerm
 		  "\\parbox{\\myboxlen}{\\centering#3}"+
 		  "\\fi}\"";
 
-		GODOTWriter.writeDOT(graph, new File("goexample.dot"), graph.getRelevantSubontology(), terms, new IDotNodeAttributesProvider()
+		GODOTWriter.writeDOT(graph, new File("goexample.dot"), graph.getRelevantSubontology(), terms, new IDotAttributesProvider()
 		{
 			public String getDotNodeAttributes(TermID id)
 			{
@@ -412,9 +412,13 @@ public class SingleTerm
 				str.append("style=\"rounded corners,top color=white,bottom color=black!15,draw=black!50,very thick\"");
 				return str.toString();
 			}
-		},
-		"nodesep=0.05; ranksep=0.05;" + preamble,false,true);
 
+			public String getDotEdgeAttributes(TermID id1, TermID id2) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+		},
+		"nodesep=0.04; ranksep=0.04;" + preamble,false,true);
 
 	}
 
@@ -525,7 +529,7 @@ public class SingleTerm
 			                                   "\\pgfdeclareradialshading{darksphere}{\\pgfpoint{-0.5cm}{0.5cm}}{gray(0cm)=(0.95);gray(0.7cm)=(0.9);gray(1cm)=(0.85);gray(2cm)=(0.85)}"+
 			                                   "\\pgfdeclareradialshading{verydarksphere}{\\pgfpoint{-0.5cm}{0.5cm}}{gray(0cm)=(0.9);gray(0.7cm)=(0.85);gray(1cm)=(0.8);gray(2cm)=(0.8)}\"";
 
-			GODOTWriter.writeDOT(graph, new File("localization-tft.dot"), graph.getRelevantSubontology(), terms, new IDotNodeAttributesProvider()
+			GODOTWriter.writeDOT(graph, new File("localization-tft.dot"), graph.getRelevantSubontology(), terms, new IDotAttributesProvider()
 			{
 				public String getDotNodeAttributes(TermID id)
 				{

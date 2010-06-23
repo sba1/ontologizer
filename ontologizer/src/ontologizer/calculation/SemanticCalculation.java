@@ -18,7 +18,7 @@ import ontologizer.ByteString;
 import ontologizer.DOTDumper;
 import ontologizer.GODOTWriter;
 import ontologizer.GOTermEnumerator;
-import ontologizer.IDotNodeAttributesProvider;
+import ontologizer.IDotAttributesProvider;
 import ontologizer.StudySet;
 import ontologizer.association.Association;
 import ontologizer.association.AssociationContainer;
@@ -967,7 +967,7 @@ public class SemanticCalculation
 			}
 		}
 
-		GODOTWriter.writeDOT(graph, new File("graph.dot"), null, tids, new IDotNodeAttributesProvider()
+		GODOTWriter.writeDOT(graph, new File("graph.dot"), null, tids, new IDotAttributesProvider()
 		{
 			public String getDotNodeAttributes(TermID id)
 			{
