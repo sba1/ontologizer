@@ -5,7 +5,7 @@ import java.util.Locale;
 import java.util.Set;
 
 import ontologizer.GlobalPreferences;
-import ontologizer.IDotNodeAttributesProvider;
+import ontologizer.IDotAttributesProvider;
 import ontologizer.go.GOGraph;
 import ontologizer.go.Namespace;
 import ontologizer.go.Term;
@@ -77,7 +77,7 @@ class GraphWindow extends ApplicationWindow
 				}
 	
 			}
-		}, new IDotNodeAttributesProvider()
+		}, new IDotAttributesProvider()
 		{
 
 			public String getDotNodeAttributes(TermID id)

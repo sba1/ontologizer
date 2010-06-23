@@ -79,11 +79,11 @@ public class Benchmark
 {
 	private static int NOISE_PERCENTAGE = 10;
 	private static int TERM_PERCENTAGE = 75;
-	private static double [] ALPHAs = new double[]{0.1,0.4};
+	private static double [] ALPHAs = new double[]{0.1,0.4,0.7};
 	private static double [] BETAs = new double[]{0.25,0.4};
 	private static boolean ORIGINAL_SAMPLING = false;
-	private static int MIN_TERMS = 0;
-	private static int MAX_TERMS = 0;
+	private static int MIN_TERMS = 1;
+	private static int MAX_TERMS = 5;
 	private static int TERMS_PER_RUN = 300;
 
 	/**
@@ -182,7 +182,8 @@ public class Benchmark
 		calcMethods.add(new Method("GenGO","gg"));
 		calcMethods.add(new Method("Topology-Weighted","tweight"));
 
-//		m = new Method("MGSA","b2g.em");
+//		m = new Method("MGSA","b2g.em.pop");
+//		m.takePopulationAsReference = true;
 //		m.em = true;
 //		calcMethods.add(m);
 

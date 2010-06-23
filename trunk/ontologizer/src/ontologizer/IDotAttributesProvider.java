@@ -13,7 +13,7 @@ import ontologizer.go.TermID;
  *
  * @author Sebastian Bauer
  */
-public interface IDotNodeAttributesProvider
+public interface IDotAttributesProvider
 {
 	/** Returns the dot attributes for the given term. */
 	public String getDotNodeAttributes(TermID id);
