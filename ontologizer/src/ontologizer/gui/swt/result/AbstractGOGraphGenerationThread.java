@@ -6,7 +6,7 @@ import java.util.HashSet;
 import org.eclipse.swt.widgets.Display;
 
 import ontologizer.GODOTWriter;
-import ontologizer.IDotNodeAttributesProvider;
+import ontologizer.IDotAttributesProvider;
 import ontologizer.go.GOGraph;
 import ontologizer.go.TermID;
 import ontologizer.gui.swt.support.IGraphGenerationSupport;
@@ -17,7 +17,7 @@ import ontologizer.gui.swt.support.NewGraphGenerationThread;
  *
  * @author Sebastian Bauer
  */
-public abstract class AbstractGOGraphGenerationThread extends NewGraphGenerationThread implements IGraphGenerationSupport, IDotNodeAttributesProvider
+public abstract class AbstractGOGraphGenerationThread extends NewGraphGenerationThread implements IGraphGenerationSupport, IDotAttributesProvider
 {
 	private GOGraph graph;
 	private HashSet<TermID> leafTerms;

@@ -18,7 +18,7 @@ import ontologizer.ByteString;
 import ontologizer.FileCache;
 import ontologizer.GODOTWriter;
 import ontologizer.GOTermEnumerator;
-import ontologizer.IDotNodeAttributesProvider;
+import ontologizer.IDotAttributesProvider;
 import ontologizer.OntologizerThreadGroups;
 import ontologizer.PopulationSet;
 import ontologizer.StudySet;
@@ -757,7 +757,7 @@ public class Bayes2GOCalculation implements ICalculation
 
 			final GOTermEnumerator studySetEnumerator = newStudyGenes.enumerateGOTerms(graph, assoc);
 
-			GODOTWriter.writeDOT(graph, new File("toy-all.dot"), null, allTermIDs, new IDotNodeAttributesProvider()
+			GODOTWriter.writeDOT(graph, new File("toy-all.dot"), null, allTermIDs, new IDotAttributesProvider()
 			{
 				public String getDotNodeAttributes(TermID id)
 				{
@@ -775,7 +775,7 @@ public class Bayes2GOCalculation implements ICalculation
 				}
 			});
 
-			GODOTWriter.writeDOT(graph, new File("toy-induced.dot"), null, wantedActiveTerms.keySet(), new IDotNodeAttributesProvider()
+			GODOTWriter.writeDOT(graph, new File("toy-induced.dot"), null, wantedActiveTerms.keySet(), new IDotAttributesProvider()
 			{
 				public String getDotNodeAttributes(TermID id)
 				{
@@ -1018,7 +1018,7 @@ public class Bayes2GOCalculation implements ICalculation
 
 			terms.addAll(wantedActiveTerms.keySet());
 
-			GODOTWriter.writeDOT(graph, new File("toy-result.dot"), null, terms, new IDotNodeAttributesProvider()
+			GODOTWriter.writeDOT(graph, new File("toy-result.dot"), null, terms, new IDotAttributesProvider()
 			{
 				public String getDotNodeAttributes(TermID id)
 				{
