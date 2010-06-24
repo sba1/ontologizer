@@ -108,15 +108,35 @@ public class GODOTWriter
 					{
 						String sourceName = graph.getGOTerm(source.termid).getName();
 						String destName = graph.getGOTerm(destID).getName();
+						String edgeAttributes = "";
+
+						if (edgeLabels)
+						{
+							edgeAttributes = provider.getDotEdgeAttributes(source.termid, destID);
+							if (edgeAttributes == null)
+							{
+								String relationName;
+								switch (source.relation)
+								{
+									case	IS_A: relationName = "is a"; break;
+									case	PART_OF_A: relationName = "part of"; break;
+									case	REGULATES: relationName = "regulates"; break;
+									case	POSITIVELY_REGULATES: relationName = "positively regulates"; break;
+									case	NEGATIVELY_REGULATES: relationName = "negatively regulates"; break;
+									default: relationName = "";
+								}
+								edgeAttributes = "label=\"" + relationName + "\"";
+							}
+						}
 
 						out.write(source.termid.id + " -> " + destID.id);
 
 						if (source.relation == TermRelation.PART_OF_A)
-							out.write("[color=blue, tooltip=\"" + destName + " is part of " + sourceName + "\"" + direction + (edgeLabels?"label=\"part of\"":"") + " ]");
+							out.write("[color=blue, tooltip=\"" + destName + " is part of " + sourceName + "\"" + direction + edgeAttributes + " ]");
 						else if (source.relation == TermRelation.REGULATES || source.relation == TermRelation.POSITIVELY_REGULATES || source.relation == TermRelation.NEGATIVELY_REGULATES)
-							out.write("[color=green, tooltip=\"" + destName + " regulates " + sourceName + "\"" + direction + (edgeLabels?"label=\"regulates\"":"") + " ]");
+							out.write("[color=green, tooltip=\"" + destName + " regulates " + sourceName + "\"" + direction + edgeAttributes + " ]");
 						else if (source.relation == TermRelation.IS_A)
-							out.write("[color=black, tooltip=\"" + destName + " is a " + sourceName + "\"" + direction + (edgeLabels?"label=\"is a\"":"") + "]");
+							out.write("[color=black, tooltip=\"" + destName + " is a " + sourceName + "\"" + direction + edgeAttributes + "]");
 						else
 							out.write("[" + direction + "]");
 
