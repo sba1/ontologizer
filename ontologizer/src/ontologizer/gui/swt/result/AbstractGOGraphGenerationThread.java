@@ -6,6 +6,7 @@ import java.util.HashSet;
 import org.eclipse.swt.widgets.Display;
 
 import ontologizer.GODOTWriter;
+import ontologizer.AbstractDotAttributesProvider;
 import ontologizer.IDotAttributesProvider;
 import ontologizer.go.GOGraph;
 import ontologizer.go.TermID;

@@ -12,7 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import ontologizer.GlobalPreferences;
-import ontologizer.IDotAttributesProvider;
+import ontologizer.AbstractDotAttributesProvider;
 import ontologizer.StudySet;
 import ontologizer.association.AssociationContainer;
 import ontologizer.go.GOGraph;
@@ -203,7 +203,7 @@ public class EnrichedGOTermsResult extends AbstractGOTermsResult
 		for (i = 0; i < propArray.length; i++)
 			goTermRank.put(propArray[i].goTerm, i);
 
-		writeDOT(graph, file, rootTerm, terms, new IDotAttributesProvider()
+		writeDOT(graph, file, rootTerm, terms, new AbstractDotAttributesProvider()
 		{
 			public String getDotNodeAttributes(TermID id)
 			{

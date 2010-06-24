@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 
 import ontologizer.GlobalPreferences;
-import ontologizer.IDotAttributesProvider;
+import ontologizer.AbstractDotAttributesProvider;
 import ontologizer.association.AssociationContainer;
 import ontologizer.calculation.AbstractGOTermProperties;
 import ontologizer.calculation.AbstractGOTermsResult;
@@ -61,7 +61,7 @@ public abstract class AbstractResultComposite extends Composite
 	private Term emanatingTerm;
 
 	/** The attributes provider */
-	private IDotAttributesProvider dotNodeAttributesProvider;
+	private AbstractDotAttributesProvider dotNodeAttributesProvider;
 
 	public AbstractResultComposite(Composite parent, int style)
 	{
@@ -260,7 +260,7 @@ public abstract class AbstractResultComposite extends Composite
 	 *
 	 * @return
 	 */
-	protected GraphGenerationThread createGraphGenerationThread(IGraphGenerationFinished finished, IDotAttributesProvider attrProvider)
+	protected GraphGenerationThread createGraphGenerationThread(IGraphGenerationFinished finished, AbstractDotAttributesProvider attrProvider)
 	{
 		GraphGenerationThread ggt = new GraphGenerationThread(getDisplay(),GlobalPreferences.getDOTPath(),finished,attrProvider);
 		ggt.go = go;
@@ -304,7 +304,7 @@ public abstract class AbstractResultComposite extends Composite
 	 *
 	 * @param attributesProvider
 	 */
-	protected void setDotNodeAttributesProvider(IDotAttributesProvider attributesProvider)
+	protected void setDotNodeAttributesProvider(AbstractDotAttributesProvider attributesProvider)
 	{
 		this.dotNodeAttributesProvider = attributesProvider;
 	}

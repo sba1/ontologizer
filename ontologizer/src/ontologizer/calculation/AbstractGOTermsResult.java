@@ -13,7 +13,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import ontologizer.GODOTWriter;
-import ontologizer.IDotAttributesProvider;
+import ontologizer.AbstractDotAttributesProvider;
 import ontologizer.association.AssociationContainer;
 import ontologizer.go.GOGraph;
 import ontologizer.go.Term;
@@ -156,7 +156,7 @@ public class AbstractGOTermsResult implements Iterable<AbstractGOTermProperties>
 	 * @param provider
 	 *          should provide for every property an appropiate id.
 	 */
-	public void writeDOT(GOGraph graph, File file, TermID rootTerm, HashSet<TermID> terms, IDotAttributesProvider provider)
+	public void writeDOT(GOGraph graph, File file, TermID rootTerm, HashSet<TermID> terms, AbstractDotAttributesProvider provider)
 	{
 		if (list.isEmpty())
 			return;

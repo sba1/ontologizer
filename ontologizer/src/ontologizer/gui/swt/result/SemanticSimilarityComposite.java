@@ -347,6 +347,11 @@ public class SemanticSimilarityComposite extends Composite implements IGraphActi
 			attributes.append(",style=\""+ style + "\",color=\"white\",fillcolor=\"" + fillcolor + "\"");
 
 			return attributes.toString();
+		}
+
+		public String getDotEdgeAttributes(TermID id1, TermID id2)
+		{
+			return null;
 		};
 
 	};

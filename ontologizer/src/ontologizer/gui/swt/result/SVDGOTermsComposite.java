@@ -5,7 +5,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Locale;
 
-import ontologizer.IDotAttributesProvider;
+import ontologizer.AbstractDotAttributesProvider;
 import ontologizer.calculation.AbstractGOTermProperties;
 import ontologizer.calculation.svd.SVDGOTermProperties;
 import ontologizer.calculation.svd.SVDResult;
@@ -306,7 +306,7 @@ public class SVDGOTermsComposite extends AbstractResultComposite
 		if (size <= 0) return;
 
 		/* Graph stuff */
-		setDotNodeAttributesProvider(new IDotAttributesProvider()
+		setDotNodeAttributesProvider(new AbstractDotAttributesProvider()
 		{
 			public String getDotNodeAttributes(TermID id)
 			{
