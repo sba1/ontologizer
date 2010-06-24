@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.HashSet;
 
 import ontologizer.GODOTWriter;
-import ontologizer.IDotAttributesProvider;
+import ontologizer.AbstractDotAttributesProvider;
 import ontologizer.calculation.AbstractGOTermsResult;
 import ontologizer.go.GOGraph;
 import ontologizer.go.Term;
@@ -30,9 +30,9 @@ public class GraphGenerationThread extends NewGraphGenerationThread
 	public AbstractGOTermsResult result;
 
 	private IGraphGenerationFinished finished;
-	private IDotAttributesProvider provider;
+	private AbstractDotAttributesProvider provider;
 
-	public GraphGenerationThread(Display display, String dotCMDPath, IGraphGenerationFinished f, IDotAttributesProvider p)
+	public GraphGenerationThread(Display display, String dotCMDPath, IGraphGenerationFinished f, AbstractDotAttributesProvider p)
 	{
 		super(display, dotCMDPath);
 
