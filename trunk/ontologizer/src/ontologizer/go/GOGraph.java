@@ -366,6 +366,21 @@ public class GOGraph implements Iterable<Term>
 	}
 
 	/**
+	 * Get the relation that relates term to ancestor or null.
+	 *  
+	 * @param ancestor
+	 * @param term 
+	 * @return
+	 */
+	public TermRelation getDirectRelation(TermID ancestor, TermID term)
+	{
+		Set<ParentTermID> parents = getTermsAncestorsWithRelation(term);
+		for (ParentTermID p : parents)
+			if (p.termid.equals(ancestor)) return p.relation;
+		return null;
+	}
+
+	/**
 	 * Returns the siblings of the term, i.e., terms that are also children of the
 	 * parents.
 	 * 
