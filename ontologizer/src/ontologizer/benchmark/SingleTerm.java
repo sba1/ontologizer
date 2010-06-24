@@ -25,6 +25,7 @@ import ontologizer.calculation.TermForTermCalculation;
 import ontologizer.go.GOGraph;
 import ontologizer.go.Term;
 import ontologizer.go.TermID;
+import ontologizer.go.TermRelation;
 import ontologizer.gui.swt.result.EnrichedGOTermsResultLatexWriter;
 import ontologizer.statistics.Bonferroni;
 
@@ -402,7 +403,7 @@ public class SingleTerm
 			{
 				String label;
 				
-				label = "\\small " + graph.getGOTerm(id).getName().replace("_", " ");
+				label = "\\small \\emph{" + graph.getGOTerm(id).getName().replace("_", " ") + "}";
 				
 				StringBuilder str = new StringBuilder(200);
 				str.append("margin=\"0\" shape=\"box\" label=\"");
@@ -413,12 +414,24 @@ public class SingleTerm
 				return str.toString();
 			}
 
-			public String getDotEdgeAttributes(TermID id1, TermID id2) {
-				// TODO Auto-generated method stub
-				return null;
+			public String getDotEdgeAttributes(TermID id1, TermID id2)
+			{
+				TermRelation relation = graph.getDirectRelation(id1,id2);
+				String relationName;
+				
+				switch (relation)
+				{
+					case	IS_A: relationName = "is a"; break;
+					case	PART_OF_A: relationName = "part of"; break;
+					case	REGULATES: relationName = "regulates"; break;
+					case	POSITIVELY_REGULATES: relationName = "$\\begin{array}{c}\\textnormal{positively}\\\\\\ \\textnormal{regulates}\\end{array}$"; break;
+					case	NEGATIVELY_REGULATES: relationName = "$\\begin{array}{c}\\textnormal{negatively}\\\\\\ \\textnormal{regulates}\\end{array}$"; break;
+					default: relationName = "";
+				}
+				return "labeldistance=0.5 margin=\"0\" label=\"\\footnotesize " + relationName + "\"";
 			}
 		},
-		"nodesep=0.04; ranksep=0.04;" + preamble,false,true);
+		"nodesep=0.05; ranksep=0.04;" + preamble,false,true);
 
 	}
 
