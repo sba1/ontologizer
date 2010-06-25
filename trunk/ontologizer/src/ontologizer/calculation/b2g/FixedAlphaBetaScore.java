@@ -174,9 +174,8 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 				int activeTermPos = (int)(base / numInactiveTerms);
 				int inactiveTermPos = (int)(base % numInactiveTerms);
 
-				for (TermID tid : activeTerms)
-					if (activeTermPos-- == 0) proposalT1 = tid;
-				proposalT2 = inactiveTermsArray[inactiveTermPos];
+				proposalT1 = termsArray[termPartition[activeTermPos + numInactiveTerms]];
+				proposalT2 = termsArray[termPartition[inactiveTermPos]];
 
 				exchange(proposalT1, proposalT2);
 			}
@@ -266,7 +265,7 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 		double newScore2 = Math.log(alpha) * n10 + Math.log(1-alpha)*n00 + Math.log(1-beta)*n11 + Math.log(beta)*n01;
 
 		if (usePrior)
-			newScore2 += Math.log(p)*activeTerms.size() + Math.log(1-p)*(termsArray.length - activeTerms.size());
+			newScore2 += Math.log(p)*(termsArray.length - numInactiveTerms) + Math.log(1-p)*(termsArray.length - numInactiveTerms);
 
 //		newScore2 -= Math.log(alpha) * observedActiveGenes.size() + Math.log(1-beta)* (population.size() - observedActiveGenes.size());
 		return newScore2;
@@ -284,7 +283,7 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 
 	public long getNeighborhoodSize()
 	{
-		long size = termsArray.length + activeTerms.size() * numInactiveTerms;
+		long size = termsArray.length + (termsArray.length - numInactiveTerms) * numInactiveTerms;
 		return size;
 	}
 
@@ -301,7 +300,7 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 		totalAlpha[alphaIdx]++;
 		totalBeta[betaIdx]++;
 		totalExp[expIdx]++;
-		totalT += activeTerms.size();
+		totalT += (termsArray.length - numInactiveTerms);
 	}
 
 	public double getAvgN00()

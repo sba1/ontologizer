@@ -84,9 +84,8 @@ class VariableAlphaBetaScore extends Bayes2GOScore
 			int activeTermPos = (int)(base / numInactiveTerms);
 			int inactiveTermPos = (int)(base % numInactiveTerms);
 
-			for (TermID tid : activeTerms)
-				if (activeTermPos-- == 0) proposalT1 = tid;
-			proposalT2 = inactiveTermsArray[inactiveTermPos];
+			proposalT1 = termsArray[termPartition[activeTermPos + numInactiveTerms]];
+			proposalT2 = termsArray[termPartition[inactiveTermPos]];
 
 			exchange(proposalT1, proposalT2);
 		}
@@ -95,7 +94,7 @@ class VariableAlphaBetaScore extends Bayes2GOScore
 	@Override
 	public double getScore()
 	{
-		return score + activeTerms.size() * Math.log(p/(1.0-p));
+		return score + (termsArray.length - numInactiveTerms) * Math.log(p/(1.0-p));
 	}
 
 	@Override
@@ -107,7 +106,7 @@ class VariableAlphaBetaScore extends Bayes2GOScore
 
 	public long getNeighborhoodSize()
 	{
-		return termsArray.length + activeTerms.size() * numInactiveTerms;
+		return termsArray.length + (termsArray.length - numInactiveTerms) * numInactiveTerms;
 	}
 
 }
