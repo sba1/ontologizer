@@ -49,8 +49,16 @@ abstract class Bayes2GOScore
 	/** Indicates the activation state of a term */
 	protected boolean [] isActive;
 
-	/** Contains active terms */
-	protected LinkedHashSet<TermID> activeTerms = new LinkedHashSet<TermID>();
+	/**
+	 * Contains indices to terms of termsArray.
+	 */
+	protected int [] termPartition;
+
+	/**
+	 * Contains the position/index of the terms in the partition.
+	 */
+	protected int [] positionOfTermInPartition;
+
 
 	/** Array indicating the genes that have been observed */
 	protected boolean [] observedGenes;
@@ -74,20 +82,6 @@ abstract class Bayes2GOScore
 
 	protected int numRecords;
 	protected int [] termActivationCounts;
-
-	/**
-	 * An array representing the inactive terms.
-	 *
-	 * Note that only the first elements as given
-	 * by the attribute numInactiveTerms are the
-	 * inactive terms.
-	 */
-	protected TermID[] inactiveTermsArray;
-
-	/**
-	 * From a term to an index of the inactiveTermsArray.
-	 */
-	protected HashMap<TermID,Integer> term2InactiveTermsIdx = new HashMap<TermID,Integer>();
 
 	protected boolean usePrior = true;
 	protected double p = Double.NaN;
@@ -120,7 +114,9 @@ abstract class Bayes2GOScore
 		/* Initialize basics of terms */
 		isActive = new boolean[termList.size()];
 		termsArray = new TermID[termList.size()];
-		inactiveTermsArray = new TermID[termList.size()];
+		termPartition = new int[termList.size()];
+		positionOfTermInPartition = new int[termList.size()];
+//		inactiveTermsArray = new TermID[termList.size()];
 		numInactiveTerms = termList.size();
 		termActivationCounts = new int[termList.size()];
 		termLinks = new GeneIDs[termList.size()];
@@ -130,9 +126,10 @@ abstract class Bayes2GOScore
 		{
 			term2TermsIdx.put(tid,i);
 			termsArray[i]=tid;
+			termPartition[i] = i;
 
-			inactiveTermsArray[i] = tid;
-			term2InactiveTermsIdx.put(tid, i);
+//			inactiveTermsArray[i] = tid;
+//			term2InactiveTermsIdx.put(tid, i);
 
 			/* Fill in the links */
 			termLinks[i] = new GeneIDs(populationEnumerator.getAnnotatedGenes(tid).totalAnnotated.size());
@@ -147,8 +144,6 @@ abstract class Bayes2GOScore
 		}
 
 		this.populationEnumerator = populationEnumerator;
-
-		activeTerms = new LinkedHashSet<TermID>();
 	}
 
 	public void setUsePrior(boolean usePrior)
@@ -168,11 +163,13 @@ abstract class Bayes2GOScore
 
 	public double score(Collection<TermID> activeTerms)
 	{
-		ArrayList<TermID> oldTerms = new ArrayList<TermID>(this.activeTerms);
+		int [] oldTerms = new int[termsArray.length - numInactiveTerms];
+		for (int i=numInactiveTerms,j=0;i<termsArray.length;i++,j++)
+			oldTerms[j] = termPartition[i];
 
 		/* Deactivate old terms */
-		for (TermID tid : oldTerms)
-			switchState(term2TermsIdx.get(tid));
+		for (int i=0;i<oldTerms.length;i++)
+			switchState(oldTerms[i]);
 
 		/* Enable new terms */
 		for (TermID tid : activeTerms)
@@ -192,9 +189,9 @@ abstract class Bayes2GOScore
 				switchState(idx);
 		}
 
-		/* Enable old terms */
-		for (TermID tid : oldTerms)
-			switchState(term2TermsIdx.get(tid));
+		/* Enable old terms again */
+		for (int i=0;i<oldTerms.length;i++)
+			switchState(oldTerms[i]);
 
 		return score;
 	}
@@ -217,6 +214,8 @@ abstract class Bayes2GOScore
 
 //	public long currentTime;
 
+
+
 	public void switchState(int toSwitch)
 	{
 //		long enterTime = System.nanoTime();
@@ -227,9 +226,7 @@ abstract class Bayes2GOScore
 		isActive[toSwitch] = !isActive[toSwitch];
 		if (isActive[toSwitch])
 		{
-			/* A term is added */
-			activeTerms.add(t);
-
+			/* A term was added, activate/deactivate genes */
 			for (int gid : geneIDs)
 			{
 				if (activeHiddenGenes[gid] == 0)
@@ -242,21 +239,24 @@ abstract class Bayes2GOScore
 				}
 			}
 
-			int inactiveIndex = term2InactiveTermsIdx.get(t);
-
-			if (inactiveIndex != (numInactiveTerms - 1))
-			{
-				inactiveTermsArray[inactiveIndex] = inactiveTermsArray[numInactiveTerms - 1];
-				term2InactiveTermsIdx.put(inactiveTermsArray[inactiveIndex], inactiveIndex);
-			}
-
-			term2InactiveTermsIdx.remove(t);
+			/* Move the added set from the 0 partition to the 1 partition (it essentially becomes the
+			 * new first element of the 1 element, while the last 0 element gets the original position
+			 * of the added set) */
 			numInactiveTerms--;
+			if (numInactiveTerms != 0)
+			{
+				int pos = positionOfTermInPartition[toSwitch];
+				int e0 = termPartition[numInactiveTerms];
+
+				/* Move last element in the partition to left */
+				termPartition[pos] = e0;
+				positionOfTermInPartition[e0] = pos;
+				/* Let be the newly added term the first in the partition */
+				termPartition[numInactiveTerms] = toSwitch;
+				positionOfTermInPartition[toSwitch] = numInactiveTerms;
+			}
 		} else
 		{
-			/* Remove a term */
-			activeTerms.remove(t);
-
 			/* Update hiddenActiveGenes */
 			for (int gid : geneIDs)
 			{
@@ -270,10 +270,20 @@ abstract class Bayes2GOScore
 				}
 			}
 
-			/* Append the new term at the end of the index list */
-			inactiveTermsArray[numInactiveTerms] = t;
-			term2InactiveTermsIdx.put(t, numInactiveTerms);
+			/* Converse of above. Here the removed set, which belonged to the 1 partition,
+			 * is moved at the end of the 0 partition while the element at that place is
+			 * pushed to the original position of the removed element. */
+			if (numInactiveTerms != (termsArray.length - 1))
+			{
+				int pos = positionOfTermInPartition[toSwitch];
+				int b1 = termPartition[numInactiveTerms];
+				termPartition[pos] = b1;
+				positionOfTermInPartition[b1] = pos;
+				termPartition[numInactiveTerms] = toSwitch;
+				positionOfTermInPartition[toSwitch] = numInactiveTerms;
+			}
 			numInactiveTerms++;
+
 		}
 
 //		{
@@ -300,9 +310,17 @@ abstract class Bayes2GOScore
 	 */
 	public void record()
 	{
-		for (TermID tid : activeTerms)
-			termActivationCounts[term2TermsIdx.get(tid)]++;
+		for (int i=numInactiveTerms;i<termsArray.length;i++)
+			termActivationCounts[termPartition[i]]++;
 
 		numRecords++;
+	}
+
+	public ArrayList<TermID> getActiveTerms()
+	{
+		ArrayList<TermID> list = new ArrayList<TermID>(termsArray.length - numInactiveTerms);
+		for (int i=numInactiveTerms;i<termsArray.length;i++)
+			list.add(termsArray[termPartition[i]]);
+		return list;
 	}
 }
