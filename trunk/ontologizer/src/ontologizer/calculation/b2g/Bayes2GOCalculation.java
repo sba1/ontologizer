@@ -417,14 +417,14 @@ public class Bayes2GOCalculation implements ICalculation
 				for (int j=0;j<allTerms.size();j++)
 					if (rnd.nextDouble() < pForStart) bayesScore.switchState(j);
 				
-				logger.info("Starting with " + bayesScore.activeTerms.size() + " terms (p=" + pForStart + ")");
+				logger.info("Starting with " + bayesScore.getActiveTerms().size() + " terms (p=" + pForStart + ")");
 				
 				score = bayesScore.getScore();
 			}
 			logger.info("Score of initial set: " + score);
 
 			double maxScore = score;
-			ArrayList<TermID> maxScoredTerms = new ArrayList<TermID>(bayesScore.activeTerms);
+			ArrayList<TermID> maxScoredTerms = bayesScore.getActiveTerms();
 			double maxScoredAlpha = Double.NaN;
 			double maxScoredBeta = Double.NaN;
 			double maxScoredP = Double.NaN;
@@ -438,7 +438,7 @@ public class Bayes2GOCalculation implements ICalculation
 				if (score > maxScore)
 				{
 					maxScore = score;
-					maxScoredTerms = new ArrayList<TermID>(bayesScore.activeTerms);
+					maxScoredTerms = bayesScore.getActiveTerms();
 					maxScoredAlpha = bayesScore.getAlpha();
 					maxScoredBeta = bayesScore.getBeta();
 					maxScoredP = bayesScore.getP();
@@ -448,7 +448,7 @@ public class Bayes2GOCalculation implements ICalculation
 				long now = System.currentTimeMillis();
 				if (now - start > updateReportTime)
 				{
-					logger.info((t*100/maxSteps) + "% (score=" + score +" maxScore=" + maxScore + " #terms="+bayesScore.activeTerms.size()+
+					logger.info((t*100/maxSteps) + "% (score=" + score +" maxScore=" + maxScore + " #terms="+bayesScore.getActiveTerms().size()+
 										" accept/reject=" + String.format("%g",(double)numAccepts / (double)numRejects) +
 										" accept/steps=" + String.format("%g",(double)numAccepts / (double)t) +
 										" exp=" + expectedNumberOfTerms + " usePrior=" + usePrior + ")");
@@ -468,7 +468,7 @@ public class Bayes2GOCalculation implements ICalculation
 	
 				boolean DEBUG = false;
 	
-				if (DEBUG) System.out.print(bayesScore.activeTerms.size() + "  score=" + score + " newScore="+newScore + " maxScore=" + maxScore + " a=" + acceptProb);
+				if (DEBUG) System.out.print(bayesScore.getActiveTerms().size() + "  score=" + score + " newScore="+newScore + " maxScore=" + maxScore + " a=" + acceptProb);
 	
 				double u = rnd.nextDouble();
 				if (u >= acceptProb)
@@ -648,7 +648,8 @@ public class Bayes2GOCalculation implements ICalculation
 //////		wantedActiveTerms.put(new TermID("GO:0035237"), B2GTestParameter.BETA); /* corazonin receptor activity */
 
 		wantedActiveTerms.put(new TermID("GO:0035282"),B2GTestParameter.BETA); /* segmentation */
-		wantedActiveTerms.put(new TermID("GO:0009880"),B2GTestParameter.BETA);
+		wantedActiveTerms.put(new TermID("GO:0007049"), B2GTestParameter.BETA); /* cell cycle */
+//		wantedActiveTerms.put(new TermID("GO:0009880"),B2GTestParameter.BETA);
 		
 		
 		
@@ -805,7 +806,7 @@ public class Bayes2GOCalculation implements ICalculation
 //		TermForTermCalculation calc = new TermForTermCalculation();
 //		ParentChildCalculation calc = new ParentChildCalculation();
 		Bayes2GOCalculation calc = new Bayes2GOCalculation();
-//		calc.setSeed(2); /* Finds a optimum */
+		calc.setSeed(2); /* Finds a optimum */
 //		calc.setSeed(3); /* with basement membrane, score 6826.695 */
 //		calc.setSeed(4); /* Optimum, score 6826.039 */
 
