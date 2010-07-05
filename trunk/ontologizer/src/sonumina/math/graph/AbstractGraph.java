@@ -191,6 +191,34 @@ abstract public class AbstractGraph<VertexType>
 	}
 	
 	/**
+	 * Returns whether there is a path from source to dest.
+	 * @param source
+	 * @param dest
+	 * @return
+	 */
+	public boolean existsPath(final VertexType source, final VertexType dest)
+	{
+		class ExistsPathVisitor implements IVisitor<VertexType>
+		{
+			boolean found;
+			
+			public boolean visited(VertexType vertex)
+			{
+				if (vertex.equals(dest))
+				{
+					found = true;
+					return true;
+				}
+				return false;
+			}
+		}
+		ExistsPathVisitor epv = new ExistsPathVisitor();
+		
+		bfs(source,false,epv);
+		return epv.found;
+	}
+	
+	/**
 	 * Returns the vertices in a topological order.
 	 * 
 	 * If the length of the returned differs from the number of vertices we have a cycle. 
