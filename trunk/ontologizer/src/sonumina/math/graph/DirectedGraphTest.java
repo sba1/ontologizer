@@ -6,11 +6,15 @@
  */
 package sonumina.math.graph;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
+import sonumina.math.graph.AbstractGraph.DotAttributesProvider;
 import sonumina.math.graph.DirectedGraph.IDistanceVisitor;
 
 import junit.framework.Assert;
@@ -23,6 +27,11 @@ class TestData
 	public TestData(String id)
 	{
 		this.id = id;
+	}
+
+	@Override
+	public String toString() {
+		return id;
 	}
 };
 
@@ -157,5 +166,27 @@ public class DirectedGraphTest extends TestCase
 				return true;
 			}
 		});
+
+
+		HashSet<TestData> sub = new HashSet<TestData>();
+		sub.add(root);
+		sub.add(b);
+		sub.add(e);
+		sub.add(f);
+
+		DirectedGraph<TestData> subGraph = graph.transitivitySubGraph(sub);
+		try {
+			subGraph.writeDOT(new FileOutputStream(new File("sub.dot")), new DotAttributesProvider<TestData>(){
+				@Override
+				public String getDotNodeAttributes(TestData vt) {
+					return "label=\""+vt.id + "\"";
+				}
+			});
+		} catch (FileNotFoundException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+
 	}
 }

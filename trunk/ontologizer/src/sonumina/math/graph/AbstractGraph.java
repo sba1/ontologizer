@@ -1,6 +1,7 @@
 package sonumina.math.graph;
 
 import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -207,9 +208,9 @@ abstract public class AbstractGraph<VertexType>
 				if (vertex.equals(dest))
 				{
 					found = true;
-					return true;
+					return false;
 				}
-				return false;
+				return true;
 			}
 		}
 		ExistsPathVisitor epv = new ExistsPathVisitor();
@@ -312,7 +313,7 @@ abstract public class AbstractGraph<VertexType>
 	 * @param fos. For the output.
 	 * @param provider. Provides the attributes.
 	 */
-	public void writeDOT(FileOutputStream fos, DotAttributesProvider<VertexType> provider)
+	public void writeDOT(OutputStream fos, DotAttributesProvider<VertexType> provider)
 	{
 		writeDOT(fos,getVertices(),provider);
 	}
@@ -324,7 +325,7 @@ abstract public class AbstractGraph<VertexType>
 	 * @param nodeSet. Defines the subset of nodes to be written out.
 	 * @param provider. Provides the attributes.
 	 */
-	public void writeDOT(FileOutputStream fos, Iterable<VertexType> nodeSet, DotAttributesProvider<VertexType> provider)
+	public void writeDOT(OutputStream fos, Iterable<VertexType> nodeSet, DotAttributesProvider<VertexType> provider)
 	{
 		PrintWriter out = new PrintWriter(fos);
 
