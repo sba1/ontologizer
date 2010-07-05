@@ -217,6 +217,7 @@ public class GOGraph implements Iterable<Term>
 	}
 
 	private GOGraph() { }
+
 	/**
 	 * Determines whether the given id is the id of the (possible artifactial)
 	 * root term
@@ -419,7 +420,7 @@ public class GOGraph implements Iterable<Term>
 		 * direction. Basically a breadth-depth search is done.
 		 */
 
-		/* TODO: Make this a method of DirectedGraph */
+		/* TODO: Make this a method of DirectedGraph (already implemented there) */
 		Term source = termContainer.get(sourceID);
 		Term dest = termContainer.get(destID);
 
@@ -759,16 +760,31 @@ public class GOGraph implements Iterable<Term>
 	
 	
 	/**
-	 * Returns the levels of the given terms starting from the root.
+	 * Returns the levels of the given terms starting from the root. Considers
+	 * only the relevant terms.
 	 * 
 	 * @param termids
 	 * @return
 	 */
-	synchronized public GOLevels getGOLevels(final Set<TermID> termids)
+	public GOLevels getGOLevels(final Set<TermID> termids)
 	{
+		DirectedGraph<Term> transGraph;
+		Term transRoot;
+		
+		if (getRelevantSubontology() != null || getRelevantSubset() != null)
+		{
+			GOGraph ontologyTransGraph = getGraphOfRelevantTerms();
+			transGraph = ontologyTransGraph.graph;
+			transRoot = ontologyTransGraph.getRootTerm();
+		} else
+		{
+			transGraph = graph;
+			transRoot = rootTerm;
+		}
+		
 		final GOLevels levels = new GOLevels();
 		
-		graph.singleSourceLongestPath(rootTerm, new IDistanceVisitor<Term>()
+		transGraph.singleSourceLongestPath(transRoot, new IDistanceVisitor<Term>()
 				{
 					public boolean visit(Term vertex, List<Term> path,
 							int distance)
@@ -836,6 +852,16 @@ public class GOGraph implements Iterable<Term>
 		
 		relevantSubset = null;
 		throw new IllegalArgumentException("Subset \"" + subsetName + "\" couldn't be found!");
+	}
+	
+	/**
+	 * Returns the current relevant subject.
+	 * 
+	 * @return
+	 */
+	public Subset getRelevantSubset()
+	{
+		return relevantSubset;
 	}
 
 	/**
@@ -914,5 +940,78 @@ public class GOGraph implements Iterable<Term>
 		
 		return isRelevantTerm(t);
 	}
+
+	/**
+	 * Returns a redundant relation to this term.
+	 * 
+	 * @param t
+	 * @return null, if there is no redundant relation
+	 */
+	public TermID findARedundantISARelation(Term t)
+	{
+		/* We implement a naive algorithm which results straight-forward from
+		 * the definition: A relation is redundant if it can be removed without
+		 * having a effect on the reachability of the nodes.
+		 */
+		Set<TermID> parents = getTermsAncestors(t.getID());
+		
+		Set<TermID> allInducedTerms = getTermsOfInducedGraph(null,t.getID());
+		
+		for (TermID p : parents)
+		{
+			HashSet<TermID> thisInduced = new HashSet<TermID>();
+			
+			for (TermID p2 : parents)
+			{
+				/* Leave out the current parent */
+				if (p.equals(p2)) continue;
+
+				thisInduced.addAll(getTermsOfInducedGraph(null, p2));
+			}
+			
+			if (thisInduced.size() == allInducedTerms.size() - 1)
+				return p;
+			
+		}
+		
+		return null;
+	}
+
+	/**
+	 * Returns redundant is a relations.
+	 */
+	public void findRedundantISARelations()
+	{
+		for (Term t : this)
+		{
+			TermID redundant = findARedundantISARelation(t);
+			if (redundant != null)
+			{
+				System.out.println(t.getName() + " (" + t.getIDAsString() + ") -> " + getGOTerm(redundant).getName() + "(" + redundant.toString() +")");
+			}
+		}
+	}
 	
+	/**
+	 * Returns the graph of relevant terms.
+	 * 
+	 * @return
+	 */
+	private GOGraph getGraphOfRelevantTerms()
+	{
+		HashSet<Term> terms = new HashSet<Term>();
+		for (Term t : this)
+			if (isRelevantTerm(t)) terms.add(t);
+		
+		DirectedGraph<Term> trans = graph.transitivitySubGraph(terms);
+		
+		GOGraph g = new GOGraph();
+		g.graph = trans;
+		g.termContainer = termContainer;
+		g.assignLevel1TermsAndFixRoot();
+
+		/* TODO: Add real GOEdges */
+		
+		return g;
+	}
 }
