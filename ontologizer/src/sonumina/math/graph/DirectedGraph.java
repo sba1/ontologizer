@@ -1,5 +1,6 @@
 package sonumina.math.graph;
 
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -765,7 +766,8 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 	}
 
 	/**
-	 * Returns a subgraph of the graph that includes all given vertices.
+	 * Returns a subgraph of the graph that includes all given vertices. Edges are included
+	 * only, if it is spanned between two vertices in the given set.
 	 *
 	 * @param verticesToBeIncluded
 	 * @return
@@ -792,4 +794,136 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 
 		return graph;
 	}
+
+	/**
+	 * Returns the path-transitivity-maintaining transitive closure of
+	 * a subgraph that contains the given vertices.
+	 *
+	 * @param verticesToBeIncluded
+	 * @return
+	 */
+	public DirectedGraph<VertexType> transitiveClosureOfSubGraph(Set<VertexType> verticesToBeIncluded)
+	{
+		/* This is a very naive implementation */
+		DirectedGraph<VertexType> graph = new DirectedGraph<VertexType>();
+
+		/* Add vertices that should be contained in the subgraph */
+		for (VertexType v : verticesToBeIncluded)
+			graph.addVertex(v);
+
+		for (VertexType v1 : verticesToBeIncluded)
+		{
+			for (VertexType v2 : verticesToBeIncluded)
+			{
+				if (v1.equals(v2)) continue;
+				if (existsPath(v1, v2))
+					graph.addEdge(new Edge<VertexType>(v1,v2));
+			}
+		}
+
+		return graph;
+	}
+
+	/**
+	 * Returns a sub graph with selected vertices, in which transitivity relationships are
+	 * maintained.
+	 *
+	 * @param verticesToBeIncluded
+	 * @return
+	 *
+	 * @todo think about a better implementation.
+	 */
+	public DirectedGraph<VertexType> transitivitySubGraph(Set<VertexType> verticesToBeIncluded)
+	{
+		DirectedGraph<VertexType> transitiveClosure = transitiveClosureOfSubGraph(verticesToBeIncluded);
+		DirectedGraph<VertexType> transitivitySubGraph;
+		boolean reducedInIteration;
+
+		do
+		{
+			reducedInIteration = false;
+
+			/* Here, the reduced graph structure is stored */
+			transitivitySubGraph = new DirectedGraph<VertexType>();
+			for (VertexType v : verticesToBeIncluded)
+				transitivitySubGraph.addVertex(v);
+
+			/* Now add edges to the reduced graph structure, i.e., leave out
+			 * edges that are redundant */
+			for (VertexType v : verticesToBeIncluded)
+			{
+				Set<VertexType> vUpperVertices = transitiveClosure.getVerticesOfUpperInducedGraph(null,v);
+				LinkedList<VertexType> parents = new LinkedList<VertexType>();
+				Iterator<VertexType> parentIterator = transitiveClosure.getAncestorNodes(v);
+				while (parentIterator.hasNext())
+					parents.add(parentIterator.next());
+
+				/* Construct the upper graph by using only the parents. Always
+				 * leave out a single parent. If that edge is redundant, the number
+				 * of nodes in this newly created graph differs only by one.
+				 */
+				for (VertexType p : parents)
+				{
+					HashSet<VertexType> pUpperVertices = new HashSet<VertexType>();
+
+					for (VertexType p2 : parents)
+					{
+						/* Skip parent that should be left out */
+						if (p.equals(p2)) continue;
+
+						pUpperVertices.addAll(transitiveClosure.getVerticesOfUpperInducedGraph(null,p2));
+					}
+
+					System.out.println(vUpperVertices.size() + "(" + v + " ) " + pUpperVertices.size() + "(" + p + ")");
+					if (pUpperVertices.size() != vUpperVertices.size() - 1)
+					{
+						/* Here we know that the edge from p to v was relevant */
+						transitivitySubGraph.addEdge(new Edge<VertexType>(p,v));
+						System.out.println("Add");
+					} else reducedInIteration = true;
+				}
+			}
+			transitiveClosure = transitivitySubGraph;
+		} while (reducedInIteration);
+
+		return transitivitySubGraph;
+	}
+
+	/**
+	 * Returns a set of induced terms that are the terms of the induced graph.
+	 *
+	 * @param rootTerm the root term (all terms up to this are included)
+	 * @param term the inducing term.
+	 * @return
+	 */
+	public Set<VertexType> getVerticesOfUpperInducedGraph(final VertexType root, VertexType termID)
+	{
+		/**
+		 * Visitor which simply add all nodes to the nodeSet.
+		 *
+		 * @author Sebastian Bauer
+		 */
+		class Visitor implements IVisitor<VertexType>
+		{
+			public HashSet<VertexType> nodeSet = new HashSet<VertexType>();
+
+			public boolean visited(VertexType vertex)
+			{
+				if (root != null)
+				{
+					if (vertex.equals(root) || existsPath(root, vertex))
+						nodeSet.add(vertex);
+				} else
+					nodeSet.add(vertex);
+
+				return true;
+			}
+		};
+
+		Visitor visitor = new Visitor();
+		bfs(termID,true,visitor);
+
+		return visitor.nodeSet;
+	}
+
 }
