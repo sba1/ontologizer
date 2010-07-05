@@ -172,9 +172,6 @@ public class TopologyWeightedCalculation extends AbstractHypergeometricCalculati
 			AssociationContainer goAssociations, PopulationSet populationSet,
 			StudySet studySet, AbstractTestCorrection testCorrection)
 	{
-		if (graph.getRelevantSubontology() != null || graph.getRelevantSubset() != null)
-			throw new IllegalArgumentException("Subset or sub ontology selection not supported for this calculation method!");
-
 		EnrichedGOTermsResult studySetResult = new EnrichedGOTermsResult(graph, goAssociations, studySet, populationSet.getGeneCount());
 		studySetResult.setCalculationName(this.getName());
 		studySetResult.setCorrectionName(testCorrection.getName());
