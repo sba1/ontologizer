@@ -39,7 +39,7 @@ public class GODOTWriter
 	 */
 	public static void writeDOT(GOGraph graph, File file, TermID rootTerm, Set<TermID> terms, IDotAttributesProvider provider)
 	{
-		writeDOT(graph, file, rootTerm, terms, provider, "nodesep=0.4;", true, false);
+		writeDOT(graph, file, rootTerm, terms, provider, "nodesep=0.4;", true, false, null);
 	}
 
 	/**
@@ -64,8 +64,9 @@ public class GODOTWriter
 	 *          should provide for every property an appropiate id.
 	 * @param reverseDirection spec
 	 * @param edgeLabels
+	 * @param ignoreTerms
 	 */
-	public static void writeDOT(GOGraph graph, File file, TermID rootTerm, Set<TermID> terms, IDotAttributesProvider provider, String graphAttrs, boolean reverseDirection, boolean edgeLabels)
+	public static void writeDOT(GOGraph graph, File file, TermID rootTerm, Set<TermID> terms, IDotAttributesProvider provider, String graphAttrs, boolean reverseDirection, boolean edgeLabels, Set<TermID> ignoreTerms)
 	{
 		/* Collect terms starting from the terms upto the root term and place them into nodeSet */
 		HashSet<TermID> nodeSet = new HashSet<TermID>();
@@ -74,7 +75,7 @@ public class GODOTWriter
 			if (!nodeSet.contains(term))
 				nodeSet.addAll(graph.getTermsOfInducedGraph(rootTerm,term));
 		}
-
+		if (ignoreTerms != null) nodeSet.removeAll(ignoreTerms);
 		/* We now have a list of nodes which can be placed into the output */
 		try
 		{
