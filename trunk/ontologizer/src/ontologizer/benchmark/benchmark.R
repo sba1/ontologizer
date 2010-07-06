@@ -57,45 +57,6 @@ d<-subset(d,d$term!=0)
 
 
 #
-# Converts the given name to a more useful one.
-#
-decode.name<-function(name)
-{
-	pat<-"p.b2g.a(0.\\d+)\\.b(0.\\d+)\\.d(\\d+)"
-	if (length(grep(pat,name,perl=T))>0)
-	{
-		a<-as.numeric(gsub(pat,"\\1",name,perl=T))
-		b<-as.numeric(gsub(pat,"\\2",name,perl=T))
-		dt<-as.numeric(gsub(pat,"\\3",name,perl=T))
-		sprintf("b2g (a=%g b=%g dt=%d)",a,b,dt)
-		return(sprintf("b2g (a=%g b=%g dt=%d)",a,b,dt))
-	} else
-	{
-		return(name)
-	}
-}
-
-#
-# Returns a list with elements describing the given
-# name encoded setting
-#
-decode.parameter.setting<-function(name)
-{
-	pat<-"p.b2g.a(0.\\d+)\\.b(0.\\d+)\\.d(\\d+)"
-	if (length(grep(pat,name,perl=T))>0)
-	{
-		a<-as.numeric(gsub(pat,"\\1",name,perl=T))
-		b<-as.numeric(gsub(pat,"\\2",name,perl=T))
-		dt<-as.numeric(gsub(pat,"\\3",name,perl=T))
-		return(list(m="b2g",a=a,b=b,dt=dt))
-	} else
-	{
-		m<-gsub("^p\\.(.+)","\\1",name,perl=T);
-		return(list(m=m,a=NA,b=NA,dt=NA));
-	}
-}
-
-#
 # Draw some performance plots using ROCR. Also k-truncated score
 # is calculated in this routine (should have been moved into a
 # plot.roc.new function, does not depend on ROCR...)
@@ -268,7 +229,7 @@ lapply(r.all, function(r.one) {
 	r<-r[o]
 
 	colors<-c(hcl(c(0,60),l=60,alpha=0.9),hcl(c(60,120,180,240),l=45))
-	sp<-c(0.25,0.25,0.5,0.25,0.25,0.25,0.25)
+	sp<-c(0.25,0.25,0.5,0.25,0.25,0.25)
 	dens<-c(-1,-1,-1,-1,-1,-1,-1)
 	
 	pchs<-1:length(r)
