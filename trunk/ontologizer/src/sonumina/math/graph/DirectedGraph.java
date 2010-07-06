@@ -62,6 +62,60 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 	}
 
 	/**
+	 * Removed the given vertex and all edges associated to it.
+	 * 
+	 * @param vertex
+	 */
+	public void removeVertex(VertexType vertex)
+	{
+		VertexAttributes<VertexType> va = vertices.get(vertex);
+		if (va != null)
+		{
+			/* Remove each in edge */
+			while (va.inEdges.size() > 0)
+			{
+				int lastPos = va.inEdges.size() - 1;
+				Edge<VertexType> last = va.inEdges.get(lastPos);
+				removeConnections(last.getSource(), last.getDest());
+			}
+			
+			/* Remove each out edge */
+			while (va.outEdges.size() > 0)
+			{
+				int lastPos = va.outEdges.size() - 1;
+				Edge<VertexType> last = va.outEdges.get(lastPos);
+				removeConnections(last.getSource(), last.getDest());
+			}
+			
+			vertices.remove(vertex);
+		}
+	}
+
+	/**
+	 * Removed the given vertex and all edges associated to it.
+	 * 
+	 * @param vertex
+	 */
+	private void removeVertexMaintainConnectivity(VertexType vertex)
+	{
+		VertexAttributes<VertexType> va = vertices.get(vertex);
+		if (va != null)
+		{
+			/* Connect each the source of each in edges to the dest of each out edge */
+			for (Edge<VertexType> i : va.inEdges)
+			{
+				for (Edge<VertexType> o : va.outEdges)
+				{
+					if (!hasEdge(i.getSource(),o.getDest()))
+						addEdge(new Edge<VertexType>(i.getSource(),o.getDest()));
+				}
+			}
+			
+			removeVertex(vertex);
+		}
+	}
+
+	/**
 	 * Returns the vertices as an iterable object.
 	 * 
 	 * @return
@@ -130,6 +184,24 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 		
 		vaSource.outEdges.add(edge);
 		vaDest.inEdges.add(edge);
+	}
+	
+	/**
+	 * Returns true if there is a directed edge between source and dest.
+	 * 
+	 * @param source
+	 * @param dest
+	 * @return
+	 */
+	public boolean hasEdge(VertexType source, VertexType dest)
+	{
+		VertexAttributes<VertexType> vaSource = vertices.get(source);
+		for (Edge<VertexType> e : vaSource.outEdges)
+		{
+			if (e.getDest().equals(dest))
+				return true;
+		}
+		return false;
 	}
 
 	public void removeConnections(VertexType source, VertexType dest)
@@ -802,42 +874,74 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 	 * @param verticesToBeIncluded
 	 * @return
 	 */
-	public DirectedGraph<VertexType> transitiveClosureOfSubGraph(Set<VertexType> verticesToBeIncluded)
+	public DirectedGraph<VertexType> transitiveClosureOfSubGraph(final Set<VertexType> verticesToBeIncluded)
 	{
-		/* This is a very naive implementation */
-		DirectedGraph<VertexType> graph = new DirectedGraph<VertexType>();
+		/* This is a naive implementation */
+		final DirectedGraph<VertexType> graph = new DirectedGraph<VertexType>();
 
 		/* Add vertices that should be contained in the subgraph */
 		for (VertexType v : verticesToBeIncluded)
 			graph.addVertex(v);
-		
-		for (VertexType v1 : verticesToBeIncluded)
+
+		for (final VertexType v1 : verticesToBeIncluded)
 		{
-			for (VertexType v2 : verticesToBeIncluded)
-			{
-				if (v1.equals(v2)) continue;
-				if (existsPath(v1, v2))
-					graph.addEdge(new Edge<VertexType>(v1,v2));
-			}
+			bfs(v1,false,new IVisitor<VertexType>() {
+				public boolean visited(VertexType vertex)
+				{
+					if (verticesToBeIncluded.contains(vertex))
+					{
+						graph.addEdge(new Edge<VertexType>(v1,vertex));
+					}
+					return true;
+				};
+			});
 		}
 		
 		return graph;
 	}
-	
+
 	/**
-	 * Returns a sub graph with selected vertices, in which transitivity relationships are
+	 * 
+	 * Returns a sub graph with selected vertices, in which path relationships are
+	 * maintained. Basic version.
+	 * 
+	 * @return 
+	 */
+	private DirectedGraph<VertexType> compactedSubgraph(final Set<VertexType> verticesToBeIncluded)
+	{
+		/* This is a naive implementation */
+		DirectedGraph<VertexType> graph = copyGraph();
+		
+		/* Note that we iterate here over the nodes the this instance and
+		 * not over the duplicated graph. We will remove nodes from there
+		 * therefore iterating over those nodes is node safe.
+		 */
+		for (VertexType v : this)
+		{
+			if (!verticesToBeIncluded.contains(v))
+				graph.removeVertexMaintainConnectivity(v);
+		}
+
+		return graph;
+	}
+
+	/**
+	 * Returns a sub graph with selected vertices, in which path relationships are
 	 * maintained.
 	 * 
 	 * @param verticesToBeIncluded
 	 * @return
-	 * 
-	 * @todo think about a better implementation.
 	 */
-	public DirectedGraph<VertexType> transitivitySubGraph(Set<VertexType> verticesToBeIncluded)
+	public DirectedGraph<VertexType> pathMaintainingSubGraph(Set<VertexType> verticesToBeIncluded)
 	{
-		DirectedGraph<VertexType> transitiveClosure = transitiveClosureOfSubGraph(verticesToBeIncluded);
+		DirectedGraph<VertexType> transitiveClosure = compactedSubgraph(verticesToBeIncluded);//transitiveClosureOfSubGraph(verticesToBeIncluded);
 		DirectedGraph<VertexType> transitivitySubGraph;
 		boolean reducedInIteration;
+		
+		
+		/* Here we also want to ensure that no redunancies are included */
+		
+		int removed = 0;
 		
 		do
 		{
@@ -850,6 +954,7 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 
 			/* Now add edges to the reduced graph structure, i.e., leave out
 			 * edges that are redundant */
+			int i = 0;
 			for (VertexType v : verticesToBeIncluded)
 			{
 				Set<VertexType> vUpperVertices = transitiveClosure.getVerticesOfUpperInducedGraph(null,v);
@@ -858,6 +963,7 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 				while (parentIterator.hasNext())
 					parents.add(parentIterator.next());
 
+				i++;
 				/* Construct the upper graph by using only the parents. Always
 				 * leave out a single parent. If that edge is redundant, the number
 				 * of nodes in this newly created graph differs only by one.
@@ -874,13 +980,15 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 						pUpperVertices.addAll(transitiveClosure.getVerticesOfUpperInducedGraph(null,p2));
 					}
 
-					System.out.println(vUpperVertices.size() + "(" + v + " ) " + pUpperVertices.size() + "(" + p + ")");
 					if (pUpperVertices.size() != vUpperVertices.size() - 1)
 					{
 						/* Here we know that the edge from p to v was relevant */
 						transitivitySubGraph.addEdge(new Edge<VertexType>(p,v));
-						System.out.println("Add");
-					} else reducedInIteration = true;
+					} else
+					{
+						reducedInIteration = true;
+						removed++;
+					}
 				}
 			}
 			transitiveClosure = transitivitySubGraph;
