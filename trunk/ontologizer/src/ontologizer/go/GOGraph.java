@@ -771,7 +771,9 @@ public class GOGraph implements Iterable<Term>
 		DirectedGraph<Term> transGraph;
 		Term transRoot;
 
-		if (getRelevantSubontology() != null || getRelevantSubset() != null)
+		System.out.println(getRelevantSubontology());
+
+		if ((getRelevantSubontology() != null && !isRootTerm(getRelevantSubontology())) || getRelevantSubset() != null)
 		{
 			GOGraph ontologyTransGraph = getGraphOfRelevantTerms();
 			transGraph = ontologyTransGraph.graph;
@@ -1003,7 +1005,7 @@ public class GOGraph implements Iterable<Term>
 		for (Term t : this)
 			if (isRelevantTerm(t)) terms.add(t);
 
-		DirectedGraph<Term> trans = graph.transitivitySubGraph(terms);
+		DirectedGraph<Term> trans = graph.pathMaintainingSubGraph(terms);
 
 		GOGraph g = new GOGraph();
 		g.graph = trans;
