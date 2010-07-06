@@ -174,7 +174,7 @@ public class DirectedGraphTest extends TestCase
 		sub.add(e);
 		sub.add(f);
 
-		DirectedGraph<TestData> subGraph = graph.transitivitySubGraph(sub);
+		DirectedGraph<TestData> subGraph = graph.pathMaintainingSubGraph(sub);
 		try {
 			subGraph.writeDOT(new FileOutputStream(new File("sub.dot")), new DotAttributesProvider<TestData>(){
 				@Override
