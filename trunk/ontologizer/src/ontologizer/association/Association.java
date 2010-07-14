@@ -63,6 +63,9 @@ public class Association
 	/** A unique symbol such as a gene name (primary id) */
 	private ByteString DB_Object_Symbol;
 
+	/** The evidence */
+	private ByteString evidence;
+	
 	/** The aspect */
 	private ByteString aspect;
 
@@ -96,6 +99,9 @@ public class Association
 
 	/** Index of GO:id field */
 	private final static int GOFIELD = 4;
+
+	/** Index of evidence field */
+	private final static int EVIDENCEFIELD = 7;
 
 	/** Index of aspect field */
 	private final static int ASPECTFIELD = 8;
@@ -170,6 +176,7 @@ public class Association
 		 */
 		this.DB_Object_Symbol = new ByteString(fields[DBOBJECTSYMBOLFIELD].trim());
 
+		this.evidence = new ByteString(fields[EVIDENCEFIELD].trim());
 		this.aspect = new ByteString(fields[ASPECTFIELD].trim());
 		
 		/* TODO: There are new fields (colocalizes_with (a component) and 
@@ -255,5 +262,15 @@ public class Association
 	public ByteString getAspect()
 	{
 		return aspect;
+	}
+	
+	/**
+	 * Returns the evidence code of the annotation.
+	 * 
+	 * @return
+	 */
+	public ByteString getEvidence()
+	{
+		return evidence;
 	}
 }
