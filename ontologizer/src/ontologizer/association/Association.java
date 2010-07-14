@@ -101,7 +101,7 @@ public class Association
 	private final static int GOFIELD = 4;
 
 	/** Index of evidence field */
-	private final static int EVIDENCEFIELD = 7;
+	private final static int EVIDENCEFIELD = 6;
 
 	/** Index of aspect field */
 	private final static int ASPECTFIELD = 8;
