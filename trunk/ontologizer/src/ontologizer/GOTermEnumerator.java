@@ -69,12 +69,23 @@ public class GOTermEnumerator implements Iterable<TermID>
 	}
 
 	/**
+	 *
+	 * @param geneAssociations
+	 */
+	public void push(Gene2Associations geneAssociations)
+	{
+		push(geneAssociations,null);
+	}
+
+	/**
 	 * Pushes the given gene association into the enumerator. I.e.
 	 * add the gene in question to all terms annotating that gene.
 	 *
 	 * @param geneAssociations the gene associations
+	 * @param evidences consider only annotation entries that correspond to
+	 *  the given evidence codes.
 	 */
-	public void push(Gene2Associations geneAssociations)
+	public void push(Gene2Associations geneAssociations, Set<ByteString> evidences)
 	{
 		ByteString geneName = geneAssociations.name();
 
@@ -117,6 +128,12 @@ public class GOTermEnumerator implements Iterable<TermID>
 
 			if (!graph.isRelevantTermID(goTermID))
 				continue;
+
+			if (evidences != null)
+			{
+				if (!evidences.contains(association.getEvidence()))
+					continue;
+			}
 
 			GOTermAnnotatedGenes termGenes = map.get(goTermID);
 
