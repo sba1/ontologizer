@@ -8,7 +8,7 @@ import ontologizer.ByteString;
  * After AssociationParser was used to parse the gene_association.XXX file, this
  * class is used to store and process the information about Associations.
  */
-public class AssociationContainer
+public class AssociationContainer implements Iterable<Gene2Associations>
 {
 	/** Mapping from gene (or gene product) names to Association objects */
 	private HashMap<ByteString, Gene2Associations> gene2assocs;
@@ -185,5 +185,10 @@ public class AssociationContainer
 	public boolean containsGene(ByteString g1)
 	{
 		return get(g1) != null;
+	}
+
+	public Iterator<Gene2Associations> iterator()
+	{
+		return gene2assocs.values().iterator();
 	}
 }
