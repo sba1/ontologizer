@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import ontologizer.GOTermEnumerator.GOTermAnnotatedGenes;
@@ -389,6 +390,11 @@ public class StudySet implements Iterable<ByteString>
 		return goTermCounter;
 	}
 
+	public GOTermEnumerator enumerateGOTerms(GOGraph graph, AssociationContainer associationContainer)
+	{
+		return enumerateGOTerms(graph, associationContainer, null);
+	}
+
 	/**
 	 * Enumerate genes annotated for every term. Multiple
 	 * calls to this method are fast, if the gene set has not
@@ -396,8 +402,9 @@ public class StudySet implements Iterable<ByteString>
 	 *
 	 * @param goTerms
      * @param associationContainer
+     * @param evidences
 	 */
-	public synchronized GOTermEnumerator enumerateGOTerms(GOGraph graph, AssociationContainer associationContainer)
+	public synchronized GOTermEnumerator enumerateGOTerms(GOGraph graph, AssociationContainer associationContainer, Set<ByteString> evidences)
 	{
 		/* Return cached enumerator if available */
 		if (goTermEnumerator != null) return goTermEnumerator;
@@ -409,7 +416,7 @@ public class StudySet implements Iterable<ByteString>
 		{
 			Gene2Associations geneAssociations = associationContainer.get(geneName);
 			if (geneAssociations != null)
-				goTermEnumerator.push(geneAssociations);
+				goTermEnumerator.push(geneAssociations,evidences);
 		}
 
 		return goTermEnumerator;
