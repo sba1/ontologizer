@@ -88,6 +88,7 @@ public class GOTermEnumerator implements Iterable<TermID>
 	public void push(Gene2Associations geneAssociations, Set<ByteString> evidences)
 	{
 		ByteString geneName = geneAssociations.name();
+		System.out.println(geneName.toString());
 		
 		/* Check for suspicious annotations. An annotation i is suspicious
 		 * if there exists a more specialized annotation orgininating from
@@ -121,7 +122,9 @@ public class GOTermEnumerator implements Iterable<TermID>
 		 * completely.
 		 */
 		
-		/* At first add the direct counts */
+		HashSet<TermID> goTermSet = new HashSet<TermID>();
+
+		/* At first add the direct counts and remember the terms */
 		for (Association association : geneAssociations)
 		{
 			TermID goTermID = association.getTermID();
@@ -145,12 +148,10 @@ public class GOTermEnumerator implements Iterable<TermID>
 			}
 			
 			termGenes.directAnnotated.add(geneName);
-		}
-
-		/* Now build goTermSet */
-		HashSet<TermID> goTermSet = new HashSet<TermID>();
-		for (Association association : geneAssociations)
+			
+			/* This term is annotated */
 			goTermSet.add(association.getTermID());
+		}
 
 		/* Then add the total counts */
 
