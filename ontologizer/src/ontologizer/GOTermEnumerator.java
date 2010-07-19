@@ -88,7 +88,6 @@ public class GOTermEnumerator implements Iterable<TermID>
 	public void push(Gene2Associations geneAssociations, Set<ByteString> evidences)
 	{
 		ByteString geneName = geneAssociations.name();
-		System.out.println(geneName.toString());
 		
 		/* Check for suspicious annotations. An annotation i is suspicious
 		 * if there exists a more specialized annotation orgininating from
