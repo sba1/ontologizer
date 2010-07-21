@@ -162,18 +162,25 @@ public class AssociationParser
 
 					for (int i = 0; i <annotatedTerms.length; i++)
 					{
-						int id = new Integer(annotatedTerms[i]);
-						String goID = String.format("GO:%07d",id);
 
-						/* TODO: There exists also a possibility for alternative IDs
-						 * which isn't taken into account yet */
-						if (terms.get(goID) != null)
+						TermID tid;
+
+						try
 						{
-							Association assoc = new Association(new ByteString(fields[0]),goID);
+							tid = new TermID(annotatedTerms[i]);
+						} catch (IllegalArgumentException ex)
+						{
+							int id = new Integer(annotatedTerms[i]);
+							tid = new TermID(TermID.DEFAULT_PREFIX,id);
+						}
+
+						if (terms.get(tid) != null)
+						{
+							Association assoc = new Association(new ByteString(fields[0]),tid.toString());
 							associations.add(assoc);
 						} else
 						{
-							logger.warning(goID + " which annotates " + fields[0] + " not found");
+							logger.warning(tid.toString() + " which annotates " + fields[0] + " not found");
 						}
 					}
 				}
