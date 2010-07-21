@@ -82,22 +82,19 @@ public class BuildInfo {
 
 	<target name="compile" depends="init" description="compile the main source">
 		<mkdir dir="${build.classes}" />
-		<javac srcdir="${java.dir}" destdir="${build.classes}" debug="${debug}" verbose="no">
+		<javac srcdir="${java.dir}" destdir="${build.classes}" debug="${debug}" verbose="no" >
 			<exclude name="**/ontologizer/tests/*.java" />
-			<exclude name="**/ontologizer/gui/*.java" />
-			<exclude name="**/ontologizer/gui/swt/*.java" />
-			<exclude name="**/ontologizer/gui/swt/images/**" />
-			<exclude name="**/ontologizer/gui/swt/result/**" />
-			<exclude name="**/ontologizer/gui/swt/support/**" />
-			<exclude name="**/ontologizer/gui/swt/threads/**" />
+			<exclude name="**/ontologizer/gui/**" />
 			<exclude name="**/ontologizer/calculation/svd/*.java" />
 			<exclude name="**/ontologizer/sampling/*Test.java" />
 			<exclude name="**/ontologizer/go/*Test.java" />
+			<exclude name="**/sonumina/math/graph/*Test.java" />
 			<exclude name="**/ontologizer/go/ParsedContainerTest.java" />
 			<exclude name="**/ontologizer/calculation/ProbabilisticCalculationTest.java" />
 			<exclude name="**/ontologizer/graph/*Test.java" />
 			<exclude name="**/ontologizer/tests/*.java" />
 			<exclude name="**/tools/*.java" />
+			<exclude name="**/ontologizer/benchmark/**" />
 
 			<classpath refid="classpath" />
 		</javac>
@@ -134,8 +131,6 @@ public class BuildInfo {
 				<attribute name="Built-By" value="${user.name}"/>
 				<attribute name="Main-Class" value="ontologizer.gui.Ontologizer" />
 			</manifest>
-
-			<zipfileset src="prefuse.jar" />
 
 			<fileset dir="${build.classes}">
 				<!-- Exclude files only useful for command line -->
