@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-import ontologizer.ByteString;
 import ontologizer.GOTermEnumerator;
 import ontologizer.go.TermID;
+import ontologizer.types.ByteString;
 
 /**
  * A basic container representing a set of genes

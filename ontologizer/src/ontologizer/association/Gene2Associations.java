@@ -2,8 +2,8 @@ package ontologizer.association;
 
 import java.util.*;
 
-import ontologizer.ByteString;
 import ontologizer.go.TermID;
+import ontologizer.types.ByteString;
 
 /**
  * <P>

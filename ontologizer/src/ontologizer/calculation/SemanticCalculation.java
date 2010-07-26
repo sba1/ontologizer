@@ -14,7 +14,6 @@ import java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
 import java.util.logging.Logger;
 
-import ontologizer.ByteString;
 import ontologizer.DOTDumper;
 import ontologizer.GODOTWriter;
 import ontologizer.GOTermEnumerator;
@@ -29,6 +28,7 @@ import ontologizer.go.Term;
 import ontologizer.go.TermContainer;
 import ontologizer.go.TermID;
 import ontologizer.go.TermRelation;
+import ontologizer.types.ByteString;
 
 /**
  * Stripped-down-version of the general HashMap function suitable

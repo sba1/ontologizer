@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import ontologizer.ByteString;
 import ontologizer.GeneFilter;
 import ontologizer.PopulationSet;
 import ontologizer.StudySet;
@@ -30,6 +29,7 @@ import ontologizer.statistics.AbstractTestCorrection;
 import ontologizer.statistics.IResampling;
 import ontologizer.statistics.IResamplingProgress;
 import ontologizer.statistics.TestCorrectionRegistry;
+import ontologizer.types.ByteString;
 
 import org.eclipse.swt.widgets.Display;
 

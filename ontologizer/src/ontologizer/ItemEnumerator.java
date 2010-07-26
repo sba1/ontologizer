@@ -7,6 +7,7 @@ import java.util.LinkedHashSet;
 
 import ontologizer.GOTermEnumerator.GOTermAnnotatedGenes;
 import ontologizer.go.TermID;
+import ontologizer.types.ByteString;
 
 /**
  * Stores which items are annotated to which terms.

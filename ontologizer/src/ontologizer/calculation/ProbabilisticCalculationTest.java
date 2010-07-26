@@ -3,7 +3,6 @@ package ontologizer.calculation;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import ontologizer.ByteString;
 import ontologizer.PopulationSet;
 import ontologizer.StudySet;
 import ontologizer.association.Association;
@@ -15,6 +14,7 @@ import ontologizer.go.Term;
 import ontologizer.go.TermContainer;
 import ontologizer.go.TermRelation;
 import ontologizer.statistics.None;
+import ontologizer.types.ByteString;
 import junit.framework.TestCase;
 
 public class ProbabilisticCalculationTest extends TestCase {

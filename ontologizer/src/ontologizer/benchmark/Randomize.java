@@ -10,7 +10,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import ontologizer.ByteString;
 import ontologizer.GOTermEnumerator;
 import ontologizer.GlobalPreferences;
 import ontologizer.OntologizerThreadGroups;
@@ -29,6 +28,7 @@ import ontologizer.parser.IParserCallback;
 import ontologizer.parser.ItemAttribute;
 import ontologizer.parser.ParserFactory;
 import ontologizer.sampling.StudySetSampler;
+import ontologizer.types.ByteString;
 
 public class Randomize {
 

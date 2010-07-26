@@ -1,6 +1,6 @@
 package ontologizer.parser;
 
-import ontologizer.ByteString;
+import ontologizer.types.ByteString;
 
 public interface IParserCallback
 {

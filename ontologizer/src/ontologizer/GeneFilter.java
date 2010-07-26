@@ -10,6 +10,8 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.HashMap;
 
+import ontologizer.types.ByteString;
+
 /**
  *
  * This class is resonsible for managing the GeneFilter stuff

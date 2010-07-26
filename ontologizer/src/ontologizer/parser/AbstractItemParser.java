@@ -3,7 +3,7 @@ package ontologizer.parser;
 import java.io.IOException;
 import java.util.HashMap;
 
-import ontologizer.ByteString;
+import ontologizer.types.ByteString;
 
 /**
  * Abstract class for parsers used to parse files containing names of items

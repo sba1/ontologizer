@@ -3,7 +3,7 @@ package ontologizer.calculation;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import ontologizer.ByteString;
+import ontologizer.types.ByteString;
 
 public class TopologyWeightGOTermProperties extends AbstractGOTermProperties
 {
