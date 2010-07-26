@@ -3,7 +3,7 @@ package ontologizer.parser;
 import java.io.File;
 import java.io.IOException;
 
-import ontologizer.ByteString;
+import ontologizer.types.ByteString;
 
 public class OneOnALineValueParser extends OneOnALineParser
 {

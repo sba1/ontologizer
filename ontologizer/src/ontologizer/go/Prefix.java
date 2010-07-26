@@ -1,6 +1,6 @@
 package ontologizer.go;
 
-import ontologizer.ByteString;
+import ontologizer.types.ByteString;
 
 /**
  * This class implements a ontology prefix which is used before the colon

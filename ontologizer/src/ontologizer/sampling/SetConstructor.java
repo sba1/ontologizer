@@ -12,7 +12,6 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import ontologizer.ByteString;
 import ontologizer.GOTermCounter;
 import ontologizer.GOTermEnumerator;
 import ontologizer.PopulationSet;
@@ -33,6 +32,7 @@ import ontologizer.go.Namespace.NamespaceEnum;
 import ontologizer.statistics.AbstractTestCorrection;
 import ontologizer.statistics.PValue;
 import ontologizer.statistics.TestCorrectionRegistry;
+import ontologizer.types.ByteString;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.GnuParser;

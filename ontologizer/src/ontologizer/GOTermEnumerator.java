@@ -17,6 +17,7 @@ import ontologizer.go.GOGraph;
 import ontologizer.go.Term;
 import ontologizer.go.TermID;
 import ontologizer.go.GOGraph.IVisitingGOVertex;
+import ontologizer.types.ByteString;
 
 /**
  * This class encapsulates the enumeration of explicit and implicit

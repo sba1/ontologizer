@@ -1,7 +1,7 @@
 package ontologizer.tests;
 
-import ontologizer.ByteString;
 import ontologizer.StudySet;
+import ontologizer.types.ByteString;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;

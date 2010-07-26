@@ -2,11 +2,11 @@ package ontologizer.tests;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
-import ontologizer.ByteString;
 import ontologizer.association.AssociationContainer;
 import ontologizer.association.AssociationParser;
 import ontologizer.go.ParsedContainerTest;
 import ontologizer.go.TermContainer;
+import ontologizer.types.ByteString;
 
 public class AssociationParserTest extends TestCase
 {

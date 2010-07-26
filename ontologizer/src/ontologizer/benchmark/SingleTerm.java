@@ -9,7 +9,6 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
-import ontologizer.ByteString;
 import ontologizer.GODOTWriter;
 import ontologizer.GOTermEnumerator;
 import ontologizer.GlobalPreferences;
@@ -28,6 +27,7 @@ import ontologizer.go.TermID;
 import ontologizer.go.TermRelation;
 import ontologizer.gui.swt.result.EnrichedGOTermsResultLatexWriter;
 import ontologizer.statistics.Bonferroni;
+import ontologizer.types.ByteString;
 
 class B2GTestParameter
 {
@@ -382,6 +382,13 @@ public class SingleTerm
 		terms.add(new TermID("GO:0000278"));
 		terms.add(new TermID("GO:0048523"));
 		terms.add(new TermID("GO:0022402"));
+		terms.add(new TermID("GO:0051304"));
+		terms.add(new TermID("GO:0051329"));
+		
+		HashSet<TermID> ignoreTerms = new HashSet<TermID>();
+		ignoreTerms.add(new TermID("GO:0048519"));
+		ignoreTerms.add(new TermID("GO:0051325"));
+		ignoreTerms.add(new TermID("GO:0022403"));
 		
 //		String preamble = "d2tfigpreamble=\"\\pgfdeclareradialshading{verylightsphere}{\\pgfpoint{-0.5cm}{0.5cm}}{rgb(0cm)=(0.99,0.99,0.99);rgb(0.7cm)=(0.96,0.96,0.96);rgb(1cm)=(0.93,0.93,0.93);rgb(1.05cm)=(1,1,1)}"+
 //        "\\pgfdeclareradialshading{lightsphere}{\\pgfpoint{-0.5cm}{0.5cm}}{rgb(0cm)=(0.99,0.99,0.99);rgb(0.7cm)=(0.95,0.95,0.95);rgb(1cm)=(0.9,0.9,0.9);rgb(1.05cm)=(1,1,1)}"+
@@ -407,7 +414,7 @@ public class SingleTerm
 				
 				StringBuilder str = new StringBuilder(200);
 				str.append("margin=\"0\" shape=\"box\" label=\"");
-				str.append("\\maxbox{3.3cm}{" + label + "}{" + label + "}");
+				str.append("\\maxbox{3.9cm}{" + label + "}{" + label + "}");
 				str.append("\"");
 
 				str.append("style=\"rounded corners,top color=white,bottom color=black!15,draw=black!50,very thick\"");
@@ -428,10 +435,11 @@ public class SingleTerm
 					case	NEGATIVELY_REGULATES: relationName = "$\\begin{array}{c}\\textnormal{negatively}\\\\\\ \\textnormal{regulates}\\end{array}$"; break;
 					default: relationName = "";
 				}
-				return "labeldistance=0.5 margin=\"0\" label=\"\\footnotesize " + relationName + "\"";
+				return "margin=\"-0.08,-2\" label=\"\\footnotesize " + relationName + "\"";
+//				return "label=\"test\"";
 			}
 		},
-		"nodesep=0.05; ranksep=0.04;" + preamble,false,true);
+		"nodesep=0.05; ranksep=-1.01;" + preamble,false,true, ignoreTerms);
 
 	}
 
@@ -596,7 +604,7 @@ public class SingleTerm
 					return str.toString();
 				}
 			},
-			"nodesep=0.05; ranksep=0.1;" + preamble,false,false);
+			"nodesep=0.05; ranksep=0.1;" + preamble,false,false,null);
 			
 		}
 	}

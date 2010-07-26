@@ -2,7 +2,7 @@ package ontologizer.association;
 
 import java.util.*;
 
-import ontologizer.ByteString;
+import ontologizer.types.ByteString;
 
 /**
  * After AssociationParser was used to parse the gene_association.XXX file, this

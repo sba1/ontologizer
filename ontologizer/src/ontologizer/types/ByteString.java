@@ -1,4 +1,4 @@
-package ontologizer;
+package ontologizer.types;
 
 import java.util.ArrayList;
 
