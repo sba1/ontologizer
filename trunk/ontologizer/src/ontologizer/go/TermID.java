@@ -89,7 +89,7 @@ public class TermID
 	}
 
 	/**
-	 * Return the string representation of this GO ID
+	 * Return the string representation of this term ID.
 	 */
 	public String toString()
 	{

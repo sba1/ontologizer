@@ -14,7 +14,6 @@ import java.util.Random;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import ontologizer.ByteString;
 import ontologizer.FileCache;
 import ontologizer.GODOTWriter;
 import ontologizer.GOTermEnumerator;
@@ -46,6 +45,7 @@ import ontologizer.parser.ValuedItemAttribute;
 import ontologizer.statistics.AbstractTestCorrection;
 import ontologizer.statistics.Bonferroni;
 import ontologizer.statistics.None;
+import ontologizer.types.ByteString;
 import ontologizer.worksets.WorkSet;
 import ontologizer.worksets.WorkSetLoadThread;
 

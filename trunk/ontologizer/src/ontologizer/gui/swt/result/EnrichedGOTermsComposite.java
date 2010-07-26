@@ -18,7 +18,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import ontologizer.ByteString;
 import ontologizer.GOTermEnumerator;
 import ontologizer.GlobalPreferences;
 import ontologizer.GOTermEnumerator.GOTermAnnotatedGenes;
@@ -34,6 +33,7 @@ import ontologizer.gui.swt.Ontologizer;
 import ontologizer.gui.swt.support.GraphCanvas;
 import ontologizer.gui.swt.support.IGraphGenerationFinished;
 import ontologizer.gui.swt.support.SWTUtil;
+import ontologizer.types.ByteString;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;

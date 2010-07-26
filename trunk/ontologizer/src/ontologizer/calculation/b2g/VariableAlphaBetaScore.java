@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-import ontologizer.ByteString;
 import ontologizer.GOTermEnumerator;
 import ontologizer.go.TermID;
+import ontologizer.types.ByteString;
 
 /**
  * Score of a setting in which alpha and beta are known.

@@ -15,6 +15,7 @@ import ontologizer.go.TermContainer;
 import ontologizer.statistics.AbstractTestCorrection;
 import ontologizer.statistics.IResampling;
 import ontologizer.statistics.TestCorrectionRegistry;
+import ontologizer.types.ByteString;
 
 /**
  * The OntologizerCore class controls parsing and output of Gene Ontology

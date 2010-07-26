@@ -24,6 +24,7 @@ import ontologizer.go.TermID;
 import ontologizer.go.GOGraph.IVisitingGOVertex;
 import ontologizer.parser.ItemAttribute;
 import ontologizer.sampling.StudySetSampler;
+import ontologizer.types.ByteString;
 
 /**
  * This class holds all gene names of a study and their associated

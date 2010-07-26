@@ -6,7 +6,6 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import ontologizer.ByteString;
 import ontologizer.GOTermEnumerator;
 import ontologizer.GlobalPreferences;
 import ontologizer.PopulationSet;
@@ -24,6 +23,7 @@ import ontologizer.parser.IParserCallback;
 import ontologizer.parser.ItemAttribute;
 import ontologizer.parser.ParserFactory;
 import ontologizer.statistics.None;
+import ontologizer.types.ByteString;
 
 public class Single {
 

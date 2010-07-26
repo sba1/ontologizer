@@ -10,6 +10,7 @@ import ontologizer.parser.AbstractItemParser;
 import ontologizer.parser.IParserCallback;
 import ontologizer.parser.ItemAttribute;
 import ontologizer.parser.ParserFactory;
+import ontologizer.types.ByteString;
 
 /**
  * Create study sets conveniently

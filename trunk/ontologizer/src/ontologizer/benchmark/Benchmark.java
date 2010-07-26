@@ -14,7 +14,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import ontologizer.ByteString;
 import ontologizer.GOTermEnumerator;
 import ontologizer.GlobalPreferences;
 import ontologizer.OntologizerThreadGroups;
@@ -36,6 +35,7 @@ import ontologizer.sampling.StudySetSampler;
 import ontologizer.statistics.AbstractTestCorrection;
 import ontologizer.statistics.Bonferroni;
 import ontologizer.statistics.None;
+import ontologizer.types.ByteString;
 
 class GeneratedStudySet extends StudySet
 {
@@ -138,9 +138,9 @@ public class Benchmark
 	}
 
 	static ArrayList<Method> calcMethods;
-	static double [] calcAlpha = new double[]{/*0.05,0.1,0.25,*/0.5};
-	static double [] calcBeta = new double[]{/*0.05,0.1,0.25,*/0.5};
-	static int [] calcDesiredTerms = new int []{1/*,2,4,6,8*/};
+//	static double [] calcAlpha = new double[]{/*0.05,0.1,0.25,*/0.5};
+//	static double [] calcBeta = new double[]{/*0.05,0.1,0.25,*/0.5};
+//	static int [] calcDesiredTerms = new int []{1/*,2,4,6,8*/};
 
 	static
 	{
@@ -182,10 +182,10 @@ public class Benchmark
 		calcMethods.add(new Method("GenGO","gg"));
 		calcMethods.add(new Method("Topology-Weighted","tweight"));
 
-//		m = new Method("MGSA","b2g.em.pop");
-//		m.takePopulationAsReference = true;
-//		m.em = true;
-//		calcMethods.add(m);
+		m = new Method("MGSA","b2g.em.pop");
+		m.takePopulationAsReference = true;
+		m.em = true;
+		calcMethods.add(m);
 
 //		m = new Method("MGSA", "b2g.mcmc");
 //		m.mcmc = true;
