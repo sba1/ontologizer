@@ -6,10 +6,10 @@ import java.util.*;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 
-import ontologizer.ByteString;
 import ontologizer.go.Term;
 import ontologizer.go.TermContainer;
 import ontologizer.go.TermID;
+import ontologizer.types.ByteString;
 
 /**
  * This class is responsible for parsing GO association files. One object is

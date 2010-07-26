@@ -5,9 +5,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.logging.Logger;
 
-import ontologizer.ByteString;
 import ontologizer.association.AssociationContainer;
 import ontologizer.go.GOGraph;
+import ontologizer.types.ByteString;
 
 public class SemanticResult
 {

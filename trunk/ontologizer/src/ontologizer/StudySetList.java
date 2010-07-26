@@ -15,6 +15,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import ontologizer.types.ByteString;
+
 /**
  * Container class of all considered study sets.
  *

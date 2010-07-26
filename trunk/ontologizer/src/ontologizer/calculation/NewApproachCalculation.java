@@ -8,7 +8,6 @@ package ontologizer.calculation;
 
 import java.util.HashSet;
 
-import ontologizer.ByteString;
 import ontologizer.GOTermEnumerator;
 import ontologizer.PopulationSet;
 import ontologizer.StudySet;
@@ -19,6 +18,7 @@ import ontologizer.go.TermID;
 import ontologizer.statistics.AbstractTestCorrection;
 import ontologizer.statistics.IPValueCalculation;
 import ontologizer.statistics.PValue;
+import ontologizer.types.ByteString;
 
 public class NewApproachCalculation extends AbstractHypergeometricCalculation
 {

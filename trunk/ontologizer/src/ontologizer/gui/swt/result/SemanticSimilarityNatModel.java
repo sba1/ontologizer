@@ -8,7 +8,7 @@ import net.sourceforge.nattable.data.IColumnHeaderLabelProvider;
 import net.sourceforge.nattable.data.IDataProvider;
 import net.sourceforge.nattable.model.DefaultNatTableModel;
 import net.sourceforge.nattable.renderer.DefaultRowHeaderRenderer;
-import ontologizer.ByteString;
+import ontologizer.types.ByteString;
 
 public class SemanticSimilarityNatModel extends DefaultNatTableModel
 {

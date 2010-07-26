@@ -171,7 +171,7 @@ evaluate<-function(d)
 		l<-list(name=v[i,2],short=v[i,1])
 		
 		# precision/recall values
-		idx.dots<-cumsum(hist(recall,plot=F,breaks=25)$counts)
+		idx.dots<-cumsum(hist(recall,plot=F,breaks=15)$counts)
 		idx.lines<-cumsum(hist(recall,plot=F,breaks=300)$counts)
 		l<-c(l,prec.lines=list(prec[idx.lines]),recall.lines=list(recall[idx.lines]))
 		l<-c(l,prec.dots =list(prec[idx.dots]), recall.dots =list(recall[idx.dots]))

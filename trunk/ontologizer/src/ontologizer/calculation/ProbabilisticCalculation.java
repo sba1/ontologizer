@@ -6,7 +6,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import ontologizer.ByteString;
 import ontologizer.GOTermEnumerator;
 import ontologizer.PopulationSet;
 import ontologizer.StudySet;
@@ -14,6 +13,7 @@ import ontologizer.association.AssociationContainer;
 import ontologizer.go.GOGraph;
 import ontologizer.go.TermID;
 import ontologizer.statistics.AbstractTestCorrection;
+import ontologizer.types.ByteString;
 
 /**
  * This calculation implements the approach described in

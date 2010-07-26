@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import ontologizer.ByteString;
 import ontologizer.GOTermEnumerator;
 import ontologizer.PopulationSet;
 import ontologizer.StudySet;
@@ -14,6 +13,7 @@ import ontologizer.go.GOGraph;
 import ontologizer.go.TermID;
 import ontologizer.go.GOGraph.GOLevels;
 import ontologizer.statistics.AbstractTestCorrection;
+import ontologizer.types.ByteString;
 
 public class TopologyWeightedCalculation extends AbstractHypergeometricCalculation
 {

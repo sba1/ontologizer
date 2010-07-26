@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import ontologizer.ByteString;
 import ontologizer.PopulationSet;
 import ontologizer.StudySet;
 import ontologizer.StudySetList;
@@ -23,6 +22,7 @@ import ontologizer.go.OBOParser;
 import ontologizer.go.OBOParserException;
 import ontologizer.go.TermContainer;
 import ontologizer.statistics.TestCorrectionRegistry;
+import ontologizer.types.ByteString;
 
 /**
  * @author grossman
