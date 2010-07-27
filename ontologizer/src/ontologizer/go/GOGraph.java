@@ -600,6 +600,18 @@ public class GOGraph implements Iterable<Term>
 		return go;
 	}
 
+
+	/**
+	 * Returns whether the given term is included in the graph.
+	 * 
+	 * @param term
+	 * @return
+	 */
+	public boolean termExists(TermID term)
+	{
+		return graph.getOutDegree(getGOTerm(term)) != -1;
+	}
+
 	/**
 	 * Returns a set of induced terms that are the terms of the induced graph.
 	 * 
