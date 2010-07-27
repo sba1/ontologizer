@@ -72,6 +72,9 @@ public class GODOTWriter
 		HashSet<TermID> nodeSet = new HashSet<TermID>();
 		for (TermID term : terms)
 		{
+			if (!graph.termExists(term))
+				throw new IllegalArgumentException("Requested term " + term.toString() + " couldn't be found in the graph");
+
 			if (!nodeSet.contains(term))
 				nodeSet.addAll(graph.getTermsOfInducedGraph(rootTerm,term));
 		}
