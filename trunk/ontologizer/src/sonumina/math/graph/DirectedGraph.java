@@ -333,7 +333,7 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 	
 	public Iterator<VertexType> getAncestorNodes(VertexType vt)
 	{
-		VertexAttributes<VertexType> va = vertices.get(vt); 
+		VertexAttributes<VertexType> va = vertices.get(vt);
 		assert(va != null);
 		
 		List<VertexType> ancestors = new LinkedList<VertexType>();
