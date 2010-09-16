@@ -111,7 +111,7 @@ public class SlimDirectedGraphView<VertexType>
 			vertexDescendants[i] = createIndicesFromIter(descendants.iterator());
 
 			/* Sort them, as we require this for isDescendant() */ 
-			Arrays.sort(vertexDescendants);
+			Arrays.sort(vertexDescendants[i]);
 		}
 	}
 
