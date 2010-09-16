@@ -1,6 +1,7 @@
 package sonumina.math.graph;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -32,7 +33,7 @@ public class SlimDirectedGraphView<VertexType>
 	/** Contains the children of the term */
 	public int [][] vertexChildren;
 
-	/** Contains the descendants of the (i.e., children, grand-children, etc. */
+	/** Contains the descendants of the (i.e., children, grand-children, etc.).*/
 	public int [][] vertexDescendants;
 
 	/**
@@ -108,6 +109,9 @@ public class SlimDirectedGraphView<VertexType>
 				};
 			});
 			vertexDescendants[i] = createIndicesFromIter(descendants.iterator());
+
+			/* Sort them, as we require this for isDescendant() */
+			Arrays.sort(vertexDescendants);
 		}
 	}
 
@@ -186,5 +190,17 @@ public class SlimDirectedGraphView<VertexType>
 			vertexArray[i++] = vertex2Index.get(v);
 
 		return vertexArray;
+	}
+
+	/**
+	 * Determines whether node i is a descendant of node j.
+	 *
+	 * @param i
+	 * @param j
+	 * @return
+	 */
+	public boolean isDescendant(int i, int j)
+	{
+		return Arrays.binarySearch(vertexDescendants[i],j) > 0;
 	}
 }
