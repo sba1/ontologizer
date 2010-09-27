@@ -8,7 +8,7 @@ import ontologizer.association.AssociationParser;
 import ontologizer.calculation.CalculationRegistry;
 import ontologizer.calculation.EnrichedGOTermsResult;
 import ontologizer.calculation.ICalculation;
-import ontologizer.go.GOGraph;
+import ontologizer.go.Ontology;
 import ontologizer.go.OBOParser;
 import ontologizer.go.OBOParserException;
 import ontologizer.go.TermContainer;
@@ -85,7 +85,7 @@ public class OntologizerCore
 	private TermContainer goTerms;
 
 	/** The graph to the gene ontolgy */
-	private GOGraph goGraph;
+	private Ontology goGraph;
 
 	/** List of all studies being analyzed */
 	private StudySetList studySetList;
@@ -146,7 +146,7 @@ public class OntologizerCore
 		System.out.println(oboParser.doParse());
 		goTerms = new TermContainer(oboParser.getTermMap(), oboParser.getFormatVersion(), oboParser.getDate());
 		System.out.println("Building graph");
-		goGraph = new GOGraph(goTerms); 
+		goGraph = new Ontology(goTerms); 
 
 		/* create the study list. A directory or a single file might be given */
 		File studyFile = new File(args.studySet);
@@ -276,7 +276,7 @@ public class OntologizerCore
 		return goAssociations;
 	}
 
-	public GOGraph getGoGraph()
+	public Ontology getGoGraph()
 	{
 		return goGraph;
 	}

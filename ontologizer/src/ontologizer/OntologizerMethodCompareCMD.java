@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import ontologizer.calculation.EnrichedGOTermsResult;
-import ontologizer.go.GOGraph;
+import ontologizer.go.Ontology;
 import ontologizer.go.OBOParser;
 import ontologizer.go.OBOParserException;
 import ontologizer.go.TermContainer;
@@ -173,7 +173,7 @@ public class OntologizerMethodCompareCMD
 			System.out.println(oboParser.doParse());
 			TermContainer goTerms = new TermContainer(oboParser.getTermMap(), oboParser.getFormatVersion(), oboParser.getDate());
 			System.out.println("Building graph");
-			GOGraph graph = new GOGraph(goTerms); 
+			Ontology graph = new Ontology(goTerms); 
 			
 			DOTDumper dotDumper = new DOTDumper(graph);
 			double alpha = 0.05;

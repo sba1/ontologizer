@@ -21,7 +21,7 @@ import ontologizer.calculation.EnrichedGOTermsResult;
 import ontologizer.calculation.b2g.B2GParam;
 import ontologizer.calculation.b2g.Bayes2GOCalculation;
 import ontologizer.calculation.b2g.Bayes2GOGOTermProperties;
-import ontologizer.go.GOGraph;
+import ontologizer.go.Ontology;
 import ontologizer.go.TermID;
 import ontologizer.parser.AbstractItemParser;
 import ontologizer.parser.IParserCallback;
@@ -68,7 +68,7 @@ public class Randomize {
 
 		Datafiles df = new Datafiles(oboPath,assocPath);
 		final AssociationContainer assoc = df.assoc;
-		final GOGraph graph = df.graph;
+		final Ontology graph = df.graph;
 		
 		graph.setRelevantSubontology("biological_process");
 

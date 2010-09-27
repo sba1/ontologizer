@@ -9,9 +9,9 @@ import ontologizer.PopulationSet;
 import ontologizer.StudySet;
 import ontologizer.GOTermEnumerator.GOTermAnnotatedGenes;
 import ontologizer.association.AssociationContainer;
-import ontologizer.go.GOGraph;
+import ontologizer.go.Ontology;
 import ontologizer.go.TermID;
-import ontologizer.go.GOGraph.GOLevels;
+import ontologizer.go.Ontology.GOLevels;
 import ontologizer.statistics.AbstractTestCorrection;
 import ontologizer.types.ByteString;
 
@@ -21,7 +21,7 @@ public class TopCalculation extends AbstractHypergeometricCalculation
 
 	private HashMap<TermID,HashSet<ByteString>> markedGenesMap;
 
-	private void calculateTerm(GOGraph graph,
+	private void calculateTerm(Ontology graph,
 			AssociationContainer goAssociations, PopulationSet populationSet,
 			StudySet studySet, AbstractTestCorrection testCorrection, TermID term,
 			EnrichedGOTermsResult studySetResult, GOTermEnumerator studyTermEnumerator, GOTermEnumerator populationTermEnumerator)
@@ -123,7 +123,7 @@ public class TopCalculation extends AbstractHypergeometricCalculation
 		studySetResult.addGOTermProperties(myP);
 	}
 
-	private HashSet<ByteString> calculateTermNew(GOGraph graph,
+	private HashSet<ByteString> calculateTermNew(Ontology graph,
 			AssociationContainer goAssociations, PopulationSet populationSet,
 			StudySet studySet, AbstractTestCorrection testCorrection, TermID term,
 			EnrichedGOTermsResult studySetResult, GOTermEnumerator studyTermEnumerator, GOTermEnumerator populationTermEnumerator)
@@ -226,7 +226,7 @@ public class TopCalculation extends AbstractHypergeometricCalculation
 		return markedGenes;
 	}
 
-	public EnrichedGOTermsResult calculateStudySet(GOGraph graph,
+	public EnrichedGOTermsResult calculateStudySet(Ontology graph,
 			AssociationContainer goAssociations, PopulationSet populationSet,
 			StudySet studySet, AbstractTestCorrection testCorrection)
 	{

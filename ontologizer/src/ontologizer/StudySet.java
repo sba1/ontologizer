@@ -18,10 +18,10 @@ import ontologizer.GOTermEnumerator.GOTermAnnotatedGenes;
 import ontologizer.association.Association;
 import ontologizer.association.AssociationContainer;
 import ontologizer.association.Gene2Associations;
-import ontologizer.go.GOGraph;
+import ontologizer.go.Ontology;
 import ontologizer.go.Term;
 import ontologizer.go.TermID;
-import ontologizer.go.GOGraph.IVisitingGOVertex;
+import ontologizer.go.Ontology.IVisitingGOVertex;
 import ontologizer.parser.ItemAttribute;
 import ontologizer.sampling.StudySetSampler;
 import ontologizer.types.ByteString;
@@ -373,7 +373,7 @@ public class StudySet implements Iterable<ByteString>
 	 * @param goTerms
      * @param associationContainer
 	 */
-	public synchronized GOTermCounter countGOTerms(GOGraph graph, AssociationContainer associationContainer)
+	public synchronized GOTermCounter countGOTerms(Ontology graph, AssociationContainer associationContainer)
 	{
 		/* Return cached enumerator if available */
 		if (goTermCounter != null) return goTermCounter;
@@ -391,7 +391,7 @@ public class StudySet implements Iterable<ByteString>
 		return goTermCounter;
 	}
 	
-	public GOTermEnumerator enumerateGOTerms(GOGraph graph, AssociationContainer associationContainer)
+	public GOTermEnumerator enumerateGOTerms(Ontology graph, AssociationContainer associationContainer)
 	{
 		return enumerateGOTerms(graph, associationContainer, null);
 	}
@@ -405,7 +405,7 @@ public class StudySet implements Iterable<ByteString>
      * @param associationContainer
      * @param evidences
 	 */
-	public synchronized GOTermEnumerator enumerateGOTerms(GOGraph graph, AssociationContainer associationContainer, Set<ByteString> evidences)
+	public synchronized GOTermEnumerator enumerateGOTerms(Ontology graph, AssociationContainer associationContainer, Set<ByteString> evidences)
 	{
 		/* Return cached enumerator if available */
 		if (goTermEnumerator != null) return goTermEnumerator;
@@ -533,7 +533,7 @@ public class StudySet implements Iterable<ByteString>
 	 * @param associations
 	 * @param file
 	 */
-	public void writeMinimumSubsumerMatrix(final GOGraph graph,  AssociationContainer associations, File file)
+	public void writeMinimumSubsumerMatrix(final Ontology graph,  AssociationContainer associations, File file)
 	{
 		GOTermEnumerator enumerator = goTermEnumerator;
 
@@ -654,7 +654,7 @@ public class StudySet implements Iterable<ByteString>
 	 * @param associations
 	 * @param file
 	 */
-	public void writeTermAnnotatedGenes(GOGraph graph, AssociationContainer associations, File file)
+	public void writeTermAnnotatedGenes(Ontology graph, AssociationContainer associations, File file)
 	{
 		GOTermEnumerator enumerator = goTermEnumerator;
 
@@ -699,7 +699,7 @@ public class StudySet implements Iterable<ByteString>
 	 * @param associations specifies the associations
 	 * @param file defines the file to which is written to
 	 */
-	public void writeSetWithAnnotations(GOGraph graph, AssociationContainer associations, File file)
+	public void writeSetWithAnnotations(Ontology graph, AssociationContainer associations, File file)
 	{
 		try
 		{

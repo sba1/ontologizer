@@ -17,7 +17,7 @@ import java.util.Set;
 import ontologizer.association.Association;
 import ontologizer.association.AssociationContainer;
 import ontologizer.association.Gene2Associations;
-import ontologizer.go.GOGraph;
+import ontologizer.go.Ontology;
 import ontologizer.go.Term;
 import ontologizer.go.TermID;
 import ontologizer.types.ByteString;
@@ -70,7 +70,7 @@ public class GeneEditor extends Composite
 {
 	private static String currentImportStudyFileName;
 
-	private GOGraph graph;
+	private Ontology graph;
 	private AssociationContainer assoc;
 
 	private Shell tipShell;

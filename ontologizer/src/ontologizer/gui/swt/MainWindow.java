@@ -31,7 +31,7 @@ import java.util.zip.ZipOutputStream;
 
 import ontologizer.association.AssociationContainer;
 import ontologizer.calculation.CalculationRegistry;
-import ontologizer.go.GOGraph;
+import ontologizer.go.Ontology;
 import ontologizer.go.Subset;
 import ontologizer.go.Term;
 import ontologizer.gui.swt.support.SWTUtil;
@@ -647,7 +647,7 @@ public class MainWindow extends ApplicationWindow
 								{
 									public void run()
 									{
-										GOGraph graph = WorkSetLoadThread.getGraph(currentWorkSet.getOboPath());
+										Ontology graph = WorkSetLoadThread.getGraph(currentWorkSet.getOboPath());
 										AssociationContainer assoc = WorkSetLoadThread.getAssociations(currentWorkSet.getAssociationPath());
 										
 										if (graph != null)

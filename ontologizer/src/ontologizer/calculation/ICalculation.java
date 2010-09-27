@@ -4,7 +4,7 @@ package ontologizer.calculation;
 import ontologizer.PopulationSet;
 import ontologizer.StudySet;
 import ontologizer.association.AssociationContainer;
-import ontologizer.go.GOGraph;
+import ontologizer.go.Ontology;
 import ontologizer.statistics.AbstractTestCorrection;
 
 /**
@@ -40,7 +40,7 @@ public interface ICalculation
 	 * @return the result of the calculation
 	 */
 	public EnrichedGOTermsResult calculateStudySet(
-			GOGraph graph,
+			Ontology graph,
 			AssociationContainer goAssociations,
 			PopulationSet populationSet,
 			StudySet studySet,

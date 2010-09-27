@@ -15,7 +15,7 @@ import net.sourceforge.nattable.NatTable;
 import ontologizer.GlobalPreferences;
 import ontologizer.association.Gene2Associations;
 import ontologizer.calculation.SemanticResult;
-import ontologizer.go.GOGraph;
+import ontologizer.go.Ontology;
 import ontologizer.go.TermID;
 import ontologizer.gui.swt.support.GraphCanvas;
 import ontologizer.gui.swt.support.IGraphCanvas;
@@ -263,7 +263,7 @@ public class SemanticSimilarityComposite extends Composite implements IGraphActi
 		private HashSet<TermID> gene1Set = new HashSet<TermID>();
 		private HashSet<TermID> gene2Set = new HashSet<TermID>();
 
-		public SemanticGOGraphGenerationThread(ByteString g1, ByteString g2, Display display, GOGraph graph, String dotCMDPath)
+		public SemanticGOGraphGenerationThread(ByteString g1, ByteString g2, Display display, Ontology graph, String dotCMDPath)
 		{
 			super(display, graph, dotCMDPath);
 
