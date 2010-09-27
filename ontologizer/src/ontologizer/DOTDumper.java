@@ -203,7 +203,7 @@ public class DOTDumper
 
 				for (TermID sourceID : graph.getTermParents(destID))
 				{
-					Term source = graph.getGOTerm(sourceID);
+					Term source = graph.getTerm(sourceID);
 					if (nodeMap.containsKey(source))
 						out.write(sourceID.id + " -> " + destID.id + ";\n");
 				}

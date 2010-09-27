@@ -459,7 +459,7 @@ public class WorkSetLoadThread extends Thread
 			{
 				workSetProgress.message("Parsing association file");
 				workSetProgress.updateGauge(0);
-				AssociationParser ap = new AssociationParser(assocName,graph.getGoTermContainer(),null,new IAssociationParserProgress()
+				AssociationParser ap = new AssociationParser(assocName,graph.getTermContainer(),null,new IAssociationParserProgress()
 				{
 					public void init(int max)
 					{

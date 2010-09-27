@@ -110,8 +110,8 @@ public class GODOTWriter
 				{
 					if (nodeSet.contains(source.termid))
 					{
-						String sourceName = graph.getGOTerm(source.termid).getName();
-						String destName = graph.getGOTerm(destID).getName();
+						String sourceName = graph.getTerm(source.termid).getName();
+						String destName = graph.getTerm(destID).getName();
 						String edgeAttributes = "";
 
 						if (edgeLabels)

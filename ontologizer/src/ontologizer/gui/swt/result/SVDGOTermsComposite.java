@@ -322,7 +322,7 @@ public class SVDGOTermsComposite extends AbstractResultComposite
 					SVDGOTermProperties prop = (SVDGOTermProperties)result.getGOTermProperties(id);
 					attrString.append(id.toString());
 					attrString.append("\\n");
-					attrString.append(go.getGOTerm(id).getName());
+					attrString.append(go.getTerm(id).getName());
 				}
 				attrString.append("\"");
 				

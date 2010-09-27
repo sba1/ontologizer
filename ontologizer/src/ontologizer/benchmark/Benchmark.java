@@ -263,7 +263,7 @@ public class Benchmark
 		for (TermID tid : completePopEnumerator)
 		{
 			if (tid.id == 8150)
-				System.out.println(tid + " " + completePopEnumerator.getAnnotatedGenes(tid).totalAnnotatedCount() + " " + graph.getGOTerm(tid).getNamespaceAsString());
+				System.out.println(tid + " " + completePopEnumerator.getAnnotatedGenes(tid).totalAnnotatedCount() + " " + graph.getTerm(tid).getNamespaceAsString());
 		}
 		
 		final ByteString [] allGenesArray = completePop.getGenes();
