@@ -123,7 +123,7 @@ public class NewApproachCalculation extends AbstractHypergeometricCalculation
 					}
 
 					myP = new TermForTermGOTermProperties();
-					myP.goTerm = graph.getGOTerm(term);
+					myP.goTerm = graph.getTerm(term);
 					myP.annotatedStudyGenes = studyTermAnnotatedGeneCount;
 					myP.annotatedPopulationGenes = populationTermAnnotatedGeneCount;
 
@@ -242,8 +242,8 @@ public class NewApproachCalculation extends AbstractHypergeometricCalculation
 		};
 
 		// *** For debugging purposes
-		fixedGOTerms.add(graph.getGOTerm(new TermID(6807)));
-		fixedGOTerms.add(graph.getGOTerm(new TermID(8652)));
+		fixedGOTerms.add(graph.getTerm(new TermID(6807)));
+		fixedGOTerms.add(graph.getTerm(new TermID(8652)));
 
 		for (int k = 0; k < 1; k++)
 		{

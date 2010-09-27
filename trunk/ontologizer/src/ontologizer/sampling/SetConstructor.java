@@ -443,10 +443,10 @@ public class SetConstructor
 					{ bioproc, cellcomp, molfunc };
 					for (TermID tid : mainTerms)
 					{
-						NamespaceEnum ns = Namespace.getNamespaceEnum(graph.getGOTerm(tid).getNamespace());
+						NamespaceEnum ns = Namespace.getNamespaceEnum(graph.getTerm(tid).getNamespace());
 						HashSet<TermID> thisGoodTerms = new HashSet<TermID>();
 						for (TermID gtid : goodTerms) {
-							NamespaceEnum gns = Namespace.getNamespaceEnum(graph.getGOTerm(gtid).getNamespace());
+							NamespaceEnum gns = Namespace.getNamespaceEnum(graph.getTerm(gtid).getNamespace());
 							if (ns == gns)
 								thisGoodTerms.add(gtid);
 						}

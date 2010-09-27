@@ -93,7 +93,7 @@ public class GOTermCounter implements Iterable<TermID>
 	/** Add direct annotation */
 	private void addDirect(TermID id)
 	{
-		Term gt = graph.getGOTerm(id);
+		Term gt = graph.getTerm(id);
 		AssociationCounter ac = null;
 		if (gt == null)
 		{
@@ -148,7 +148,7 @@ public class GOTermCounter implements Iterable<TermID>
 	/** Add to total (direct + indirect) annotation */
 	private void addTotal(TermID id)
 	{
-		Term gt = graph.getGOTerm(id);
+		Term gt = graph.getTerm(id);
 		AssociationCounter ac = null;
 		if (gt == null)
 		{

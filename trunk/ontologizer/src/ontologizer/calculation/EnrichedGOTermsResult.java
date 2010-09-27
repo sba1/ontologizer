@@ -218,7 +218,7 @@ public class EnrichedGOTermsResult extends AbstractGOTermsResult
 					attributes.append(id.toString());
 					attributes.append("\\n");
 
-					String label = graph.getGOTerm(id).getName();
+					String label = graph.getTerm(id).getName();
 					if (GlobalPreferences.getWrapColumn() != -1)
 						label = Util.wrapLine(label,"\\n",GlobalPreferences.getWrapColumn());
 

@@ -83,7 +83,7 @@ public class TermForTermCalculation extends AbstractHypergeometricCalculation
 					int goidAnnotatedStudyGeneCount = studyTermEnumerator.getAnnotatedGenes(term).totalAnnotatedCount();
 
 					myP = new TermForTermGOTermProperties();
-					myP.goTerm = graph.getGOTerm(term);
+					myP.goTerm = graph.getTerm(term);
 					myP.annotatedStudyGenes = goidAnnotatedStudyGeneCount;
 					myP.annotatedPopulationGenes = goidAnnotatedPopGeneCount;
 
