@@ -15,7 +15,7 @@ import ontologizer.association.AssociationContainer;
 import ontologizer.chisquare.ChiSquare;
 import ontologizer.chisquare.ChiSquare2P;
 import ontologizer.chisquare.ChiSquareIncompatibleCountsException;
-import ontologizer.go.GOGraph;
+import ontologizer.go.Ontology;
 import ontologizer.go.TermID;
 import ontologizer.statistics.AbstractTestCorrection;
 
@@ -42,7 +42,7 @@ public class ChiSquareQCalculation implements ICalculation
 		return null;
 	}
 
-	public EnrichedGOTermsResult calculateStudySet(GOGraph graph,
+	public EnrichedGOTermsResult calculateStudySet(Ontology graph,
 			AssociationContainer goAssociations, PopulationSet populationSet,
 			StudySet studySet, AbstractTestCorrection testCorrection)
 	{

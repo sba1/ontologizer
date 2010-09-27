@@ -8,10 +8,10 @@ import java.util.HashMap;
 
 import ontologizer.calculation.AbstractGOTermProperties;
 import ontologizer.calculation.EnrichedGOTermsResult;
-import ontologizer.go.GOGraph;
+import ontologizer.go.Ontology;
 import ontologizer.go.Term;
 import ontologizer.go.TermID;
-import ontologizer.go.GOGraph.IVisitingGOVertex;
+import ontologizer.go.Ontology.IVisitingGOVertex;
 
 /**
  * A class writing dot files for the comparision of different calculation
@@ -76,7 +76,7 @@ public class DOTDumper
 		}
 	}
 
-	private GOGraph graph;
+	private Ontology graph;
 
 	/* TODO: Add more colors */
 	private final String someColors[] = new String[] {"#888888", "#222222", "green", "blue", "violet"};
@@ -85,7 +85,7 @@ public class DOTDumper
 	 * @param terms
 	 * @param graph
 	 */
-	public DOTDumper(GOGraph graph)
+	public DOTDumper(Ontology graph)
 	{
 		this.graph = graph;
 	}
@@ -220,7 +220,7 @@ public class DOTDumper
 	public class MultResultNodeVisitor implements IVisitingGOVertex
 	{
 		public HashMap<Term, MultResultNode> nodeMap;
-		public GOGraph graph;
+		public Ontology graph;
 		public int rows, cols;
 
 		/**
@@ -228,7 +228,7 @@ public class DOTDumper
 		 * @param map
 		 * @param results
 		 */
-		public MultResultNodeVisitor(GOGraph goGraph, HashMap<Term, MultResultNode> map, int nRows, int nCols)
+		public MultResultNodeVisitor(Ontology goGraph, HashMap<Term, MultResultNode> map, int nRows, int nCols)
 		{
 			graph = goGraph;
 			nodeMap = map;

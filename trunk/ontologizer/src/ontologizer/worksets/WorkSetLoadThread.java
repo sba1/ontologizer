@@ -18,7 +18,7 @@ import ontologizer.FileCache.FileCacheUpdateCallback;
 import ontologizer.association.AssociationContainer;
 import ontologizer.association.AssociationParser;
 import ontologizer.association.IAssociationParserProgress;
-import ontologizer.go.GOGraph;
+import ontologizer.go.Ontology;
 import ontologizer.go.IOBOParserProgress;
 import ontologizer.go.OBOParser;
 import ontologizer.go.OBOParserException;
@@ -173,7 +173,7 @@ public class WorkSetLoadThread extends Thread
 		return wslt.assocMap.get(localPath);
 	}
 
-	public static GOGraph getGraph(String oboPath)
+	public static Ontology getGraph(String oboPath)
 	{
 		String localPath = FileCache.getLocalFileName(oboPath);
 		if (localPath == null) return null;
@@ -181,7 +181,7 @@ public class WorkSetLoadThread extends Thread
 	}
 
 	/* Private attributes */
-	private Map<String,GOGraph> graphMap = Collections.synchronizedMap(new HashMap<String,GOGraph>());
+	private Map<String,Ontology> graphMap = Collections.synchronizedMap(new HashMap<String,Ontology>());
 	private Map<String,AssociationContainer> assocMap = Collections.synchronizedMap(new HashMap<String,AssociationContainer>());
 
 	private BlockingQueue<Message> messageQueue = new LinkedBlockingQueue<Message>();
@@ -406,9 +406,9 @@ public class WorkSetLoadThread extends Thread
 	 * @throws IOException
 	 * @throws OBOParserException
 	 */
-	private GOGraph loadGraph(String oboName, final IWorkSetProgress workSetProgress) throws IOException, OBOParserException
+	private Ontology loadGraph(String oboName, final IWorkSetProgress workSetProgress) throws IOException, OBOParserException
 	{
-		GOGraph graph;
+		Ontology graph;
 		if (!graphMap.containsKey(oboName))
 		{
 			OBOParser oboParser = new OBOParser(oboName);
@@ -429,7 +429,7 @@ public class WorkSetLoadThread extends Thread
 			});
 			TermContainer goTerms = new TermContainer(oboParser.getTermMap(), oboParser.getFormatVersion(), oboParser.getDate());
 			workSetProgress.message("Building GO graph");
-			graph = new GOGraph(goTerms);
+			graph = new Ontology(goTerms);
 			graphMap.put(oboName,graph);
 		} else
 		{
@@ -453,7 +453,7 @@ public class WorkSetLoadThread extends Thread
 
 		try
 		{
-			GOGraph graph = loadGraph(oboName, workSetProgress);
+			Ontology graph = loadGraph(oboName, workSetProgress);
 
 			if (!assocMap.containsKey(assocName))
 			{

@@ -6,7 +6,7 @@ import java.util.HashSet;
 import ontologizer.GODOTWriter;
 import ontologizer.AbstractDotAttributesProvider;
 import ontologizer.calculation.AbstractGOTermsResult;
-import ontologizer.go.GOGraph;
+import ontologizer.go.Ontology;
 import ontologizer.go.Term;
 import ontologizer.go.TermID;
 import ontologizer.gui.swt.support.IGraphGenerationFinished;
@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.Display;
  */
 public class GraphGenerationThread extends NewGraphGenerationThread
 {
-	public GOGraph go;
+	public Ontology go;
 	public Term emanatingTerm;
 	public HashSet<TermID> leafTerms = new HashSet<TermID>();
 	public AbstractGOTermsResult result;

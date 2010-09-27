@@ -11,7 +11,7 @@ import ontologizer.AbstractDotAttributesProvider;
 import ontologizer.association.AssociationContainer;
 import ontologizer.calculation.AbstractGOTermProperties;
 import ontologizer.calculation.AbstractGOTermsResult;
-import ontologizer.go.GOGraph;
+import ontologizer.go.Ontology;
 import ontologizer.go.Term;
 import ontologizer.go.TermID;
 import ontologizer.gui.swt.ISimpleAction;
@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.MessageBox;
 public abstract class AbstractResultComposite extends Composite
 {
 	/** The GO graph */
-	protected GOGraph go;
+	protected Ontology go;
 
 	/** The association container */
 	protected AssociationContainer associationContainer;

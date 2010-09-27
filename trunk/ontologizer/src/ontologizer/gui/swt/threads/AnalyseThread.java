@@ -18,7 +18,7 @@ import ontologizer.calculation.ICalculation;
 import ontologizer.calculation.ICalculationProgress;
 import ontologizer.calculation.b2g.B2GParam;
 import ontologizer.calculation.b2g.Bayes2GOCalculation;
-import ontologizer.go.GOGraph;
+import ontologizer.go.Ontology;
 import ontologizer.go.IOBOParserProgress;
 import ontologizer.go.OBOParser;
 import ontologizer.go.TermContainer;
@@ -225,7 +225,7 @@ public class AnalyseThread extends AbstractOntologizerThread
 			display.asyncExec(new ResultAppendLogRunnable(diag));
 			display.asyncExec(new ResultAppendLogRunnable("Building GO graph"));
 			TermContainer goTerms = new TermContainer(oboParser.getTermMap(), oboParser.getFormatVersion(), oboParser.getDate());
-			GOGraph goGraph = new GOGraph(goTerms);
+			Ontology goGraph = new Ontology(goTerms);
 			if (subsetName != null) goGraph.setRelevantSubset(subsetName);
 			if (subontologyName != null) goGraph.setRelevantSubontology(subontologyName);
 

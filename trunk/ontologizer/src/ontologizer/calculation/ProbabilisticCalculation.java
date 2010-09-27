@@ -10,7 +10,7 @@ import ontologizer.GOTermEnumerator;
 import ontologizer.PopulationSet;
 import ontologizer.StudySet;
 import ontologizer.association.AssociationContainer;
-import ontologizer.go.GOGraph;
+import ontologizer.go.Ontology;
 import ontologizer.go.TermID;
 import ontologizer.statistics.AbstractTestCorrection;
 import ontologizer.types.ByteString;
@@ -210,7 +210,7 @@ public class ProbabilisticCalculation implements ICalculation
 		 * @param graph
 		 * @return
 		 */
-		private double optimizeForTerms(GOGraph graph)
+		private double optimizeForTerms(Ontology graph)
 		{
 			/* No active terms in the init phase. */
 			activeTerms.clear();
@@ -281,7 +281,7 @@ public class ProbabilisticCalculation implements ICalculation
 		this.defaultQ = defaultQ;
 	}
 
-	public EnrichedGOTermsResult calculateStudySet(GOGraph graph,
+	public EnrichedGOTermsResult calculateStudySet(Ontology graph,
 			AssociationContainer goAssociations, PopulationSet populationSet,
 			StudySet studySet, AbstractTestCorrection testCorrection)
 	{

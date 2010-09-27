@@ -6,7 +6,7 @@ import java.io.IOException;
 
 import ontologizer.FileCache;
 import ontologizer.association.AssociationContainer;
-import ontologizer.go.GOGraph;
+import ontologizer.go.Ontology;
 import ontologizer.worksets.WorkSet;
 import ontologizer.worksets.WorkSetLoadThread;
 
@@ -17,7 +17,7 @@ import ontologizer.worksets.WorkSetLoadThread;
  */
 public class Datafiles
 {
-	public GOGraph graph;
+	public Ontology graph;
 	public AssociationContainer assoc;
 
 	public Datafiles(String oboName, String assocName) throws InterruptedException, IOException

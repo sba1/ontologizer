@@ -7,7 +7,7 @@ import ontologizer.GOTermEnumerator;
 import ontologizer.PopulationSet;
 import ontologizer.StudySet;
 import ontologizer.association.AssociationContainer;
-import ontologizer.go.GOGraph;
+import ontologizer.go.Ontology;
 import ontologizer.go.TermID;
 import ontologizer.statistics.AbstractTestCorrection;
 import ontologizer.statistics.IPValueCalculation;
@@ -31,7 +31,7 @@ public class ParentChildCalculation extends
 	}
 
 	public EnrichedGOTermsResult calculateStudySet(
-			GOGraph graph,
+			Ontology graph,
 			AssociationContainer goAssociations,
 			PopulationSet popSet,
 			StudySet studySet,
@@ -55,7 +55,7 @@ public class ParentChildCalculation extends
 			/*
 			 * We basically have the arguments of calculateStudy as fields
 			 */
-			public GOGraph graph;
+			public Ontology graph;
 			public AssociationContainer goAssociations;
 			public PopulationSet populationSet;
 			public GOTermEnumerator popTermEnumerator;
@@ -102,7 +102,7 @@ public class ParentChildCalculation extends
 
 			private ParentChildGOTermProperties calculateTerm(
 					TermID term,
-					GOGraph graph,
+					Ontology graph,
 					GOTermEnumerator popTermEnumerator,
 					GOTermEnumerator studyTermEnumerator)
 			{

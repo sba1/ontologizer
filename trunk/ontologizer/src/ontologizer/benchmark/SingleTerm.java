@@ -21,7 +21,7 @@ import ontologizer.calculation.AbstractGOTermProperties;
 import ontologizer.calculation.EnrichedGOTermsResult;
 import ontologizer.calculation.ICalculation;
 import ontologizer.calculation.TermForTermCalculation;
-import ontologizer.go.GOGraph;
+import ontologizer.go.Ontology;
 import ontologizer.go.Term;
 import ontologizer.go.TermID;
 import ontologizer.go.TermRelation;
@@ -45,7 +45,7 @@ class B2GTestParameter
 public class SingleTerm
 {
 	private static AssociationContainer assoc;
-	private static GOGraph graph;
+	private static Ontology graph;
 
 	/**
 	 * A test procedure.

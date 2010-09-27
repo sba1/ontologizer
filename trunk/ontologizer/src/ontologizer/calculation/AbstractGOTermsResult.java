@@ -15,7 +15,7 @@ import java.util.Iterator;
 import ontologizer.GODOTWriter;
 import ontologizer.AbstractDotAttributesProvider;
 import ontologizer.association.AssociationContainer;
-import ontologizer.go.GOGraph;
+import ontologizer.go.Ontology;
 import ontologizer.go.Term;
 import ontologizer.go.TermID;
 
@@ -37,7 +37,7 @@ public class AbstractGOTermsResult implements Iterable<AbstractGOTermProperties>
 	private int index = 0;
 
 	/** The GO Graph */
-	protected GOGraph go;
+	protected Ontology go;
 
 	/** The association container */
 	private AssociationContainer associations;
@@ -48,7 +48,7 @@ public class AbstractGOTermsResult implements Iterable<AbstractGOTermProperties>
 	 * @param newGO
 	 * @param newAssociations
 	 */
-	public AbstractGOTermsResult(GOGraph newGO, AssociationContainer newAssociations)
+	public AbstractGOTermsResult(Ontology newGO, AssociationContainer newAssociations)
 	{
 		this.go = newGO;
 		this.associations = newAssociations;
@@ -130,7 +130,7 @@ public class AbstractGOTermsResult implements Iterable<AbstractGOTermProperties>
 	 *
 	 * @return
 	 */
-	public GOGraph getGO()
+	public Ontology getGO()
 	{
 		return go;
 	}
@@ -156,7 +156,7 @@ public class AbstractGOTermsResult implements Iterable<AbstractGOTermProperties>
 	 * @param provider
 	 *          should provide for every property an appropiate id.
 	 */
-	public void writeDOT(GOGraph graph, File file, TermID rootTerm, HashSet<TermID> terms, AbstractDotAttributesProvider provider)
+	public void writeDOT(Ontology graph, File file, TermID rootTerm, HashSet<TermID> terms, AbstractDotAttributesProvider provider)
 	{
 		if (list.isEmpty())
 			return;

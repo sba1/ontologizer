@@ -3,7 +3,7 @@ package ontologizer.calculation;
 import ontologizer.PopulationSet;
 import ontologizer.StudySet;
 import ontologizer.association.AssociationContainer;
-import ontologizer.go.GOGraph;
+import ontologizer.go.Ontology;
 import ontologizer.go.Term;
 import ontologizer.statistics.AbstractTestCorrection;
 import ontologizer.statistics.IPValueCalculation;
@@ -39,7 +39,7 @@ public class IndependentUniformCalculation implements ICalculation
 	 *
 	 * @return
 	 */
-	public EnrichedGOTermsResult calculateStudySet(GOGraph graph,
+	public EnrichedGOTermsResult calculateStudySet(Ontology graph,
 			AssociationContainer goAssociations, PopulationSet populationSet,
 			StudySet studySet, AbstractTestCorrection testCorrection)
 	{
@@ -60,7 +60,7 @@ public class IndependentUniformCalculation implements ICalculation
 			public PopulationSet populationSet;
 			public StudySet observedStudySet;
 
-			public GOGraph graph;
+			public Ontology graph;
 
 			public int currentStudySetSize()
 			{
