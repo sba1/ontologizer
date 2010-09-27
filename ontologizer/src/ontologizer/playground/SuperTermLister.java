@@ -11,7 +11,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import ontologizer.go.GOGraph;
+import ontologizer.go.Ontology;
 import ontologizer.go.OBOParser;
 import ontologizer.go.OBOParserException;
 import ontologizer.go.Term;
@@ -86,7 +86,7 @@ public class SuperTermLister
 			System.err.println(oboParser.doParse());
 			TermContainer goTerms = new TermContainer(oboParser.getTermMap(), oboParser.getFormatVersion(), oboParser.getDate());
 			System.err.println("Building graph");
-			GOGraph graph = new GOGraph(goTerms);
+			Ontology graph = new Ontology(goTerms);
 
 			/* making outDir if necessary */
 			File outDir = null;
@@ -111,7 +111,7 @@ public class SuperTermLister
 				BufferedWriter termOut = new BufferedWriter(new FileWriter(termFile));
 
 				/* A visitor which simply writes the terms out into termOut */
-				class Visitor implements GOGraph.IVisitingGOVertex
+				class Visitor implements Ontology.IVisitingGOVertex
 				{
 					public BufferedWriter out;
 

@@ -49,9 +49,9 @@ class GOEdge extends Edge<Term>
  *
  * @author Sebastian Bauer
  */
-public class GOGraph implements Iterable<Term>
+public class Ontology implements Iterable<Term>
 {
-	private static Logger logger = Logger.getLogger(GOGraph.class.getCanonicalName());
+	private static Logger logger = Logger.getLogger(Ontology.class.getCanonicalName());
 
 	/** The graph */
 	private DirectedGraph<Term> graph;
@@ -73,7 +73,7 @@ public class GOGraph implements Iterable<Term>
 	 *
 	 * @param termContainer
 	 */
-	public GOGraph(TermContainer newTermContainer)
+	public Ontology(TermContainer newTermContainer)
 	{
 		this.termContainer = newTermContainer;
 
@@ -111,9 +111,9 @@ public class GOGraph implements Iterable<Term>
 	 * @param termIDs
 	 * @return
 	 */
-	public GOGraph getInducedGraph(Collection<TermID> termIDs)
+	public Ontology getInducedGraph(Collection<TermID> termIDs)
 	{
-		GOGraph subgraph = new GOGraph();
+		Ontology subgraph = new Ontology();
 		HashSet<Term> allTerms = new HashSet<Term>();
 
 		for (TermID tid : termIDs)
@@ -216,7 +216,7 @@ public class GOGraph implements Iterable<Term>
 		}
 	}
 
-	private GOGraph() { }
+	private Ontology() { }
 
 	/**
 	 * Determines whether the given id is the id of the (possible artifactial)
@@ -630,7 +630,7 @@ public class GOGraph implements Iterable<Term>
 		 */
 		class Visitor implements IVisitingGOVertex
 		{
-			public GOGraph graph;
+			public Ontology graph;
 			public HashSet<TermID> nodeSet;
 
 			public boolean visited(Term term)
@@ -787,7 +787,7 @@ public class GOGraph implements Iterable<Term>
 
 		if ((getRelevantSubontology() != null && !isRootTerm(getRelevantSubontology())) || getRelevantSubset() != null)
 		{
-			GOGraph ontologyTransGraph = getGraphOfRelevantTerms();
+			Ontology ontologyTransGraph = getGraphOfRelevantTerms();
 			transGraph = ontologyTransGraph.graph;
 			transRoot = ontologyTransGraph.getRootTerm();
 		} else
@@ -1011,7 +1011,7 @@ public class GOGraph implements Iterable<Term>
 	 *
 	 * @return
 	 */
-	private GOGraph getGraphOfRelevantTerms()
+	private Ontology getGraphOfRelevantTerms()
 	{
 		HashSet<Term> terms = new HashSet<Term>();
 		for (Term t : this)
@@ -1019,7 +1019,7 @@ public class GOGraph implements Iterable<Term>
 
 		DirectedGraph<Term> trans = graph.pathMaintainingSubGraph(terms);
 
-		GOGraph g = new GOGraph();
+		Ontology g = new Ontology();
 		g.graph = trans;
 		g.termContainer = termContainer;
 		g.assignLevel1TermsAndFixRoot();

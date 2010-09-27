@@ -6,14 +6,14 @@ import java.io.PrintWriter;
 import java.util.logging.Logger;
 
 import ontologizer.association.AssociationContainer;
-import ontologizer.go.GOGraph;
+import ontologizer.go.Ontology;
 import ontologizer.types.ByteString;
 
 public class SemanticResult
 {
 	private static Logger logger = Logger.getLogger(EnrichedGOTermsResult.class.getCanonicalName());
 
-	public GOGraph g;
+	public Ontology g;
 	public AssociationContainer assoc;
 
 	public ByteString [] names;

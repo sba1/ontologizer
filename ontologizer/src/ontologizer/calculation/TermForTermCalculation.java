@@ -5,7 +5,7 @@ import ontologizer.GOTermEnumerator;
 import ontologizer.PopulationSet;
 import ontologizer.StudySet;
 import ontologizer.association.AssociationContainer;
-import ontologizer.go.GOGraph;
+import ontologizer.go.Ontology;
 import ontologizer.go.TermID;
 import ontologizer.statistics.AbstractTestCorrection;
 import ontologizer.statistics.IPValueCalculation;
@@ -40,7 +40,7 @@ public class TermForTermCalculation extends AbstractHypergeometricCalculation
 	 * @return
 	 */
 	public EnrichedGOTermsResult calculateStudySet(
-			GOGraph graph,
+			Ontology graph,
 			AssociationContainer goAssociations,
 			PopulationSet populationSet,
 			StudySet studySet,
@@ -63,7 +63,7 @@ public class TermForTermCalculation extends AbstractHypergeometricCalculation
 			public PopulationSet populationSet;
 			public StudySet observedStudySet;
 			public AssociationContainer goAssociations;
-			public GOGraph graph;
+			public Ontology graph;
 
 			private PValue [] calculatePValues(StudySet studySet)
 			{

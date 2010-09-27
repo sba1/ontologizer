@@ -3,7 +3,7 @@ package ontologizer.calculation.b2g;
 import ontologizer.StudySet;
 import ontologizer.association.AssociationContainer;
 import ontologizer.calculation.EnrichedGOTermsResult;
-import ontologizer.go.GOGraph;
+import ontologizer.go.Ontology;
 
 
 /**
@@ -15,7 +15,7 @@ public class Bayes2GOEnrichedGOTermsResult extends EnrichedGOTermsResult
 {
 	private Bayes2GOScore score;
 
-	public Bayes2GOEnrichedGOTermsResult(GOGraph go,
+	public Bayes2GOEnrichedGOTermsResult(Ontology go,
 			AssociationContainer associations, StudySet studySet,
 			int populationGeneCount)
 	{

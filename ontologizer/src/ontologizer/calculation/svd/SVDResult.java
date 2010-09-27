@@ -2,7 +2,7 @@ package ontologizer.calculation.svd;
 
 import ontologizer.association.AssociationContainer;
 import ontologizer.calculation.AbstractGOTermsResult;
-import ontologizer.go.GOGraph;
+import ontologizer.go.Ontology;
 import cern.colt.matrix.DoubleMatrix2D;
 import cern.colt.matrix.impl.DenseDoubleMatrix2D;
 import cern.colt.matrix.linalg.SingularValueDecomposition;
@@ -54,7 +54,7 @@ public class SVDResult extends AbstractGOTermsResult
 	 * @param ddm A matrix containing the normalized and centered count data used to perform the SVD
 	 * @param colNames the names of the columns
 	 */
-	public SVDResult(GOGraph go, AssociationContainer associations, SingularValueDecomposition svd, DoubleMatrix2D ddm, String [] colNames, boolean pValues)
+	public SVDResult(Ontology go, AssociationContainer associations, SingularValueDecomposition svd, DoubleMatrix2D ddm, String [] colNames, boolean pValues)
 	{
 		super(go,associations);
 

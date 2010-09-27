@@ -6,7 +6,7 @@ import java.util.Set;
 
 import ontologizer.GlobalPreferences;
 import ontologizer.AbstractDotAttributesProvider;
-import ontologizer.go.GOGraph;
+import ontologizer.go.Ontology;
 import ontologizer.go.Namespace;
 import ontologizer.go.Term;
 import ontologizer.go.TermID;
@@ -53,7 +53,7 @@ class GraphWindow extends ApplicationWindow
 		shell.setBounds(rect);
 	}
 
-	public void setVisibleTerms(final GOGraph graph, final Set<TermID> terms)
+	public void setVisibleTerms(final Ontology graph, final Set<TermID> terms)
 	{
 		GraphGenerationThread ggt = new GraphGenerationThread(shell.getDisplay(),GlobalPreferences.getDOTPath(),new IGraphGenerationFinished()
 		{

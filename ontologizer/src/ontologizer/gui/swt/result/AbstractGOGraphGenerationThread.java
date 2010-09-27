@@ -8,7 +8,7 @@ import org.eclipse.swt.widgets.Display;
 import ontologizer.GODOTWriter;
 import ontologizer.AbstractDotAttributesProvider;
 import ontologizer.IDotAttributesProvider;
-import ontologizer.go.GOGraph;
+import ontologizer.go.Ontology;
 import ontologizer.go.TermID;
 import ontologizer.gui.swt.support.IGraphGenerationSupport;
 import ontologizer.gui.swt.support.NewGraphGenerationThread;
@@ -20,11 +20,11 @@ import ontologizer.gui.swt.support.NewGraphGenerationThread;
  */
 public abstract class AbstractGOGraphGenerationThread extends NewGraphGenerationThread implements IGraphGenerationSupport, IDotAttributesProvider
 {
-	private GOGraph graph;
+	private Ontology graph;
 	private HashSet<TermID> leafTerms;
 	private TermID emanatingTerm;
 
-	public AbstractGOGraphGenerationThread(Display display, GOGraph graph, String dotCMDPath)
+	public AbstractGOGraphGenerationThread(Display display, Ontology graph, String dotCMDPath)
 	{
 		super(display, dotCMDPath);
 

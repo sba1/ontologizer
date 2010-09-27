@@ -7,7 +7,7 @@ import ontologizer.GOTermEnumerator;
 import ontologizer.PopulationSet;
 import ontologizer.StudySet;
 import ontologizer.association.AssociationContainer;
-import ontologizer.go.GOGraph;
+import ontologizer.go.Ontology;
 import ontologizer.go.TermID;
 import ontologizer.statistics.AbstractTestCorrection;
 import ontologizer.statistics.IPValueCalculation;
@@ -32,7 +32,7 @@ public class ParentChildCutCalculation extends
 				+ "of gene sets in case that there exist multiple parents";
 	}
 
-	public EnrichedGOTermsResult calculateStudySet(GOGraph graph,
+	public EnrichedGOTermsResult calculateStudySet(Ontology graph,
 			AssociationContainer goAssociations, PopulationSet popSet,
 			StudySet studySet, AbstractTestCorrection testCorrection)
 	{
@@ -54,7 +54,7 @@ public class ParentChildCutCalculation extends
 			/*
 			 * We basically have the arguments of calculateStudy as fields
 			 */
-			public GOGraph graph;
+			public Ontology graph;
 
 			public AssociationContainer goAssociations;
 
@@ -105,7 +105,7 @@ public class ParentChildCutCalculation extends
 			}
 
 			private ParentChildGOTermProperties calculateTerm(TermID term,
-					GOGraph graph, GOTermEnumerator popTermEnumerator,
+					Ontology graph, GOTermEnumerator popTermEnumerator,
 					GOTermEnumerator studyTermEnumerator)
 			{
 				// counts annotated to term

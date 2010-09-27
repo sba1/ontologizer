@@ -3,11 +3,11 @@ package ontologizer;
 import java.util.*;
 import java.util.logging.Logger;
 
-import ontologizer.go.GOGraph;
+import ontologizer.go.Ontology;
 import ontologizer.go.Namespace;
 import ontologizer.go.Term;
 import ontologizer.go.TermID;
-import ontologizer.go.GOGraph.IVisitingGOVertex;
+import ontologizer.go.Ontology.IVisitingGOVertex;
 
 /**
  * This class encapsulates the counting of explicit and implicit annotations for
@@ -36,9 +36,9 @@ public class GOTermCounter implements Iterable<TermID>
 	/**
 	 * The graph of the ontology
 	 */
-	private GOGraph graph;
+	private Ontology graph;
 
-	public GOTermCounter(GOGraph g)
+	public GOTermCounter(Ontology g)
 	{
 		processHashMap = new HashMap<TermID, AssociationCounter>();
 		functionHashMap = new HashMap<TermID, AssociationCounter>();

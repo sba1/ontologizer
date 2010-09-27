@@ -15,12 +15,12 @@ import ontologizer.GlobalPreferences;
 import ontologizer.AbstractDotAttributesProvider;
 import ontologizer.StudySet;
 import ontologizer.association.AssociationContainer;
-import ontologizer.go.GOGraph;
+import ontologizer.go.Ontology;
 import ontologizer.go.Namespace;
 import ontologizer.go.Term;
 import ontologizer.go.TermContainer;
 import ontologizer.go.TermID;
-import ontologizer.go.GOGraph.IVisitingGOVertex;
+import ontologizer.go.Ontology.IVisitingGOVertex;
 import ontologizer.util.Util;
 
 /**
@@ -48,7 +48,7 @@ public class EnrichedGOTermsResult extends AbstractGOTermsResult
 	 *            number of genes of the populations (FIXME: This infact is
 	 *            redundant)
 	 */
-	public EnrichedGOTermsResult(GOGraph go, AssociationContainer associations, StudySet studySet, int populationGeneCount)
+	public EnrichedGOTermsResult(Ontology go, AssociationContainer associations, StudySet studySet, int populationGeneCount)
 	{
 		super(go, associations);
 
@@ -178,7 +178,7 @@ public class EnrichedGOTermsResult extends AbstractGOTermsResult
 	 * 			defines which terms should be included within the
 	 *          graphs.
 	 */
-	public void writeDOT(final GOGraph graph, File file,
+	public void writeDOT(final Ontology graph, File file,
 			final double alpha, final boolean counts, TermID rootTerm, HashSet<TermID> terms)
 	{
 		/* Build the props Array and count the number significant p values */
@@ -305,7 +305,7 @@ public class EnrichedGOTermsResult extends AbstractGOTermsResult
 	 * @param counts
 	 * @param rootTerm
 	 */
-	public void writeDOT(GOGraph graph, File file, double thresh, boolean counts, TermID rootTerm)
+	public void writeDOT(Ontology graph, File file, double thresh, boolean counts, TermID rootTerm)
 	{
 		HashSet<TermID> nodes = new HashSet<TermID>();
 
