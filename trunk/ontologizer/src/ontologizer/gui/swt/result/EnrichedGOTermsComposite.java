@@ -404,7 +404,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 				Term goTerm = (Term)item.getData("term");
 				if (goTerm != null)
 				{
-					Set<TermID> ancestors = go.getTermsAncestors(goTerm.getID());
+					Set<TermID> ancestors = go.getTermParents(goTerm.getID());
 					if (ancestors != null)
 					{
 						str.append("<br />Parents: ");
@@ -422,7 +422,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 						str.append("</div>");
 					}
 
-					Set<TermID> descendants = go.getTermsDescendants(goTerm.getID());
+					Set<TermID> descendants = go.getTermChildren(goTerm.getID());
 					if (descendants != null)
 					{
 						str.append("<br />Children: ");
@@ -972,7 +972,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 
 					if (e.widget.equals(childTermsMenuItem))
 					{
-						Set<TermID> termIDs = go.getTermsDescendants(new TermID(id));
+						Set<TermID> termIDs = go.getTermChildren(new TermID(id));
 						for (TermID termID : termIDs)
 						{
 							Integer selection = termID2ListLine.get(termID.id);

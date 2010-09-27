@@ -106,7 +106,7 @@ public class GODOTWriter
 			/* Write out the edges */
 			for (TermID destID : nodeSet)
 			{
-				for (ParentTermID source : graph.getTermsAncestorsWithRelation(destID))
+				for (ParentTermID source : graph.getTermParentsWithRelation(destID))
 				{
 					if (nodeSet.contains(source.termid))
 					{

@@ -124,7 +124,7 @@ public class ParentChildCalculation extends
 					prop.p_min = 1.0;
 				} else {
 					// getting parents
-					Set<TermID> parents = graph.getTermsAncestors(term);
+					Set<TermID> parents = graph.getTermParents(term);
 
 					// These will hold the names of all genes directly annotated to parents
 					HashSet<ByteString> popParentAllGenes = new HashSet<ByteString>();

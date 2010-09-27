@@ -188,7 +188,7 @@ public class TopologyWeightedCalculation extends AbstractHypergeometricCalculati
 
 			for (TermID t : terms)
 			{
-				Set<TermID> descs = graph.getTermsDescendants(t);
+				Set<TermID> descs = graph.getTermChildren(t);
 				Set<TermID> annotatedDescs = new HashSet<TermID>();
 				for (TermID d : descs)
 				{
