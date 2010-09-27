@@ -255,7 +255,7 @@ public class EnrichedGOTermsResult extends AbstractGOTermsResult
 					}
 
 					ExtremalVisitor visitor = new ExtremalVisitor();
-					graph.walkToSinks(graph.getTermsDescendants(id), visitor);
+					graph.walkToSinks(graph.getTermChildren(id), visitor);
 					isExtremal = visitor.isExtremal;
 
 					float hue, saturation, brightness;

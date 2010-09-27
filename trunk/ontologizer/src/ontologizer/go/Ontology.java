@@ -21,7 +21,7 @@ import sonumina.math.graph.DirectedGraph.IDistanceVisitor;
  * 
  * @author sba
  */
-class GOEdge extends Edge<Term>
+class OntologyEdge extends Edge<Term>
 {
 	/** Relation always to the parent (source) */
 	private TermRelation relation;
@@ -36,7 +36,7 @@ class GOEdge extends Edge<Term>
 		return relation;
 	}
 
-	public GOEdge(Term source, Term dest, TermRelation relation)
+	public OntologyEdge(Term source, Term dest, TermRelation relation)
 	{
 		super(source, dest);
 
@@ -45,7 +45,7 @@ class GOEdge extends Edge<Term>
 }
 
 /**
- * Represents the whole GO Graph
+ * Represents the whole ontology.
  * 
  * @author Sebastian Bauer
  */
@@ -80,8 +80,8 @@ public class Ontology implements Iterable<Term>
 		graph = new DirectedGraph<Term>();
 
 		/* At first add all goterms to the graph */
-		for (Term goTerm : newTermContainer)
-			graph.addVertex(goTerm);
+		for (Term term : newTermContainer)
+			graph.addVertex(term);
 
 		/* Now add the edges, i.e. link the terms */
 		for (Term term : newTermContainer)
@@ -98,7 +98,7 @@ public class Ontology implements Iterable<Term>
 					logger.info("Detected self-loop in the definition of the ontology (term "+ term.getIDAsString()+"). This link has been ignored.");
 					continue;
 				}
-				graph.addEdge(new GOEdge(newTermContainer.get(parent.termid), term, parent.relation));
+				graph.addEdge(new OntologyEdge(newTermContainer.get(parent.termid), term, parent.relation));
 			}
 		}
 
@@ -204,7 +204,7 @@ public class Ontology implements Iterable<Term>
 
 			for (Term lvl1 : level1terms)
 			{
-				graph.addEdge(new GOEdge(rootTerm, lvl1,TermRelation.UNKOWN));
+				graph.addEdge(new OntologyEdge(rootTerm, lvl1,TermRelation.UNKOWN));
 			}
 		} else
 		{
@@ -250,18 +250,18 @@ public class Ontology implements Iterable<Term>
 	}
 
 	/**
-	 * Return the set of GO term IDs containing the given GO term's descendants.
+	 * Return the set of term IDs containing the given term's descendants.
 	 * 
-	 * @param goTerm
-	 * @return the set of GOID strings of ancestors
+	 * @param termID as string
+	 * @return the set of term ids of children as a set of strings
 	 */
-	public Set<String> getTermsDescendantsAsStrings(String goTermID)
+	public Set<String> getTermChildrenAsStrings(String termID)
 	{
 		Term goTerm;
-		if (goTermID.equals(rootTerm.getIDAsString()))
+		if (termID.equals(rootTerm.getIDAsString()))
 			goTerm = rootTerm;
 		else
-			goTerm = termContainer.get(goTermID);
+			goTerm = termContainer.get(termID);
 
 		HashSet<String> terms = new HashSet<String>();
 		Iterator<Edge<Term>> edgeIter = graph.getOutEdges(goTerm);
@@ -271,18 +271,18 @@ public class Ontology implements Iterable<Term>
 	}
 
 	/**
-	 * Return the set of GO term IDs containing the given GO term's ancestors.
+	 * Return the set of term IDs containing the given term's ancestors.
 	 * 
-	 * @param goTerm - the GOID as a string
-	 * @return the set of GOID strings of descendants
+	 * @param termID - the id as a string
+	 * @return the set of term ids of parents as a set of strings.
 	 */
-	public Set<String> getTermsAncestorsAsStrings(String goTermID)
+	public Set<String> getTermParentsAsStrings(String termID)
 	{
 		Term goTerm;
-		if (goTermID.equals(rootTerm.getIDAsString()))
+		if (termID.equals(rootTerm.getIDAsString()))
 			goTerm = rootTerm;
 		else
-			goTerm = termContainer.get(goTermID);
+			goTerm = termContainer.get(termID);
 
 		HashSet<String> terms = new HashSet<String>();
 
@@ -293,18 +293,18 @@ public class Ontology implements Iterable<Term>
 	}
 
 	/**
-	 * Return the set of GO term IDs containing the given GO term's descendants.
+	 * Return the set of term IDs containing the given term's children.
 	 * 
-	 * @param goTerm - the GOID as a TermID
-	 * @return the set of GOIDs of the decendants as TermIDs
+	 * @param term - the termID as a TermID
+	 * @return the set of termID of the descendants as terms
 	 */
-	public Set<TermID> getTermsDescendants(TermID goTermID)
+	public Set<TermID> getTermChildren(TermID termID)
 	{
 		Term goTerm;
-		if (rootTerm.getID().id == goTermID.id)
+		if (rootTerm.getID().id == termID.id)
 			goTerm = rootTerm;
 		else
-			goTerm = termContainer.get(goTermID);
+			goTerm = termContainer.get(termID);
 
 		HashSet<TermID> terms = new HashSet<TermID>();
 		Iterator<Edge<Term>> edgeIter = graph.getOutEdges(goTerm);
@@ -319,7 +319,7 @@ public class Ontology implements Iterable<Term>
 	 * @param goTerm
 	 * @return the set of GO IDs of ancestors
 	 */
-	public Set<TermID> getTermsAncestors(TermID goTermID)
+	public Set<TermID> getTermParents(TermID goTermID)
 	{
 		HashSet<TermID> terms = new HashSet<TermID>();
 		if (rootTerm.getID().id == goTermID.id)
@@ -344,7 +344,7 @@ public class Ontology implements Iterable<Term>
 	 * @param destID
 	 * @return
 	 */
-	public Set<ParentTermID> getTermsAncestorsWithRelation(TermID goTermID)
+	public Set<ParentTermID> getTermParentsWithRelation(TermID goTermID)
 	{
 		HashSet<ParentTermID> terms = new HashSet<ParentTermID>();
 		if (rootTerm.getID().id == goTermID.id)
@@ -359,7 +359,7 @@ public class Ontology implements Iterable<Term>
 		Iterator<Edge<Term>> edgeIter = graph.getInEdges(goTerm);
 		while (edgeIter.hasNext())
 		{
-			GOEdge t = (GOEdge)edgeIter.next();
+			OntologyEdge t = (OntologyEdge)edgeIter.next();
 			terms.add(new ParentTermID(t.getSource().getID(),t.getRelation()));
 		}
 
@@ -375,7 +375,7 @@ public class Ontology implements Iterable<Term>
 	 */
 	public TermRelation getDirectRelation(TermID ancestor, TermID term)
 	{
-		Set<ParentTermID> parents = getTermsAncestorsWithRelation(term);
+		Set<ParentTermID> parents = getTermParentsWithRelation(term);
 		for (ParentTermID p : parents)
 			if (p.termid.equals(ancestor)) return p.relation;
 		return null;
@@ -390,10 +390,10 @@ public class Ontology implements Iterable<Term>
 	 */
 	public Set<TermID> getTermsSiblings(TermID tid)
 	{
-		Set<TermID> parentTerms = getTermsAncestors(tid);
+		Set<TermID> parentTerms = getTermParents(tid);
 		HashSet<TermID> siblings = new HashSet<TermID>();
 		for (TermID p : parentTerms)
-			siblings.addAll(getTermsDescendants(p));
+			siblings.addAll(getTermChildren(p));
 		siblings.remove(tid);
 		return siblings;
 	}
@@ -967,7 +967,7 @@ public class Ontology implements Iterable<Term>
 		 * the definition: A relation is redundant if it can be removed without
 		 * having a effect on the reachability of the nodes.
 		 */
-		Set<TermID> parents = getTermsAncestors(t.getID());
+		Set<TermID> parents = getTermParents(t.getID());
 		
 		Set<TermID> allInducedTerms = getTermsOfInducedGraph(null,t.getID());
 		
