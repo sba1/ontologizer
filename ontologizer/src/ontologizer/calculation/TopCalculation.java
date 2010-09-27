@@ -26,7 +26,7 @@ public class TopCalculation extends AbstractHypergeometricCalculation
 			StudySet studySet, AbstractTestCorrection testCorrection, TermID term,
 			EnrichedGOTermsResult studySetResult, GOTermEnumerator studyTermEnumerator, GOTermEnumerator populationTermEnumerator)
 	{
-		Set<TermID> d = graph.getTermsDescendants(term);
+		Set<TermID> d = graph.getTermChildren(term);
 
 		int popGeneCount = populationSet.getGeneCount();
 		int studyGeneCount = studySet.getGeneCount();
@@ -134,7 +134,7 @@ public class TopCalculation extends AbstractHypergeometricCalculation
 			return markedGenesMap.get(term);
 
 		HashSet<ByteString> markedGenes = new HashSet<ByteString>();
-		Set<TermID> d = graph.getTermsDescendants(term);
+		Set<TermID> d = graph.getTermChildren(term);
 		if (d != null)
 		{
 			for (TermID c : d)

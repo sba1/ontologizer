@@ -470,7 +470,7 @@ public class SemanticCalculation
 			termloop:
 			for (TermID tid : assocList)
 			{
-				for (TermID desc : g.getTermsDescendants(tid))
+				for (TermID desc : g.getTermChildren(tid))
 				{
 					if (inducedNodes.contains(desc))
 						continue termloop;

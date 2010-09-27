@@ -128,7 +128,7 @@ public class ParentChildCutCalculation extends
 				} else
 				{
 					// getting parents
-					Set<TermID> parents = graph.getTermsAncestors(term);
+					Set<TermID> parents = graph.getTermParents(term);
 
 					// These will hold the names of all genes annotated to all
 					// parents (intersection)

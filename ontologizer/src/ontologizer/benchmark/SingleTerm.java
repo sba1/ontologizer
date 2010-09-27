@@ -514,8 +514,8 @@ public class SingleTerm
 
 				for (TermID wanted : wantedActiveTerms.keySet())
 				{
-					children.addAll(graph.getTermsDescendants(wanted));
-					if (graph.getTermsDescendants(wanted).contains(prop.goTerm.getID()))
+					children.addAll(graph.getTermChildren(wanted));
+					if (graph.getTermChildren(wanted).contains(prop.goTerm.getID()))
 						propIsChild = true;
 
 					if (graph.existsPath(wanted, prop.goTerm.getID()) && !wanted.equals(prop.goTerm.getID()))
