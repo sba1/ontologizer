@@ -118,7 +118,7 @@ public class Ontology implements Iterable<Term>
 		
 		for (TermID tid : termIDs)
 			for (TermID tid2 : getTermsOfInducedGraph(null, tid))
-				allTerms.add(getGOTerm(tid2));
+				allTerms.add(getTerm(tid2));
 		
 		subgraph.availableSubsets = availableSubsets;
 		subgraph.graph = graph.subGraph(allTerms);
@@ -558,10 +558,12 @@ public class Ontology implements Iterable<Term>
 
 	/**
 	 * Returns the term container attached to this ontology graph.
+	 * Note that the term container usually contains all terms while
+	 * the graph object may contain a subset.
 	 * 
 	 * @return
 	 */
-	public TermContainer getGoTermContainer()
+	public TermContainer getTermContainer()
 	{
 		return termContainer;
 	}
@@ -572,7 +574,7 @@ public class Ontology implements Iterable<Term>
 	 * @param term
 	 * @return
 	 */
-	public Term getGOTerm(String term)
+	public Term getTerm(String term)
 	{
 		Term go = termContainer.get(term);
 		if (go == null)
@@ -592,7 +594,13 @@ public class Ontology implements Iterable<Term>
 		return go;
 	}
 
-	public Term getGOTerm(TermID id)
+	/**
+	 * Returns the full-fledged term.
+	 * 
+	 * @param id
+	 * @return
+	 */
+	public Term getTerm(TermID id)
 	{
 		Term go = termContainer.get(id);
 		if (go == null && id.id == rootTerm.getID().id)
@@ -609,7 +617,7 @@ public class Ontology implements Iterable<Term>
 	 */
 	public boolean termExists(TermID term)
 	{
-		return graph.getOutDegree(getGOTerm(term)) != -1;
+		return graph.getOutDegree(getTerm(term)) != -1;
 	}
 
 	/**
@@ -810,11 +818,14 @@ public class Ontology implements Iterable<Term>
 		return levels;
 	}
 
-	/** Returns the number of terms in this ontology */
-	public int numberOfTerms()
+	/**
+	 * Returns the number of terms in this ontology
+	 * 
+	 * @return the number of terms.
+	 */
+	public int getNumberOfTerms()
 	{
-		/* Don't forget the artificial term */
-		return termContainer.termCount() + 1; 
+		return graph.getNumberOfVertices();
 	}
 
 	/**
@@ -1001,7 +1012,7 @@ public class Ontology implements Iterable<Term>
 			TermID redundant = findARedundantISARelation(t);
 			if (redundant != null)
 			{
-				System.out.println(t.getName() + " (" + t.getIDAsString() + ") -> " + getGOTerm(redundant).getName() + "(" + redundant.toString() +")");
+				System.out.println(t.getName() + " (" + t.getIDAsString() + ") -> " + getTerm(redundant).getName() + "(" + redundant.toString() +")");
 			}
 		}
 	}

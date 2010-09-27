@@ -399,7 +399,7 @@ public class GeneEditor extends Composite
 								{
 									str.append("\n");
 									
-									Term t = graph.getGOTerm(ga.getTermID());
+									Term t = graph.getTerm(ga.getTermID());
 									if (t != null)
 									{
 										str.append(t.getName());

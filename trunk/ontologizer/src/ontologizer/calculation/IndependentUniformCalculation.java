@@ -71,7 +71,7 @@ public class IndependentUniformCalculation implements ICalculation
 			{
 				int i = 0;
 
-				PValue p[] = new PValue[graph.numberOfTerms()];
+				PValue p[] = new PValue[graph.getNumberOfTerms()];
 				TermForTermGOTermProperties myP;
 
 				for (Term goterm : graph)
@@ -82,7 +82,7 @@ public class IndependentUniformCalculation implements ICalculation
 					int goidAnnotatedStudyGeneCount = observedStudySet.getGeneCount();
 
 					myP = new TermForTermGOTermProperties();
-					myP.goTerm = graph.getGOTerm(term);
+					myP.goTerm = graph.getTerm(term);
 					myP.annotatedStudyGenes = goidAnnotatedStudyGeneCount;
 					myP.annotatedPopulationGenes = goidAnnotatedPopGeneCount;
 

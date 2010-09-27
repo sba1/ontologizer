@@ -91,7 +91,7 @@ public class SingleTerm
 //		}
 		
 		final ByteString [] allGenesArray = completePop.getGenes();
-		final TermID root = graph.getGOTerm("GO:0008150").getID();
+		final TermID root = graph.getTerm("GO:0008150").getID();
 		final int rootGenes = completePopEnumerator.getAnnotatedGenes(root).totalAnnotatedCount();
 
 		System.out.println("Population set consits of " + allGenesArray.length + " genes. Root term has " + rootGenes + " associated genes");
@@ -147,7 +147,7 @@ public class SingleTerm
 		
 		for (TermID t : wantedActiveTerms.keySet())
 		{
-			if (graph.getGOTerm(t) == null)
+			if (graph.getTerm(t) == null)
 				throw new IllegalArgumentException("Term " + t.toString() + " not found");
 			StudySet termStudySet = new StudySet("study");
 			for (ByteString g : completePopEnumerator.getAnnotatedGenes(t).totalAnnotated)
@@ -214,7 +214,7 @@ public class SingleTerm
 				{
 					StringBuilder str = new StringBuilder(200);
 					str.append("label=\"");
-					str.append(graph.getGOTerm(id).getName());
+					str.append(graph.getTerm(id).getName());
 					str.append("\\n");
 					str.append(studySetEnumerator.getAnnotatedGenes(id).totalAnnotatedCount() + "/" + completePopEnumerator.getAnnotatedGenes(id).totalAnnotatedCount());
 					str.append("\"");
@@ -232,7 +232,7 @@ public class SingleTerm
 				{
 					StringBuilder str = new StringBuilder(200);
 					str.append("label=\"");
-					str.append(graph.getGOTerm(id).getName());
+					str.append(graph.getTerm(id).getName());
 					str.append("\\n");
 					str.append(studySetEnumerator.getAnnotatedGenes(id).totalAnnotatedCount() + "/" + completePopEnumerator.getAnnotatedGenes(id).totalAnnotatedCount());
 					str.append("\"");
@@ -410,7 +410,7 @@ public class SingleTerm
 			{
 				String label;
 				
-				label = "\\small \\emph{" + graph.getGOTerm(id).getName().replace("_", " ") + "}";
+				label = "\\small \\emph{" + graph.getTerm(id).getName().replace("_", " ") + "}";
 				
 				StringBuilder str = new StringBuilder(200);
 				str.append("margin=\"0\" shape=\"box\" label=\"");
@@ -563,7 +563,7 @@ public class SingleTerm
 					str.append("\\emph{");
 					if (wantedActiveTerms.containsKey(id))
 						str.append("\\underline{");
-					str.append(graph.getGOTerm(id).getName().replace("_", " "));
+					str.append(graph.getTerm(id).getName().replace("_", " "));
 					if (wantedActiveTerms.containsKey(id))
 						str.append("}");
 					str.append("} \\\\\\ ");

@@ -517,7 +517,7 @@ public class Bayes2GOCalculation implements ICalculation
 				for (TermID t : allTerms)
 				{
 					Bayes2GOGOTermProperties prop = new Bayes2GOGOTermProperties();
-					prop.goTerm = graph.getGOTerm(t);
+					prop.goTerm = graph.getTerm(t);
 					prop.annotatedStudyGenes = studyEnumerator.getAnnotatedGenes(t).totalAnnotatedCount();
 					prop.annotatedPopulationGenes = populationEnumerator.getAnnotatedGenes(t).totalAnnotatedCount();
 					prop.marg = ((double)bayesScore.termActivationCounts[bayesScore.term2TermsIdx.get(t)] / bayesScore.numRecords);
@@ -537,7 +537,7 @@ public class Bayes2GOCalculation implements ICalculation
 			System.out.println("Term combination that reaches score of " + maxScore + " when alpha=" + maxScoredAlpha + ", beta=" + maxScoredBeta + ", p=" + maxScoredP + " at step " + maxWhenSeen);
 			for (TermID tid : maxScoredTerms)
 			{
-				System.out.println(tid.toString() + "/" + graph.getGOTerm(tid).getName());
+				System.out.println(tid.toString() + "/" + graph.getTerm(tid).getName());
 			}
 	
 			if (Double.isNaN(alpha))
@@ -764,7 +764,7 @@ public class Bayes2GOCalculation implements ICalculation
 				{
 					StringBuilder str = new StringBuilder(200);
 					str.append("label=\"");
-					str.append(graph.getGOTerm(id).getName());
+					str.append(graph.getTerm(id).getName());
 					str.append("\\n");
 					str.append(studySetEnumerator.getAnnotatedGenes(id).totalAnnotatedCount() + "/" + allEnumerator.getAnnotatedGenes(id).totalAnnotatedCount());
 					str.append("\"");
@@ -782,7 +782,7 @@ public class Bayes2GOCalculation implements ICalculation
 				{
 					StringBuilder str = new StringBuilder(200);
 					str.append("label=\"");
-					str.append(graph.getGOTerm(id).getName());
+					str.append(graph.getTerm(id).getName());
 					str.append("\\n");
 					str.append(studySetEnumerator.getAnnotatedGenes(id).totalAnnotatedCount() + "/" + allEnumerator.getAnnotatedGenes(id).totalAnnotatedCount());
 					str.append("\"");
@@ -1025,7 +1025,7 @@ public class Bayes2GOCalculation implements ICalculation
 				{
 					StringBuilder str = new StringBuilder(200);
 					str.append("label=\"");
-					str.append(graph.getGOTerm(id).getName());
+					str.append(graph.getTerm(id).getName());
 					str.append("\\n");
 					if (result.getGOTermProperties(id) != null)
 						str.append(String.format("p(t)=%g\\n", /*1-*/result.getGOTermProperties(id).p_adjusted));
