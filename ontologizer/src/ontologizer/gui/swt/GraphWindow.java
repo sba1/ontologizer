@@ -84,7 +84,7 @@ class GraphWindow extends ApplicationWindow
 			{
 				StringBuilder builder = new StringBuilder();
 
-				Term t = graph.getGOTerm(id);
+				Term t = graph.getTerm(id);
 				if (t == null) return "";
 
 				builder.append("label=\"");

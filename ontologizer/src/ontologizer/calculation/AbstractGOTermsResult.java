@@ -85,7 +85,7 @@ public class AbstractGOTermsResult implements Iterable<AbstractGOTermProperties>
 	 */
 	public AbstractGOTermProperties getGOTermProperties(TermID goID)
 	{
-		Integer index = go2Index.get(go.getGOTerm(goID));
+		Integer index = go2Index.get(go.getTerm(goID));
 		if (index == null)
 			return null;
 		return list.get(index);

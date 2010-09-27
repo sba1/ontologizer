@@ -92,7 +92,7 @@ public class ChiSquareQCalculation implements ICalculation
 				prop.annotatedStudyGenes = goidAnnotatedStudyGeneCount;
 				prop.chisquare = chiSquare.chiSquare();
 				if (Double.isNaN(prop.chisquare)) prop.chisquare = 0.0;
-				prop.goTerm = graph.getGOTerm(term);
+				prop.goTerm = graph.getTerm(term);
 				if (chiSquare.df()>0)
 				{
 					prop.p = ChiSquare2P.pchi(prop.chisquare,chiSquare.df());

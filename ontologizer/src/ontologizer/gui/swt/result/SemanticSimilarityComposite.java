@@ -315,7 +315,7 @@ public class SemanticSimilarityComposite extends Composite implements IGraphActi
 				attributes.append(id.toString());
 				attributes.append("\\n");
 
-				String label = result.g.getGOTerm(id).getName();
+				String label = result.g.getTerm(id).getName();
 				if (GlobalPreferences.getWrapColumn() != -1)
 					label = Util.wrapLine(label,"\\n",GlobalPreferences.getWrapColumn());
 

@@ -654,7 +654,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 			Integer lineIdx = termID2ListLine.get(termid.id);
 			if (lineIdx != null)
 			{
-				Term term = go.getGOTerm(termid);
+				Term term = go.getTerm(termid);
 				if (term != null)
 					terms.add(term);
 			}

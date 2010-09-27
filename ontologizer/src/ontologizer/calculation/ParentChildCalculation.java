@@ -112,7 +112,7 @@ public class ParentChildCalculation extends
 
 				// this is what we give back
 				ParentChildGOTermProperties prop = new ParentChildGOTermProperties();
-				prop.goTerm = graph.getGOTerm(term);
+				prop.goTerm = graph.getTerm(term);
 				prop.annotatedPopulationGenes = popTermCount;
 				prop.annotatedStudyGenes = studyTermCount;
 

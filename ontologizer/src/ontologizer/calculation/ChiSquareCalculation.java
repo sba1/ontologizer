@@ -132,7 +132,7 @@ public class ChiSquareCalculation implements ICalculation
 		double chisq = chisqCalc.chiSquare();
 		ChiSquareGOTermProperties prop = new ChiSquareGOTermProperties();
 
-		prop.goTerm = graph.getGOTerm(term);
+		prop.goTerm = graph.getTerm(term);
 		prop.annotatedPopulationGenes = termPopGenes.totalAnnotatedCount();
 		prop.annotatedStudyGenes = termStudyGenes.totalAnnotatedCount();
 		prop.nchildren = children.size();
