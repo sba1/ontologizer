@@ -9,7 +9,7 @@ import ontologizer.PopulationSet;
 import ontologizer.GOTermEnumerator.GOTermAnnotatedGenes;
 import ontologizer.association.AssociationContainer;
 import ontologizer.association.AssociationParser;
-import ontologizer.go.GOGraph;
+import ontologizer.go.Ontology;
 import ontologizer.go.OBOParser;
 import ontologizer.go.OBOParserException;
 import ontologizer.go.TermContainer;
@@ -104,7 +104,7 @@ public class GeneLister
 			System.err.println(oboParser.doParse());
 			TermContainer goTerms = new TermContainer(oboParser.getTermMap(), oboParser.getFormatVersion(), oboParser.getDate());
 			System.err.println("Building graph");
-			GOGraph graph = new GOGraph(goTerms);
+			Ontology graph = new Ontology(goTerms);
 			
 			/* association */
 			AssociationParser assocParser = new AssociationParser(assocFileName,goTerms,null);

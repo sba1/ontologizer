@@ -23,7 +23,7 @@ import ontologizer.calculation.CalculationRegistry;
 import ontologizer.calculation.EnrichedGOTermsResult;
 import ontologizer.calculation.ICalculation;
 import ontologizer.calculation.TermForTermGOTermProperties;
-import ontologizer.go.GOGraph;
+import ontologizer.go.Ontology;
 import ontologizer.go.OBOParser;
 import ontologizer.go.TermContainer;
 import ontologizer.go.TermID;
@@ -238,7 +238,7 @@ public class SetConstructor
 
 			TermContainer goTerms = new TermContainer(oboParser.getTermMap(), oboParser.getFormatVersion(), oboParser.getDate());
 			System.out.println("Building graph");
-			GOGraph graph = new GOGraph(goTerms);
+			Ontology graph = new Ontology(goTerms);
 
 			// loading associations
 			AssociationParser assocParser = new AssociationParser(assocFileName, goTerms, null);
@@ -630,7 +630,7 @@ public class SetConstructor
 	 *             if writing fails
 	 */
 	private static void writeAllFiles(String sampleFileName,
-			boolean listAllTerms, GOGraph graph, AssociationContainer assocs,
+			boolean listAllTerms, Ontology graph, AssociationContainer assocs,
 			File outDir, StudySet sample) throws IOException
 	{
 		// construct a GOTermEnumerator for the reduced population set

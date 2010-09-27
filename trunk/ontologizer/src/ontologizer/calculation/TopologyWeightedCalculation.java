@@ -9,9 +9,9 @@ import ontologizer.PopulationSet;
 import ontologizer.StudySet;
 import ontologizer.GOTermEnumerator.GOTermAnnotatedGenes;
 import ontologizer.association.AssociationContainer;
-import ontologizer.go.GOGraph;
+import ontologizer.go.Ontology;
 import ontologizer.go.TermID;
-import ontologizer.go.GOGraph.GOLevels;
+import ontologizer.go.Ontology.GOLevels;
 import ontologizer.statistics.AbstractTestCorrection;
 import ontologizer.types.ByteString;
 
@@ -19,7 +19,7 @@ public class TopologyWeightedCalculation extends AbstractHypergeometricCalculati
 {
 	static final double SIGNIFICANCE_LEVEL = 0.01;
 
-	private void computeTermSig(PopulationSet populationSet, StudySet studySet, GOGraph graph, TermID u, Set<TermID> children, EnrichedGOTermsResult studySetResult, GOTermEnumerator studyTermEnumerator, GOTermEnumerator populationTermEnumerator)
+	private void computeTermSig(PopulationSet populationSet, StudySet studySet, Ontology graph, TermID u, Set<TermID> children, EnrichedGOTermsResult studySetResult, GOTermEnumerator studyTermEnumerator, GOTermEnumerator populationTermEnumerator)
 	{
 		if (graph.isRootTerm(u)) return;
 
@@ -100,7 +100,7 @@ public class TopologyWeightedCalculation extends AbstractHypergeometricCalculati
 	 * @return
 	 */
 	private TopologyWeightGOTermProperties wFisher(PopulationSet populationSet,
-			StudySet studySet, GOGraph graph, TermID u,
+			StudySet studySet, Ontology graph, TermID u,
 			EnrichedGOTermsResult studySetResult,
 			GOTermEnumerator studyTermEnumerator,
 			GOTermEnumerator populationTermEnumerator)
@@ -144,7 +144,7 @@ public class TopologyWeightedCalculation extends AbstractHypergeometricCalculati
 	}
 
 	private TopologyWeightGOTermProperties ensureGOTermPropertiesExistence(
-			GOGraph graph, TermID u, EnrichedGOTermsResult studySetResult,
+			Ontology graph, TermID u, EnrichedGOTermsResult studySetResult,
 			GOTermEnumerator studyTermEnumerator,
 			GOTermEnumerator populationTermEnumerator)
 	{
@@ -168,7 +168,7 @@ public class TopologyWeightedCalculation extends AbstractHypergeometricCalculati
 		return b/a;
 	}
 
-	public EnrichedGOTermsResult calculateStudySet(GOGraph graph,
+	public EnrichedGOTermsResult calculateStudySet(Ontology graph,
 			AssociationContainer goAssociations, PopulationSet populationSet,
 			StudySet studySet, AbstractTestCorrection testCorrection)
 	{

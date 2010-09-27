@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.HashSet;
 
 import ontologizer.calculation.EnrichedGOTermsResult;
-import ontologizer.go.GOGraph;
+import ontologizer.go.Ontology;
 import ontologizer.go.Term;
 import ontologizer.go.TermID;
 import ontologizer.gui.swt.support.IGraphGenerationFinished;
@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Display;
  */
 public class EnrichedGraphGenerationThread extends NewGraphGenerationThread
 {
-	public GOGraph go;
+	public Ontology go;
 	public Term emanatingTerm;
 	public double significanceLevel;
 	public HashSet<TermID> leafTerms = new HashSet<TermID>();

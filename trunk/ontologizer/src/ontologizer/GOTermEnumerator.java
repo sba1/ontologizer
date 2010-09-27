@@ -13,10 +13,10 @@ import java.util.Map.Entry;
 
 import ontologizer.association.Association;
 import ontologizer.association.Gene2Associations;
-import ontologizer.go.GOGraph;
+import ontologizer.go.Ontology;
 import ontologizer.go.Term;
 import ontologizer.go.TermID;
-import ontologizer.go.GOGraph.IVisitingGOVertex;
+import ontologizer.go.Ontology.IVisitingGOVertex;
 import ontologizer.types.ByteString;
 
 /**
@@ -50,7 +50,7 @@ public class GOTermEnumerator implements Iterable<TermID>
 	}
 
 	/** The GO graph */
-	private GOGraph graph;
+	private Ontology graph;
 
 	private HashMap<TermID,GOTermAnnotatedGenes> map;
 
@@ -62,7 +62,7 @@ public class GOTermEnumerator implements Iterable<TermID>
 	 * 
 	 * @param graph the GO graph
 	 */
-	public GOTermEnumerator(GOGraph graph)
+	public GOTermEnumerator(Ontology graph)
 	{
 		this.graph = graph;
 		

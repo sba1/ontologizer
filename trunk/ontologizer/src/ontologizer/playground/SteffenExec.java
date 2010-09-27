@@ -17,7 +17,7 @@ import ontologizer.calculation.AbstractGOTermProperties;
 import ontologizer.calculation.EnrichedGOTermsResult;
 import ontologizer.calculation.ICalculation;
 import ontologizer.calculation.ParentChildCalculation;
-import ontologizer.go.GOGraph;
+import ontologizer.go.Ontology;
 import ontologizer.go.OBOParser;
 import ontologizer.go.OBOParserException;
 import ontologizer.go.TermContainer;
@@ -58,7 +58,7 @@ public class SteffenExec
 		 * building GO graph from terms
 		 */
 		System.out.println("Building graph");
-		GOGraph goGraph = new GOGraph(goTermCont);
+		Ontology goGraph = new Ontology(goTermCont);
 		
 		/*
 		 * Getting annotations

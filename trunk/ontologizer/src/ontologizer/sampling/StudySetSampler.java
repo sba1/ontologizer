@@ -8,7 +8,7 @@ import ontologizer.GOTermEnumerator;
 import ontologizer.StudySet;
 import ontologizer.GOTermEnumerator.GOTermAnnotatedGenes;
 import ontologizer.association.AssociationContainer;
-import ontologizer.go.GOGraph;
+import ontologizer.go.Ontology;
 import ontologizer.go.TermID;
 import ontologizer.types.ByteString;
 
@@ -155,7 +155,7 @@ public class StudySetSampler
 	 *            In this case, null is returned.
 	 * @return the sampled study set
 	 */
-	public StudySet sampleRandomStudySet(GOGraph graph,
+	public StudySet sampleRandomStudySet(Ontology graph,
 			AssociationContainer associationContainer,
 			PercentageEnrichmentRule enrichRule,
 			boolean failIfZero)
@@ -205,7 +205,7 @@ public class StudySetSampler
 	 *            should be for the genes of the specified terms
 	 * @return the sapled study set
 	 */
-	public StudySet sampleRandomStudySet(GOGraph graph,
+	public StudySet sampleRandomStudySet(Ontology graph,
 			AssociationContainer associationContainer, int desiredSize,
 			TermID[] termsToOverRepresent, double OverRepresentationRatio)
 	{

@@ -2,16 +2,16 @@ package ontologizer.go;
 
 import java.util.Set;
 
-import ontologizer.go.GOGraph.IVisitingGOVertex;
+import ontologizer.go.Ontology.IVisitingGOVertex;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
-public class GOGraphTest extends TestCase
+public class OntologyTest extends TestCase
 {
 	private TermContainer goTerms;
 
-	private GOGraph graph;
+	private Ontology graph;
 
 	@Override
 	protected void setUp() throws Exception
@@ -26,7 +26,7 @@ public class GOGraphTest extends TestCase
 
 		/* Build graph */
 		System.out.println("Build graph");
-		graph = new GOGraph(goTerms);
+		graph = new Ontology(goTerms);
 	}
 
 	public void testRoot()

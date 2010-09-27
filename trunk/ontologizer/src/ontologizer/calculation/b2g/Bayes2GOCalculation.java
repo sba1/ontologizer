@@ -34,7 +34,7 @@ import ontologizer.calculation.ProbabilisticCalculation;
 import ontologizer.calculation.TermForTermCalculation;
 import ontologizer.calculation.TermForTermGOTermProperties;
 import ontologizer.calculation.TopologyWeightedCalculation;
-import ontologizer.go.GOGraph;
+import ontologizer.go.Ontology;
 import ontologizer.go.ParentTermID;
 import ontologizer.go.Term;
 import ontologizer.go.TermContainer;
@@ -261,7 +261,7 @@ public class Bayes2GOCalculation implements ICalculation
 		return hasOnlyValuedItemAttributes;
 	}
 	
-	public EnrichedGOTermsResult calculateStudySet(GOGraph graph,
+	public EnrichedGOTermsResult calculateStudySet(Ontology graph,
 			AssociationContainer goAssociations, PopulationSet populationSet,
 			StudySet studySet)
 	{
@@ -297,7 +297,7 @@ public class Bayes2GOCalculation implements ICalculation
 		return result;
 	}
 
-	public EnrichedGOTermsResult calculateStudySet(GOGraph graph,
+	public EnrichedGOTermsResult calculateStudySet(Ontology graph,
 			AssociationContainer goAssociations, PopulationSet populationSet,
 			StudySet studySet, AbstractTestCorrection testCorrection)
 	{
@@ -309,7 +309,7 @@ public class Bayes2GOCalculation implements ICalculation
 		this.usePrior = usePrior;
 	}
 
-	private void calculateByMCMC(GOGraph graph,
+	private void calculateByMCMC(Ontology graph,
 			Bayes2GOEnrichedGOTermsResult result,
 			GOTermEnumerator populationEnumerator,
 			GOTermEnumerator studyEnumerator,
@@ -572,7 +572,7 @@ public class Bayes2GOCalculation implements ICalculation
 		return "MGSA";
 	}
 
-	public static GOGraph graph;
+	public static Ontology graph;
 	public static AssociationContainer assoc;
 	
 	private static void createInternalOntology(long seed)
@@ -603,7 +603,7 @@ public class Bayes2GOCalculation implements ICalculation
 		terms.add(c10);
 		terms.add(c11);
 		TermContainer termContainer = new TermContainer(terms,"","");
-		graph = new GOGraph(termContainer);
+		graph = new Ontology(termContainer);
 
 		HashSet<TermID> tids = new HashSet<TermID>();
 		for (Term term : terms)

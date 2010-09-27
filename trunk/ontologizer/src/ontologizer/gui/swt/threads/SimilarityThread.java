@@ -10,7 +10,7 @@ import ontologizer.association.AssociationContainer;
 import ontologizer.association.AssociationParser;
 import ontologizer.calculation.SemanticCalculation;
 import ontologizer.calculation.SemanticResult;
-import ontologizer.go.GOGraph;
+import ontologizer.go.Ontology;
 import ontologizer.gui.swt.Ontologizer;
 import ontologizer.gui.swt.ResultWindow;
 import ontologizer.worksets.IWorkSetProgress;
@@ -101,7 +101,7 @@ public class SimilarityThread extends AbstractOntologizerThread
 
 				/* Stuff should have been loaded at this point */
 
-				GOGraph graph = WorkSetLoadThread.getGraph(workSet.getOboPath());
+				Ontology graph = WorkSetLoadThread.getGraph(workSet.getOboPath());
 				AssociationContainer assoc = WorkSetLoadThread.getAssociations(workSet.getAssociationPath());
 				
 				if (graph == null) throw new RuntimeException("Error in loading the ontology graph!");

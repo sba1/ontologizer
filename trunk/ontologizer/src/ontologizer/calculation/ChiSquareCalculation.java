@@ -12,7 +12,7 @@ import ontologizer.GOTermEnumerator.GOTermAnnotatedGenes;
 import ontologizer.association.AssociationContainer;
 import ontologizer.chisquare.ChiSquare;
 import ontologizer.chisquare.ChiSquareIncompatibleCountsException;
-import ontologizer.go.GOGraph;
+import ontologizer.go.Ontology;
 import ontologizer.go.TermID;
 import ontologizer.statistics.AbstractTestCorrection;
 
@@ -33,7 +33,7 @@ public class ChiSquareCalculation implements ICalculation
 		return "We calculate a chi-square value for each non.leaf node";
 	}
 
-	public EnrichedGOTermsResult calculateStudySet(GOGraph graph,
+	public EnrichedGOTermsResult calculateStudySet(Ontology graph,
 			AssociationContainer goAssociations,
 			PopulationSet populationSet,
 			StudySet studySet, AbstractTestCorrection testCorrection)
@@ -65,7 +65,7 @@ public class ChiSquareCalculation implements ICalculation
 	}
 
 	protected AbstractGOTermProperties calculateTerm(TermID term,
-			GOGraph graph, GOTermEnumerator populationTermEnumerator,
+			Ontology graph, GOTermEnumerator populationTermEnumerator,
 			GOTermEnumerator studyTermEnumerator)
 	{
 		ChiSquare chisqCalc = new ChiSquare();

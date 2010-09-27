@@ -12,7 +12,7 @@ import ontologizer.StudySet;
 import ontologizer.association.AssociationContainer;
 import ontologizer.calculation.AbstractGOTermProperties;
 import ontologizer.calculation.EnrichedGOTermsResult;
-import ontologizer.go.GOGraph;
+import ontologizer.go.Ontology;
 import ontologizer.go.Namespace;
 import ontologizer.go.Term;
 import ontologizer.go.TermContainer;
@@ -30,7 +30,7 @@ import cern.colt.matrix.linalg.SingularValueDecomposition;
  */
 public class SVD
 {
-	public static SVDResult doSVD(TermContainer goTerms, GOGraph goGraph,
+	public static SVDResult doSVD(TermContainer goTerms, Ontology goGraph,
 			ArrayList<EnrichedGOTermsResult> studySetResultList, StudySet populationSet, boolean pValues, boolean onlySignificant) throws IOException
 	{
 		HashSet<TermID> includedTerms;

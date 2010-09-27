@@ -27,7 +27,7 @@ import ontologizer.calculation.ICalculation;
 import ontologizer.calculation.ProbabilisticCalculation;
 import ontologizer.calculation.b2g.B2GParam;
 import ontologizer.calculation.b2g.Bayes2GOCalculation;
-import ontologizer.go.GOGraph;
+import ontologizer.go.Ontology;
 import ontologizer.go.TermID;
 import ontologizer.sampling.KSubsetSampler;
 import ontologizer.sampling.PercentageEnrichmentRule;
@@ -246,7 +246,7 @@ public class Benchmark
 
 		Datafiles df = new Datafiles(oboPath,assocPath);
 		final AssociationContainer assoc = df.assoc;
-		final GOGraph graph = df.graph;
+		final Ontology graph = df.graph;
 
 //		df.graph.setRelevantSubontology("biological_process");
 		Set<ByteString> allAnnotatedGenes = assoc.getAllAnnotatedGenes();
@@ -662,7 +662,7 @@ public class Benchmark
 	 * @return
 	 */
 	private static StudySet generateStudySet(Random rnd,
-			AssociationContainer assoc, GOGraph graph,
+			AssociationContainer assoc, Ontology graph,
 			GOTermEnumerator completePopEnumerator,
 			ByteString[] allGenesArray, StudySetSampler sampler,
 			HashMap<TermID,Double> wantedActiveTerms, double ALPHA, double BETA)

@@ -8,7 +8,7 @@ import ontologizer.StudySet;
 import ontologizer.association.Association;
 import ontologizer.association.AssociationContainer;
 import ontologizer.association.AssociationParser;
-import ontologizer.go.GOGraph;
+import ontologizer.go.Ontology;
 import ontologizer.go.ParentTermID;
 import ontologizer.go.Term;
 import ontologizer.go.TermContainer;
@@ -32,7 +32,7 @@ public class ProbabilisticCalculationTest extends TestCase {
 		terms.add(c3);
 		terms.add(c4);
 		TermContainer termContainer = new TermContainer(terms,"","");
-		GOGraph graph = new GOGraph(termContainer);
+		Ontology graph = new Ontology(termContainer);
 
 		/* Population */
 		PopulationSet pop = new PopulationSet("population");
