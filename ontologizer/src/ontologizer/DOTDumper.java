@@ -201,7 +201,7 @@ public class DOTDumper
 			{
 				TermID destID = node.goTerm.getID();
 
-				for (TermID sourceID : graph.getTermsAncestors(destID))
+				for (TermID sourceID : graph.getTermParents(destID))
 				{
 					Term source = graph.getGOTerm(sourceID);
 					if (nodeMap.containsKey(source))

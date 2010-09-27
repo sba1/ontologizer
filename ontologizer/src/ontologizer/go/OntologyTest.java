@@ -33,11 +33,11 @@ public class OntologyTest extends TestCase
 	{
 		Set<String> terms;
 
-		terms = graph.getTermsDescendantsAsStrings("GO:0000000");
+		terms = graph.getTermChildrenAsStrings("GO:0000000");
 		Assert.assertTrue("Test we get some Set<String> object back", terms != null);
 		Assert.assertTrue("Root has three descendants", terms.size() == 3);
 
-		terms = graph.getTermsAncestorsAsStrings("GO:0000000");
+		terms = graph.getTermParentsAsStrings("GO:0000000");
 		Assert.assertTrue("Test we gat some Set<String> object back", terms != null);
 		Assert.assertTrue("Root has no ancestors", terms.size() == 0);
 	}

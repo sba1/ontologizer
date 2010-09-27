@@ -46,7 +46,7 @@ public class ChiSquareCalculation implements ICalculation
 		for (TermID term : studyTermEnumerator)
 		{
 			// we don't have to do something for leaves
-			if (graph.getTermsDescendants(term).isEmpty())
+			if (graph.getTermChildren(term).isEmpty())
 				continue;
 
 			GOTermEnumerator popuTermEnumerator = populationSet.enumerateGOTerms(
@@ -101,7 +101,7 @@ public class ChiSquareCalculation implements ICalculation
 		}
 
 		// counting children
-		Set<TermID> children = graph.getTermsDescendants(term);
+		Set<TermID> children = graph.getTermChildren(term);
 		for (TermID child : children)
 		{
 			GOTermAnnotatedGenes childPopGenes = populationTermEnumerator.getAnnotatedGenes(child);
