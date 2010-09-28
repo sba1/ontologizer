@@ -795,7 +795,7 @@ public class Ontology implements Iterable<Term>
 		
 		if ((getRelevantSubontology() != null && !isRootTerm(getRelevantSubontology())) || getRelevantSubset() != null)
 		{
-			Ontology ontologyTransGraph = getGraphOfRelevantTerms();
+			Ontology ontologyTransGraph = getOntlogyOfRelevantTerms();
 			transGraph = ontologyTransGraph.graph;
 			transRoot = ontologyTransGraph.getRootTerm();
 		} else
@@ -1022,7 +1022,7 @@ public class Ontology implements Iterable<Term>
 	 * 
 	 * @return
 	 */
-	private Ontology getGraphOfRelevantTerms()
+	public Ontology getOntlogyOfRelevantTerms()
 	{
 		HashSet<Term> terms = new HashSet<Term>();
 		for (Term t : this)
