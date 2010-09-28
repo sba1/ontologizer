@@ -35,6 +35,12 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 
 	public interface IDistanceVisitor<VertexType>
 	{
+		/**
+		 * @param vertex
+		 * @param path
+		 * @param distance
+		 * @return false if visit should be never called again.
+		 */
 		boolean visit(VertexType vertex, List<VertexType> path, int distance);
 	}
 	
@@ -737,6 +743,30 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 		return paths;
 	}
 
+	/**
+	 * Returns all pathes from source to dest.
+	 * 
+	 * @param source where to start.
+	 * @param dest where to end.
+	 * @return the number of paths.
+	 * @note The implementation uses ugly recursion.
+	 */
+	public ArrayList<VertexType> getAllPathes(VertexType source, VertexType dest, ArrayList<VertexType> pathes)
+	{
+		if (source.equals(dest)){
+			ArrayList<VertexType> ret = new ArrayList<VertexType>();
+			ret.add(dest);
+			return ret;
+		}
+		
+		for (VertexType next : getDescendantVertices(source)){
+			ArrayList<VertexType> rec = getAllPathes(next, dest, pathes);
+			System.out.println("recur: "+rec);
+			pathes.addAll(rec);
+		}
+		return pathes;
+	}
+	
 	/**
 	 * Returns an arbitrary node of the graph
 	 * 
