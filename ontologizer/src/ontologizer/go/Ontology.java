@@ -1030,8 +1030,8 @@ public class Ontology implements Iterable<Term>
 
 		DirectedGraph<Term> trans = graph.pathMaintainingSubGraph(terms);
 
-		Ontology g = new Ontology();
-		g.graph = trans;
+		Ontology g 		= new Ontology();
+		g.graph 		= trans;
 		g.termContainer = termContainer;
 		g.assignLevel1TermsAndFixRoot();
 
