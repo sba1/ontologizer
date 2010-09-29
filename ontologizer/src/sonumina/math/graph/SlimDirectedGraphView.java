@@ -14,7 +14,7 @@ import sonumina.math.graph.AbstractGraph.IVisitor;
  * accessed directly.
  * 
  * @author Sebastian Bauer
- *
+ * @author sebastiankohler
  */
 public class SlimDirectedGraphView<VertexType>
 {
@@ -61,11 +61,9 @@ public class SlimDirectedGraphView<VertexType>
 		vertexParents = new int[vertices.length][];
 		for (i=0;i<vertices.length;i++)
 		{
-			VertexType v = (VertexType)vertices[i];
-
-			/* FIXME: The name getAncestorNodes() is misleading */
-			Iterator<VertexType> parentIter = graph.getAncestorNodes(v);
-			vertexParents[i] = createIndicesFromIter(parentIter);
+			VertexType v 					= (VertexType)vertices[i];
+			Iterator<VertexType> parentIter = graph.getParentNodes(v);
+			vertexParents[i] 				= createIndicesFromIter(parentIter);
 		}
 
 		/* Term ancestor stuff */
@@ -82,6 +80,9 @@ public class SlimDirectedGraphView<VertexType>
 				};
 			});
 			vertexAncestors[i] = createIndicesFromIter(ancestors.iterator());
+			
+			/* Sort them, as we require this for binary search in isAncestor() */ 
+			Arrays.sort(vertexAncestors[i]);
 		}
 		
 		/* Term children stuff */
@@ -90,9 +91,8 @@ public class SlimDirectedGraphView<VertexType>
 		{
 			VertexType v = (VertexType)vertices[i];
 
-			/* FIXME: The name getDescendantNodes() is misleading */
-			Iterator<VertexType> childrenIter = graph.getDescendantNodes(v);
-			vertexChildren[i] = createIndicesFromIter(childrenIter);
+			Iterator<VertexType> childrenIter 	= graph.getChildNodes(v);
+			vertexChildren[i] 					= createIndicesFromIter(childrenIter);
 		}
 		
 		/* Term descendants stuff */
@@ -110,7 +110,7 @@ public class SlimDirectedGraphView<VertexType>
 			});
 			vertexDescendants[i] = createIndicesFromIter(descendants.iterator());
 
-			/* Sort them, as we require this for isDescendant() */ 
+			/* Sort them, as we require this for binary search in isDescendant() */ 
 			Arrays.sort(vertexDescendants[i]);
 		}
 	}
@@ -193,17 +193,74 @@ public class SlimDirectedGraphView<VertexType>
 	}
 
 	/**
-	 * Determines whether node i is a descendant of node j. 
+	 * Determines whether node with the index i is an ancestor of node with index j. 
 	 * 
 	 * @param i
 	 * @param j
-	 * @return
+	 * @return true if the node with the index i is an ancestor
+	 * of the node with the index j, otherwise false.
+	 */
+	public boolean isAncestor(int i, int j)
+	{
+		int [] ancs = vertexAncestors[i];
+		int r 		=  Arrays.binarySearch(ancs,j);
+		return r >= 0;
+	}
+	
+	/**
+	 * Determines whether the node with index i is a 
+	 * descendant of the node with the index j. 
+	 * 
+	 * @param i
+	 * @param j
+	 * @return true if the node with the index i is a descendant
+	 * of the node with the index j, otherwise false.
 	 */
 	public boolean isDescendant(int i, int j)
 	{
-		int [] descs = vertexDescendants[i];
-		int r =  Arrays.binarySearch(descs,j);
+		int [] descs 	= vertexDescendants[i];
+		int r 			= Arrays.binarySearch(descs,j);
 		return r >= 0;
+	}
+	
+	/**
+	 * Determines if the given vertex i is an ancestor of
+	 * the given vertex j.
+	 * @param i
+	 * @param j
+	 * @return true if the node i is an ancestor
+	 * of the node j, otherwise false.
+	 */
+	public boolean isAncestor(VertexType i, VertexType j){
+		
+		/* Check that both nodes are present in graph */
+		if ( (! isVertexInGraph(i)) || (! isVertexInGraph(j)))
+			return false;
+		
+		int iIdx = vertex2Index.get(i);
+		int jIdx = vertex2Index.get(j);
+		
+		return isAncestor(iIdx, jIdx);
+	}
+	
+	/**
+	 * Determines if the given vertex i is a descendant of
+	 * the given vertex j.
+	 * @param i
+	 * @param j
+	 * @return true if the node i is a descendant
+	 * of the node j, otherwise false.
+	 */
+	public boolean isDescendant(VertexType i, VertexType j){
+		
+		/* Check that both nodes are present in graph */
+		if ( (! isVertexInGraph(i)) || (! isVertexInGraph(j)))
+			return false;
+		
+		int iIdx = vertex2Index.get(i);
+		int jIdx = vertex2Index.get(j);
+		
+		return isDescendant(iIdx, jIdx);
 	}
 	
 	/**
@@ -214,19 +271,19 @@ public class SlimDirectedGraphView<VertexType>
 	 */
 	public ArrayList<VertexType> getDescendants(VertexType t){
 		
-		// check that this vertex is found in the graph
+		/* check that this vertex is found in the graph */
 		if ( ! isVertexInGraph(t))
 			return null;
 		
-		// get the index of the vertex
+		/* get the index of the vertex */
 		int indexOfTerm 						= getVertexIndex(t);
-		// get all descendent indices of the vertex
+		/* get all descendent indices of the vertex */
 		int[] descendantIndices					= vertexDescendants[indexOfTerm];
 		
-		// init the return list of vertex-objects
+		/* init the return list of vertex-objects */
 		ArrayList<VertexType> descendantObjects = new ArrayList<VertexType>(descendantIndices.length);
 		
-		// convert each descendant-index to an vertex object
+		/* convert each descendant-index to an vertex object */
 		for (int descendantIdx : descendantIndices){
 			VertexType descendantVertex = getVertex(descendantIdx);
 			descendantObjects.add(descendantVertex);
@@ -243,19 +300,19 @@ public class SlimDirectedGraphView<VertexType>
 	 */
 	public ArrayList<VertexType> getAncestors(VertexType t){
 		
-		// check that this vertex is found in the graph
+		/* check that this vertex is found in the graph */
 		if ( ! isVertexInGraph(t))
 			return null;
 		
-		// get the index of the vertex
+		/* get the index of the vertex */
 		int indexOfTerm 						= getVertexIndex(t);
-		// get all descendent indices of the vertex
+		/* get all descendent indices of the vertex */
 		int[] ancestorIndices					= vertexAncestors[indexOfTerm];
 		
-		// init the return list of vertex-objects
+		/* init the return list of vertex-objects */
 		ArrayList<VertexType> ancestorObjects 	= new ArrayList<VertexType>(ancestorIndices.length);
 		
-		// convert each ancestor-index to an vertex object
+		/* convert each ancestor-index to an vertex object */
 		for (int ancestorIdx : ancestorIndices){
 			VertexType ancestorVertex = getVertex(ancestorIdx);
 			ancestorObjects.add(ancestorVertex);
@@ -271,5 +328,8 @@ public class SlimDirectedGraphView<VertexType>
 	private boolean isVertexInGraph(VertexType vertex){
 		return vertex2Index.containsKey(vertex);
 	}
+	
+	
+	
 	
 }
