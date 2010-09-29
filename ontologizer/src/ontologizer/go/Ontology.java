@@ -314,10 +314,10 @@ public class Ontology implements Iterable<Term>
 	}
 
 	/**
-	 * Return the set of GO term IDs containing the given GO term's ancestors.
+	 * Return the set of term IDs containing the given term-ID's ancestors.
 	 * 
-	 * @param goTerm
-	 * @return the set of GO IDs of ancestors
+	 * @param Term-ID
+	 * @return the set of Term-IDs of ancestors
 	 */
 	public Set<TermID> getTermParents(TermID goTermID)
 	{
@@ -336,6 +336,31 @@ public class Ontology implements Iterable<Term>
 			terms.add(edgeIter.next().getSource().getID());
 		return terms;
 	}
+	
+	/**
+	 * Return the set of terms that are parents of the given term.
+	 * 
+	 * @param term
+	 * @return the set of Terms of parents
+	 */
+	public Set<Term> getTermParents(Term term)
+	{
+		HashSet<Term> terms = new HashSet<Term>();
+		if (rootTerm.getID().id == term.getID().id)
+			return terms;
+
+		Term goTerm;
+		if (term.getID().equals(rootTerm.getIDAsString()))
+			goTerm = rootTerm;
+		else
+			goTerm = termContainer.get(term.getID());
+
+		Iterator<Edge<Term>> edgeIter = graph.getInEdges(goTerm);
+		while (edgeIter.hasNext())
+			terms.add(edgeIter.next().getSource());
+		return terms;
+	}
+	
 
 	/**
 	 * Return the set of GO term IDs containing the given GO term's ancestors.
