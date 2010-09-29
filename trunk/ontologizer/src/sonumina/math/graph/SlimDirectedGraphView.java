@@ -118,16 +118,16 @@ public class SlimDirectedGraphView<VertexType>
 	/**
 	 * Creates an index array from the given vertex iterator.
 	 *
-	 * @param parentIter
+	 * @param iterator
 	 * @return
 	 */
-	private int[] createIndicesFromIter(Iterator<VertexType> parentIter)
+	private int[] createIndicesFromIter(Iterator<VertexType> iterator)
 	{
 		ArrayList<Integer> indicesList = new ArrayList<Integer>(10);
 
-		while (parentIter.hasNext())
+		while (iterator.hasNext())
 		{
-			VertexType p = parentIter.next();
+			VertexType p = iterator.next();
 			Integer idx = vertex2Index.get(p);
 			if (idx != null)
 				indicesList.add(idx);
@@ -205,4 +205,71 @@ public class SlimDirectedGraphView<VertexType>
 		int r =  Arrays.binarySearch(descs,j);
 		return r >= 0;
 	}
+
+	/**
+	 * Get the descendants of a given vertex as ArrayList of vertices.
+	 * @param t The vertex for that the descendant vertices should be found.
+	 * @return null if the given vertex was not found in the graph, otherwise an ArrayList of vertices
+	 * that are descendants of the given vertex.
+	 */
+	public ArrayList<VertexType> getDescendants(VertexType t){
+
+		// check that this vertex is found in the graph
+		if ( ! isVertexInGraph(t))
+			return null;
+
+		// get the index of the vertex
+		int indexOfTerm 						= getVertexIndex(t);
+		// get all descendent indices of the vertex
+		int[] descendantIndices					= vertexDescendants[indexOfTerm];
+
+		// init the return list of vertex-objects
+		ArrayList<VertexType> descendantObjects = new ArrayList<VertexType>(descendantIndices.length);
+
+		// convert each descendant-index to an vertex object
+		for (int descendantIdx : descendantIndices){
+			VertexType descendantVertex = getVertex(descendantIdx);
+			descendantObjects.add(descendantVertex);
+		}
+		return descendantObjects;
+	}
+
+
+	/**
+	 * Get the ancestors of a given vertex as ArrayList of vertices.
+	 * @param t The vertex for that the ancestor vertices should be found.
+	 * @return null if the given vertex was not found in the graph, otherwise an ArrayList of vertices
+	 * that are ancestors of the given vertex.
+	 */
+	public ArrayList<VertexType> getAncestors(VertexType t){
+
+		// check that this vertex is found in the graph
+		if ( ! isVertexInGraph(t))
+			return null;
+
+		// get the index of the vertex
+		int indexOfTerm 						= getVertexIndex(t);
+		// get all descendent indices of the vertex
+		int[] ancestorIndices					= vertexAncestors[indexOfTerm];
+
+		// init the return list of vertex-objects
+		ArrayList<VertexType> ancestorObjects 	= new ArrayList<VertexType>(ancestorIndices.length);
+
+		// convert each ancestor-index to an vertex object
+		for (int ancestorIdx : ancestorIndices){
+			VertexType ancestorVertex = getVertex(ancestorIdx);
+			ancestorObjects.add(ancestorVertex);
+		}
+		return ancestorObjects;
+	}
+
+	/**
+	 * Checks if a given vertex can be found in the graph.
+	 * @param The vertex to be searched.
+	 * @return True if the vertex can be found. False if not.
+	 */
+	private boolean isVertexInGraph(VertexType vertex){
+		return vertex2Index.containsKey(vertex);
+	}
+
 }
