@@ -897,7 +897,7 @@ public class Ontology implements Iterable<Term>
 	 */
 	public Iterator<Term> iterator()
 	{
-		return termContainer.iterator();
+		return graph.getVertexIterator();
 	}
 
 	private Subset relevantSubset;
