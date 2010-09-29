@@ -903,6 +903,7 @@ public class Ontology implements Iterable<Term>
 	private Subset relevantSubset;
 	private Term relevantSubontology;
 
+	
 	/**
 	 * Sets the relevant subset.
 	 * 
