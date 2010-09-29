@@ -54,7 +54,7 @@ abstract public class AbstractGraph<VertexType>
 	 * @param vt
 	 * @return
 	 */
-	public abstract Iterator<VertexType>getAncestorNodes(VertexType vt);
+	public abstract Iterator<VertexType>getParentNodes(VertexType vt);
 
 	/**
 	 * Returns the vertices to which the outgoing edges point to.
@@ -62,7 +62,7 @@ abstract public class AbstractGraph<VertexType>
 	 * @param vt
 	 * @return
 	 */
-	public abstract Iterator<VertexType>getDescendantNodes(VertexType vt);
+	public abstract Iterator<VertexType>getChildNodes(VertexType vt);
 
 	/**
 	 * Performs a breadth-first search onto the graph starting at a given
@@ -133,8 +133,8 @@ abstract public class AbstractGraph<VertexType>
 					{
 						/* If bfs is done against flow neighbours can be found via the
 						 * in-going edges otherwise via the outgoing edges */
-						if (againstFlow) return getAncestorNodes(t);
-						else return getDescendantNodes(t);
+						if (againstFlow) return getParentNodes(t);
+						else return getChildNodes(t);
 					}
 				}, visitor);
 	}
@@ -237,14 +237,14 @@ abstract public class AbstractGraph<VertexType>
 		{
 			/* Build list of children */
 			LinkedList<VertexType> vChild = new LinkedList<VertexType>();
-			Iterator<VertexType> childrenIterator = getDescendantNodes(v);
+			Iterator<VertexType> childrenIterator = getChildNodes(v);
 			while (childrenIterator.hasNext())
 				vChild.add(childrenIterator.next());
 			vertex2Children.put(v, vChild);
 
 			/* Determine the number of parents for each node */
 			int numParents = 0;
-			Iterator<VertexType> parentIterator = getAncestorNodes(v);
+			Iterator<VertexType> parentIterator = getParentNodes(v);
 			while (parentIterator.hasNext())
 			{
 				parentIterator.next();
@@ -349,7 +349,7 @@ abstract public class AbstractGraph<VertexType>
 		/* Now write out the edges. Write out only the edges which are linking nodes within the node set. */
 		for (VertexType s : nodeSet)
 		{
-			Iterator<VertexType> ancest = getDescendantNodes(s);
+			Iterator<VertexType> ancest = getChildNodes(s);
 			while (ancest.hasNext())
 			{
 				VertexType d = ancest.next();
