@@ -295,8 +295,8 @@ public class Ontology implements Iterable<Term>
 	/**
 	 * Return the set of term IDs containing the given term's children.
 	 *
-	 * @param term - the termID as a TermID
-	 * @return the set of termID of the descendants as terms
+	 * @param term - the term's id as a TermID
+	 * @return the set of termID of the descendants as term-IDs
 	 */
 	public Set<TermID> getTermChildren(TermID termID)
 	{
@@ -310,6 +310,27 @@ public class Ontology implements Iterable<Term>
 		Iterator<Edge<Term>> edgeIter = graph.getOutEdges(goTerm);
 		while (edgeIter.hasNext())
 			terms.add(edgeIter.next().getDest().getID());
+		return terms;
+	}
+
+	/**
+	 * Return the set of terms containing the given term's children.
+	 *
+	 * @param term - the term for which the children should be returned
+	 * @return the set of terms of the descendants as terms
+	 */
+	public Set<Term> getTermChildren(Term term)
+	{
+		Term goTerm;
+		if (rootTerm.getID().id == term.getID().id)
+			goTerm = rootTerm;
+		else
+			goTerm = termContainer.get(term.getID());
+
+		HashSet<Term> terms = new HashSet<Term>();
+		Iterator<Edge<Term>> edgeIter = graph.getOutEdges(goTerm);
+		while (edgeIter.hasNext())
+			terms.add(edgeIter.next().getDest());
 		return terms;
 	}
 
