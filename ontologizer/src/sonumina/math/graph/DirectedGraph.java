@@ -26,6 +26,7 @@ final class VertexAttributes<VertexType>
  * This class represents holds the structure of a directed graph.
  * 
  * @author Sebastian Bauer
+ * @author sebastiankohler
  *
  */
 public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> implements Iterable<VertexType>
@@ -149,7 +150,7 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 		while (nodeIt.hasNext())
 		{
 			VertexType node = nodeIt.next();
-			Iterator<VertexType> descIt = this.getDescendantNodes(node);
+			Iterator<VertexType> descIt = this.getChildNodes(node);
 			while (descIt.hasNext())
 			{
 				copy.addEdge(new Edge<VertexType>(node,descIt.next()));
@@ -337,7 +338,7 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 		return va.inEdges.iterator();
 	}
 	
-	public Iterator<VertexType> getAncestorNodes(VertexType vt)
+	public Iterator<VertexType> getParentNodes(VertexType vt)
 	{
 		VertexAttributes<VertexType> va = vertices.get(vt);
 		assert(va != null);
@@ -378,7 +379,7 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 		 */
 		HashSet<VertexType> neighborhood  = new HashSet<VertexType>();
 
-		Iterator<VertexType> neighborsIt = getDescendantNodes(v);
+		Iterator<VertexType> neighborsIt = getChildNodes(v);
 		while (neighborsIt.hasNext())
 			neighborhood.add( neighborsIt.next() );
 		
@@ -403,7 +404,7 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 			/*
 			 * Get all nodes reachable from this node
 			 */
-			Iterator<VertexType> neighborsNeighborsIt = getDescendantNodes(neighbor);
+			Iterator<VertexType> neighborsNeighborsIt = getChildNodes(neighbor);
 			while (neighborsNeighborsIt.hasNext()){
 				VertexType neighborsNeighbor = neighborsNeighborsIt.next();
 				
@@ -420,8 +421,8 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 		/*
 		 * Calculate clustering coefficient
 		 */
-		double denominator = (double)(numberNeighbors*(numberNeighbors-1));
-		double C = (double)numEdgesNeighborhood / denominator; 
+		double denominator 	= (double)(numberNeighbors*(numberNeighbors-1));
+		double C 			= (double)numEdgesNeighborhood / denominator; 
 		return C;
 	}
 	
@@ -442,7 +443,10 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 		return va.outEdges.iterator();
 	}
 
-	public Iterator<VertexType> getDescendantNodes(VertexType vt)
+	/* (non-Javadoc)
+	 * @see sonumina.math.graph.AbstractGraph#getChildNodes(java.lang.Object)
+	 */
+	public Iterator<VertexType> getChildNodes(VertexType vt)
 	{
 		VertexAttributes<VertexType> va = vertices.get(vt); 
 		assert(va != null);
@@ -593,7 +597,7 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 	}
 
 	/**
-	 * The bellman-ford algorithm,
+	 * The bellman-ford algorithm (computes single-source shortest paths in a weighted digraph)
 	 * 
 	 * @param source
 	 * @param weightMultiplier multiplies the weights by the given factor.
@@ -989,7 +993,7 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 			{
 				Set<VertexType> vUpperVertices = transitiveClosure.getVerticesOfUpperInducedGraph(null,v);
 				LinkedList<VertexType> parents = new LinkedList<VertexType>();
-				Iterator<VertexType> parentIterator = transitiveClosure.getAncestorNodes(v);
+				Iterator<VertexType> parentIterator = transitiveClosure.getParentNodes(v);
 				while (parentIterator.hasNext())
 					parents.add(parentIterator.next());
 
