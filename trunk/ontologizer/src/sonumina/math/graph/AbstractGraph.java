@@ -74,7 +74,7 @@ abstract public class AbstractGraph<VertexType>
 	 * @param visitor a object of a class implementing IVisitor. For every
 	 *        vertex visited by the algorithm the visitor.visited() method is
 	 *        called. Note that the method is also called for the vertex
-	 *        represented by vertex.
+	 *        represented by <code>vertex</code> (the one given as parameter to this method).
 	 *
 	 * @see IVisitor
 	 */
