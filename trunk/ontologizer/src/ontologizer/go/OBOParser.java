@@ -31,7 +31,7 @@ import java.util.zip.GZIPInputStream;
  * OBOParser parses the Gene Ontology OBO term definition file. Please see
  * www.geneontology.org for background on this file format.
  *
- * @author Peter N. Robinson, Sebastian Bauer
+ * @author Peter N. Robinson, Sebastian Bauer, Sebastian Kšhler
  */
 public class OBOParser
 {
@@ -135,6 +135,9 @@ public class OBOParser
 	/** The alternative ids of the term */
 	private ArrayList<TermID> currentAlternatives = new ArrayList<TermID>();
 
+	/** Synonyms, if any, for the Term currently being parsed */
+	private ArrayList<String> currentSynonyms = new ArrayList<String>();
+
 	/** The subsets */
 	private ArrayList<Subset> currentSubsets = new ArrayList<Subset>();
 
@@ -197,6 +200,7 @@ public class OBOParser
 			t.setDefinition(currentDefintion);
 			t.setAlternatives(currentAlternatives);
 			t.setSubsets(currentSubsets);
+			t.setSynonyms(currentSynonyms);
 			terms.add(t);
 
 			/* Statistics */
@@ -217,6 +221,7 @@ public class OBOParser
 		currentParents.clear();
 		currentAlternatives.clear();
 		currentSubsets.clear();
+		currentSynonyms.clear();
 	}
 
 
@@ -489,7 +494,11 @@ public class OBOParser
 		} else if (name.equals("is_obsolete"))
 		{
 			currentObsolete = value.equalsIgnoreCase("true");
-		} else if (name.equals("namespace"))
+		}
+		else if (name.equals("synonym")) {
+			readSynonym(value);
+		}
+		else if (name.equals("namespace"))
 		{
 			readNamespace(value);
 		} else if (name.equals("alt_id"))
@@ -659,6 +668,29 @@ public class OBOParser
 		}
 
 		currentNamespace = namespace;
+	}
+
+
+	/**
+	 * This reads a synonym from the OBO File. Note that these lines have the form
+	 * synonym "NAME" [COMMENT/REF]
+	 * Since the Phen-Ontology now uses the synonym field to record different ways that
+	 * omim.txt expresses the same feature, we essentially want to remove the quotation remarks
+	 * and can disregard the [COMMENT/REF]. This may change later, so do not depend on this.
+	 * @param value
+	 */
+	private void readSynonym(String value) {
+		int a,b;
+		a=0;
+		while (value.charAt(a) == '\"')a++;
+		if (a != 1) {
+			System.err.println("Error Parsing Synonym \""+value+"\"");
+			System.err.println("Synonym does not begin with a aingle quotation mark.");
+			System.exit(1);
+		}
+		b=1;
+		while (value.charAt(b) != '\"') b++;
+		this.currentSynonyms.add(value.substring(1,b).trim());
 	}
 
 	public String getFormatVersion()
