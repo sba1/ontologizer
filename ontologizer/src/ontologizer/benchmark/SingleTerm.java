@@ -47,6 +47,14 @@ public class SingleTerm
 	private static AssociationContainer assoc;
 	private static Ontology graph;
 
+	private static String MAX_BOX = "\\ifthenelse{\\isundefined{\\myboxlen}}{\\newlength{\\myboxlen}}{}"+
+	  "\\newcommand*{\\maxbox}[3]{\\settowidth{\\myboxlen}{#2}"+
+	  "\\ifdim#1<\\myboxlen" +
+	  "\\parbox{#1}{\\centering#3}"+
+	  "\\else"+
+	  "\\parbox{\\myboxlen}{\\centering#3}"+
+	  "\\fi}";
+
 	/**
 	 * A test procedure.
 	 *
@@ -390,19 +398,7 @@ public class SingleTerm
 		ignoreTerms.add(new TermID("GO:0051325"));
 		ignoreTerms.add(new TermID("GO:0022403"));
 
-//		String preamble = "d2tfigpreamble=\"\\pgfdeclareradialshading{verylightsphere}{\\pgfpoint{-0.5cm}{0.5cm}}{rgb(0cm)=(0.99,0.99,0.99);rgb(0.7cm)=(0.96,0.96,0.96);rgb(1cm)=(0.93,0.93,0.93);rgb(1.05cm)=(1,1,1)}"+
-//        "\\pgfdeclareradialshading{lightsphere}{\\pgfpoint{-0.5cm}{0.5cm}}{rgb(0cm)=(0.99,0.99,0.99);rgb(0.7cm)=(0.95,0.95,0.95);rgb(1cm)=(0.9,0.9,0.9);rgb(1.05cm)=(1,1,1)}"+
-//        "\\pgfdeclareradialshading{darksphere}{\\pgfpoint{-0.5cm}{0.5cm}}{gray(0cm)=(0.95);gray(0.7cm)=(0.9);gray(1cm)=(0.85);gray(2cm)=(0.85)}"+
-//        "\\pgfdeclareradialshading{verydarksphere}{\\pgfpoint{-0.5cm}{0.5cm}}{gray(0cm)=(0.9);gray(0.7cm)=(0.85);gray(1cm)=(0.8);gray(2cm)=(0.8)}\"";
-
-
-		String preamble = "d2tfigpreamble=\"\\ifthenelse{\\isundefined{\\myboxlen}}{\\newlength{\\myboxlen}}{}"+
-		  "\\newcommand*{\\maxbox}[3]{\\settowidth{\\myboxlen}{#2}"+
-		  "\\ifdim#1<\\myboxlen" +
-		  "\\parbox{#1}{\\centering#3}"+
-		  "\\else"+
-		  "\\parbox{\\myboxlen}{\\centering#3}"+
-		  "\\fi}\"";
+		String preamble = "d2tfigpreamble=\"" + MAX_BOX + "\"";
 
 		GODOTWriter.writeDOT(graph, new File("goexample.dot"), graph.getRelevantSubontology(), terms, new AbstractDotAttributesProvider()
 		{
@@ -545,7 +541,7 @@ public class SingleTerm
 
 			terms.addAll(wantedActiveTerms.keySet());
 
-			String preamble = "d2tfigpreamble=\"\\pgfdeclareradialshading{verylightsphere}{\\pgfpoint{-0.5cm}{0.5cm}}{rgb(0cm)=(0.99,0.99,0.99);rgb(0.7cm)=(0.96,0.96,0.96);rgb(1cm)=(0.93,0.93,0.93);rgb(1.05cm)=(1,1,1)}"+
+			String preamble = "d2tfigpreamble=\"" + MAX_BOX + "\\pgfdeclareradialshading{verylightsphere}{\\pgfpoint{-0.5cm}{0.5cm}}{rgb(0cm)=(0.99,0.99,0.99);rgb(0.7cm)=(0.96,0.96,0.96);rgb(1cm)=(0.93,0.93,0.93);rgb(1.05cm)=(1,1,1)}"+
 			                                   "\\pgfdeclareradialshading{lightsphere}{\\pgfpoint{-0.5cm}{0.5cm}}{rgb(0cm)=(0.99,0.99,0.99);rgb(0.7cm)=(0.95,0.95,0.95);rgb(1cm)=(0.9,0.9,0.9);rgb(1.05cm)=(1,1,1)}"+
 			                                   "\\pgfdeclareradialshading{darksphere}{\\pgfpoint{-0.5cm}{0.5cm}}{gray(0cm)=(0.95);gray(0.7cm)=(0.9);gray(1cm)=(0.85);gray(2cm)=(0.85)}"+
 			                                   "\\pgfdeclareradialshading{verydarksphere}{\\pgfpoint{-0.5cm}{0.5cm}}{gray(0cm)=(0.9);gray(0.7cm)=(0.85);gray(1cm)=(0.8);gray(2cm)=(0.8)}\"";
@@ -555,31 +551,31 @@ public class SingleTerm
 				public String getDotNodeAttributes(TermID id)
 				{
 					double val = result.getGOTermProperties(id).p_adjusted;
+					String label = graph.getTerm(id).getName().replace("_", " ");
+					AbstractGOTermProperties prop = result.getGOTermProperties(id);
+					String valStr;
+					if (prop != null)
+					{
+						valStr = EnrichedGOTermsResultLatexWriter.toLatex(val);
+						if (!valStr.startsWith("<")) valStr = "=" + valStr;
+						valStr = "$p" + valStr + "$";
+					} else valStr = "";
 
 					StringBuilder str = new StringBuilder(200);
 					str.append("margin=\"0\" shape=\"box\" label=\"");
-					str.append("\\scriptsize$\\begin{array}{c}");
-
+					str.append("\\scriptsize");
+					str.append("\\maxbox{3.3cm}{\\emph{" + label + "}}{");
 					str.append("\\emph{");
 					if (wantedActiveTerms.containsKey(id))
 						str.append("\\underline{");
-					str.append(graph.getTerm(id).getName().replace("_", " "));
+					str.append(label);
 					if (wantedActiveTerms.containsKey(id))
 						str.append("}");
 					str.append("} \\\\\\ ");
 					str.append(studySetEnumerator.getAnnotatedGenes(id).totalAnnotatedCount() + "/" + allEnumerator.getAnnotatedGenes(id).totalAnnotatedCount() + " \\\\\\ ");
 
-					AbstractGOTermProperties prop = result.getGOTermProperties(id);
-					if (prop != null)
-					{
-						String valStr = EnrichedGOTermsResultLatexWriter.toLatex(val);
-						if (!valStr.startsWith("<")) valStr = "=" + valStr;
-						str.append("p");
-						str.append(valStr);
-					}
-
-					str.append("\\end{array}$");
-					str.append("\"");
+					str.append(valStr);
+					str.append("}\"");
 
 					if (wantedActiveTerms.containsKey(id))
 					{
