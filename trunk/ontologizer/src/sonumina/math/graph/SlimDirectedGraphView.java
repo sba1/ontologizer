@@ -24,7 +24,8 @@ public class SlimDirectedGraphView<VertexType>
 	/** Map specific terms to the index in the allTerms array */
 	public HashMap<VertexType,Integer> vertex2Index;
 	
-	/** Contains all the ancestors of the terms */
+	/** Contains all the ancestors of the terms (and the terms itself). 
+	 * Note that the array of ancestors is sorted. */
 	public int [][] vertexAncestors;
 	
 	/** Contains the parents of the terms */
@@ -33,7 +34,8 @@ public class SlimDirectedGraphView<VertexType>
 	/** Contains the children of the term */
 	public int [][] vertexChildren;
 	
-	/** Contains the descendants of the (i.e., children, grand-children, etc.).*/
+	/** Contains the descendants of the (i.e., children, grand-children, etc. and the term itself). 
+	 * Note that the array of descendants is sorted.*/
 	public int [][] vertexDescendants;
 
 	/**
@@ -194,7 +196,7 @@ public class SlimDirectedGraphView<VertexType>
 
 	/**
 	 * Determines whether node with the index i is an ancestor of node with index j. 
-	 * 
+	 * @note The ancestors of a given term include the given term itself.
 	 * @param i
 	 * @param j
 	 * @return true if the node with the index i is an ancestor
@@ -210,7 +212,7 @@ public class SlimDirectedGraphView<VertexType>
 	/**
 	 * Determines whether the node with index i is a 
 	 * descendant of the node with the index j. 
-	 * 
+	 * @note The descendants of a given term include the given term itself.
 	 * @param i
 	 * @param j
 	 * @return true if the node with the index i is a descendant
