@@ -47,6 +47,9 @@ public class Term
 	/** The term's alternatives */
 	private TermID [] alternatives;
 
+	/** The synonyms of this term, as read from the obo file. */
+	private String[] synonyms;
+
 	/** The term's subsets */
 	private Subset [] subsets;
 
@@ -377,6 +380,20 @@ public class Term
 	public Subset[] getSubsets()
 	{
 		return subsets;
+	}
+
+
+	public void setSynonyms(ArrayList<String> currentSynonyms) {
+
+		if (currentSynonyms.size() > 0){
+			synonyms = new String[currentSynonyms.size()];
+			currentSynonyms.toArray(synonyms);
+		}
+	}
+
+
+	public String[] getSynonyms() {
+		return synonyms;
 	}
 
 }
