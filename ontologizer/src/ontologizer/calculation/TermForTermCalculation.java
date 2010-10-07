@@ -1,6 +1,5 @@
 package ontologizer.calculation;
 
-import ontologizer.GOTermCounter;
 import ontologizer.GOTermEnumerator;
 import ontologizer.PopulationSet;
 import ontologizer.StudySet;
@@ -73,6 +72,7 @@ public class TermForTermCalculation extends AbstractHypergeometricCalculation
 				int i = 0;
 
 				PValue p [] = new PValue[populationTermEnumerator.getTotalNumberOfAnnotatedTerms()];
+
 				TermForTermGOTermProperties myP;
 
 				for(TermID term : populationTermEnumerator)
