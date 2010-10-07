@@ -110,6 +110,7 @@ public class TopCalculation extends AbstractHypergeometricCalculation
 					}
 					marked.addAll(studyAnnotatedGenes.totalAnnotated);
 				}
+
 			}
 		} else
 		{
@@ -128,7 +129,6 @@ public class TopCalculation extends AbstractHypergeometricCalculation
 			StudySet studySet, AbstractTestCorrection testCorrection, TermID term,
 			EnrichedGOTermsResult studySetResult, GOTermEnumerator studyTermEnumerator, GOTermEnumerator populationTermEnumerator)
 	{
-		
 		/* Leave early if we already processed this term */
 		if (markedGenesMap.containsKey(term))
 			return markedGenesMap.get(term);
@@ -138,7 +138,9 @@ public class TopCalculation extends AbstractHypergeometricCalculation
 		if (d != null)
 		{
 			for (TermID c : d)
+			{
 				markedGenes.addAll(calculateTermNew(graph, goAssociations, populationSet, studySet, testCorrection, c, studySetResult, studyTermEnumerator, populationTermEnumerator));
+			}
 		}
 
 		int popGeneCount = populationSet.getGeneCount();
@@ -198,19 +200,7 @@ public class TopCalculation extends AbstractHypergeometricCalculation
 					goidAnnotatedPopGeneCount);
 
 			if (myP.p < SIGNIFICANCE_LEVEL)
-			{
-				Set<TermID> upperTerms = graph.getTermsOfInducedGraph(graph.getRootTerm().getID(), term);
-				for (TermID up : upperTerms)
-				{
-					HashSet<ByteString> marked = markedGenesMap.get(up);
-					if (marked == null)
-					{
-						marked = new HashSet<ByteString>();
-						markedGenesMap.put(up, marked);
-					}
-					marked.addAll(studyAnnotatedGenes.totalAnnotated);
-				}
-			}
+				markedGenes.addAll(studyAnnotatedGenes.totalAnnotated);
 		} else
 		{
 			/* Mark this p value as irrelevant so it isn't considered in an mtc */
@@ -240,8 +230,7 @@ public class TopCalculation extends AbstractHypergeometricCalculation
 		GOTermEnumerator populationTermEnumerator = populationSet.enumerateGOTerms(graph,goAssociations);
 		Set<TermID> allAnnotatedTerms = populationTermEnumerator.getAllAnnotatedTermsAsSet();
 		
-		
-		if (true)
+		if (false)
 		{
 			GOLevels levels = graph.getGOLevels(allAnnotatedTerms);
 			
@@ -249,9 +238,7 @@ public class TopCalculation extends AbstractHypergeometricCalculation
 			{
 				Set<TermID> terms = levels.getLevelTermSet(i);
 				for (TermID t : terms)
-				{
 					calculateTerm(graph, goAssociations, populationSet, studySet, testCorrection, t, studySetResult, studyTermEnumerator, populationTermEnumerator);
-				}
 			}
 		} else
 		{
@@ -273,7 +260,8 @@ public class TopCalculation extends AbstractHypergeometricCalculation
 		return "Topology-Elim";
 	}
 	
-	public boolean supportsTestCorrection() {
+	public boolean supportsTestCorrection()
+	{
 		return true;
 	}
 
