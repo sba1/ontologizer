@@ -837,8 +837,6 @@ public class Ontology implements Iterable<Term>
 		DirectedGraph<Term> transGraph;
 		Term transRoot;
 
-		System.out.println(getRelevantSubontology());
-
 		if ((getRelevantSubontology() != null && !isRootTerm(getRelevantSubontology())) || getRelevantSubset() != null)
 		{
 			Ontology ontologyTransGraph = getOntlogyOfRelevantTerms();
