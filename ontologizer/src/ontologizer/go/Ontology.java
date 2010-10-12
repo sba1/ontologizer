@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 import sonumina.math.graph.DirectedGraph;
 import sonumina.math.graph.Edge;
 import sonumina.math.graph.SlimDirectedGraphView;
+import sonumina.math.graph.AbstractGraph.INeighbourGrabber;
 import sonumina.math.graph.AbstractGraph.IVisitor;
 import sonumina.math.graph.DirectedGraph.IDistanceVisitor;
 
@@ -566,6 +567,34 @@ public class Ontology implements Iterable<Term>
 		graph.bfs(termIDsToTerms(termIDSet), true, vistingVertex);
 	}
 
+	/**
+	 * Starting at the vertices within the goTermIDSet walk to the source of the
+	 * DAG (ontology vertex) and call the method visiting of given object
+	 * Implementing IVisitingGOVertex. Only relations in relationsToFollow are
+	 * considered.
+	 *
+	 * @param termIDSet
+	 * @param vistingVertex
+	 * @param relationsToFollow
+	 */
+	public void walkToSource(Collection<TermID>  termIDSet, IVisitingGOVertex vistingVertex, final Set<TermRelation> relationsToFollow)
+	{
+		graph.bfs(termIDsToTerms(termIDSet), new INeighbourGrabber<Term>() {
+			@Override
+			public Iterator<Term> grabNeighbours(Term t)
+			{
+				Iterator<Edge<Term>> inIter = graph.getInEdges(t);
+				ArrayList<Term> termsToConsider = new ArrayList<Term>();
+				while (inIter.hasNext())
+				{
+					OntologyEdge edge = (OntologyEdge)inIter.next(); /* Ugly cast */
+					if (relationsToFollow.contains(edge.getRelation()))
+						termsToConsider.add(edge.getSource());
+				}
+				return termsToConsider.iterator();
+			}
+		}, vistingVertex);
+	}
 
 	/**
 	 * Starting at the vertices within the goTermIDSet walk to the sinks of the
