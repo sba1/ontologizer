@@ -184,9 +184,10 @@ public class OBOParser
 				return;
 
 			if (currentID == null || currentName == null
-					|| currentNamespace == null) {
+//					|| currentNamespace == null
+					) {
 
-				logger.warning("Error parsing stanza: " + currentStanza.toString());
+				logger.warning("Error parsing stanza: " + currentStanza.toString()+" currentID: "+currentID+", currentName: "+currentName);
 
 				resetCurrentStanza();
 
