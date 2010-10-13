@@ -204,8 +204,8 @@ public class SlimDirectedGraphView<VertexType>
 	 */
 	public boolean isAncestor(int i, int j)
 	{
-		int [] ancs = vertexAncestors[i];
-		int r 		=  Arrays.binarySearch(ancs,j);
+		int [] ancs = vertexAncestors[j];
+		int r 		=  Arrays.binarySearch(ancs,i);
 		return r >= 0;
 	}
 
@@ -220,8 +220,8 @@ public class SlimDirectedGraphView<VertexType>
 	 */
 	public boolean isDescendant(int i, int j)
 	{
-		int [] descs 	= vertexDescendants[i];
-		int r 			= Arrays.binarySearch(descs,j);
+		int [] descs 	= vertexDescendants[j];
+		int r 			= Arrays.binarySearch(descs,i);
 		return r >= 0;
 	}
 
