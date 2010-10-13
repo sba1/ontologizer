@@ -580,7 +580,6 @@ public class Ontology implements Iterable<Term>
 	public void walkToSource(Collection<TermID>  termIDSet, IVisitingGOVertex vistingVertex, final Set<TermRelation> relationsToFollow)
 	{
 		graph.bfs(termIDsToTerms(termIDSet), new INeighbourGrabber<Term>() {
-			@Override
 			public Iterator<Term> grabNeighbours(Term t)
 			{
 				Iterator<Edge<Term>> inIter = graph.getInEdges(t);
