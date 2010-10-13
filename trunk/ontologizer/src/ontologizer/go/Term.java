@@ -268,17 +268,7 @@ public class Term
 	@Override
 	public String toString()
 	{
-		String parents = "";
-
-		if (getParents() != null)
-		{
-			for (ParentTermID ptid : getParents())
-			{
-				parents += ptid.termid.toString() + " ";
-			}
-		}
-
-		return id.toString() + ": " + parents;
+		return name+ "("+id.toString() +")";
 	}
 
 	@Override
