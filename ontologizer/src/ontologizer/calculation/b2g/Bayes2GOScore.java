@@ -3,8 +3,6 @@ package ontologizer.calculation.b2g;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -55,10 +53,16 @@ abstract class Bayes2GOScore
 	protected int [] termPartition;
 
 	/**
-	 * Contains the position/index of the terms in the partition. 
+	 * The current number of inactive terms. Represents the
+	 * first part of the partition.
+	 */
+	protected int numInactiveTerms;
+
+	/**
+	 * Contains the position/index of the terms in the partition
+	 * (i.e., term[positionOfTermInPartition[i]] = i must hold)
 	 */
 	protected int [] positionOfTermInPartition;
-
 
 	/** Array indicating the genes that have been observed */
 	protected boolean [] observedGenes;
@@ -76,9 +80,6 @@ abstract class Bayes2GOScore
 	
 	/** Maps a term id to the ids of the genes to that the term is annotated */
 	protected GeneIDs [] termLinks;
-
-	/** The current number of inactive terms */
-	protected int numInactiveTerms;
 
 	protected int numRecords;
 	protected int [] termActivationCounts;
@@ -116,7 +117,6 @@ abstract class Bayes2GOScore
 		termsArray = new TermID[termList.size()];
 		termPartition = new int[termList.size()];
 		positionOfTermInPartition = new int[termList.size()];
-//		inactiveTermsArray = new TermID[termList.size()];
 		numInactiveTerms = termList.size();
 		termActivationCounts = new int[termList.size()];
 		termLinks = new GeneIDs[termList.size()];
@@ -127,9 +127,7 @@ abstract class Bayes2GOScore
 			term2TermsIdx.put(tid,i);
 			termsArray[i]=tid;
 			termPartition[i] = i;
-
-//			inactiveTermsArray[i] = tid;
-//			term2InactiveTermsIdx.put(tid, i);
+			positionOfTermInPartition[i] = i;
 
 			/* Fill in the links */
 			termLinks[i] = new GeneIDs(populationEnumerator.getAnnotatedGenes(tid).totalAnnotated.size());
@@ -220,7 +218,6 @@ abstract class Bayes2GOScore
 	{
 //		long enterTime = System.nanoTime();
 
-		TermID t = termsArray[toSwitch];
 		int [] geneIDs = termLinks[toSwitch].gid;
 
 		isActive[toSwitch] = !isActive[toSwitch];
