@@ -183,9 +183,9 @@ public class Association
 		 * contributes_to (a molecular function term) ), checkout how
 		 * these should be fitted into this framework */
 
-		String [] qualifiers = fields[QUALIFIERFIELD].trim().split("|");
+		String [] qualifiers = fields[QUALIFIERFIELD].trim().split("\\|");
 		for (String qual : qualifiers)
-			if (qual.equalsIgnoreCase("not")) notQualifier = true;   
+			if (qual.equalsIgnoreCase("not")) notQualifier = true;
 		
 		/* Find GO:nnnnnnn */
 		fields[GOFIELD] = fields[GOFIELD].trim();
