@@ -60,7 +60,7 @@ abstract class Bayes2GOScore
 
 	/**
 	 * Contains the position/index of the terms in the partition
-	 * (i.e., term[positionOfTermInPartition[i]] = i must hold)
+	 * (i.e., termPartition[positionOfTermInPartition[i]] = i must hold)
 	 */
 	protected int [] positionOfTermInPartition;
 
