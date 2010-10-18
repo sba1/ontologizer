@@ -16,8 +16,11 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.InvalidPropertiesFormatException;
 import java.util.LinkedList;
@@ -201,7 +204,16 @@ public class MainWindow extends ApplicationWindow
 
 		workspaceDirectory = newWorkspaceDirectory;
 
-		String [] projects = newWorkspaceDirectory.list();
+		String [] projects = newWorkspaceDirectory.list(new FilenameFilter()
+		{
+			public boolean accept(File dir, String name)
+			{
+				if (name.startsWith(".")) return false;
+				return true;
+			}
+		});
+		Arrays.sort(projects,String.CASE_INSENSITIVE_ORDER);
+		
 		for (String project : projects)
 		{
 			if (project.equals(".cache"))
