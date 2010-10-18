@@ -265,7 +265,7 @@ class FixedAlphaBetaScore extends Bayes2GOScore
 		double newScore2 = Math.log(alpha) * n10 + Math.log(1-alpha)*n00 + Math.log(1-beta)*n11 + Math.log(beta)*n01;
 
 		if (usePrior)
-			newScore2 += Math.log(p)*(termsArray.length - numInactiveTerms) + Math.log(1-p)*(termsArray.length - numInactiveTerms);
+			newScore2 += Math.log(p)*(termsArray.length - numInactiveTerms) + Math.log(1-p)*numInactiveTerms;
 
 //		newScore2 -= Math.log(alpha) * observedActiveGenes.size() + Math.log(1-beta)* (population.size() - observedActiveGenes.size());
 		return newScore2;
