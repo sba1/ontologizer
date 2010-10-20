@@ -30,7 +30,7 @@ public class AssociationParser
 	enum Type
 	{
 		UNKNOWN,
-		GOA,
+		GAF,
 		IDS,
 		AFFYMETRIX
 	};
@@ -38,11 +38,11 @@ public class AssociationParser
 	/** Mapping from gene (or gene product) names to Association objects */
 	private ArrayList<Association> associations;
 
-	/** Mapping of synonyms to gene names */
+	/** key: synonym, value: main gene name (dbObject_Symbol) */
 	private HashMap<ByteString, ByteString> synonym2gene;
 
-	/** <I>key</I>: dbObject <I>value</I>: main gene name (dbObject_Symbol) */
-	private HashMap<ByteString, ByteString> dbObject2gene;
+	/** key: dbObjectID, value: main gene name (dbObject_Symbol) */
+	private HashMap<ByteString, ByteString> dbObjectID2gene;
 
 	/** The file type of the association file which was parsed */ 
 	private Type fileType = Type.UNKNOWN;
@@ -94,7 +94,7 @@ public class AssociationParser
 	{
 		associations = new ArrayList<Association>();
 		synonym2gene = new HashMap<ByteString, ByteString>();
-		dbObject2gene = new HashMap<ByteString, ByteString>();
+		dbObjectID2gene = new HashMap<ByteString, ByteString>();
 
 		if (filename.endsWith(".ids"))
 		{
@@ -132,7 +132,7 @@ public class AssociationParser
 				} else
 				{
 					importAssociationFile(in,fis,names,terms,progress);
-					fileType = Type.GOA;
+					fileType = Type.GAF;
 				}
 			}
 		}
@@ -202,6 +202,7 @@ public class AssociationParser
 	 * @param terms
 	 * @throws IOException 
 	 */
+	@SuppressWarnings("unused")
 	private void importAssociationFile(BufferedReader is, FileInputStream fis, HashSet<ByteString> names, TermContainer terms, IAssociationParserProgress progress) throws IOException
 	{
 		String buf;
@@ -212,6 +213,9 @@ public class AssociationParser
 		int obsolete = 0;
 		
 		HashSet<TermID> usedGoTerms = new HashSet<TermID>();
+
+		HashMap<ByteString, ArrayList<Association>> gene2Associations = new HashMap<ByteString,ArrayList<Association>>();
+
 
 			int lineno = 0;
 			long millis = 0;
@@ -255,9 +259,6 @@ public class AssociationParser
 
 					if (assoc.hasNotQualifier())
 					{
-//						System.err.println("Skipping association of Gene " 
-//								+ assoc.getObjectSymbol() + " to GO:id " + currentGOid 
-//								+ " because qualifier NOT is set!");
 						skipped++;
 						continue;
 					}
@@ -333,11 +334,19 @@ public class AssociationParser
 					}
 
 //					assoc.setGoTermName(currentTermName);
-					// Add the Association to ArrayList.
+					/* Add the Association to ArrayList */
 					associations.add(assoc);
+					
+					ArrayList<Association> gassociations = gene2Associations.get(assoc.getObjectSymbol());
+					if (gassociations == null)
+					{
+						gassociations = new ArrayList<Association>();
+						gene2Associations.put(assoc.getObjectSymbol(), gassociations);
+					}
+					gassociations.add(assoc);
 
 					/* dbObject2Gene has a mapping from dbObjects to gene names */
-					dbObject2gene.put(assoc.getDB_Object(), assoc.getObjectSymbol());
+					dbObjectID2gene.put(assoc.getDB_Object(), assoc.getObjectSymbol());
 				} catch (Exception ex)
 				{
 					bad++;
@@ -361,7 +370,33 @@ public class AssociationParser
 					+ " associations were skipped due to various reasons whereas " + obsolete
 					+ " of those referred to obsolete terms.");
 			logger.info("A total of " + usedGoTerms.size() + " terms are directly associated."); 
-		
+
+			/* Code is disabled for now. The problem with approach above is that if a synonym of a gene is entered that also
+			 * stand for a object symbol then both genes are not filtered. */
+			if (false && names != null)
+			{
+				for (ByteString name : names)
+				{
+					ByteString objectSymbol = synonym2gene.get(name);
+
+					if (objectSymbol != null && !objectSymbol.equals(name) && !names.contains(objectSymbol))
+					{
+						/* Now check whether there is any object symbol with the same name. If
+						 * so, we remove the evidence of that gene. */
+						if (gene2Associations.containsKey(name))
+						{
+							/* Here, we know that we have names referring to different objects.
+							 * As we give precedence over object symbols, we remove the evidence
+							 * for the other one.
+							 */
+							System.out.println("nn " + name);
+							ArrayList<Association> gassociations = gene2Associations.get(name);
+							for (Association a : gassociations)
+								associations.remove(a);
+						}
+					}
+				}
+			}
 	}
 
 	/**
@@ -606,7 +641,7 @@ public class AssociationParser
 
 	public HashMap<ByteString, ByteString> getDbObject2gene()
 	{
-		return dbObject2gene;
+		return dbObjectID2gene;
 	}
 
 	/**
