@@ -1,6 +1,7 @@
 package ontologizer.gui.swt;
 
 import java.io.File;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
@@ -12,21 +13,29 @@ import ontologizer.go.Term;
 import ontologizer.go.TermID;
 import ontologizer.gui.swt.result.GraphGenerationThread;
 import ontologizer.gui.swt.support.GraphCanvas;
-import ontologizer.gui.swt.support.IGraphCanvas;
 import ontologizer.gui.swt.support.IGraphGenerationFinished;
 import ontologizer.util.Util;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
+
+import sonumina.math.graph.AbstractGraph;
 
 class GraphWindow extends ApplicationWindow
 {
-	private IGraphCanvas graphCanvas;
+	private GraphCanvas graphCanvas;
+	
+	private Ontology currentOntology;
+	private HashSet<TermID> currentLeafs;
 	
 	public GraphWindow(Display display)
 	{
@@ -45,6 +54,34 @@ class GraphWindow extends ApplicationWindow
 		shell.getShell().setLayout(new FillLayout());
 		shell.setText("Ontologizer - Graph");
 		graphCanvas = new GraphCanvas(shell,0);
+
+		/* The context menu */
+		Menu contextMenu = graphCanvas.getMenu();
+		new MenuItem(contextMenu,SWT.SEPARATOR);
+		final MenuItem removeDescendants = new MenuItem(contextMenu,0);
+		removeDescendants.setText("Hide All Descendants");
+		removeDescendants.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e)
+			{
+				if (currentOntology != null && currentLeafs != null)
+				{
+					String stringId = graphCanvas.getNameOfCurrentSelectedNode();
+					TermID tid = new TermID(Integer.parseInt(stringId));
+					Term term = currentOntology.getTerm(tid);
+					final HashSet<TermID> newLeafs = new HashSet<TermID>(currentLeafs);
+
+					currentOntology.getGraph().bfs(term, false, new AbstractGraph.IVisitor<Term>() {
+						public boolean visited(Term vertex)
+						{
+							newLeafs.remove(vertex.getID());
+							return true;
+						}}
+					);
+					setVisibleTerms(currentOntology, newLeafs);
+				}
+			}
+		});
 		
 		shell.pack();
 		Rectangle rect = shell.getBounds();
@@ -55,6 +92,10 @@ class GraphWindow extends ApplicationWindow
 
 	public void setVisibleTerms(final Ontology graph, final Set<TermID> terms)
 	{
+		currentOntology = graph;
+		currentLeafs = new HashSet<TermID>();
+		currentLeafs.addAll(terms);
+
 		GraphGenerationThread ggt = new GraphGenerationThread(shell.getDisplay(),GlobalPreferences.getDOTPath(),new IGraphGenerationFinished()
 		{
 			public void finished(boolean success, String msg, File pngFile, File dotFile)
