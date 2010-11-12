@@ -114,17 +114,18 @@ public class Ontology implements Iterable<Term>
 	 */
 	public Ontology getInducedGraph(Collection<TermID> termIDs)
 	{
-		Ontology subgraph = new Ontology();
-		HashSet<Term> allTerms = new HashSet<Term>();
+		Ontology subgraph 		= new Ontology();
+		HashSet<Term> allTerms 	= new HashSet<Term>();
 		
 		for (TermID tid : termIDs)
 			for (TermID tid2 : getTermsOfInducedGraph(null, tid))
 				allTerms.add(getTerm(tid2));
 		
-		subgraph.availableSubsets = availableSubsets;
-		subgraph.graph = graph.subGraph(allTerms);
-		subgraph.termContainer = termContainer;
-		subgraph.availableSubsets = availableSubsets;
+		subgraph.availableSubsets 	= availableSubsets;
+		subgraph.graph 				= graph.subGraph(allTerms);
+		subgraph.termContainer 		= termContainer;
+		subgraph.availableSubsets 	= availableSubsets;
+		
 		subgraph.assignLevel1TermsAndFixRoot();
 		
 		return subgraph;
@@ -696,8 +697,9 @@ public class Ontology implements Iterable<Term>
 
 	/**
 	 * Returns a set of induced terms that are the terms of the induced graph.
-	 * 
-	 * @param rootTerm the root term (all terms up to this are included)
+	 * Providing null as root-term-ID will induce all terms up to the root to be included.
+	 * @param rootTerm the root term (all terms up to this are included). if you provide null all terms
+	 * up to the original root term are included.
 	 * @param term the inducing term.
 	 * @return
 	 */
