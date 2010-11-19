@@ -332,6 +332,48 @@ public class SlimDirectedGraphView<VertexType>
 	}
 
 
+	public ArrayList<VertexType> getParents(VertexType t){
 
+		/* check that this vertex is found in the graph */
+		if ( ! isVertexInGraph(t))
+			return null;
+
+		/* get the index of the vertex */
+		int indexOfTerm 							= getVertexIndex(t);
+		/* get all indices of the vertex parents */
+		int[] parentIndices						= vertexParents[indexOfTerm];
+
+		/* init the return list of vertex-objects */
+		ArrayList<VertexType> parentObjects = new ArrayList<VertexType>(parentIndices.length);
+
+		/* convert each parent-index to an vertex object */
+		for (int parentIdx : parentIndices){
+			VertexType parentVertex = getVertex(parentIdx);
+			parentObjects.add(parentVertex);
+		}
+		return parentObjects;
+	}
+
+	public ArrayList<VertexType> getChildren(VertexType t){
+
+		/* check that this vertex is found in the graph */
+		if ( ! isVertexInGraph(t))
+			return null;
+
+		/* get the index of the vertex */
+		int indexOfTerm 							= getVertexIndex(t);
+		/* get all indices of the vertex children */
+		int[] childrenIndices					= vertexChildren[indexOfTerm];
+
+		/* init the return list of vertex-objects */
+		ArrayList<VertexType> childrenObjects 	= new ArrayList<VertexType>(childrenIndices.length);
+
+		/* convert each child-index to an vertex object */
+		for (int childIdx : childrenIndices){
+			VertexType childVertex = getVertex(childIdx);
+			childrenObjects.add(childVertex);
+		}
+		return childrenObjects;
+	}
 
 }
