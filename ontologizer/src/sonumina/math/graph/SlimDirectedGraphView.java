@@ -334,10 +334,6 @@ public class SlimDirectedGraphView<VertexType>
 	
 	public ArrayList<VertexType> getParents(VertexType t){
 		
-		/* check that this vertex is found in the graph */
-		if ( ! isVertexInGraph(t))
-			return null;
-		
 		/* get the index of the vertex */
 		int indexOfTerm 							= getVertexIndex(t);
 		/* get all indices of the vertex parents */
@@ -355,10 +351,6 @@ public class SlimDirectedGraphView<VertexType>
 	}
 	
 	public ArrayList<VertexType> getChildren(VertexType t){
-		
-		/* check that this vertex is found in the graph */
-		if ( ! isVertexInGraph(t))
-			return null;
 		
 		/* get the index of the vertex */
 		int indexOfTerm 							= getVertexIndex(t);
