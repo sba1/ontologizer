@@ -187,7 +187,7 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 		/* Ensure that the arguments are valid, i.e. both source
 		 * and destination must be vertices within the graph  */
 		if (vaSource == null || vaDest == null)
-			throw new IllegalArgumentException();
+			throw new IllegalArgumentException("Error when trying to add edge between source: "+vaSource+" and destination: "+vaDest+".");
 
 		vaSource.outEdges.add(edge);
 		vaDest.inEdges.add(edge);
