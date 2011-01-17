@@ -69,7 +69,7 @@ public class Bayes2GOCalculation implements ICalculation
 {
 	private static Logger logger = Logger.getLogger(Bayes2GOCalculation.class.getCanonicalName());
 
-	private boolean WRITE_ACCEPT_FILE = false;
+	private boolean WRITE_STATS_FILE = true;
 
 	private long seed = 0;
 
@@ -376,12 +376,12 @@ public class Bayes2GOCalculation implements ICalculation
 
 		logger.info(allTerms.size() + " terms and " + populationEnumerator.getGenes().size() + " genes in consideration.");
 
-		BufferedWriter acceptFile = null;
+		BufferedWriter statsFile = null;
 		try {
-			if (WRITE_ACCEPT_FILE)
+			if (WRITE_STATS_FILE)
 			{
-				acceptFile = new BufferedWriter(new FileWriter(new File("accept.txt")));
-				acceptFile.append("iter\tstep\tacceptProb\tscore\n");
+				statsFile = new BufferedWriter(new FileWriter(new File("stats.txt")));
+				statsFile.append("iter\tstep\tacceptProb\taccepted\tscore\n");
 			}
 		} catch (IOException e) {
 		}
@@ -500,10 +500,10 @@ public class Bayes2GOCalculation implements ICalculation
 					bayesScore.record();
 
 
-				if (acceptFile != null)
+				if (statsFile != null)
 				{
 					try {
-						acceptFile.append(i + "\t" + t + "\t" + acceptProb + "\t" + score + "\n");
+						statsFile.append(i + "\t" + t + "\t" + acceptProb + "\t" + numAccepts + "\t" + score + "\n");
 					} catch (IOException e) {
 					}
 				}
@@ -583,10 +583,10 @@ public class Bayes2GOCalculation implements ICalculation
 			}
 		}
 
-		if (acceptFile != null)
+		if (statsFile != null)
 		{
 			try {
-				acceptFile.flush();
+				statsFile.flush();
 			} catch (IOException e) {
 			}
 		}
