@@ -1,6 +1,8 @@
 package ontologizer.calculation.b2g;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -66,6 +68,8 @@ class B2GTestParameter
 public class Bayes2GOCalculation implements ICalculation
 {
 	private static Logger logger = Logger.getLogger(Bayes2GOCalculation.class.getCanonicalName());
+
+	private boolean WRITE_ACCEPT_FILE = false;
 
 	private long seed = 0;
 	
@@ -372,6 +376,16 @@ public class Bayes2GOCalculation implements ICalculation
 
 		logger.info(allTerms.size() + " terms and " + populationEnumerator.getGenes().size() + " genes in consideration.");
 
+		BufferedWriter acceptFile = null;
+		try {
+			if (WRITE_ACCEPT_FILE)
+			{
+				acceptFile = new BufferedWriter(new FileWriter(new File("accept.txt")));
+				acceptFile.append("iter\tstep\tacceptProb\tscore\n");
+			}
+		} catch (IOException e) {
+		}
+
 		for (int i=0;i<maxIter;i++)
 		{
 			FixedAlphaBetaScore bayesScore = new FixedAlphaBetaScore(rnd, allTerms, populationEnumerator,  studyEnumerator.getGenes());
@@ -484,6 +498,15 @@ public class Bayes2GOCalculation implements ICalculation
 	
 				if (t>burnin)
 					bayesScore.record();
+				
+				
+				if (acceptFile != null)
+				{
+					try {
+						acceptFile.append(i + "\t" + t + "\t" + acceptProb + "\t" + score + "\n");
+					} catch (IOException e) {
+					}
+				}
 			}
 
 			if (doAlphaEm)
@@ -557,6 +580,14 @@ public class Bayes2GOCalculation implements ICalculation
 				for (int j=0;j<bayesScore.totalExp.length;j++)
 					System.out.println("exp(" + bayesScore.EXPECTED_NUMBER_OF_TERMS[j] + ")=" + (double)bayesScore.totalExp[j] / bayesScore.numRecords);
 				
+			}
+		}
+		
+		if (acceptFile != null)
+		{
+			try {
+				acceptFile.flush();
+			} catch (IOException e) {
 			}
 		}
 	}
