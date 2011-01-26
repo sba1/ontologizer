@@ -44,97 +44,11 @@ v<-matrix(ncol=2,byrow=T,
 			"p.b2g.mcmc.pop", "MGSA"
            ))
 
-# ROCR was used for the plotting, but their (down)sampling scheme is not
-# optimal (seems to only sample from the data, ignoring the fact that in
-# some areas the data is denser than in others). It has been replaced by
-# custom functions. You can comment the following line.
-library(ROCR)
-
 # Read the input file. Ignore any 0 term.
 full.filename<-file.path(dir,filename)
 d<-read.table(full.filename,h=T)
 d<-subset(d,d$term!=0)
 
-
-#
-# Draw some performance plots using ROCR. Also k-truncated score
-# is calculated in this routine (should have been moved into a
-# plot.roc.new function, does not depend on ROCR...)
-#
-plot.roc<-function(d,main="Comparision",alpha=NA,beta=NA,calc.auc=F,y.axis="tpr",x.axis="fpr",xlim=c(0,1),ylim=c(0,1),legend.place="bottomright",rocn=NA,downsampling=300)
-{
-	nruns<-length(unique(d$run))
-	
-	if (nrow(d)==0)
-	{
-		return()
-	}
-	
-	l<-list();
-
-	colnames(v)<-c("short","full")
-	colors<-rainbow(nrow(v))
-	pchs<-1:nrow(v)
-	
-	for (i in (1:nrow(v)))
-	{
-		values<-d[,v[i,1]]
-		labels<-d$label
-
-		# rebuild the values if this should be a rocn
-		if (!is.na(rocn))
-		{
-			d.by.run<-split(d,d$run)
-
-			avg.rocn<-mean(sapply(d.by.run,function(d2)
-			{
-				values2<-d2[,v[i,1]]
-			
-				o<-order(values2,decreasing=F)
-				negatives.idx<-which(d2[o,]$label==0)
-				total.t<-length(which(d2[o,]$label==1))
-				
-				r.n<-sum(sapply(1:rocn,function(j)
-				{
-					return(negatives.idx[j]-j)
-				}))
-				
-				roc.value<- 1.0 / rocn / total.t * r.n
-				
-				return (roc.value)
-			}))
-
-			print(sprintf("%s: %f (alpha=%f, beta=%f)",v[i,2],avg.rocn,alpha,beta))
-		}
-	
-		pred<-prediction(1-values,labels)
-		perf<-performance(pred, measure = y.axis, x.measure = x.axis) 
-		name<-v[i,2]
-		
-		if (calc.auc)
-		{
-			auc.perf<-performance(pred, measure = "auc")
-			auc<-auc.perf@y.values[[1]]
-			l<-append(l,sprintf("%s (%.3g)",name,auc))
-		} else
-		{
-			l<-append(l,sprintf("%s",name))
-		}
-
-		if (i==1)
-		{
-			title<-bquote(paste(.(main),": ", alpha,"=",.(alpha),",",beta,"=",.(beta)))
-			plot(perf, col=colors[i],pch=pchs[i],downsampling=downsampling, type="l", ylim=ylim,xlim=xlim,main=title)
-			plot(perf, col=colors[i],pch=pchs[i],downsampling=25, type="p", add=TRUE)
-		} else
-		{
-			plot(perf, col=colors[i],pch=pchs[i],downsampling=downsampling, type="l", add=TRUE)
-			plot(perf, col=colors[i],pch=pchs[i],downsampling=25, type="p", add=TRUE)
-		}		
-	}
-
-	legend(legend.place, col=colors, pch=pchs, legend = unlist(l))
-}
 
 # Brings the results to a managable form
 evaluate<-function(d)
@@ -147,9 +61,12 @@ evaluate<-function(d)
 	}
 	
 	res<-list();
-
 	colnames(v)<-c("short","full")
-	
+
+	# ROCn preparations
+	d.by.run<-split(d,d$run)
+	rocn<-10
+
 	for (i in (1:nrow(v)))
 	{
 		ord<-order(d[,v[i,1]])
@@ -189,10 +106,31 @@ evaluate<-function(d)
 		# consecutive elements. We calculate the lower bound of the area.
 		auroc<-sum(c(diff(fpr[idx.lines]),0) * tpr[idx.lines])
 
+		# Average of ROCn
+		avg.rocn<-mean(sapply(d.by.run,function(d2)
+		{
+			values2<-d2[,v[i,1]]
+			
+			o<-order(values2,decreasing=F)
+			negatives.idx<-which(d2[o,]$label==0)
+			total.t<-length(which(d2[o,]$label==1))
+				
+			r.n<-sum(sapply(1:rocn,function(j)
+			{
+				return(negatives.idx[j]-j)
+			}))
+				
+			roc.value<- 1.0 / rocn / total.t * r.n
+				
+			return (roc.value)
+		}))
+
 		l<-c(l,fpr.lines=list(fpr[idx.lines]), tpr.lines=list(tpr[idx.lines]))
 		l<-c(l,fpr.dots= list(fpr[idx.dots]),  tpr.dots= list(tpr[idx.dots]))
 		l<-c(l,auroc=auroc)
-			
+		l<-c(l,avg.rocn=avg.rocn)
+		l<-c(l,rocn=rocn)
+
 		res<-c(res,list(l));
 	}
 	
