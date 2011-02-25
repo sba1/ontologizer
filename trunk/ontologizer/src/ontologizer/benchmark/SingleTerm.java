@@ -105,6 +105,14 @@ public class SingleTerm
 		System.out.println("Population set consits of " + allGenesArray.length + " genes. Root term has " + rootGenes + " associated genes");
 		if (allGenesArray.length != rootGenes)
 		{
+			if (allGenesArray.length > rootGenes)
+			{
+				HashSet<ByteString> set = completePop.getAllGeneNames();
+				for (ByteString g : completePopEnumerator.getAnnotatedGenes(root).totalAnnotated)
+					set.remove(g);
+				System.out.println(set);
+
+			}
 			System.out.println("Gene count doesn't match! Aborting.");
 			System.exit(-1);
 		}
