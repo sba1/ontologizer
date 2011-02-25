@@ -21,6 +21,9 @@ import ontologizer.calculation.AbstractGOTermProperties;
 import ontologizer.calculation.EnrichedGOTermsResult;
 import ontologizer.calculation.ICalculation;
 import ontologizer.calculation.TermForTermCalculation;
+import ontologizer.calculation.b2g.B2GParam;
+import ontologizer.calculation.b2g.Bayes2GOCalculation;
+import ontologizer.calculation.b2g.Bayes2GOGOTermProperties;
 import ontologizer.go.Ontology;
 import ontologizer.go.Term;
 import ontologizer.go.TermID;
@@ -67,8 +70,10 @@ public class SingleTerm
 		GlobalPreferences.setProxyPort(888);
 		GlobalPreferences.setProxyHost("realproxy.charite.de");
 
-		String oboPath = "http://www.geneontology.org/ontology/gene_ontology_edit.obo";
-		String assocPath = "http://cvsweb.geneontology.org/cgi-bin/cvsweb.cgi/go/gene-associations/gene_association.sgd.gz?rev=HEAD";
+		
+		
+		String oboPath = "../dissertation-manuscript/scripts/data/yeast-art-example/gene_ontology.1_2.obo.gz";
+		String assocPath = "../dissertation-manuscript/scripts/data/yeast-art-example/gene_association.sgd.gz";
 
 		Datafiles df = new Datafiles(oboPath,assocPath);
 		assoc = df.assoc;
@@ -220,7 +225,9 @@ public class SingleTerm
 		//{
 			HashSet<TermID> allTermIDs = new HashSet<TermID>();
 			for (Term t : graph)
+			{
 				allTermIDs.add(t.getID());
+			}
 
 			final GOTermEnumerator studySetEnumerator = newStudyGenes.enumerateGOTerms(graph, assoc);
 
@@ -272,13 +279,13 @@ public class SingleTerm
 		TermForTermCalculation calc = new TermForTermCalculation();
 //		ParentChildCalculation calc = new ParentChildCalculation();
 //		Bayes2GOCalculation calc = new Bayes2GOCalculation();
-//		calc.setSeed(2); /* Finds a optimum */
-//		calc.setSeed(3); /* with basement membrane, score 6826.695 */
-//		calc.setSeed(4); /* Optimum, score 6826.039 */
-
-////		calc.setAlpha(B2GParam.Type.MCMC);
-////		calc.setBeta(B2GParam.Type.MCMC);
-////		calc.setExpectedNumber(B2GParam.Type.MCMC);
+////		calc.setSeed(2); /* Finds a optimum */
+////		calc.setSeed(3); /* with basement membrane, score 6826.695 */
+////		calc.setSeed(4); /* Optimum, score 6826.039 */
+//
+//		calc.setAlpha(B2GParam.Type.MCMC);
+//		calc.setBeta(B2GParam.Type.MCMC);
+//		calc.setExpectedNumber(B2GParam.Type.MCMC);
 //		calc.setAlpha(realAlpha);
 //		calc.setBeta(realBeta);
 //		calc.setExpectedNumber(wantedActiveTerms.size());
@@ -451,7 +458,7 @@ public class SingleTerm
 			PopulationSet allGenes, StudySet newStudyGenes,
 			final GOTermEnumerator allEnumerator,
 			final GOTermEnumerator studySetEnumerator,
-			ICalculation calc)
+			final ICalculation calc)
 	{
 		final EnrichedGOTermsResult result = calc.calculateStudySet(graph, assoc, allGenes, newStudyGenes, new Bonferroni());
 
@@ -511,6 +518,16 @@ public class SingleTerm
 			int numDescentantsSig = 0;
 			HashSet<TermID> children = new HashSet<TermID>();
 
+			/* The significance treshold */
+			final double thresh;
+			int top = 8;
+			if (calc.getClass().equals(Bayes2GOCalculation.class))
+			{
+				thresh = 0.5;
+				top = 2;
+			}
+			else thresh = 0.05;
+
 			rank = 1;
 			for (AbstractGOTermProperties prop : resultList)
 			{
@@ -524,15 +541,15 @@ public class SingleTerm
 					
 					if (graph.existsPath(wanted, prop.goTerm.getID()) && !wanted.equals(prop.goTerm.getID()))
 					{
-						if (prop.isSignificant(0.05))
+						if (prop.isSignificant(thresh))
 							numDescentantsSig++;
 						break;
 					}
 				}
 
-				if (prop.isSignificant(0.05))
+				if (prop.isSignificant(thresh) || (top == 2 && rank == 2))
 				{
-					if (rank <= 10 || propIsChild)
+					if (rank <= top || propIsChild)
 					{
 						terms.add(prop.goTerm.getID());
 						System.out.println(" " + prop.goTerm.getIDAsString() + "/" + prop.goTerm.getName() + "   " + (/*1.0f - */prop.p_adjusted) + " rank=" + rank);
@@ -553,21 +570,32 @@ public class SingleTerm
 			                                   "\\pgfdeclareradialshading{lightsphere}{\\pgfpoint{-0.5cm}{0.5cm}}{rgb(0cm)=(0.99,0.99,0.99);rgb(0.7cm)=(0.95,0.95,0.95);rgb(1cm)=(0.9,0.9,0.9);rgb(1.05cm)=(1,1,1)}"+
 			                                   "\\pgfdeclareradialshading{darksphere}{\\pgfpoint{-0.5cm}{0.5cm}}{gray(0cm)=(0.95);gray(0.7cm)=(0.9);gray(1cm)=(0.85);gray(2cm)=(0.85)}"+
 			                                   "\\pgfdeclareradialshading{verydarksphere}{\\pgfpoint{-0.5cm}{0.5cm}}{gray(0cm)=(0.9);gray(0.7cm)=(0.85);gray(1cm)=(0.8);gray(2cm)=(0.8)}\"";
+			String filename;
+			if (calc instanceof Bayes2GOCalculation)
+				filename = "../dissertation-manuscript/dot/localization-mgsa.dot";
+			else
+				filename = "../dissertation-manuscript/dot/localization-tft.dot";
 
-			GODOTWriter.writeDOT(graph, new File("localization-tft.dot"), graph.getRelevantSubontology(), terms, new AbstractDotAttributesProvider()
+			GODOTWriter.writeDOT(graph, new File(filename), graph.getRelevantSubontology(), terms, new AbstractDotAttributesProvider()
 			{
 				public String getDotNodeAttributes(TermID id)
 				{
-					double val = result.getGOTermProperties(id).p_adjusted;
 					String label = graph.getTerm(id).getName().replace("_", " ");
 					AbstractGOTermProperties prop = result.getGOTermProperties(id);
 					String valStr;
 					if (prop != null)
 					{
+						double val;
+						if (prop instanceof Bayes2GOGOTermProperties)
+						{
+							Bayes2GOGOTermProperties b2gprop = (Bayes2GOGOTermProperties) prop;
+							val = b2gprop.marg;
+						} else val = result.getGOTermProperties(id).p_adjusted;
+
 						valStr = EnrichedGOTermsResultLatexWriter.toLatex(val);
 						if (!valStr.startsWith("<")) valStr = "=" + valStr;
 						valStr = "$p" + valStr + "$";
-					} else valStr = "";
+					}  else valStr = "";
 
 					StringBuilder str = new StringBuilder(200);
 					str.append("margin=\"0\" shape=\"box\" label=\"");
@@ -590,15 +618,13 @@ public class SingleTerm
 						str.append("style=\"rounded corners,top color=white,bottom color=black!15,draw=black!50,very thick\"");
 					} else
 					{
-						if (prop.isSignificant(0.05))
+						if (prop.isSignificant(thresh))
 						{
 							str.append("style=\"rounded corners,top color=white,bottom color=black!15,draw=black!50,very thick\"");
 						} else
 						{
 							str.append("style=\"rounded corners,color=black!50\"");
 						}
-						
-						
 					}
 
 //					if (result.getGOTermProperties(id) != null && result.getGOTermProperties(id).p_adjusted < 0.999)
