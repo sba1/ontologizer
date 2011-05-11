@@ -545,7 +545,10 @@ public class Ontology implements Iterable<Term>
 		ArrayList<Term> termList = new ArrayList<Term>(termIDSet.size());
 		for (TermID id : termIDSet)
 		{
-			Term t = termContainer.get(id);
+			Term t;
+
+			if (isRootTerm(id)) t = rootTerm;
+			else t = termContainer.get(id);
 			assert (t != null);
 			termList.add(t);
 		}
