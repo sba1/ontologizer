@@ -9,6 +9,7 @@ import ontologizer.GlobalPreferences;
 import ontologizer.AbstractDotAttributesProvider;
 import ontologizer.go.Ontology;
 import ontologizer.go.Namespace;
+import ontologizer.go.Prefix;
 import ontologizer.go.Term;
 import ontologizer.go.TermID;
 import ontologizer.gui.swt.result.GraphGenerationThread;
@@ -58,16 +59,17 @@ class GraphWindow extends ApplicationWindow
 		/* The context menu */
 		Menu contextMenu = graphCanvas.getMenu();
 		new MenuItem(contextMenu,SWT.SEPARATOR);
-		final MenuItem removeDescendants = new MenuItem(contextMenu,0);
-		removeDescendants.setText("Hide All Descendants");
-		removeDescendants.addSelectionListener(new SelectionAdapter() {
+		final MenuItem hideAllDescendants = new MenuItem(contextMenu,0);
+		hideAllDescendants.setText("Hide All Descendants");
+		hideAllDescendants.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e)
 			{
 				if (currentOntology != null && currentLeafs != null)
 				{
 					String stringId = graphCanvas.getNameOfCurrentSelectedNode();
-					TermID tid = new TermID(Integer.parseInt(stringId));
+					Prefix prefix = currentOntology.getRootTerm().getID().getPrefix();
+					TermID tid = new TermID(prefix,Integer.parseInt(stringId));
 					Term term = currentOntology.getTerm(tid);
 					final HashSet<TermID> newLeafs = new HashSet<TermID>(currentLeafs);
 
@@ -78,6 +80,24 @@ class GraphWindow extends ApplicationWindow
 							return true;
 						}}
 					);
+					setVisibleTerms(currentOntology, newLeafs);
+				}
+			}
+		});
+		final MenuItem showAllChildren = new MenuItem(contextMenu,0);
+		showAllChildren.setText("Show All Children");
+		showAllChildren.addSelectionListener(new SelectionAdapter()
+		{
+			@Override
+			public void widgetSelected(SelectionEvent e)
+			{
+				if (currentOntology != null && currentLeafs != null)
+				{
+					String stringId = graphCanvas.getNameOfCurrentSelectedNode();
+					Prefix prefix = currentOntology.getRootTerm().getID().getPrefix();
+					TermID tid = new TermID(prefix,Integer.parseInt(stringId));
+					final HashSet<TermID> newLeafs = new HashSet<TermID>(currentLeafs);
+					newLeafs.addAll(currentOntology.getTermChildren(tid));
 					setVisibleTerms(currentOntology, newLeafs);
 				}
 			}
@@ -146,8 +166,7 @@ class GraphWindow extends ApplicationWindow
 						case MOLECULAR_FUNCTION: hue = 60.f / 360; break;
 						case CELLULAR_COMPONENT: hue = 300.f / 360; 	break;
 						default:
-							hue = 0.f;
-							saturation = 0.f;
+							hue = 180.f;
 							break;
 
 					}
