@@ -908,7 +908,7 @@ public class MainWindow extends ApplicationWindow
 	}
 
 	/**
-	 * Add a new action which is executed when the "Analyze" button
+	 * Add a new action which is executed when the "Ontologize" button
 	 * is pressed.
 	 * 
 	 * @param ba
@@ -1511,7 +1511,7 @@ public class MainWindow extends ApplicationWindow
 		new ToolItem(toolbar,SWT.SEPARATOR);
 		
 		analyzeToolItem = new ToolItem(toolbar,0);
-		analyzeToolItem.setText("Analyze");
+		analyzeToolItem.setText("Ontologize");
 
 		new ToolItem(toolbar,SWT.SEPARATOR);
 
