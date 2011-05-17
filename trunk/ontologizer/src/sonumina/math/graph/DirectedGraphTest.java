@@ -37,6 +37,28 @@ class TestData
 
 public class DirectedGraphTest extends TestCase
 {
+	public void testVertexRemove()
+	{
+		DirectedGraph<TestData> graph = new DirectedGraph<TestData>();
+		TestData a = new TestData("a");
+		TestData b = new TestData("b");
+		TestData c = new TestData("c");
+		TestData d = new TestData("d");
+
+		/* Add some vertices */
+		graph.addVertex(a);
+		graph.addVertex(b);
+		graph.addVertex(c);
+		graph.addVertex(d);
+
+		graph.addEdge(new Edge<TestData>(a,b));
+		graph.addEdge(new Edge<TestData>(b,c));
+		graph.addEdge(new Edge<TestData>(c,d));
+		graph.addEdge(new Edge<TestData>(d,a));
+
+		graph.removeVertex(a);
+	}
+
 	public void testGraph()
 	{
 		DirectedGraph<TestData> graph = new DirectedGraph<TestData>();
