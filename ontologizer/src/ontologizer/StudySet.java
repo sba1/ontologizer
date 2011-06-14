@@ -723,7 +723,7 @@ public class StudySet implements Iterable<ByteString>
 					final HashSet<TermID> direct = new HashSet<TermID>();
 					final HashSet<TermID> indirect = new HashSet<TermID>();
 
-					/* direct associations */
+					/* direct annotations */
 					boolean first = true;
 					out.write("annotations={");
 					for (Association assoc : geneAssociations)
@@ -736,7 +736,8 @@ public class StudySet implements Iterable<ByteString>
 					}
 					out.write("}");
 
-					/* indirect associations are those located upstream (nearer to the root) */
+					/* indirect annotation are those located upstream (nearer to the root),
+					 * i.e., those inferred by the propagation annotation rule  */
 					graph.walkToSource(direct, new IVisitingGOVertex()
 					{
 						public boolean visited(Term term)
@@ -748,7 +749,7 @@ public class StudySet implements Iterable<ByteString>
 						}
 					});
 
-					out.write(" parental_annotations={");
+					out.write(" ancestors_annotations={");
 					first = true;
 					for (TermID t : indirect)
 					{
