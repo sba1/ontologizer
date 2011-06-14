@@ -10,6 +10,8 @@ import java.util.Map.Entry;
 
 import ontologizer.calculation.AbstractGOTermProperties;
 import ontologizer.calculation.EnrichedGOTermsResult;
+import ontologizer.calculation.b2g.Bayes2GOEnrichedGOTermsResult;
+import ontologizer.calculation.b2g.Bayes2GOGOTermProperties;
 import ontologizer.go.TermID;
 import ontologizer.gui.swt.support.GraphPaint;
 
@@ -91,6 +93,8 @@ public class EnrichedGOTermsResultHTMLWriter
 	{
 		try
 		{
+			boolean showMarginals = result instanceof Bayes2GOEnrichedGOTermsResult;
+
 			File pngFile = new File(htmlFile + ".png");
 
 			/* Parse the dot file */
@@ -174,8 +178,8 @@ public class EnrichedGOTermsResultHTMLWriter
 			transform.dispose();
 
 			out.println("<table>");
-
-			out.println("<tr><th>ID</th><th>Name</th><th>p-Value</th><th>p-Value (Adj)</th><th>Study Count</th><th>Population Count</th>");
+			if (showMarginals) out.println("<tr><th>ID</th><th>Name</th><th>Marginal</th><th>Study Count</th><th>Population Count</th>");
+			else out.println("<tr><th>ID</th><th>Name</th><th>p-Value</th><th>p-Value (Adj)</th><th>Study Count</th><th>Population Count</th>");
 			out.println("</tr>");
 
 			AbstractGOTermProperties [] sortedProps = new AbstractGOTermProperties[result.getSize()];
@@ -204,13 +208,21 @@ public class EnrichedGOTermsResultHTMLWriter
 				out.println(props.goTerm.getName());
 				out.println("</td>");
 
-				out.println("<td>");
-				out.printf("%g", props.p);
-				out.println("</td>");
+				if (!showMarginals)
+				{
+					out.println("<td>");
+					out.printf("%g", props.p);
+					out.println("</td>");
 
-				out.println("<td>");
-				out.printf("%g", props.p_adjusted);
-				out.println("</td>");
+					out.println("<td>");
+					out.printf("%g", props.p_adjusted);
+					out.println("</td>");
+				} else
+				{
+					out.println("<td>");
+					out.printf("%g", ((Bayes2GOGOTermProperties)props).marg);
+					out.println("</td>");
+				}
 
 				out.println("<td>");
 				out.println(props.annotatedStudyGenes);
