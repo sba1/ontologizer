@@ -276,16 +276,16 @@ public class SingleTerm
 //		calc.setDefaultQ(realAlpha);
 
 //		TopologyWeightedCalculation calc = new TopologyWeightedCalculation();
-		TermForTermCalculation calc = new TermForTermCalculation();
+//		TermForTermCalculation calc = new TermForTermCalculation();
 //		ParentChildCalculation calc = new ParentChildCalculation();
-//		Bayes2GOCalculation calc = new Bayes2GOCalculation();
-////		calc.setSeed(2); /* Finds a optimum */
-////		calc.setSeed(3); /* with basement membrane, score 6826.695 */
-////		calc.setSeed(4); /* Optimum, score 6826.039 */
+		Bayes2GOCalculation calc = new Bayes2GOCalculation();
+//		calc.setSeed(2); /* Finds a optimum */
+//		calc.setSeed(3); /* with basement membrane, score 6826.695 */
+//		calc.setSeed(4); /* Optimum, score 6826.039 */
 //
-//		calc.setAlpha(B2GParam.Type.MCMC);
-//		calc.setBeta(B2GParam.Type.MCMC);
-//		calc.setExpectedNumber(B2GParam.Type.MCMC);
+		calc.setAlpha(B2GParam.Type.MCMC);
+		calc.setBeta(B2GParam.Type.MCMC);
+		calc.setExpectedNumber(B2GParam.Type.MCMC);
 //		calc.setAlpha(realAlpha);
 //		calc.setBeta(realBeta);
 //		calc.setExpectedNumber(wantedActiveTerms.size());
@@ -547,7 +547,7 @@ public class SingleTerm
 					}
 				}
 
-				if (prop.isSignificant(thresh) || (top == 2 && rank == 2))
+				if (prop.isSignificant(thresh))
 				{
 					if (rank <= top || propIsChild)
 					{
@@ -618,12 +618,15 @@ public class SingleTerm
 						str.append("style=\"rounded corners,top color=white,bottom color=black!15,draw=black!50,very thick\"");
 					} else
 					{
-						if (prop.isSignificant(thresh))
+						if (prop != null)
 						{
-							str.append("style=\"rounded corners,top color=white,bottom color=black!15,draw=black!50,very thick\"");
-						} else
-						{
-							str.append("style=\"rounded corners,color=black!50\"");
+							if (prop.isSignificant(thresh))
+							{
+								str.append("style=\"rounded corners,top color=white,bottom color=black!15,draw=black!50,very thick\"");
+							} else
+							{
+								str.append("style=\"rounded corners,color=black!50\"");
+							}
 						}
 					}
 
