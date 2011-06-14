@@ -62,6 +62,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -121,7 +122,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 	private Composite significanceComposite;
 	private Label significanceLabel;
 	private Spinner significanceSpinner;
-	private Text significanceText;
+	private Link significanceLink;
 
 	/** The browser displaying information about currently selected term */
 	private Browser browser = null;
@@ -541,12 +542,18 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 		StringBuilder str = new StringBuilder();
 
 		str.append(getNumberOfCheckedTerms());
-		str.append("/");
+		str.append(" (");
+		str.append("<a href=\"none\">None</a>");
+		str.append(") / ");
+		str.append("<a href=\"significant\">");
 		str.append(count);
-		str.append("/");
+		str.append("</a>");
+		str.append(" / ");
+		str.append("<a href=\"all\">");
 		str.append(total);
+		str.append("</a>");
 
-		significanceText.setText(str.toString());
+		significanceLink.setText(str.toString());
 
 		str.setLength(0);
 		str.append("The first value shows the number of checked terms.\n");
@@ -555,7 +562,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 		else str.append("below");
 		str.append(" the given threshold.\n");
 		str.append("The third value shows the total number of terms that are displayed within the table.");
-		significanceText.setToolTipText(str.toString());
+		significanceLink.setToolTipText(str.toString());
 	}
 
 	private void buildCheckedTermHashSet()
@@ -894,10 +901,37 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 		significanceComposite = new Composite(tableComposite,SWT.NONE);
 		significanceComposite.setLayout(SWTUtil.newEmptyMarginGridLayout(3));
 		significanceComposite.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL|GridData.FILL_HORIZONTAL));
-		significanceText = new Text(significanceComposite,SWT.READ_ONLY);
-		significanceText.setEditable(false);
-		significanceText.setBackground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
-		significanceText.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL|GridData.FILL_HORIZONTAL));
+		significanceLink = new Link(significanceComposite,SWT.READ_ONLY);
+		significanceLink.setBackground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+		significanceLink.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL|GridData.FILL_HORIZONTAL));
+		significanceLink.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e)
+			{
+				if (e.text.equals("none"))
+				{
+					/* Clear the selections */
+					initializeCheckedTerms();
+					checkedTermsChanged = true;
+				}
+				else if (e.text.equals("significant"))
+				{
+					/* Adjust the selection to the significant ones */
+					buildCheckedTermHashSet();
+					checkedTermsChanged = false;
+				}
+				else if (e.text.equals("all"))
+				{
+					/* Select all terms */
+					initializeCheckedTerms();
+					for (int i=0;i<props.length;i++)
+						addToCheckedTerms(props[i].goTerm.getID());
+					checkedTermsChanged = true;
+				}
+				table.clearAll();
+				updateSignificanceText();
+			}
+		});
 		significanceLabel = new Label(significanceComposite,SWT.NONE);
 		significanceLabel.setText("Threshold");
 		significanceSpinner = new Spinner(significanceComposite,SWT.BORDER);
