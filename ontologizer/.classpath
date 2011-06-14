@@ -6,7 +6,6 @@
 	<classpathentry kind="src" path="piccolo2d.java/swt/src/main/java"/>
 	<classpathentry kind="src" path="src.grappa"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
 	<classpathentry kind="lib" path="colt.jar"/>
 	<classpathentry kind="lib" path="commons-cli-1.1.jar"/>
 	<classpathentry kind="lib" path="nattable-core-1.6.2.jar"/>
