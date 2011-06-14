@@ -58,7 +58,7 @@ public class EnrichedGOTermsResultLatexWriter
 			return String.format(Locale.US,"%.3f \\times 10^{%d}",i,exp);
 		} else
 		{
-			return String.format(Locale.US,"%.5f",val);
+			return String.format(Locale.US,"%.4g",val);
 		}
 	}
 
@@ -85,7 +85,7 @@ public class EnrichedGOTermsResultLatexWriter
 			out.println("\\begin{footnotesize}");
 
 			if (!showMarginals)
-				out.println("\\begin{tabular}{llllll}");
+				out.println("\\begin{tabular}{lllll}");
 			else
 				out.println("\\begin{tabular}{lllll}");
 
@@ -93,7 +93,7 @@ public class EnrichedGOTermsResultLatexWriter
 
 			/* We should query for the names here but the system does not yet allow to change the order and so on */
 			if (!showMarginals)
-				out.println("ID & Name & p-Value & p-Value (Adj) & Study Count & Population Count \\\\");
+				out.println("ID & Name & p-Value (Adj) & Study Count & Population Count \\\\");
 			else
 				out.println("ID & Name & Marginal & Study Count & Population Count \\\\");
 
@@ -120,8 +120,8 @@ public class EnrichedGOTermsResultLatexWriter
 
 				if (!showMarginals)
 				{
-					out.print(toLatex(props.p));
-					out.println("$ & $");
+//					out.print(toLatex(props.p));
+//					out.println("$ & $");
 					out.print(toLatex(props.p_adjusted));
 					out.println("$ & ");
 				} else
@@ -130,9 +130,9 @@ public class EnrichedGOTermsResultLatexWriter
 					out.println("$ & ");
 				}
 
-				out.println(props.annotatedStudyGenes);
+				out.println(props.annotatedStudyGenes + "(" + String.format("%.1f",(double)props.annotatedStudyGenes / result.getStudyGeneCount() * 100) + "\\%)");
 				out.println(" & ");
-				out.println(props.annotatedPopulationGenes);
+				out.println(props.annotatedPopulationGenes + "(" + String.format("%.1f",(double)props.annotatedPopulationGenes / result.getPopulationGeneCount() * 100) + "\\%)");
 				out.println(" \\\\");
 
 			}
