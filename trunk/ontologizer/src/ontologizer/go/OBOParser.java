@@ -1,9 +1,7 @@
 package ontologizer.go;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.channels.FileChannel;
@@ -12,10 +10,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
-
 
 /*
  * I gratefully acknowledge the help of John Richter Day, who provided the
@@ -43,7 +39,10 @@ public class OBOParser
 		TYPEDEF
 	}
 	
-	public final static int PARSE_DEFINITIONS = 1 << 0;
+	public final static int PARSE_DEFINITIONS 	= 1 << 0;
+	public final static int PARSE_XREFS 			= 2 << 0;
+	public final static int PARSE_INTERSECTIONS	= 3 << 0;
+	public final static int SETNAMEEQUALTOID		= 4 << 0;
 
 	/**
 	 * Escaped characters such as \\ in the gene_ontology.obo file.
@@ -135,11 +134,21 @@ public class OBOParser
 	/** The alternative ids of the term */
 	private ArrayList<TermID> currentAlternatives = new ArrayList<TermID>();
 
+	/** The equivalent ids of the term */
+	private ArrayList<TermID> currentEquivalents = new ArrayList<TermID>();
+
+	
 	/** Synonyms, if any, for the Term currently being parsed */
 	private ArrayList<String> currentSynonyms = new ArrayList<String>();
 	
+	/** Intersections, if any, for the Term currently being parsed */
+	private ArrayList<String> currentIntersections = new ArrayList<String>();
+	
 	/** The subsets */
 	private ArrayList<Subset> currentSubsets = new ArrayList<Subset>();
+
+	/** The xrefs of the term */
+	private ArrayList<TermXref> currentXrefs = new ArrayList<TermXref>();
 
 	/**
 	 * @param filename
@@ -183,6 +192,10 @@ public class OBOParser
 			if (currentStanza == Stanza.TYPEDEF)
 				return;
 
+			if (currentName == null){
+				currentName = currentID;
+			}
+			
 			if (currentID == null || currentName == null
 //					|| currentNamespace == null
 					) {
@@ -200,8 +213,11 @@ public class OBOParser
 			t.setObsolete(currentObsolete);
 			t.setDefinition(currentDefintion);
 			t.setAlternatives(currentAlternatives);
+			t.setEquivalents(currentEquivalents);
 			t.setSubsets(currentSubsets);
 			t.setSynonyms(currentSynonyms);
+			t.setIntersections(currentIntersections);
+			t.setXrefs(currentXrefs);
 			terms.add(t);
 
 			/* Statistics */
@@ -221,8 +237,11 @@ public class OBOParser
 		currentObsolete = false;
 		currentParents.clear();
 		currentAlternatives.clear();
+		currentEquivalents.clear();
 		currentSubsets.clear();
 		currentSynonyms.clear();
+		currentIntersections.clear();
+		currentXrefs.clear();
 	}
 
 	
@@ -466,6 +485,11 @@ public class OBOParser
 		} else if (name.equals("id"))
 		{
 			readID(value);
+			
+			if ((options & SETNAMEEQUALTOID) != 0){
+				readName(value);
+			}
+			
 		} else if (name.equals("name"))
 		{
 			readName(unescape(value));
@@ -505,9 +529,19 @@ public class OBOParser
 		} else if (name.equals("alt_id"))
 		{
 			readAlternative(value);
+		}else if (name.equals("equivalent_to"))
+		{
+			readEquivalent(value);
 		} else if (name.equals("subset"))
 		{
 			readSubset(value);
+		}
+		else if ((options & PARSE_INTERSECTIONS) != 0)
+		{
+			if (name.equals("intersection_of"))
+			{
+				currentIntersections.add(value);
+			}
 		}
 		else if ((options & PARSE_DEFINITIONS) != 0)
 		{
@@ -516,6 +550,13 @@ public class OBOParser
 				if (value.startsWith("\""))
 					currentDefintion = unescape(value, '\"', 1, value.length(),
 							false).str;
+			}
+		}
+		else if ((options & PARSE_XREFS) != 0)
+		{
+			if (name.equals("xref"))
+			{
+				readXref(value);
 			}
 		}
 		/*
@@ -533,7 +574,24 @@ public class OBOParser
 			 * (name.equals("relationship")) { return; }
 			 */
 	}
-
+	private void readXref(String value)
+	{
+		try
+		{
+			if ( ! value.contains(":")){
+				logger.info("ignoring xref: "+value);
+				return;
+			}
+			String[] xrefSplit 	= value.split(":");
+			String dbName		= xrefSplit[0];
+			TermXref xref = new TermXref(dbName, xrefSplit[1]);
+			currentXrefs.add(xref);
+		} catch (IllegalArgumentException e)
+		{
+			logger.warning("Unable to parse xref from : \""+value+"\"");
+		}
+	}
+	
 	private void readAlternative(String value)
 	{
 		try
@@ -542,6 +600,18 @@ public class OBOParser
 		} catch (IllegalArgumentException e)
 		{
 			logger.warning("Unable to parse alternative ID: \""+value+"\"");
+		}
+
+	}
+	
+	private void readEquivalent(String value)
+	{
+		try
+		{
+			currentEquivalents.add(new TermID(value));
+		} catch (IllegalArgumentException e)
+		{
+			logger.warning("Unable to parse equivalent ID: \""+value+"\"");
 		}
 
 	}
