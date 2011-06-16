@@ -39,10 +39,17 @@ public class OBOParser
 		TYPEDEF
 	}
 
+	/** Flag to keep the definitions */
 	public final static int PARSE_DEFINITIONS 	= 1 << 0;
-	public final static int PARSE_XREFS 			= 2 << 0;
-	public final static int PARSE_INTERSECTIONS	= 3 << 0;
-	public final static int SETNAMEEQUALTOID		= 4 << 0;
+
+	/** Flag to keep the xrefs */
+	public final static int PARSE_XREFS 		= 1 << 1;
+
+	/** Flag to keep the intersections */
+	public final static int PARSE_INTERSECTIONS	= 1 << 2;
+
+	/** Takes the id as name, if the name is not present */
+	public final static int SETNAMEEQUALTOID	= 1 << 3;
 
 	/**
 	 * Escaped characters such as \\ in the gene_ontology.obo file.
