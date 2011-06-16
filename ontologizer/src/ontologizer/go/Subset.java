@@ -44,9 +44,14 @@ public class Subset
 	public static Subset createFromString(String str)
 	{
 		int del = str.indexOf(' ');
-		if (del < 1) throw new IllegalArgumentException("\"" + str + "\" is no valid subset definition");
+//		if (del < 1) throw new IllegalArgumentException("\"" + str + "\" is no valid subset definition");
 
-		String name = new String(str.substring(0, del).toCharArray());
+		String name;
+		if (del < 1)
+			name = str;
+		else
+			name = new String(str.substring(0, del).toCharArray());
+
 		String desc;
 
 		try
