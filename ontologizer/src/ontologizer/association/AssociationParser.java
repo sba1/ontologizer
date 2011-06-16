@@ -214,6 +214,9 @@ public class AssociationParser
 
 		HashSet<TermID> usedGoTerms = new HashSet<TermID>();
 
+		/* Used for alternative ids */
+		HashMap<TermID,Term> altTermID2Term = null;
+
 		HashMap<ByteString, ArrayList<Association>> gene2Associations = new HashMap<ByteString,ArrayList<Association>>();
 
 
@@ -252,7 +255,7 @@ public class AssociationParser
 				try
 				{
 					Association assoc = new Association(buf);
-					TermID currentGOid = assoc.getTermID();
+					TermID currentTermID = assoc.getTermID();
 					Term currentTerm;
 
 					good++;
@@ -263,24 +266,46 @@ public class AssociationParser
 						continue;
 					}
 
-					currentTerm = terms.get(currentGOid);
+					currentTerm = terms.get(currentTermID);
 					if (currentTerm == null)
 					{
-						System.err.println("Skipping association of item \""
-								+ assoc.getObjectSymbol() + "\" to " + currentGOid
-								+ " because the term was not found!");
-						System.err.println("(Are the obo file and the association "
-								+ "file both up-to-date?)");
-						skipped++;
-						continue;
+						if (altTermID2Term == null)
+						{
+							/* Create the alternative ID to Term map */
+							altTermID2Term = new HashMap<TermID, Term>();
+
+							for (Term t : terms)
+								for (TermID altID : t.getAlternatives())
+									altTermID2Term.put(altID, t);
+						}
+
+						/* Try to find the term among the alternative terms before
+						 * giving up.
+						 */
+						currentTerm = altTermID2Term.get(currentTermID);
+						if (currentTerm == null)
+						{
+							System.err.println("Skipping association of item \""
+									+ assoc.getObjectSymbol() + "\" to " + currentTermID
+									+ " because the term was not found!");
+							System.err.println("(Are the obo file and the association "
+									+ "file both up-to-date?)");
+							skipped++;
+							continue;
+						} else
+						{
+							/* Okay, found, so set the new attributes */
+							assoc.setTermID(currentTerm.getID());
+							currentTermID = currentTerm.getID();
+						}
 					}
 
-					usedGoTerms.add(currentGOid);
+					usedGoTerms.add(currentTermID);
 
 					if (currentTerm.isObsolete())
 					{
 						System.err.println("Skipping association of item \""
-								+ assoc.getObjectSymbol() + "\" to " + currentGOid
+								+ assoc.getObjectSymbol() + "\" to " + currentTermID
 								+ " because term is obsolete!");
 						System.err.println("(Are the obo file and the association "
 								+ "file in sync?)");
