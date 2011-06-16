@@ -266,8 +266,8 @@ public class AssociationParser
 					currentTerm = terms.get(currentGOid);
 					if (currentTerm == null)
 					{
-						System.err.println("Skipping association of Gene " 
-								+ assoc.getObjectSymbol() + " to GO:id " + currentGOid 
+						System.err.println("Skipping association of item \"" 
+								+ assoc.getObjectSymbol() + "\" to " + currentGOid 
 								+ " because the term was not found!");
 						System.err.println("(Are the obo file and the association "
 								+ "file both up-to-date?)");
@@ -279,8 +279,8 @@ public class AssociationParser
 					
 					if (currentTerm.isObsolete())
 					{
-						System.err.println("Skipping association of Gene " 
-								+ assoc.getObjectSymbol() + " to GO:id " + currentGOid 
+						System.err.println("Skipping association of item \"" 
+								+ assoc.getObjectSymbol() + "\" to " + currentGOid 
 								+ " because term is obsolete!");
 						System.err.println("(Are the obo file and the association "
 								+ "file in sync?)");
