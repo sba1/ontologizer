@@ -6,7 +6,7 @@ import java.util.*;
  * A Container class for the terms parsed by OBOParser. The class stores the
  * parsed terms as a HashMap. While OBOParser basically has to do with input
  * from the gene_ontology.obo file, this class has to do more with storing and
- * processing the information about GO terms.
+ * processing the information about the terms.
  *
  * This class implements the Iterable interface so you can iterate over all
  * GOTerms conveniently.
@@ -17,29 +17,29 @@ import java.util.*;
 public class TermContainer implements Iterable<Term>
 {
 	/** The set of GO terms */
-	private HashMap<TermID, Term> goterms;
+	private HashMap<TermID, Term> termMap;
 
 	/** To allow easy iteration over all GO terms */
-	private LinkedList<Term> goTermList;
+	private LinkedList<Term> termList;
 
 	/** Format version of the gene_ontology.obo file */
-	private String format_version;
+	private String formatVersion;
 
-	/** Date of the gene_ontology.obo file */
+	/** Date of the OBO file */
 	private String date;
 
 	public TermContainer(Set<Term> terms, String format, String datum)
 	{
-		format_version = format;
+		formatVersion = format;
 		date = datum;
 
 		/* Build our data structures linked list */
-		goterms = new HashMap<TermID, Term>();
-		goTermList = new LinkedList<Term>();
+		termMap = new HashMap<TermID, Term>();
+		termList = new LinkedList<Term>();
 		for (Term entry : terms)
 		{
-			goterms.put(entry.getID(), entry);
-			goTermList.add(entry);
+			termMap.put(entry.getID(), entry);
+			termList.add(entry);
 		}
 	}
 
@@ -48,12 +48,12 @@ public class TermContainer implements Iterable<Term>
 	 */
 	public int termCount()
 	{
-		return goterms.size();
+		return termMap.size();
 	}
 
 	public String getFormatVersion()
 	{
-		return format_version;
+		return formatVersion;
 	}
 
 	public String getDate()
@@ -87,13 +87,13 @@ public class TermContainer implements Iterable<Term>
 
 	public Term get(TermID id)
 	{
-		return goterms.get(id);
+		return termMap.get(id);
 	}
 
 	public Term get(String id)
 	{
 		TermID tempID = new TermID(id);
-		return goterms.get(tempID);
+		return termMap.get(tempID);
 	}
 
 	/** The following is intended for debugging purposes. */
@@ -109,7 +109,7 @@ public class TermContainer implements Iterable<Term>
 
 	public Iterator<Term> iterator()
 	{
-		return goTermList.iterator();
+		return termList.iterator();
 	}
 
 }
