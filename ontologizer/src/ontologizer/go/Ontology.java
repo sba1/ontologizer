@@ -70,16 +70,13 @@ public class Ontology implements Iterable<Term>
 	private HashSet <Subset> availableSubsets = new HashSet<Subset>();
 
 	/**
-	 * Terms often have alternative IDs (mostly from Term-merges). Sometimes
-	 * the alternative IDs are used in annotation-files. This map is used by
-	 * getTermIncludingAlternatives(String termIdString). This map is also 
-	 * initialized in this method, at the first time it is needed.
-	 * 
+	 * Terms often have alternative IDs (mostly from term merges). This map is used by
+	 * getTermIncludingAlternatives(String termIdString) and initialized there lazily.
 	 */
 	private HashMap<String, String> alternativeId2primaryId;
 	
 	/**
-	 * Construct the GO Graph.
+	 * Construct the GO Graph from the given container.
 	 * 
 	 * @param termContainer
 	 */
@@ -93,7 +90,8 @@ public class Ontology implements Iterable<Term>
 		for (Term term : newTermContainer)
 			graph.addVertex(term);
 
-		int notAddedCount = 0;
+		int skippedEdges = 0;
+
 		/* Now add the edges, i.e. link the terms */
 		for (Term term : newTermContainer)
 		{
@@ -109,14 +107,19 @@ public class Ontology implements Iterable<Term>
 					logger.info("Detected self-loop in the definition of the ontology (term "+ term.getIDAsString()+"). This link has been ignored.");
 					continue;
 				}
-				if(newTermContainer.get(parent.termid) == null){
-					++notAddedCount;
+				if (newTermContainer.get(parent.termid) == null)
+				{
+					/* FIXME: We may want to add a new vertex to graph here instead */
+					logger.info("Could not add a link from term " + term.toString() + " to " + parent.termid.toString() +" as the latter's definition is missing.");
+					++skippedEdges;
 					continue;
 				}
 				graph.addEdge(new OntologyEdge(newTermContainer.get(parent.termid), term, parent.relation));
 			}
 		}
-		System.out.println("NOT ADDED "+notAddedCount+" EDGES!!!");
+
+		if (skippedEdges > 0)
+			logger.info("A total of " + skippedEdges + " edges were skipped.");
 		assignLevel1TermsAndFixRoot();
 	}
 
