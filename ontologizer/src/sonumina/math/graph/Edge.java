@@ -48,4 +48,12 @@ public class Edge<Type>
 	{
 		return 1;
 	}
+
+	void setSource(Type source) {
+		this.source = source;
+	}
+
+	void setDest(Type dest) {
+		this.dest = dest;
+	}
 }
