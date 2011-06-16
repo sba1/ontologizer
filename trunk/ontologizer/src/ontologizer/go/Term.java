@@ -45,13 +45,22 @@ public class Term
 	private ParentTermID [] parents;
 
 	/** The term's alternatives */
-	private TermID [] alternatives;
+	private ArrayList<TermID> alternatives;
+
+	/** The term's alternatives */
+	private TermID [] equivalents;
 
 	/** The synonyms of this term, as read from the obo file. */
 	private String[] synonyms;
 
+	/** The intersections tags of this term, as read from the obo file. */
+	private String[] intersections;
+
 	/** The term's subsets */
 	private Subset [] subsets;
+
+	/** The term's xrefs */
+	private TermXref [] xrefs;
 
 	/** The term's name space */
 	private Namespace namespace;
@@ -327,6 +336,19 @@ public class Term
 		this.definition = definition;
 	}
 
+	public void setEquivalents(ArrayList<TermID> currentEquivalents) {
+		equivalents = new TermID[currentEquivalents.size()];
+		int i = 0;
+		for (TermID t : currentEquivalents)
+			equivalents[i++] = t;
+	}
+
+	public TermID [] getEquivalents()
+	{
+		return equivalents;
+	}
+
+
 	/**
 	 * This sets the alternatives of the term.
 	 *
@@ -334,10 +356,8 @@ public class Term
 	 */
 	public void setAlternatives(List<TermID> altList)
 	{
-		alternatives = new TermID[altList.size()];
-		int i = 0;
-		for (TermID t : altList)
-			alternatives[i++] = t;
+		this.alternatives = new ArrayList<TermID>();
+		this.alternatives.addAll(altList);
 	}
 
 	/**
@@ -345,7 +365,7 @@ public class Term
 	 *
 	 * @return
 	 */
-	public TermID [] getAlternatives()
+	public ArrayList<TermID> getAlternatives()
 	{
 		return alternatives;
 	}
@@ -385,6 +405,39 @@ public class Term
 	public String[] getSynonyms() {
 		return synonyms;
 	}
+
+
+	public void setXrefs(ArrayList<TermXref> currentXrefs) {
+		if (currentXrefs.size() > 0){
+			xrefs = new TermXref[currentXrefs.size()];
+			currentXrefs.toArray(xrefs);
+		}
+	}
+
+	public TermXref[] getXrefs() {
+		return xrefs;
+	}
+
+
+	public void setIntersections(ArrayList<String> currentIntersections) {
+		if (currentIntersections.size() > 0){
+			intersections = new String[currentIntersections.size()];
+			currentIntersections.toArray(intersections);
+		}
+
+	}
+
+	public String[] getIntersections() {
+		return intersections;
+	}
+
+
+	public void addAlternativeId(TermID id2) {
+		if (this.alternatives == null)
+			this.alternatives = new ArrayList<TermID>();
+		this.alternatives.add(id2);
+	}
+
 
 }
 
