@@ -1,5 +1,7 @@
 package ontologizer.go;
 
+import java.util.HashMap;
+
 /**
  * This is a simple wrapper class for representing a term identifier such
  * as GO:0001004.
@@ -19,6 +21,12 @@ public class TermID
 
 	/** Its integer part */
 	public final int id;
+
+	/**
+	 * bugfix...
+	 */
+	private static final HashMap<String, Integer> string2id = new HashMap<String, Integer>();
+	private static int index = Integer.MAX_VALUE;
 
 	/**
 	 * Constructs the TermID from a plain integer value. The prefix defaults
@@ -66,16 +74,32 @@ public class TermID
 		if (colon < 1) throw new IllegalArgumentException("Failed to find a proper prefix of termid: \"" + stringID + "\"");
 
 		/* condition, sine qua non for the integer part */
-		if (stringID.length() - colon != 8) throw new IllegalArgumentException("Failed to parse the integer part of termid: \"" + stringID + "\"");
+//		if (stringID.length() - colon != 8) throw new IllegalArgumentException("Failed to parse the integer part of termid: \"" + stringID + "\"");
 
 		prefix = new Prefix(stringID,colon);
+		int parsedId;
+		String parseIdFrom = stringID.substring(colon+1);
 		try
 		{
-			id = Integer.parseInt(stringID.substring(colon+1));
+			parsedId = Integer.parseInt(parseIdFrom);
 		} catch(NumberFormatException ex)
 		{
-			throw new IllegalArgumentException("Failed to parse the integer part of termid: \"" + stringID + "\"");
+			// this is a fix to keep this running for uberpheno
+			parsedId = makeIdFromString(parseIdFrom);
+//			throw new IllegalArgumentException("Failed to parse the integer part of termid: \"" + stringID + "\"");
 		}
+		id = parsedId;
+	}
+
+
+	private int makeIdFromString(String parseIdFrom) {
+		if ( string2id.containsKey(parseIdFrom))
+			return string2id.get(parseIdFrom);
+
+		--index;
+		string2id.put(parseIdFrom, index);
+		return index;
+
 	}
 
 	/**
