@@ -70,6 +70,15 @@ public class Ontology implements Iterable<Term>
 	private HashSet <Subset> availableSubsets = new HashSet<Subset>();
 
 	/**
+	 * Terms often have alternative IDs (mostly from Term-merges). Sometimes
+	 * the alternative IDs are used in annotation-files. This map is used by
+	 * getTermIncludingAlternatives(String termIdString). This map is also 
+	 * initialized in this method, at the first time it is needed.
+	 * 
+	 */
+	private HashMap<String, String> alternativeId2primaryId;
+	
+	/**
 	 * Construct the GO Graph.
 	 * 
 	 * @param termContainer
@@ -84,6 +93,7 @@ public class Ontology implements Iterable<Term>
 		for (Term term : newTermContainer)
 			graph.addVertex(term);
 
+		int notAddedCount = 0;
 		/* Now add the edges, i.e. link the terms */
 		for (Term term : newTermContainer)
 		{
@@ -99,10 +109,14 @@ public class Ontology implements Iterable<Term>
 					logger.info("Detected self-loop in the definition of the ontology (term "+ term.getIDAsString()+"). This link has been ignored.");
 					continue;
 				}
+				if(newTermContainer.get(parent.termid) == null){
+					++notAddedCount;
+					continue;
+				}
 				graph.addEdge(new OntologyEdge(newTermContainer.get(parent.termid), term, parent.relation));
 			}
 		}
-
+		System.out.println("NOT ADDED "+notAddedCount+" EDGES!!!");
 		assignLevel1TermsAndFixRoot();
 	}
 
@@ -669,7 +683,75 @@ public class Ontology implements Iterable<Term>
 			{
 			}
 		}
+		/*
+		 * In order to avoid the returning of terms that 
+		 * are only in the TermContainer but not in the graph
+		 * we check here that the term is contained in the graph. 
+		 */
+		if (  ! graph.containsVertex(go) ){
+			return null;
+		}
+		
 		return go;
+	}
+
+	/**
+	 * A method to get a term using the term-ID as string.
+	 * If no term with the given primary ID is found all
+	 * alternative IDs are used. If still no term is found null is returned.
+	 * 
+	 * @param term ID as string
+	 * @return
+	 */
+	public Term getTermIncludingAlternatives(String termIdString)
+	{
+		
+		// try using the primary id
+		Term term = getTerm(termIdString);
+		if (term != null)
+			return term;
+		
+		/*
+		 *  no term with this primary id exists -> use alternative ids
+		 */
+		
+		// do we already have a mapping between alternative ids and primary ids ?
+		if (alternativeId2primaryId == null)
+			setUpMappingAlternativeId2PrimaryId();
+		
+		// try to find a mapping to a primary term-id
+		if (alternativeId2primaryId.containsKey(termIdString)){
+			String primaryId 	= alternativeId2primaryId.get(termIdString);
+			term 				= termContainer.get(primaryId);
+		}
+		
+		// term still null?
+		if (term == null)
+		{
+			/* GO Term Container doesn't include the root term so we have to handle
+			 * this case for our own.
+			 */
+			try
+			{
+				TermID id = new TermID(termIdString);
+				if (id.id == rootTerm.getID().id)
+					return rootTerm;
+			} catch (IllegalArgumentException iea)
+			{
+			}
+		}
+		return term;
+	}
+	
+	private void setUpMappingAlternativeId2PrimaryId() {
+		alternativeId2primaryId = new HashMap<String, String>();
+		for (Term t : this.termContainer){
+			String primaryId = t.getIDAsString();
+			for (TermID alternativeTermId : t.getAlternatives()){
+				alternativeId2primaryId.put(alternativeTermId.toString(), primaryId);
+			}
+		}
+		
 	}
 
 	/**
@@ -1121,4 +1203,23 @@ public class Ontology implements Iterable<Term>
 	public DirectedGraph<Term> getGraph() {
 		return graph;
 	}
+	
+	/**
+	 * Merges equivalent terms. The first term given to this 
+	 * method will be the representative of this
+	 * "equivalence-cluster".
+	 * @param t1
+	 * @param eqTerms
+	 */
+	public void mergeTerms(Term t1, HashSet<Term> eqTerms){
+		
+		for (Term t : eqTerms){
+			t1.addAlternativeId(t.getID());
+		}
+		
+		this.graph.mergeVertices(t1,eqTerms);
+		
+		
+	}
+	
 }
