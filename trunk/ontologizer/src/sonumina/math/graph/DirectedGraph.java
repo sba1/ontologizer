@@ -219,13 +219,15 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 		if (vaSource == null || vaDest == null)
 			throw new IllegalArgumentException();
 
-//		System.out.print("start removing -->  ");
+//		System.out.println("start removing -->  ");
 		HashSet<Edge<VertexType>> deleteMe = new HashSet<Edge<VertexType>>();
 		for (Edge<VertexType> edge : vaSource.outEdges){
 			if (edge.getDest().equals(dest)){
+//				System.out.println(" --> added edge "+edge.getSource()+" -> "+edge.getDest());
 				deleteMe.add(edge);
 			}
 		}
+//		System.out.println("edges..."+deleteMe);
 		if (deleteMe.size() > 1)
 			throw new RuntimeException(" found more than one edge to delete ("+deleteMe.size()+") --> "+deleteMe);
 		for (Edge<VertexType> edge : deleteMe){
@@ -243,7 +245,7 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 		if (deleteMe.size() > 1)
 			throw new RuntimeException(" found more than one edge to delete ("+deleteMe.size()+") --> "+deleteMe);
 		for (Edge<VertexType> edge : deleteMe){
-//			System.out.print("rem: "+edge.getSource()+" -> "+edge.getDest());
+			System.out.print("rem: "+edge.getSource()+" -> "+edge.getDest());
 			vaSource.inEdges.remove(edge);
 		}
 //		System.out.print(" ok 2 - ");
@@ -1068,4 +1070,38 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 		return visitor.nodeSet;
 	}
 
+	/**
+	 * Merge equivalent vertices. First vertex given will be
+	 * the representative and thus we inherit all the edges
+	 * of the other equivalent vertices.
+	 *
+	 * @param vertex1
+	 * @param eqVertices
+	 */
+	public void mergeVertices(VertexType vertex1, HashSet<VertexType> eqVertices) {
+
+
+		for (VertexType vertex2 : eqVertices){
+
+			if ( ! vertices.containsKey(vertex2)){
+				System.out.println("   not found vertex2. prob. already removed");
+				return;
+			}
+
+			VertexAttributes<VertexType> vertexTwoAttributes = vertices.get(vertex2);
+			for (Edge<VertexType> e : vertexTwoAttributes.inEdges){
+				e.setDest(vertex1);
+			}
+			for (Edge<VertexType> e : vertexTwoAttributes.outEdges){
+				e.setSource(vertex1);
+			}
+
+			vertices.remove(vertex2);
+		}
+
+	}
+
+	public boolean containsVertex(VertexType vertex){
+		return vertices.containsKey(vertex);
+	}
 }
