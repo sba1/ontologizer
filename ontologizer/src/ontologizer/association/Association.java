@@ -273,4 +273,15 @@ public class Association
 	{
 		return evidence;
 	}
+	
+	
+	/**
+	 * Sets the term id of this association.
+	 * 
+	 * @param termID
+	 */
+	void setTermID(TermID termID)
+	{
+		this.termID = termID;
+	}
 }
