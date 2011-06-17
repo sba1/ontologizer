@@ -344,6 +344,9 @@ public class WorkSetLoadThread extends Thread
 							}
 						}
 
+						logger.info("The name of the obo file to be loaded is \"" + ws.getOboPath() + "\"");
+						logger.info("The name of the association file to be loaded is \"" + ws.getAssociationPath() + "\"");
+
 						/* open() returns null, if files are about to be downloaded, otherwise
 						 * it returns the local file cache. We can check that way whether files have already
 						 * been downloaded */ 
@@ -457,6 +460,8 @@ public class WorkSetLoadThread extends Thread
 			
 			if (!assocMap.containsKey(assocName))
 			{
+				logger.info("Parse local association file \"" + assocName + "\"");
+
 				workSetProgress.message("Parsing association file");
 				workSetProgress.updateGauge(0);
 				AssociationParser ap = new AssociationParser(assocName,graph.getTermContainer(),null,new IAssociationParserProgress()
