@@ -8,6 +8,7 @@ import ontologizer.association.AssociationParser;
 import ontologizer.calculation.CalculationRegistry;
 import ontologizer.calculation.EnrichedGOTermsResult;
 import ontologizer.calculation.ICalculation;
+import ontologizer.filter.GeneFilter;
 import ontologizer.go.Ontology;
 import ontologizer.go.OBOParser;
 import ontologizer.go.OBOParserException;

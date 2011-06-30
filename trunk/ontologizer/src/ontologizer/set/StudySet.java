@@ -14,13 +14,13 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import ontologizer.GeneFilter;
 import ontologizer.association.Association;
 import ontologizer.association.AssociationContainer;
 import ontologizer.association.Gene2Associations;
 import ontologizer.enumeration.GOTermCounter;
 import ontologizer.enumeration.GOTermEnumerator;
 import ontologizer.enumeration.GOTermEnumerator.GOTermAnnotatedGenes;
+import ontologizer.filter.GeneFilter;
 import ontologizer.go.Ontology;
 import ontologizer.go.Term;
 import ontologizer.go.TermID;
