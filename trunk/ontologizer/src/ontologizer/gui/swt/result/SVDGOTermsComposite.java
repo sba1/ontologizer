@@ -5,10 +5,10 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Locale;
 
-import ontologizer.AbstractDotAttributesProvider;
 import ontologizer.calculation.AbstractGOTermProperties;
 import ontologizer.calculation.svd.SVDGOTermProperties;
 import ontologizer.calculation.svd.SVDResult;
+import ontologizer.dotwriter.AbstractDotAttributesProvider;
 import ontologizer.go.TermID;
 import ontologizer.gui.swt.support.Chart;
 import ontologizer.gui.swt.support.GraphCanvas;

@@ -6,7 +6,7 @@ import java.util.Locale;
 import java.util.Set;
 
 import ontologizer.GlobalPreferences;
-import ontologizer.AbstractDotAttributesProvider;
+import ontologizer.dotwriter.AbstractDotAttributesProvider;
 import ontologizer.go.Ontology;
 import ontologizer.go.Namespace;
 import ontologizer.go.Prefix;

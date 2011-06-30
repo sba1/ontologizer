@@ -1,4 +1,4 @@
-package ontologizer;
+package ontologizer.dotwriter;
 
 import ontologizer.go.TermID;
 

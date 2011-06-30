@@ -15,12 +15,12 @@ import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
 import java.util.logging.Logger;
 
 import ontologizer.DOTDumper;
-import ontologizer.GODOTWriter;
-import ontologizer.AbstractDotAttributesProvider;
 import ontologizer.StudySet;
 import ontologizer.association.Association;
 import ontologizer.association.AssociationContainer;
 import ontologizer.association.Gene2Associations;
+import ontologizer.dotwriter.AbstractDotAttributesProvider;
+import ontologizer.dotwriter.GODOTWriter;
 import ontologizer.enumeration.GOTermEnumerator;
 import ontologizer.go.Ontology;
 import ontologizer.go.ParentTermID;
