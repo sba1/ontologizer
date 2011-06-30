@@ -18,14 +18,14 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import ontologizer.GOTermEnumerator;
 import ontologizer.GlobalPreferences;
-import ontologizer.GOTermEnumerator.GOTermAnnotatedGenes;
 import ontologizer.association.Gene2Associations;
 import ontologizer.calculation.AbstractGOTermProperties;
 import ontologizer.calculation.EnrichedGOTermsResult;
 import ontologizer.calculation.b2g.Bayes2GOEnrichedGOTermsResult;
 import ontologizer.calculation.b2g.Bayes2GOGOTermProperties;
+import ontologizer.enumeration.GOTermEnumerator;
+import ontologizer.enumeration.GOTermEnumerator.GOTermAnnotatedGenes;
 import ontologizer.go.Namespace;
 import ontologizer.go.Term;
 import ontologizer.go.TermID;

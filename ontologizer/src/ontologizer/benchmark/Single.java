@@ -6,7 +6,6 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import ontologizer.GOTermEnumerator;
 import ontologizer.GlobalPreferences;
 import ontologizer.PopulationSet;
 import ontologizer.StudySet;
@@ -17,6 +16,7 @@ import ontologizer.calculation.ProbabilisticCalculation;
 import ontologizer.calculation.b2g.B2GParam;
 import ontologizer.calculation.b2g.Bayes2GOCalculation;
 import ontologizer.calculation.b2g.Bayes2GOGOTermProperties;
+import ontologizer.enumeration.GOTermEnumerator;
 import ontologizer.go.Ontology;
 import ontologizer.parser.AbstractItemParser;
 import ontologizer.parser.IParserCallback;

@@ -1,4 +1,4 @@
-package ontologizer;
+package ontologizer.enumeration;
 
 import java.util.ArrayList;
 import java.util.Arrays;
