@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Random;
 
-import ontologizer.StudySet;
 import ontologizer.association.AssociationContainer;
 import ontologizer.enumeration.GOTermEnumerator;
 import ontologizer.enumeration.GOTermEnumerator.GOTermAnnotatedGenes;
 import ontologizer.go.Ontology;
 import ontologizer.go.TermID;
+import ontologizer.set.StudySet;
 import ontologizer.types.ByteString;
 
 /**

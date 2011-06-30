@@ -7,9 +7,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import ontologizer.PopulationSet;
-import ontologizer.StudySet;
-import ontologizer.StudySetList;
 import ontologizer.StudySetResultList;
 import ontologizer.association.AssociationContainer;
 import ontologizer.association.AssociationParser;
@@ -21,6 +18,9 @@ import ontologizer.go.Ontology;
 import ontologizer.go.OBOParser;
 import ontologizer.go.OBOParserException;
 import ontologizer.go.TermContainer;
+import ontologizer.set.PopulationSet;
+import ontologizer.set.StudySet;
+import ontologizer.set.StudySetList;
 import ontologizer.statistics.TestCorrectionRegistry;
 import ontologizer.types.ByteString;
 

@@ -5,14 +5,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-import ontologizer.PopulationSet;
-import ontologizer.StudySet;
 import ontologizer.association.AssociationContainer;
 import ontologizer.enumeration.GOTermEnumerator;
 import ontologizer.enumeration.GOTermEnumerator.GOTermAnnotatedGenes;
 import ontologizer.go.Ontology;
 import ontologizer.go.TermID;
 import ontologizer.go.Ontology.GOLevels;
+import ontologizer.set.PopulationSet;
+import ontologizer.set.StudySet;
 import ontologizer.statistics.AbstractTestCorrection;
 import ontologizer.statistics.IPValueCalculation;
 import ontologizer.statistics.PValue;

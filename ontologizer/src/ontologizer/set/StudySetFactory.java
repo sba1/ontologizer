@@ -1,4 +1,4 @@
-package ontologizer;
+package ontologizer.set;
 
 import java.io.File;
 import java.io.IOException;

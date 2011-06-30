@@ -12,8 +12,6 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import ontologizer.PopulationSet;
-import ontologizer.StudySet;
 import ontologizer.association.AssociationContainer;
 import ontologizer.association.AssociationParser;
 import ontologizer.calculation.CalculationRegistry;
@@ -29,6 +27,8 @@ import ontologizer.go.TermContainer;
 import ontologizer.go.TermID;
 import ontologizer.go.Namespace;
 import ontologizer.go.Namespace.NamespaceEnum;
+import ontologizer.set.PopulationSet;
+import ontologizer.set.StudySet;
 import ontologizer.statistics.AbstractTestCorrection;
 import ontologizer.statistics.PValue;
 import ontologizer.statistics.TestCorrectionRegistry;

@@ -12,8 +12,6 @@ import java.util.concurrent.TimeUnit;
 
 import ontologizer.GlobalPreferences;
 import ontologizer.OntologizerThreadGroups;
-import ontologizer.PopulationSet;
-import ontologizer.StudySet;
 import ontologizer.association.AssociationContainer;
 import ontologizer.calculation.AbstractGOTermProperties;
 import ontologizer.calculation.EnrichedGOTermsResult;
@@ -28,6 +26,8 @@ import ontologizer.parser.IParserCallback;
 import ontologizer.parser.ItemAttribute;
 import ontologizer.parser.ParserFactory;
 import ontologizer.sampling.StudySetSampler;
+import ontologizer.set.PopulationSet;
+import ontologizer.set.StudySet;
 import ontologizer.types.ByteString;
 
 public class Randomize {

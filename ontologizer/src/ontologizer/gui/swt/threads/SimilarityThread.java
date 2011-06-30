@@ -4,8 +4,6 @@ import java.util.logging.Logger;
 
 import org.eclipse.swt.widgets.Display;
 
-import ontologizer.StudySet;
-import ontologizer.StudySetList;
 import ontologizer.association.AssociationContainer;
 import ontologizer.association.AssociationParser;
 import ontologizer.calculation.SemanticCalculation;
@@ -13,6 +11,8 @@ import ontologizer.calculation.SemanticResult;
 import ontologizer.go.Ontology;
 import ontologizer.gui.swt.Ontologizer;
 import ontologizer.gui.swt.ResultWindow;
+import ontologizer.set.StudySet;
+import ontologizer.set.StudySetList;
 import ontologizer.worksets.IWorkSetProgress;
 import ontologizer.worksets.WorkSet;
 import ontologizer.worksets.WorkSetLoadThread;

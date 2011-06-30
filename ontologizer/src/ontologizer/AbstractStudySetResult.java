@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import ontologizer.set.StudySet;
+
 /**
  *
  * @author Sebastian Bauer

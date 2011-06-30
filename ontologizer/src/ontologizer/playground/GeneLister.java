@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Set;
 
-import ontologizer.PopulationSet;
 import ontologizer.association.AssociationContainer;
 import ontologizer.association.AssociationParser;
 import ontologizer.enumeration.GOTermEnumerator;
@@ -14,6 +13,7 @@ import ontologizer.go.OBOParser;
 import ontologizer.go.OBOParserException;
 import ontologizer.go.TermContainer;
 import ontologizer.go.TermID;
+import ontologizer.set.PopulationSet;
 import ontologizer.types.ByteString;
 
 import org.apache.commons.cli.CommandLine;
