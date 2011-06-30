@@ -1,4 +1,4 @@
-package ontologizer;
+package ontologizer.enumeration;
 
 import ontologizer.go.TermID;
 
