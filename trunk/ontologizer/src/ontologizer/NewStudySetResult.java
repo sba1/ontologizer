@@ -1,6 +1,7 @@
 package ontologizer;
 
 import ontologizer.calculation.TermForTermGOTermProperties;
+import ontologizer.set.StudySet;
 
 /**
  *

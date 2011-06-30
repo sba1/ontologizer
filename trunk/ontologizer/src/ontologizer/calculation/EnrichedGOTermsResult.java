@@ -12,7 +12,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import ontologizer.GlobalPreferences;
-import ontologizer.StudySet;
 import ontologizer.association.AssociationContainer;
 import ontologizer.dotwriter.AbstractDotAttributesProvider;
 import ontologizer.go.Ontology;
@@ -21,6 +20,7 @@ import ontologizer.go.Term;
 import ontologizer.go.TermContainer;
 import ontologizer.go.TermID;
 import ontologizer.go.Ontology.IVisitingGOVertex;
+import ontologizer.set.StudySet;
 import ontologizer.util.Util;
 
 /**

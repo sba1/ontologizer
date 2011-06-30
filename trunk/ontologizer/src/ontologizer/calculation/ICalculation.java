@@ -1,10 +1,10 @@
 package ontologizer.calculation;
 
 
-import ontologizer.PopulationSet;
-import ontologizer.StudySet;
 import ontologizer.association.AssociationContainer;
 import ontologizer.go.Ontology;
+import ontologizer.set.PopulationSet;
+import ontologizer.set.StudySet;
 import ontologizer.statistics.AbstractTestCorrection;
 
 /**

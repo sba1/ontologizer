@@ -11,8 +11,6 @@ import java.util.Set;
 
 import ontologizer.GlobalPreferences;
 import ontologizer.OntologizerThreadGroups;
-import ontologizer.PopulationSet;
-import ontologizer.StudySet;
 import ontologizer.association.AssociationContainer;
 import ontologizer.calculation.AbstractGOTermProperties;
 import ontologizer.calculation.EnrichedGOTermsResult;
@@ -29,6 +27,8 @@ import ontologizer.go.Term;
 import ontologizer.go.TermID;
 import ontologizer.go.TermRelation;
 import ontologizer.gui.swt.result.EnrichedGOTermsResultLatexWriter;
+import ontologizer.set.PopulationSet;
+import ontologizer.set.StudySet;
 import ontologizer.statistics.Bonferroni;
 import ontologizer.types.ByteString;
 
