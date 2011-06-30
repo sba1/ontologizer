@@ -3,7 +3,6 @@ package ontologizer.enumeration;
 import java.util.*;
 import java.util.logging.Logger;
 
-import ontologizer.AssociationCounter;
 import ontologizer.go.Ontology;
 import ontologizer.go.Namespace;
 import ontologizer.go.Term;
