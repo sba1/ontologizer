@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import ontologizer.GeneFilter;
 import ontologizer.association.AssociationContainer;
 import ontologizer.association.AssociationParser;
 import ontologizer.association.IAssociationParserProgress;
@@ -15,6 +14,7 @@ import ontologizer.calculation.ICalculation;
 import ontologizer.calculation.ICalculationProgress;
 import ontologizer.calculation.b2g.B2GParam;
 import ontologizer.calculation.b2g.Bayes2GOCalculation;
+import ontologizer.filter.GeneFilter;
 import ontologizer.go.Ontology;
 import ontologizer.go.IOBOParserProgress;
 import ontologizer.go.OBOParser;
