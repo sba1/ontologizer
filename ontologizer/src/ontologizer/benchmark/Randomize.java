@@ -10,7 +10,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import ontologizer.GOTermEnumerator;
 import ontologizer.GlobalPreferences;
 import ontologizer.OntologizerThreadGroups;
 import ontologizer.PopulationSet;
@@ -21,6 +20,7 @@ import ontologizer.calculation.EnrichedGOTermsResult;
 import ontologizer.calculation.b2g.B2GParam;
 import ontologizer.calculation.b2g.Bayes2GOCalculation;
 import ontologizer.calculation.b2g.Bayes2GOGOTermProperties;
+import ontologizer.enumeration.GOTermEnumerator;
 import ontologizer.go.Ontology;
 import ontologizer.go.TermID;
 import ontologizer.parser.AbstractItemParser;

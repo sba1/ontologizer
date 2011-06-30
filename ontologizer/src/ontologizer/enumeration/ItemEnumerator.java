@@ -1,11 +1,11 @@
-package ontologizer;
+package ontologizer.enumeration;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 
-import ontologizer.GOTermEnumerator.GOTermAnnotatedGenes;
+import ontologizer.enumeration.GOTermEnumerator.GOTermAnnotatedGenes;
 import ontologizer.go.TermID;
 import ontologizer.types.ByteString;
 

@@ -8,10 +8,10 @@ package ontologizer.calculation;
 
 import java.util.HashSet;
 
-import ontologizer.GOTermEnumerator;
 import ontologizer.PopulationSet;
 import ontologizer.StudySet;
 import ontologizer.association.AssociationContainer;
+import ontologizer.enumeration.GOTermEnumerator;
 import ontologizer.go.Ontology;
 import ontologizer.go.Term;
 import ontologizer.go.TermID;

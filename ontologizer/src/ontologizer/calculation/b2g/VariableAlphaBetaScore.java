@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-import ontologizer.GOTermEnumerator;
+import ontologizer.enumeration.GOTermEnumerator;
 import ontologizer.go.TermID;
 import ontologizer.types.ByteString;
 
