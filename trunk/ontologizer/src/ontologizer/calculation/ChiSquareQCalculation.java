@@ -8,13 +8,13 @@ package ontologizer.calculation;
 
 import java.util.Arrays;
 
-import ontologizer.GOTermCounter;
 import ontologizer.PopulationSet;
 import ontologizer.StudySet;
 import ontologizer.association.AssociationContainer;
 import ontologizer.chisquare.ChiSquare;
 import ontologizer.chisquare.ChiSquare2P;
 import ontologizer.chisquare.ChiSquareIncompatibleCountsException;
+import ontologizer.enumeration.GOTermCounter;
 import ontologizer.go.Ontology;
 import ontologizer.go.TermID;
 import ontologizer.statistics.AbstractTestCorrection;

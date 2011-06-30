@@ -13,11 +13,11 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
-import ontologizer.GOTermEnumerator;
 import ontologizer.PopulationSet;
-import ontologizer.GOTermEnumerator.GOTermAnnotatedGenes;
 import ontologizer.association.AssociationContainer;
 import ontologizer.association.AssociationParser;
+import ontologizer.enumeration.GOTermEnumerator;
+import ontologizer.enumeration.GOTermEnumerator.GOTermAnnotatedGenes;
 import ontologizer.go.Ontology;
 import ontologizer.go.OBOParser;
 import ontologizer.go.OBOParserException;
