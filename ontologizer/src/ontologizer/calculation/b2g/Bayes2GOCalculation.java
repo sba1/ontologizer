@@ -17,8 +17,6 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import ontologizer.FileCache;
-import ontologizer.GODOTWriter;
-import ontologizer.AbstractDotAttributesProvider;
 import ontologizer.OntologizerThreadGroups;
 import ontologizer.PopulationSet;
 import ontologizer.StudySet;
@@ -33,6 +31,8 @@ import ontologizer.calculation.ProbabilisticCalculation;
 import ontologizer.calculation.TermForTermCalculation;
 import ontologizer.calculation.TermForTermGOTermProperties;
 import ontologizer.calculation.TopologyWeightedCalculation;
+import ontologizer.dotwriter.AbstractDotAttributesProvider;
+import ontologizer.dotwriter.GODOTWriter;
 import ontologizer.enumeration.GOTermEnumerator;
 import ontologizer.enumeration.GOTermEnumerator.GOTermAnnotatedGenes;
 import ontologizer.enumeration.GOTermEnumerator.GOTermOftenAnnotatedCount;

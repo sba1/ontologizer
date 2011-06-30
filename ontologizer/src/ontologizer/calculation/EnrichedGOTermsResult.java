@@ -12,9 +12,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import ontologizer.GlobalPreferences;
-import ontologizer.AbstractDotAttributesProvider;
 import ontologizer.StudySet;
 import ontologizer.association.AssociationContainer;
+import ontologizer.dotwriter.AbstractDotAttributesProvider;
 import ontologizer.go.Ontology;
 import ontologizer.go.Namespace;
 import ontologizer.go.Term;
