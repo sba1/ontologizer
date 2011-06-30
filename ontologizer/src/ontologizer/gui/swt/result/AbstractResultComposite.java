@@ -7,10 +7,10 @@ import java.util.HashSet;
 import java.util.LinkedList;
 
 import ontologizer.GlobalPreferences;
-import ontologizer.AbstractDotAttributesProvider;
 import ontologizer.association.AssociationContainer;
 import ontologizer.calculation.AbstractGOTermProperties;
 import ontologizer.calculation.AbstractGOTermsResult;
+import ontologizer.dotwriter.AbstractDotAttributesProvider;
 import ontologizer.go.Ontology;
 import ontologizer.go.Term;
 import ontologizer.go.TermID;

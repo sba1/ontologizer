@@ -9,9 +9,7 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
-import ontologizer.GODOTWriter;
 import ontologizer.GlobalPreferences;
-import ontologizer.AbstractDotAttributesProvider;
 import ontologizer.OntologizerThreadGroups;
 import ontologizer.PopulationSet;
 import ontologizer.StudySet;
@@ -23,6 +21,8 @@ import ontologizer.calculation.TermForTermCalculation;
 import ontologizer.calculation.b2g.B2GParam;
 import ontologizer.calculation.b2g.Bayes2GOCalculation;
 import ontologizer.calculation.b2g.Bayes2GOGOTermProperties;
+import ontologizer.dotwriter.AbstractDotAttributesProvider;
+import ontologizer.dotwriter.GODOTWriter;
 import ontologizer.enumeration.GOTermEnumerator;
 import ontologizer.go.Ontology;
 import ontologizer.go.Term;
