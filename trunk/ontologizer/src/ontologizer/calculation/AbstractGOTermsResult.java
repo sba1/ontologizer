@@ -12,9 +12,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import ontologizer.GODOTWriter;
-import ontologizer.AbstractDotAttributesProvider;
 import ontologizer.association.AssociationContainer;
+import ontologizer.dotwriter.AbstractDotAttributesProvider;
+import ontologizer.dotwriter.GODOTWriter;
 import ontologizer.go.Ontology;
 import ontologizer.go.Term;
 import ontologizer.go.TermID;

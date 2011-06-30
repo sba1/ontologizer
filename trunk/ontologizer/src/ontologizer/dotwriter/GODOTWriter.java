@@ -1,4 +1,4 @@
-package ontologizer;
+package ontologizer.dotwriter;
 
 import java.io.File;
 import java.io.FileWriter;
