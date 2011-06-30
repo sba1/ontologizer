@@ -3,10 +3,10 @@ package ontologizer.calculation;
 import java.util.HashSet;
 import java.util.Set;
 
-import ontologizer.GOTermEnumerator;
 import ontologizer.PopulationSet;
 import ontologizer.StudySet;
 import ontologizer.association.AssociationContainer;
+import ontologizer.enumeration.GOTermEnumerator;
 import ontologizer.go.Ontology;
 import ontologizer.go.TermID;
 import ontologizer.statistics.AbstractTestCorrection;
