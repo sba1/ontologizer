@@ -16,8 +16,6 @@ import java.util.concurrent.TimeUnit;
 
 import ontologizer.GlobalPreferences;
 import ontologizer.OntologizerThreadGroups;
-import ontologizer.PopulationSet;
-import ontologizer.StudySet;
 import ontologizer.association.AssociationContainer;
 import ontologizer.calculation.AbstractGOTermProperties;
 import ontologizer.calculation.CalculationRegistry;
@@ -32,6 +30,8 @@ import ontologizer.go.TermID;
 import ontologizer.sampling.KSubsetSampler;
 import ontologizer.sampling.PercentageEnrichmentRule;
 import ontologizer.sampling.StudySetSampler;
+import ontologizer.set.PopulationSet;
+import ontologizer.set.StudySet;
 import ontologizer.statistics.AbstractTestCorrection;
 import ontologizer.statistics.Bonferroni;
 import ontologizer.statistics.None;

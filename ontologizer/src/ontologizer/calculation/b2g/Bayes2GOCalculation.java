@@ -18,8 +18,6 @@ import java.util.logging.Logger;
 
 import ontologizer.FileCache;
 import ontologizer.OntologizerThreadGroups;
-import ontologizer.PopulationSet;
-import ontologizer.StudySet;
 import ontologizer.association.Association;
 import ontologizer.association.AssociationContainer;
 import ontologizer.calculation.AbstractGOTermProperties;
@@ -44,6 +42,8 @@ import ontologizer.go.TermID;
 import ontologizer.go.TermRelation;
 import ontologizer.parser.ItemAttribute;
 import ontologizer.parser.ValuedItemAttribute;
+import ontologizer.set.PopulationSet;
+import ontologizer.set.StudySet;
 import ontologizer.statistics.AbstractTestCorrection;
 import ontologizer.statistics.Bonferroni;
 import ontologizer.statistics.None;

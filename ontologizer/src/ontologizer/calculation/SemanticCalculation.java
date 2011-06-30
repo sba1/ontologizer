@@ -15,7 +15,6 @@ import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
 import java.util.logging.Logger;
 
 import ontologizer.DOTDumper;
-import ontologizer.StudySet;
 import ontologizer.association.Association;
 import ontologizer.association.AssociationContainer;
 import ontologizer.association.Gene2Associations;
@@ -28,6 +27,7 @@ import ontologizer.go.Term;
 import ontologizer.go.TermContainer;
 import ontologizer.go.TermID;
 import ontologizer.go.TermRelation;
+import ontologizer.set.StudySet;
 import ontologizer.types.ByteString;
 
 /**

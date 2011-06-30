@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.text.*;
 
-import ontologizer.StudySet;
 import ontologizer.association.AssociationContainer;
 import ontologizer.calculation.AbstractGOTermProperties;
 import ontologizer.calculation.EnrichedGOTermsResult;
@@ -17,6 +16,7 @@ import ontologizer.go.Namespace;
 import ontologizer.go.Term;
 import ontologizer.go.TermContainer;
 import ontologizer.go.TermID;
+import ontologizer.set.StudySet;
 import cern.colt.matrix.DoubleMatrix2D;
 import cern.colt.matrix.impl.DenseDoubleMatrix2D;
 import cern.colt.matrix.linalg.SingularValueDecomposition;
