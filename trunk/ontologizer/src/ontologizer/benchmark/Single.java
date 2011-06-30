@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import ontologizer.GlobalPreferences;
-import ontologizer.PopulationSet;
-import ontologizer.StudySet;
 import ontologizer.association.AssociationContainer;
 import ontologizer.calculation.AbstractGOTermProperties;
 import ontologizer.calculation.EnrichedGOTermsResult;
@@ -22,6 +20,8 @@ import ontologizer.parser.AbstractItemParser;
 import ontologizer.parser.IParserCallback;
 import ontologizer.parser.ItemAttribute;
 import ontologizer.parser.ParserFactory;
+import ontologizer.set.PopulationSet;
+import ontologizer.set.StudySet;
 import ontologizer.statistics.None;
 import ontologizer.types.ByteString;
 

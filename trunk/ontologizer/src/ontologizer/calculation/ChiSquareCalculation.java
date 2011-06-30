@@ -5,8 +5,6 @@ package ontologizer.calculation;
 
 import java.util.Set;
 
-import ontologizer.PopulationSet;
-import ontologizer.StudySet;
 import ontologizer.association.AssociationContainer;
 import ontologizer.chisquare.ChiSquare;
 import ontologizer.chisquare.ChiSquareIncompatibleCountsException;
@@ -14,6 +12,8 @@ import ontologizer.enumeration.GOTermEnumerator;
 import ontologizer.enumeration.GOTermEnumerator.GOTermAnnotatedGenes;
 import ontologizer.go.Ontology;
 import ontologizer.go.TermID;
+import ontologizer.set.PopulationSet;
+import ontologizer.set.StudySet;
 import ontologizer.statistics.AbstractTestCorrection;
 
 /**
