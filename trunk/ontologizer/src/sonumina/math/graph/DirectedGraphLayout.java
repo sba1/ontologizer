@@ -24,8 +24,8 @@ public class DirectedGraphLayout<T>
 
 	static public class Dimension
 	{
-		int width;
-		int height;
+		public int width;
+		public int height;
 	}
 
 	static public interface IGetDimension<T>
@@ -56,29 +56,31 @@ public class DirectedGraphLayout<T>
 
 		final HashMap<T,Attr> nodes2Attrs = new HashMap<T,Attr>();
 
-		T root = null;
+		List<T> rootList = new ArrayList<T>(4);
 
-		/* Find a root */
+		/* Find the roots */
 		for (T n : graph)
-			if (graph.getInDegree(n)==0) root = n;
-		if (root == null)
-			root = graph.getArbitaryNode();
+			if (graph.getInDegree(n)==0) rootList.add(n);
+		if (rootList.size() == 0)
+			rootList.add(graph.getArbitaryNode());
 
 		/* Find out the distance to the root of each vertex */
-		graph.singleSourceLongestPath(root,new DirectedGraph.IDistanceVisitor<T>() {
-			public boolean visit(T n, List<T> path, int distance) {
+		for (T root : rootList)
+		{
+			graph.singleSourceLongestPath(root,new DirectedGraph.IDistanceVisitor<T>() {
+				public boolean visit(T n, List<T> path, int distance) {
 
-				Attr a = nodes2Attrs.get(n);
-				if (a == null)
-				{
-					a = new Attr();
-					a.distanceToRoot = distance;
-					System.out.println(n + " has distance " + distance);
-					nodes2Attrs.put(n, a);
+					Attr a = nodes2Attrs.get(n);
+					if (a == null)
+					{
+						a = new Attr();
+						a.distanceToRoot = distance;
+						nodes2Attrs.put(n, a);
+					}
+					return true;
 				}
-				return true;
-			}
-		});
+			});
+		}
 
 		/* Determine the dimension of each node */
 		final Dimension dim = new Dimension();
@@ -86,6 +88,11 @@ public class DirectedGraphLayout<T>
 		for (T n : graph)
 		{
 			Attr a = nodes2Attrs.get(n);
+			if (a == null) /* May happen if graph as more than one root */
+			{
+				a = new Attr();
+				nodes2Attrs.put(n,a);
+			}
 			dimensionCallback.get(n, dim);
 			a.width = dim.width;
 			a.height = dim.height;
@@ -104,7 +111,7 @@ public class DirectedGraphLayout<T>
 		/* Determine the vertical position of each level */
 		int [] levelYPos = new int[maxDistanceToRoot+1];
 		for (int i=1;i<levelYPos.length;i++)
-			levelYPos[i] = levelYPos[i-1] + levelHeight[i-1];
+			levelYPos[i] = levelYPos[i-1] + levelHeight[i-1] + vertSpace;
 
 		/* Assign ypos */
 		for (T n : graph)
@@ -131,7 +138,7 @@ public class DirectedGraphLayout<T>
 
 	}
 
-	static <T> void layout(DirectedGraph<T> graph, IGetDimension<T> dimensionCallback, IPosition<T> positionCallback)
+	public static <T> void layout(DirectedGraph<T> graph, IGetDimension<T> dimensionCallback, IPosition<T> positionCallback)
 	{
 		new DirectedGraphLayout<T>(graph,dimensionCallback,positionCallback).layout();
 	}
