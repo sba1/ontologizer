@@ -56,6 +56,9 @@ public class DirectedGraphLayout<T>
 		
 		final HashMap<T,Attr> nodes2Attrs = new HashMap<T,Attr>();
 		
+		if (graph.getNumberOfVertices() == 0)
+			return;
+
 		List<T> rootList = new ArrayList<T>(4);
 		
 		/* Find the roots */
