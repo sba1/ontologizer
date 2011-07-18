@@ -75,10 +75,10 @@ public class Bayes2GOCalculation implements ICalculation
 	
 	private boolean usePrior = true;
 
-	private DoubleParam alpha = new DoubleParam(B2GParam.Type.EM);
-	private DoubleParam beta = new DoubleParam(B2GParam.Type.EM);
-	private IntegerParam expectedNumberOfTerms = new IntegerParam(B2GParam.Type.EM);
-
+	private DoubleParam alpha = new DoubleParam(B2GParam.Type.MCMC);
+	private DoubleParam beta = new DoubleParam(B2GParam.Type.MCMC);
+	private IntegerParam expectedNumberOfTerms = new IntegerParam(B2GParam.Type.MCMC);
+	
 	private boolean takePopulationAsReference = false;
 	private ICalculationProgress calculationProgress;
 	
