@@ -157,7 +157,7 @@ public class OntologizerCMD
 			{
 				System.out.println("Ontologizer 2.0 (Build: " + BuildInfo.date + "-" + BuildInfo.revisionNumber + ")");
 				System.out.println();
-				System.out.println("Copyright (C) 2004-2010 Ontologizer Development Team.");
+				System.out.println("Copyright (C) 2004-2011 Ontologizer Development Team.");
 				System.exit(0);
 			}
 
