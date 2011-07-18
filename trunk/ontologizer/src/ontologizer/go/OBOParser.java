@@ -27,7 +27,7 @@ import java.util.zip.GZIPInputStream;
  * OBOParser parses the Gene Ontology OBO term definition file. Please see
  * www.geneontology.org for background on this file format.
  * 
- * @author Peter N. Robinson, Sebastian Bauer, Sebastian Kšhler
+ * @author Peter N. Robinson, Sebastian Bauer, Sebastian Koehler
  */
 public class OBOParser
 {
