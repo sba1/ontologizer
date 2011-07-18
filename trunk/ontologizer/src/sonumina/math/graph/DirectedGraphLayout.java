@@ -99,16 +99,28 @@ public class DirectedGraphLayout<T>
 			dimensionCallback.get(n, dim);
 			a.width = dim.width;
 			a.height = dim.height;
-			if (a.distanceToRoot > maxDistanceToRoot) maxDistanceToRoot = a.distanceToRoot;
+			if (a.distanceToRoot > maxDistanceToRoot)
+				maxDistanceToRoot = a.distanceToRoot;
 		}
 
-		/* Determine the heights of each level */
+		/* Determine the heights of each level and the width of each level as well as the number of objects per level */
 		int [] levelHeight = new int[maxDistanceToRoot+1];
+		int [] levelWidth = new int[maxDistanceToRoot+1];
+		int [] levelCounts = new int[maxDistanceToRoot+1];
+		int maxLevelWidth = -1;
 		for (T n : graph)
 		{
 			Attr a = nodes2Attrs.get(n);
 			if (a.height > levelHeight[a.distanceToRoot])
 				levelHeight[a.distanceToRoot] = a.height;
+			levelCounts[a.distanceToRoot]++;
+			levelWidth[a.distanceToRoot] += a.width;
+		}
+		for (int i=0;i<=maxDistanceToRoot;i++)
+		{
+			levelWidth[i] += horizSpace * levelCounts[i];
+			if (levelWidth[i] > maxLevelWidth)
+				maxLevelWidth = levelWidth[i];
 		}
 
 		/* Determine the vertical position of each level */
