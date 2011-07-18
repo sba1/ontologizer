@@ -8,6 +8,8 @@ import ontologizer.association.AssociationParser;
 import ontologizer.calculation.CalculationRegistry;
 import ontologizer.calculation.EnrichedGOTermsResult;
 import ontologizer.calculation.ICalculation;
+import ontologizer.calculation.b2g.B2GParam;
+import ontologizer.calculation.b2g.Bayes2GOCalculation;
 import ontologizer.filter.GeneFilter;
 import ontologizer.go.Ontology;
 import ontologizer.go.OBOParser;
@@ -125,7 +127,14 @@ public class OntologizerCore
 		calculation = CalculationRegistry.getCalculationByName(args.calculationName);
 		if (calculation == null)
 			calculation = CalculationRegistry.getDefault();
-
+		if (calculation instanceof Bayes2GOCalculation) {
+			Bayes2GOCalculation b2g = (Bayes2GOCalculation) calculation;
+			b2g.setAlpha(B2GParam.Type.MCMC);
+			b2g.setBeta(B2GParam.Type.MCMC);
+			b2g.setExpectedNumber(B2GParam.Type.MCMC);
+			b2g.setMcmcSteps(1000000);
+		}
+		
 		/* Set the desired test correction or set the default */
 		testCorrection = TestCorrectionRegistry.getCorrectionByName(args.correctionName);
 		if (testCorrection == null)
