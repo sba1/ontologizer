@@ -17,7 +17,8 @@ public class DirectedGraphLayout<T>
 		int posY;
 		int layoutPosX;
 		int layoutPosY;
-		int distanceToRoot;
+		int distanceToRoot;	/* This defines the vertical rank */
+		int horizontalRank;
 		int width;
 		int height;
 	}
@@ -137,11 +138,13 @@ public class DirectedGraphLayout<T>
 
 		/* Distribute x pos for each level */
 		int [] levelCurXPos = new int[maxDistanceToRoot+1];
+		int [] levelCurXRank = new int[maxDistanceToRoot+1];
 		for (T n : graph)
 		{
 			Attr a = nodes2Attrs.get(n);
 			a.layoutPosX = levelCurXPos[a.distanceToRoot];
 			levelCurXPos[a.distanceToRoot] += a.width + horizSpace;
+			a.horizontalRank = levelCurXRank[a.distanceToRoot]++;
 		}
 
 		/* Emit positions */
