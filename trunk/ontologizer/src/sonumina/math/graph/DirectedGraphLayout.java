@@ -2,6 +2,7 @@ package sonumina.math.graph;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -108,6 +109,7 @@ public class DirectedGraphLayout<T>
 		int [] levelHeight = new int[maxDistanceToRoot+1];
 		int [] levelWidth = new int[maxDistanceToRoot+1];
 		int [] levelCounts = new int[maxDistanceToRoot+1];
+		ArrayList [] levelNodes = new ArrayList[maxDistanceToRoot+1];
 		int maxLevelWidth = -1;
 		for (T n : graph)
 		{
@@ -116,6 +118,9 @@ public class DirectedGraphLayout<T>
 				levelHeight[a.distanceToRoot] = a.height;
 			levelCounts[a.distanceToRoot]++;
 			levelWidth[a.distanceToRoot] += a.width;
+			if (levelNodes[a.distanceToRoot] == null)
+				levelNodes[a.distanceToRoot] = new ArrayList();
+			levelNodes[a.distanceToRoot].add(n);
 		}
 		for (int i=0;i<=maxDistanceToRoot;i++)
 		{
@@ -136,16 +141,25 @@ public class DirectedGraphLayout<T>
 			a.layoutPosY = levelYPos[a.distanceToRoot];
 		}
 
-		/* Distribute x pos for each level */
-		int [] levelCurXPos = new int[maxDistanceToRoot+1];
+		/* Distribute x rank of nodes for each level */
 		int [] levelCurXRank = new int[maxDistanceToRoot+1];
 		for (T n : graph)
 		{
 			Attr a = nodes2Attrs.get(n);
-			a.layoutPosX = levelCurXPos[a.distanceToRoot];
-			levelCurXPos[a.distanceToRoot] += a.width + horizSpace;
 			a.horizontalRank = levelCurXRank[a.distanceToRoot]++;
 		}
+
+		/* Assign xpos */
+		for (T n : graph)
+		{
+			int [] levelCurXPos = new int[maxDistanceToRoot+1];
+			Attr a = nodes2Attrs.get(n);
+			a.layoutPosX = levelCurXPos[a.distanceToRoot];
+			levelCurXPos[a.distanceToRoot] += a.width + horizSpace;
+		}
+
+		/* Calculate score */
+		scoreLayout(nodes2Attrs, maxDistanceToRoot, levelNodes);
 
 		/* Emit positions */
 		for (T n: graph)
@@ -153,7 +167,38 @@ public class DirectedGraphLayout<T>
 			Attr a = nodes2Attrs.get(n);
 			positionCallback.set(n, a.layoutPosX, a.layoutPosY);
 		}
+	}
 
+	/**
+	 * Scores the current layout.
+	 *
+	 * @param nodes2Attrs
+	 * @param maxDistanceToRoot
+	 * @param levelNodes
+	 * @return
+	 */
+	private int scoreLayout(final HashMap<T, Attr> nodes2Attrs,	int maxDistanceToRoot, ArrayList[] levelNodes)
+	{
+		int length = 0;
+		for (int i=1;i<=maxDistanceToRoot;i++)
+		{
+			for (int j=0;j<levelNodes[i].size();j++)
+			{
+				T n = (T) levelNodes[i].get(j);
+				Attr na = nodes2Attrs.get(n);
+				int e1x = na.layoutPosX + na.width / 2;
+
+				Iterator<T> parents = graph.getParentNodes(n);
+				while (parents.hasNext())
+				{
+					T p = parents.next();
+					Attr ap = nodes2Attrs.get(p);
+					int e2x = ap.layoutPosX + ap.width / 2;
+					length += Math.abs(e1x - e2x);
+				}
+			}
+		}
+		return length;
 	}
 
 	public static <T> void layout(DirectedGraph<T> graph, IGetDimension<T> dimensionCallback, IPosition<T> positionCallback)
