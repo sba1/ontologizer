@@ -1,6 +1,8 @@
 package sonumina.math.graph;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -149,17 +151,88 @@ public class DirectedGraphLayout<T>
 			a.horizontalRank = levelCurXRank[a.distanceToRoot]++;
 		}
 
-		/* Assign xpos */
+		/* Assign initial xpos */
+		int [] levelCurXPos = new int[maxDistanceToRoot+1];
 		for (T n : graph)
 		{
-			int [] levelCurXPos = new int[maxDistanceToRoot+1];
 			Attr a = nodes2Attrs.get(n);
 			a.layoutPosX = levelCurXPos[a.distanceToRoot];
 			levelCurXPos[a.distanceToRoot] += a.width + horizSpace;
 		}
 
-		/* Calculate score */
-		scoreLayout(nodes2Attrs, maxDistanceToRoot, levelNodes);
+		int currentScore = scoreLayout(nodes2Attrs, maxDistanceToRoot, levelNodes);
+
+		/* In each run, we select a node which decreases the score best */
+		for (int run = 0; run < 100; run++)
+		{
+			int bestScore = currentScore;
+			int bestLayoutPosX = -1;
+			T bestNode = null;
+
+			for (int l = 0; l <= maxDistanceToRoot; l++)
+			{
+				for (int j=0;j<levelNodes[l].size();j++)
+				{
+					T n = (T) levelNodes[l].get(j);
+					Attr na = nodes2Attrs.get(n);
+
+					int minX;
+					if (j==0) minX = 0;
+					else minX = nodes2Attrs.get(levelNodes[l].get(j-1)).layoutPosX + nodes2Attrs.get(levelNodes[l].get(j-1)).width + horizSpace;
+
+					int maxX;
+					if (j==levelNodes[l].size()-1) maxX = maxLevelWidth - na.width;
+					else maxX = nodes2Attrs.get(levelNodes[l].get(j+1)).layoutPosX - horizSpace - na.width;
+
+
+					/* Determine all neighbors */
+					ArrayList<T> neighbors = new ArrayList<T>();
+					Iterator<T> iter = graph.getParentNodes(n);
+					while (iter.hasNext())
+						neighbors.add(iter.next());
+					iter = graph.getChildNodes(n);
+					while (iter.hasNext())
+						neighbors.add(iter.next());
+
+					int savedLayoutPosX = na.layoutPosX; /* Remember the current pos */
+
+					for (T neighbor : neighbors)
+					{
+						Attr neighbora = nodes2Attrs.get(neighbor);
+						int newenx = getEdgeX(neighbora);
+
+						na.layoutPosX = Math.min(maxX,Math.max(minX,newenx - na.width / 2));
+
+						int newScore = scoreLayout(nodes2Attrs, maxDistanceToRoot, levelNodes);
+						if (newScore < bestScore)
+						{
+							bestScore = newScore;
+							bestLayoutPosX = na.layoutPosX;
+							bestNode = n;
+						}
+					}
+					na.layoutPosX = savedLayoutPosX; /* Restore */
+				}
+			}
+
+			if (bestNode == null)
+				break;
+
+//			System.out.println(bestNode + " changed from " + nodes2Attrs.get(bestNode).layoutPosX + " to " + bestLayoutPosX);
+			nodes2Attrs.get(bestNode).layoutPosX = bestLayoutPosX;
+			currentScore = bestScore;
+
+//			for (T n : graph)
+//			{
+//				Attr a = nodes2Attrs.get(n);
+//				graph.get
+//
+//				a.layoutPosX = levelCurXPos[a.distanceToRoot];
+//				levelCurXPos[a.distanceToRoot] += a.width + horizSpace;
+//			}
+//
+
+		}
 
 		/* Emit positions */
 		for (T n: graph)
@@ -186,19 +259,30 @@ public class DirectedGraphLayout<T>
 			{
 				T n = (T) levelNodes[i].get(j);
 				Attr na = nodes2Attrs.get(n);
-				int e1x = na.layoutPosX + na.width / 2;
+				int e1x = getEdgeX(na);
 
 				Iterator<T> parents = graph.getParentNodes(n);
 				while (parents.hasNext())
 				{
 					T p = parents.next();
 					Attr ap = nodes2Attrs.get(p);
-					int e2x = ap.layoutPosX + ap.width / 2;
+					int e2x = getEdgeX(ap);
 					length += Math.abs(e1x - e2x);
 				}
 			}
 		}
 		return length;
+	}
+
+	/**
+	 * Returns the x coordiate of the given attr.
+	 *
+	 * @param na
+	 * @return
+	 */
+	private final int getEdgeX(Attr na)
+	{
+		return na.layoutPosX + na.width / 2;
 	}
 
 	public static <T> void layout(DirectedGraph<T> graph, IGetDimension<T> dimensionCallback, IPosition<T> positionCallback)
