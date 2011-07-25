@@ -39,6 +39,7 @@ public class DirectedGraphLayout<T>
 	
 	static public interface IPosition<T>
 	{
+		void setSize(int width, int height);
 		void set(T vertex, int left, int top);
 	}
 	
@@ -233,6 +234,17 @@ public class DirectedGraphLayout<T>
 //
 			
 		}
+		
+		/* Calculate area */
+		int width = 0;
+		int height = 0;
+		for (T n: graph)
+		{
+			Attr a = nodes2Attrs.get(n);
+			if (a.layoutPosX + a.width > width) width = a.layoutPosX + a.width - 1;
+			if (a.layoutPosY + a.height > height) height = a.layoutPosY + a.height - 1;
+		}		
+		positionCallback.setSize(width, height);
 
 		/* Emit positions */
 		for (T n: graph)
