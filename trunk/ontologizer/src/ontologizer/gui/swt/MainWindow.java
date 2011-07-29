@@ -20,6 +20,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -1959,6 +1960,11 @@ public class MainWindow extends ApplicationWindow
 		return settingsComposite.getSubontologyString();
 	}
 
+	/**
+	 * Set the selected subset ontology string.
+	 * 
+	 * @param subontology
+	 */
 	public void setSubontology(String subontology)
 	{
 		settingsComposite.setConsider(subontology);
@@ -1982,5 +1988,15 @@ public class MainWindow extends ApplicationWindow
 	public void setMTCEnabled(boolean supportsTestCorrection)
 	{
 		mtcCombo.setEnabled(supportsTestCorrection);
+	}
+
+	/**
+	 * Returns the currently selected evidences.
+	 * 
+	 * @return
+	 */
+	public Collection<String> getCheckedEvidences()
+	{
+		return settingsComposite.getCheckedEvidences();
 	}
 }
