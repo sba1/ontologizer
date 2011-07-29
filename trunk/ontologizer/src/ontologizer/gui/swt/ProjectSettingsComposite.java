@@ -7,6 +7,9 @@
 package ontologizer.gui.swt;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 
 import ontologizer.gui.swt.support.FileGridCompositeWidgets;
 import ontologizer.gui.swt.support.SWTUtil;
@@ -22,6 +25,8 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
 
 class Expander extends Composite
 {
@@ -96,6 +101,7 @@ public class ProjectSettingsComposite extends Composite
 	private FileGridCompositeWidgets mappingFileGridCompositeWidgets = null;
 	private Combo subsetCombo;
 	private Combo considerCombo;
+	private Table evidenceTable;
 	private Expander advancedExpander;
 
 	private Button subsetCheckbox;
@@ -216,7 +222,14 @@ public class ProjectSettingsComposite extends Composite
 //			updateMappingEnabled();
 		}
 
-
+		Label evidenceLabel = new Label(mappingComposite,0);
+		evidenceLabel.setText("Evidences");
+		evidenceLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+		gd = new GridData(GridData.FILL_HORIZONTAL|GridData.GRAB_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		evidenceTable = new Table(mappingComposite, SWT.BORDER|SWT.CHECK);
+		evidenceTable.setLayoutData(gd);
+		evidenceTable.setEnabled(false);
 
 		/* If a new work set has been selected */
 		workSetCombo.addSelectionListener(new SelectionAdapter()
@@ -407,6 +420,53 @@ public class ProjectSettingsComposite extends Composite
 
 		if (subset.length() > 0)
 			advancedExpander.setExpandedState(true);
+	}
+
+	/**
+	 * Sets the available evidences.
+	 *
+	 * @param evidences
+	 */
+	public void setEvidences(Collection<String> evidences)
+	{
+		evidenceTable.clearAll();
+		ArrayList<String> sortedEvidences = new ArrayList<String>(evidences);
+		Collections.sort(sortedEvidences);
+
+		for (String ev : sortedEvidences)
+		{
+			TableItem evi = new TableItem(evidenceTable,0);
+			evi.setText(ev);
+			evi.setChecked(true);
+		}
+		evidenceTable.setEnabled(true);
+	}
+
+	/**
+	 * Clears the evidences.
+	 */
+	public void clearEvidences()
+	{
+		evidenceTable.clearAll();
+		evidenceTable.setEnabled(false);
+	}
+
+	/**
+	 * Returns the selected evidences.
+	 *
+	 * @return
+	 */
+	public Collection<String> getCheckedEvidences()
+	{
+		ArrayList<String> selectedEvidences = new ArrayList<String>();
+		for (int i=0;i<evidenceTable.getItemCount();i++)
+		{
+			if (evidenceTable.getItem(i).getChecked())
+			{
+				selectedEvidences.add(evidenceTable.getItem(i).getText());
+			}
+		}
+		return selectedEvidences;
 	}
 
 	/**
