@@ -429,7 +429,7 @@ public class ProjectSettingsComposite extends Composite
 	 */
 	public void setEvidences(Collection<String> evidences)
 	{
-		evidenceTable.clearAll();
+		evidenceTable.removeAll();
 		ArrayList<String> sortedEvidences = new ArrayList<String>(evidences);
 		Collections.sort(sortedEvidences);
 
@@ -447,7 +447,7 @@ public class ProjectSettingsComposite extends Composite
 	 */
 	public void clearEvidences()
 	{
-		evidenceTable.clearAll();
+		evidenceTable.removeAll();
 		evidenceTable.setEnabled(false);
 	}
 
