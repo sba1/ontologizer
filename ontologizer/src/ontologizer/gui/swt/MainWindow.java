@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.InvalidPropertiesFormatException;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,13 +33,16 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
+import ontologizer.association.Association;
 import ontologizer.association.AssociationContainer;
+import ontologizer.association.Gene2Associations;
 import ontologizer.calculation.CalculationRegistry;
 import ontologizer.go.Ontology;
 import ontologizer.go.Subset;
 import ontologizer.go.Term;
 import ontologizer.gui.swt.support.SWTUtil;
 import ontologizer.statistics.TestCorrectionRegistry;
+import ontologizer.types.ByteString;
 import ontologizer.worksets.WorkSet;
 import ontologizer.worksets.WorkSetList;
 import ontologizer.worksets.WorkSetLoadThread;
@@ -690,6 +694,14 @@ public class MainWindow extends ApplicationWindow
 											settingsComposite.setAssociationErrorString("Error in obtaining the association file.");
 										} else
 										{
+											HashSet<String> evidences = new HashSet<String>();
+											for (Gene2Associations g2a : assoc)
+											{
+												for (Association a : g2a)
+													evidences.add(a.getEvidence().toString());
+											}
+
+											settingsComposite.setEvidences(evidences);
 											settingsComposite.setAssociationErrorString(null);
 										}
 									}
