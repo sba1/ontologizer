@@ -92,6 +92,26 @@ public class AssociationParser
 	 */
 	public AssociationParser(String filename, TermContainer terms, HashSet<ByteString> names, IAssociationParserProgress progress) throws IOException
 	{
+		this(filename,terms,names,null,progress);
+	}
+
+	
+	/**
+	 * Construct the association parser object. The given file name will
+	 * parsed.
+	 * 
+	 * @param filename specifies the association file which contains
+	 *                 the association of genes to GO terms.
+	 * @param terms the container of the GO terms
+	 * @param names list of genes from which the associations should be gathered.
+	 *        If null all associations are taken,
+	 * @param evidence keep only the annotation whose evidence match the given ones. If null, all annotations are used.
+	 *        Note that this field is currently used when the filenames referes to a GAF file.
+	 * @param progress
+	 * @throws IOException 
+	 */
+	public AssociationParser(String filename, TermContainer terms, HashSet<ByteString> names, Collection<String> evidences, IAssociationParserProgress progress) throws IOException
+	{
 		associations = new ArrayList<Association>();
 		synonym2gene = new HashMap<ByteString, ByteString>();
 		dbObjectID2gene = new HashMap<ByteString, ByteString>();
@@ -131,7 +151,7 @@ public class AssociationParser
 					fileType = Type.AFFYMETRIX;
 				} else
 				{
-					importAssociationFile(in,fis,names,terms,progress);
+					importAssociationFile(in,fis,names,terms,evidences,progress);
 					fileType = Type.GAF;
 				}
 			}
@@ -200,17 +220,30 @@ public class AssociationParser
 	 * 
 	 * @param names
 	 * @param terms
+	 * @param evidences specifies which annotations to take.
 	 * @throws IOException 
 	 */
 	@SuppressWarnings("unused")
-	private void importAssociationFile(BufferedReader is, FileInputStream fis, HashSet<ByteString> names, TermContainer terms, IAssociationParserProgress progress) throws IOException
+	private void importAssociationFile(BufferedReader is, FileInputStream fis, HashSet<ByteString> names, TermContainer terms, Collection<String> evidences, IAssociationParserProgress progress) throws IOException
 	{
 		String buf;
 		int good = 0;
 		int bad = 0;
 		int skipped = 0;
+		int evidenceMismatch = 0;
 		int kept = 0;
 		int obsolete = 0;
+		
+		HashSet<ByteString> myEvidences; /* Evidences converted to Bytestring */
+		if (evidences != null)
+		{
+			myEvidences = new HashSet<ByteString>();
+			for (String e : evidences)
+			{
+				myEvidences.add(new ByteString(e));
+				System.out.println(e);
+			}
+		} else myEvidences = null;
 		
 		HashSet<TermID> usedGoTerms = new HashSet<TermID>();
 		
@@ -264,6 +297,17 @@ public class AssociationParser
 					{
 						skipped++;
 						continue;
+					}
+
+					if (myEvidences != null)
+					{
+						/* Skip if evidence of the annotation was not supplied as argument */
+						if (!myEvidences.contains(assoc.getEvidence()))
+						{
+							skipped++;
+							evidenceMismatch++;
+							continue;
+						}
 					}
 
 					currentTerm = terms.get(currentTermID);
@@ -393,7 +437,8 @@ public class AssociationParser
 			logger.info("A further "
 					+ skipped
 					+ " associations were skipped due to various reasons whereas " + obsolete
-					+ " of those referred to obsolete terms.");
+					+ " of those referred to obsolete terms and " + evidenceMismatch + " didn't"
+					+ " match the requested evidence codes");
 			logger.info("A total of " + usedGoTerms.size() + " terms are directly associated."); 
 
 			/* Code is disabled for now. The problem with approach above is that if a synonym of a gene is entered that also
