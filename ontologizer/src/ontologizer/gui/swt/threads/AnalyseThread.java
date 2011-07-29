@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.logging.Logger;
 
 import ontologizer.association.AssociationContainer;
 import ontologizer.association.AssociationParser;
@@ -36,6 +37,8 @@ import org.eclipse.swt.widgets.Display;
 
 public class AnalyseThread extends AbstractOntologizerThread
 {
+	private static Logger logger = Logger.getLogger(AnalyseThread.class.getName());
+
 	private String definitionFile;
 	private String associationsFile;
 	private String mappingFile;
@@ -85,6 +88,12 @@ public class AnalyseThread extends AbstractOntologizerThread
 	{
 		try
 		{
+			if (checkedEvidences != null && checkedEvidences.size() == 0)
+			{
+				logger.info("No evidence filter specified. We assume that evidence code shall be ignored.");
+				checkedEvidences = null;
+			}
+
 			/**
 			 * Runnable to be used for adding a new result into the result window
 			 * 
@@ -257,7 +266,7 @@ public class AnalyseThread extends AbstractOntologizerThread
 			 * products. Results are placed in association parser.
 			 */
 			display.asyncExec(new ResultAppendLogRunnable("Parse associations"));
-			AssociationParser ap = new AssociationParser(associationsFile,goTerms,populationSet.getAllGeneNames(), new IAssociationParserProgress()
+			AssociationParser ap = new AssociationParser(associationsFile, goTerms, populationSet.getAllGeneNames(), checkedEvidences, new IAssociationParserProgress()
 			{
 				public void init(final int max)
 				{
