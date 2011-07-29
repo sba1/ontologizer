@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -240,6 +241,7 @@ public class Ontologizer
 				String mtcName = main.getSelectedMTCName();
 				String subontologyName = main.getSubontologyString();
 				String subsetName = main.getSubsetString();
+				Collection<String> checkedEvidences = main.getCheckedEvidences();
 
 				if (mappingFile != null && mappingFile.length() == 0)
 					mappingFile = null;
@@ -270,7 +272,7 @@ public class Ontologizer
 				final Thread newThread = new AnalyseThread(display,calledWhenFinished,
 						result,defintionFile,associationsFile,mappingFile,
 						populationSet,studySetList,methodName,mtcName,
-						subsetName,subontologyName,
+						subsetName,subontologyName,checkedEvidences,
 						GlobalPreferences.getNumberOfPermutations(),
 						GlobalPreferences.getAlpha(),GlobalPreferences.getUpperAlpha(),
 						GlobalPreferences.getBeta(),GlobalPreferences.getUpperBeta(),
@@ -628,6 +630,12 @@ public class Ontologizer
 		return studySetList;
 	}
 
+	/**
+	 * Copies the given file to a given temporary directory.
+	 * 
+	 * @param file
+	 * @param tempDir
+	 */
 	private static void copyFileToTemp(String file, String tempDir)
 	{
 		InputStream is = OntologizerCore.class.getResourceAsStream(file);
