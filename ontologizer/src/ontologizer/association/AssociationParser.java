@@ -239,10 +239,7 @@ public class AssociationParser
 		{
 			myEvidences = new HashSet<ByteString>();
 			for (String e : evidences)
-			{
 				myEvidences.add(new ByteString(e));
-				System.out.println(e);
-			}
 		} else myEvidences = null;
 		
 		HashSet<TermID> usedGoTerms = new HashSet<TermID>();
