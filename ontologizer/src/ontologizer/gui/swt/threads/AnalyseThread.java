@@ -2,6 +2,7 @@ package ontologizer.gui.swt.threads;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import ontologizer.association.AssociationContainer;
@@ -45,6 +46,7 @@ public class AnalyseThread extends AbstractOntologizerThread
 	private PopulationSet populationSet;
 	private StudySetList studySetList;
 	private int numberOfPermutations;
+	private Collection<String> checkedEvidences;
 
 	private double alpha, upperAlpha, beta, upperBeta;
 	private int expectedNumber;
@@ -52,7 +54,7 @@ public class AnalyseThread extends AbstractOntologizerThread
 
 	public AnalyseThread(Display display, Runnable calledWhenFinished, ResultWindow result,
 			String definitionFile, String associationsFile, String mappingFile, PopulationSet populationSet, StudySetList studySetList,
-			String methodName, String mtcName, String subsetName, String subontologyName,
+			String methodName, String mtcName, String subsetName, String subontologyName,Collection<String> checkedEvidences,
 			int noP, double alpha, double upperAlpha, double beta, double upperBeta, int expectedNumber, int numberOfMCMCSteps)
 	{
 		super("Analyze Thread",calledWhenFinished,display,result);
@@ -66,6 +68,7 @@ public class AnalyseThread extends AbstractOntologizerThread
 		this.mtcName = mtcName;
 		this.subsetName = subsetName;
 		this.subontologyName = subontologyName;
+		this.checkedEvidences = checkedEvidences;
 
 		this.numberOfPermutations = noP;
 		this.alpha = alpha;
