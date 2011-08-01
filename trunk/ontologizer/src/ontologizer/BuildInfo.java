@@ -2,7 +2,7 @@
 package ontologizer;
 
 public class BuildInfo {
-	public static final String revisionNumber="570";
-	public static final String date ="20110718";
+	public static final String revisionNumber="585";
+	public static final String date ="20110801";
 }
 		
