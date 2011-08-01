@@ -4,9 +4,9 @@ import java.util.Set;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
-import ontologizer.StudySet;
-import ontologizer.StudySetFactory;
 import ontologizer.association.AssociationContainer;
+import ontologizer.set.StudySet;
+import ontologizer.set.StudySetFactory;
 import ontologizer.tests.AssociationParserTest;
 import ontologizer.types.ByteString;
 

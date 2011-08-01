@@ -3,8 +3,6 @@ package ontologizer.calculation;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import ontologizer.PopulationSet;
-import ontologizer.StudySet;
 import ontologizer.association.Association;
 import ontologizer.association.AssociationContainer;
 import ontologizer.association.AssociationParser;
@@ -13,6 +11,8 @@ import ontologizer.go.ParentTermID;
 import ontologizer.go.Term;
 import ontologizer.go.TermContainer;
 import ontologizer.go.TermRelation;
+import ontologizer.set.PopulationSet;
+import ontologizer.set.StudySet;
 import ontologizer.statistics.None;
 import ontologizer.types.ByteString;
 import junit.framework.TestCase;
