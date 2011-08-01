@@ -9,7 +9,7 @@ package ontologizer.gui.swt;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.HashMap;
 
 import ontologizer.gui.swt.support.FileGridCompositeWidgets;
 import ontologizer.gui.swt.support.SWTUtil;
@@ -26,8 +26,14 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
+/**
+ * A simple expander widget.
+ * 
+ * @author Sebastian Bauer
+ */
 class Expander extends Composite
 {
 	private Composite control;
@@ -95,6 +101,74 @@ class Expander extends Composite
  */
 public class ProjectSettingsComposite extends Composite
 {
+	/**
+	 * Private class holding description for evidence codes.
+	 * 
+	 * @author Sebastian Bauer
+	 */
+	private static class Evidence
+	{
+		public String name;
+		public String description;
+		public String cl;
+		
+		public Evidence(String name, String description, String cl)
+		{
+			this.name = name;
+			this.description = description;
+			this.cl = cl;
+		}
+	};
+	
+	/**
+	 * Supported evidence codes.
+	 */
+	private static Evidence [] EVIDENCES = new Evidence[]{
+		new Evidence("EXP","Inferred from Experiment","Experimental Evidence Codes"),
+		new Evidence("IDA","Inferred from Direct Assay","Experimental Evidence Codes"),
+		new Evidence("IPI","Inferred from Physical Interaction","Experimental Evidence Codes"),
+		new Evidence("IMP","Inferred from Mutant Phenotype","Experimental Evidence Codes"),
+		new Evidence("IGI","Inferred from Genetic Interaction","Experimental Evidence Codes"),
+		new Evidence("IEP","Inferred from Expression Pattern","Experimental Evidence Codes"),
+		
+		new Evidence("ISS","Inferred from Sequence or Structural Similarity","Computational Analysis Evidence Codes"),
+		new Evidence("ISO","Inferred from Sequence Orthology","Computational Analysis Evidence Codes"),
+		new Evidence("ISA","Inferred from Sequence Alignment","Computational Analysis Evidence Codes"),
+		new Evidence("ISM","Inferred from Sequence Model","Computational Analysis Evidence Codes"),
+		new Evidence("IGC","Inferred from Genomic Context","Computational Analysis Evidence Codes"),
+		new Evidence("IBA","Inferred from Biological aspect of Ancestor","Computational Analysis Evidence Codes"),
+		new Evidence("IBD","Inferred from Biological aspect of Descendant","Computational Analysis Evidence Codes"),
+		new Evidence("IKR","Inferred from Key Residues","Computational Analysis Evidence Codes"),
+		new Evidence("IRD","Inferred from Rapid Divergence","Computational Analysis Evidence Codes"),
+		new Evidence("RCA","Inferred from Reviewed Computational Analysis","Computational Analysis Evidence Codes"),
+		
+		new Evidence("TAS","Traceable Author Statement","Author Statement Evidence Codes"),
+		new Evidence("NAS","Non-traceable Author Statement","Author Statement Evidence Codes"),
+		
+		new Evidence("TAS","Traceable Author Statement","Author Statement Evidence Codes"),
+		new Evidence("NAS","Non-traceable Author Statement","Author Statement Evidence Codes"),
+
+		new Evidence("IC","Inferred by Curator","Curator Statement Evidence Codes"),
+		new Evidence("ND","No biological Data available","Curator Statement Evidence Codes"),
+		
+		new Evidence("IEA","Inferred from Electronic Annotation","Automatically-assigned Evidence Codes"),
+
+		new Evidence("NR","Not Recorded","Obsolete Evidence Codes")
+	};
+	
+	private static HashMap<String,Evidence> EVIDENCE_MAP;
+	
+	/**
+	 * Initialize private static data;
+	 */
+	static
+	{
+		/* Initialize evidence map */
+		EVIDENCE_MAP = new HashMap<String, ProjectSettingsComposite.Evidence>();
+		for (Evidence evi : EVIDENCES)
+			EVIDENCE_MAP.put(evi.name, evi);
+	}
+	
 	private Combo workSetCombo = null;
 	private FileGridCompositeWidgets ontologyFileGridCompositeWidgets = null;
 	private FileGridCompositeWidgets assocFileGridCompositeWidgets = null;
@@ -102,6 +176,8 @@ public class ProjectSettingsComposite extends Composite
 	private Combo subsetCombo;
 	private Combo considerCombo;
 	private Table evidenceTable;
+	private TableColumn evidenceNameColumn;
+	private TableColumn evidenceDescColumn;
 	private Expander advancedExpander;
 
 	private Button subsetCheckbox;
@@ -230,6 +306,8 @@ public class ProjectSettingsComposite extends Composite
 		evidenceTable = new Table(mappingComposite, SWT.BORDER|SWT.CHECK);
 		evidenceTable.setLayoutData(gd);
 		evidenceTable.setEnabled(false);
+		evidenceNameColumn = new TableColumn(evidenceTable, SWT.NONE);
+		evidenceDescColumn = new TableColumn(evidenceTable, SWT.NONE);
 
 		/* If a new work set has been selected */
 		workSetCombo.addSelectionListener(new SelectionAdapter()
@@ -436,9 +514,16 @@ public class ProjectSettingsComposite extends Composite
 		for (String ev : sortedEvidences)
 		{
 			TableItem evi = new TableItem(evidenceTable,0);
-			evi.setText(ev);
+			evi.setText(0,ev);
+			Evidence realEvidence = EVIDENCE_MAP.get(ev);
+			if (realEvidence != null)
+				evi.setText(1,realEvidence.description);
+			else
+				evi.setText(1,"Unknown");
 			evi.setChecked(true);
 		}
+		evidenceNameColumn.pack();
+		evidenceDescColumn.pack();
 		evidenceTable.setEnabled(true);
 	}
 	
@@ -479,6 +564,11 @@ public class ProjectSettingsComposite extends Composite
 		ontologyFileGridCompositeWidgets.setErrorString(error);
 	}
 	
+	/**
+	 * Add an action which is invoked when the ontology file is changed.
+	 * 
+	 * @param act
+	 */
 	public void addOntologyChangedAction(ISimpleAction act)
 	{
 		ontologyFileGridCompositeWidgets.addTextChangedAction(act);
@@ -494,6 +584,12 @@ public class ProjectSettingsComposite extends Composite
 		assocFileGridCompositeWidgets.setErrorString(error);
 	}
 	
+	/**
+	 * Adds the action that is invoked when the association file is
+	 * changed.
+	 * 
+	 * @param act
+	 */
 	public void addAssociationChangedAction(ISimpleAction act)
 	{
 		assocFileGridCompositeWidgets.addTextChangedAction(act);
