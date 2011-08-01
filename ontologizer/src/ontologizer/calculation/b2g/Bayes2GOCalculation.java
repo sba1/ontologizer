@@ -69,7 +69,7 @@ public class Bayes2GOCalculation implements ICalculation
 {
 	private static Logger logger = Logger.getLogger(Bayes2GOCalculation.class.getCanonicalName());
 
-	private boolean WRITE_STATS_FILE = true;
+	private boolean WRITE_STATS_FILE = false;
 
 	private long seed = 0;
 	
