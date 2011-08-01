@@ -72,7 +72,7 @@ class Expander extends Composite
 	{
 		this.control = control;
 		control.setVisible(visible);
-		control.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL|GridData.FILL_BOTH));
+		control.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL|GridData.GRAB_VERTICAL|GridData.FILL_BOTH));
 	}
 
 	private void updateButtonText()
@@ -82,6 +82,8 @@ class Expander extends Composite
 		else
 			expandButton.setText("<< Hide Advanced Options");
 		expandButton.pack(true);
+		if (getParent() != null)
+			getParent().layout();
 	}
 
 	void setExpandedState(boolean visible)
@@ -226,7 +228,7 @@ public class ProjectSettingsComposite extends Composite
 
 
 		advancedExpander = new Expander(this,0);
-		gd = new GridData(GridData.FILL_HORIZONTAL|GridData.GRAB_HORIZONTAL);
+		gd = new GridData(GridData.FILL_HORIZONTAL|GridData.GRAB_VERTICAL|GridData.GRAB_HORIZONTAL|GridData.GRAB_VERTICAL|GridData.VERTICAL_ALIGN_BEGINNING);
 		gd.horizontalSpan = 3;
 		advancedExpander.setLayoutData(gd);
 
@@ -301,7 +303,7 @@ public class ProjectSettingsComposite extends Composite
 		Label evidenceLabel = new Label(mappingComposite,0);
 		evidenceLabel.setText("Evidences");
 		evidenceLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-		gd = new GridData(GridData.FILL_HORIZONTAL|GridData.GRAB_HORIZONTAL);
+		gd = new GridData(GridData.GRAB_VERTICAL|GridData.GRAB_HORIZONTAL|GridData.FILL_BOTH);
 		gd.horizontalSpan = 2;
 		evidenceTable = new Table(mappingComposite, SWT.BORDER|SWT.CHECK);
 		evidenceTable.setLayoutData(gd);
@@ -524,6 +526,7 @@ public class ProjectSettingsComposite extends Composite
 		}
 		evidenceNameColumn.pack();
 		evidenceDescColumn.pack();
+		layout();
 		evidenceTable.setEnabled(true);
 	}
 
