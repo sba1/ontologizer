@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Queue;
 
 /**
@@ -60,9 +61,9 @@ public class DirectedGraphLayout<T>
 	{
 		final int horizSpace = 0;
 		final int vertSpace = 0;
-		
+
 		final HashMap<T,Attr> nodes2Attrs = new HashMap<T,Attr>();
-		
+				
 		if (graph.getNumberOfVertices() == 0)
 			return;
 
@@ -166,7 +167,7 @@ public class DirectedGraphLayout<T>
 		int currentScore = scoreLayout(nodes2Attrs, maxDistanceToRoot, levelNodes);
 
 		/* Build node queue */
-		Queue<T> nodeQueue = new LinkedList<T>();
+		LinkedList<T> nodeQueue = new LinkedList<T>();
 		for (int l = 0; l <= maxDistanceToRoot; l++)
 		{
 			for (int j=0;j<levelNodes[l].size();j++)
@@ -175,6 +176,8 @@ public class DirectedGraphLayout<T>
 				nodeQueue.add(n);
 			}
 		}
+		
+		boolean onlyAcceptImprovements = true;
 
 		/* In each run, we select a node which decreases the score best */
 		for (int run = 0; run < 100; run++)
@@ -183,95 +186,96 @@ public class DirectedGraphLayout<T>
 			int bestLayoutPosX = -1;
 			T bestNode = null;
 
-			/* First pass, try to improve the configuration */
+			ListIterator<T> queueIter = nodeQueue.listIterator();
 			
+			LinkedList<T> savedNodes = new LinkedList<T>(); 
 
-			for (int l = 0; l <= maxDistanceToRoot; l++)
+			boolean improved = false;
+			
+			/* First pass, we try to improve the configuration */
+
+			while (queueIter.hasNext())
 			{
-				for (int j=0;j<levelNodes[l].size();j++)
+				T n = queueIter.next();
+				Attr na = nodes2Attrs.get(n);
+				
+				int horizRank = na.horizontalRank;
+				int vertRank = na.distanceToRoot;
+				
+				/* Determine the minimal x position of this node. This is aligned to the left border of the node */
+				int minX;
+				if (horizRank==0) minX = 0;
+				else minX = nodes2Attrs.get(levelNodes[vertRank].get(horizRank-1)).layoutPosX + nodes2Attrs.get(levelNodes[vertRank].get(horizRank-1)).width + horizSpace; 
+
+				/* Determine the maximal x position of this node. This is aligned to the left border of the node */
+				int maxX;
+				if (horizRank==levelNodes[vertRank].size()-1) maxX = maxLevelWidth - na.width;
+				else maxX = nodes2Attrs.get(levelNodes[vertRank].get(horizRank+1)).layoutPosX - horizSpace - na.width;
+
+				/* Determine all neighbors */
+				ArrayList<T> neighbors = new ArrayList<T>();
+				Iterator<T> iter = graph.getParentNodes(n);
+				while (iter.hasNext())
+					neighbors.add(iter.next());
+				iter = graph.getChildNodes(n);
+				while (iter.hasNext())
+					neighbors.add(iter.next());
+
+				/* Remember the current pos */
+				int savedLayoutPosX = na.layoutPosX; 
+
+				int sumX = 0;
+				int cnt = 0;
+				for (T neighbor : neighbors)
 				{
-					T n = (T) levelNodes[l].get(j);
-					Attr na = nodes2Attrs.get(n);
-					
-					int horizRank = na.horizontalRank;
-					int vertRank = na.distanceToRoot;
-					
-					int minX;
-					if (horizRank==0) minX = 0;
-					else minX = nodes2Attrs.get(levelNodes[vertRank].get(horizRank-1)).layoutPosX + nodes2Attrs.get(levelNodes[vertRank].get(horizRank-1)).width + horizSpace; 
+					Attr neighbora = nodes2Attrs.get(neighbor);
+					sumX += getEdgeX(neighbora);
+					cnt++;
+				}
+				
+				na.layoutPosX = Math.min(maxX,Math.max(minX,sumX / cnt - na.width / 2));
 
-					int maxX;
-					if (horizRank==levelNodes[vertRank].size()-1) maxX = maxLevelWidth - na.width;
-					else maxX = nodes2Attrs.get(levelNodes[vertRank].get(horizRank+1)).layoutPosX - horizSpace - na.width;
-					
-
-					/* Determine all neighbors */
-					ArrayList<T> neighbors = new ArrayList<T>();
-					Iterator<T> iter = graph.getParentNodes(n);
-					while (iter.hasNext())
-						neighbors.add(iter.next());
-					iter = graph.getChildNodes(n);
-					while (iter.hasNext())
-						neighbors.add(iter.next());
-
-					int savedLayoutPosX = na.layoutPosX; /* Remember the current pos */
-					
-					for (T neighbor : neighbors)
+				int newScore = scoreLayout(nodes2Attrs, maxDistanceToRoot, levelNodes);
+				if (newScore <= bestScore && savedLayoutPosX != na.layoutPosX)
+				{
+					if (newScore < bestScore || !onlyAcceptImprovements)
 					{
-						Attr neighbora = nodes2Attrs.get(neighbor);
-						int newenx = getEdgeX(neighbora);
-
-						na.layoutPosX = Math.min(maxX,Math.max(minX,newenx - na.width / 2));
-
-						int newScore = scoreLayout(nodes2Attrs, maxDistanceToRoot, levelNodes);
-						if (newScore < bestScore)
+						bestScore = newScore;
+						bestLayoutPosX = na.layoutPosX;
+						bestNode = n;
+						
+						if (newScore == bestScore)
 						{
-							bestScore = newScore;
-							bestLayoutPosX = na.layoutPosX;
-							bestNode = n;
+//							System.out.println("Node \"" + n.toString() + "\" attains same score at pos " + na.layoutPosX);
+							queueIter.remove();
+							savedNodes.addLast(n);
+						} else
+						{
+							improved = true;
 						}
 					}
-
-//					int sumX = 0;
-//					int cnt = 0;
-//					for (T neighbor : neighbors)
-//					{
-//						Attr neighbora = nodes2Attrs.get(neighbor);
-//						sumX += getEdgeX(neighbora);
-//						cnt++;
-//					}
-//					
-//					na.layoutPosX = Math.min(maxX,Math.max(minX,sumX / cnt - na.width / 2));
-//
-//					int newScore = scoreLayout(nodes2Attrs, maxDistanceToRoot, levelNodes);
-//					if (newScore <= bestScore)
-//					{
-//						bestScore = newScore;
-//						bestLayoutPosX = na.layoutPosX;
-//						bestNode = n;
-//					}
-
-					na.layoutPosX = savedLayoutPosX; /* Restore */
 				}
+
+				na.layoutPosX = savedLayoutPosX; /* Restore */
 			}
 			
-			if (bestNode == null)
-				break;
+//			System.out.println(run + "  " + improved + " " + bestNode);
 			
-//			System.out.println(bestNode + " changed from " + nodes2Attrs.get(bestNode).layoutPosX + " to " + bestLayoutPosX);
-			nodes2Attrs.get(bestNode).layoutPosX = bestLayoutPosX;
-			currentScore = bestScore;
+			if (bestNode != null)
+			{
+				nodes2Attrs.get(bestNode).layoutPosX = bestLayoutPosX;
+				currentScore = bestScore;
+				onlyAcceptImprovements = true;
+			} else
+			{
+				if (!onlyAcceptImprovements)
+					break;
 
-//			for (T n : graph)
-//			{
-//				Attr a = nodes2Attrs.get(n);
-//				graph.get
-//
-//				a.layoutPosX = levelCurXPos[a.distanceToRoot];
-//				levelCurXPos[a.distanceToRoot] += a.width + horizSpace;
-//			}
-//
+				onlyAcceptImprovements = false;
+			}
 			
+			for (T n : savedNodes)
+				nodeQueue.addLast(n);
 		}
 		
 		/* Calculate area */
