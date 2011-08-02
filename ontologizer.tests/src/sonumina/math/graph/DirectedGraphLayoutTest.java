@@ -9,19 +9,20 @@ public class DirectedGraphLayoutTest extends TestCase
 	public void testLayout()
 	{
 		final String [] names = new String[]{
-				"|Root|","|A|", "|A third node, which is very long|", "|4th|", "|5th|"
+				"|Root|","|Node|", "|A third node, which is very long|", "|4th|", "|5th|"
 		};
 		DirectedGraph<Integer> graph = new DirectedGraph<Integer>();
 		graph.addVertex(0);
 		graph.addVertex(1);
 		graph.addVertex(2);
 		graph.addVertex(3);
-		graph.addVertex(4);
+//		graph.addVertex(4);
 		
-		graph.addEdge(new Edge<Integer>(0,2));
+		graph.addEdge(new Edge<Integer>(0,1));
 		graph.addEdge(new Edge<Integer>(1,2));
-		graph.addEdge(new Edge<Integer>(2,3));
-		graph.addEdge(new Edge<Integer>(2,4));
+		graph.addEdge(new Edge<Integer>(0,3));
+		graph.addEdge(new Edge<Integer>(3,2));
+//		graph.addEdge(new Edge<Integer>(2,4));
 
 		final StringBuilder str = new StringBuilder();
 		final String emptyLine = "                                                                                            \n";
@@ -30,7 +31,6 @@ public class DirectedGraphLayoutTest extends TestCase
 
 		DirectedGraphLayout.layout(graph, new DirectedGraphLayout.IGetDimension<Integer>()
 				{
-
 					@Override
 					public void get(Integer vertex, Dimension d)
 					{
@@ -40,6 +40,9 @@ public class DirectedGraphLayoutTest extends TestCase
 					}
 			
 				}, new DirectedGraphLayout.IPosition<Integer>() {
+					@Override
+					public void setSize(int width, int height) { }
+					
 					@Override
 					public void set(Integer vertex, int left, int top)
 					{
