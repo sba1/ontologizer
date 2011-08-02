@@ -5,7 +5,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 /**
  * A very basic layout algorithm for directed graphs.
@@ -163,12 +165,26 @@ public class DirectedGraphLayout<T>
 
 		int currentScore = scoreLayout(nodes2Attrs, maxDistanceToRoot, levelNodes);
 
+		/* Build node queue */
+		Queue<T> nodeQueue = new LinkedList<T>();
+		for (int l = 0; l <= maxDistanceToRoot; l++)
+		{
+			for (int j=0;j<levelNodes[l].size();j++)
+			{
+				T n = (T) levelNodes[l].get(j);
+				nodeQueue.add(n);
+			}
+		}
+
 		/* In each run, we select a node which decreases the score best */
 		for (int run = 0; run < 100; run++)
 		{
 			int bestScore = currentScore;
 			int bestLayoutPosX = -1;
 			T bestNode = null;
+
+			/* First pass, try to improve the configuration */
+
 
 			for (int l = 0; l <= maxDistanceToRoot; l++)
 			{
@@ -177,13 +193,16 @@ public class DirectedGraphLayout<T>
 					T n = (T) levelNodes[l].get(j);
 					Attr na = nodes2Attrs.get(n);
 
+					int horizRank = na.horizontalRank;
+					int vertRank = na.distanceToRoot;
+
 					int minX;
-					if (j==0) minX = 0;
-					else minX = nodes2Attrs.get(levelNodes[l].get(j-1)).layoutPosX + nodes2Attrs.get(levelNodes[l].get(j-1)).width + horizSpace;
+					if (horizRank==0) minX = 0;
+					else minX = nodes2Attrs.get(levelNodes[vertRank].get(horizRank-1)).layoutPosX + nodes2Attrs.get(levelNodes[vertRank].get(horizRank-1)).width + horizSpace;
 
 					int maxX;
-					if (j==levelNodes[l].size()-1) maxX = maxLevelWidth - na.width;
-					else maxX = nodes2Attrs.get(levelNodes[l].get(j+1)).layoutPosX - horizSpace - na.width;
+					if (horizRank==levelNodes[vertRank].size()-1) maxX = maxLevelWidth - na.width;
+					else maxX = nodes2Attrs.get(levelNodes[vertRank].get(horizRank+1)).layoutPosX - horizSpace - na.width;
 
 
 					/* Determine all neighbors */
@@ -212,6 +231,26 @@ public class DirectedGraphLayout<T>
 							bestNode = n;
 						}
 					}
+
+//					int sumX = 0;
+//					int cnt = 0;
+//					for (T neighbor : neighbors)
+//					{
+//						Attr neighbora = nodes2Attrs.get(neighbor);
+//						sumX += getEdgeX(neighbora);
+//						cnt++;
+//					}
+//
+//					na.layoutPosX = Math.min(maxX,Math.max(minX,sumX / cnt - na.width / 2));
+//
+//					int newScore = scoreLayout(nodes2Attrs, maxDistanceToRoot, levelNodes);
+//					if (newScore <= bestScore)
+//					{
+//						bestScore = newScore;
+//						bestLayoutPosX = na.layoutPosX;
+//						bestNode = n;
+//					}
+
 					na.layoutPosX = savedLayoutPosX; /* Restore */
 				}
 			}
