@@ -122,7 +122,7 @@ public class DirectedGraphLayout<T>
 		{
 			Attr a = attrs[i];
 			if (levelNodes[a.distanceToRoot] == null)
-				levelNodes[a.distanceToRoot] = new int[levelCounts[i]];
+				levelNodes[a.distanceToRoot] = new int[levelCounts[a.distanceToRoot]];
 			levelNodes[a.distanceToRoot][levelCounter[a.distanceToRoot]++] = i;
 		}
 
