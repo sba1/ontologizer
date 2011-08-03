@@ -10,8 +10,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Queue;
 
-import com.google.gwt.core.client.GWT;
-
 /**
  * A very basic layout algorithm for directed graphs.
  *
@@ -69,7 +67,6 @@ public class DirectedGraphLayout<T>
 
 		/* Find the roots */
 		List<T> rootList = new ArrayList<T>(4);
-		GWT.log(graph.getNumberOfVertices() + "");
 		for (T n : graph)
 			if (graph.getInDegree(n)==0) rootList.add(n);
 		if (rootList.size() == 0)
