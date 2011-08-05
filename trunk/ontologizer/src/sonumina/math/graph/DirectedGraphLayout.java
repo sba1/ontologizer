@@ -195,7 +195,8 @@ public class DirectedGraphLayout<T>
 			while (queueIter.hasNext())
 			{
 				T n = queueIter.next();
-				Attr na = attrs[slimGraph.getVertexIndex(n)];
+				int vi = slimGraph.getVertexIndex(n);
+				Attr na = attrs[vi];
 
 				int horizRank = na.horizontalRank;
 				int vertRank = na.distanceToRoot;
@@ -210,26 +211,17 @@ public class DirectedGraphLayout<T>
 				if (horizRank==levelNodes[vertRank].length-1) maxX = maxLevelWidth - na.width;
 				else maxX = attrs[levelNodes[vertRank][horizRank+1]].layoutPosX - horizSpace - na.width;
 
-				/* Determine all neighbors */
-				ArrayList<T> neighbors = new ArrayList<T>();
-				Iterator<T> iter = graph.getParentNodes(n);
-				while (iter.hasNext())
-					neighbors.add(iter.next());
-				iter = graph.getChildNodes(n);
-				while (iter.hasNext())
-					neighbors.add(iter.next());
-
 				/* Remember the current pos */
 				int savedLayoutPosX = na.layoutPosX;
 
+				/* Calculate the sum of all horizontal positions (for determination of the mean) */
 				int sumX = 0;
-				int cnt = 0;
-				for (T neighbor : neighbors)
-				{
-					Attr neighbora = attrs[slimGraph.getVertexIndex(neighbor)];
-					sumX += getEdgeX(neighbora);
-					cnt++;
-				}
+				for (int p : slimGraph.vertexParents[vi])
+					sumX += getEdgeX(attrs[p]);
+				for (int c : slimGraph.vertexChildren[vi])
+					sumX += getEdgeX(attrs[c]);
+
+				int cnt = slimGraph.vertexParents[vi].length + slimGraph.vertexChildren[vi].length;
 
 				na.layoutPosX = Math.min(maxX,Math.max(minX,sumX / cnt - na.width / 2));
 
