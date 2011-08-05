@@ -308,15 +308,12 @@ public class DirectedGraphLayout<T>
 		int length = 0;
 		for (int j=0;j<slimGraph.getNumberOfVertices();j++)
 		{
-			T n = slimGraph.getVertex(j);
 			Attr na = attrs[j];
 			int e1x = getEdgeX(na);
 			
-			Iterator<T> parents = graph.getParentNodes(n);
-			while (parents.hasNext())
+			for (int p : slimGraph.vertexParents[j])
 			{
-				T p = parents.next();
-				Attr ap = attrs[slimGraph.getVertexIndex(p)];
+				Attr ap = attrs[p];
 				int e2x = getEdgeX(ap);
 				length += Math.abs(e1x - e2x);
 			}
