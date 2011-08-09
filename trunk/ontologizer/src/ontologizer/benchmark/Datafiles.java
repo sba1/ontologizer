@@ -20,6 +20,10 @@ public class Datafiles
 	public Ontology graph;
 	public AssociationContainer assoc;
 
+	public Datafiles()
+	{
+	}
+
 	public Datafiles(String oboName, String assocName) throws InterruptedException, IOException
 	{
 		File workspace = new File(ontologizer.util.Util.getAppDataDirectory("ontologizer"),"workspace");
