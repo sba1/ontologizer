@@ -277,7 +277,7 @@ public class Term
 	@Override
 	public String toString()
 	{
-		return name+ "("+id.toString() +")";
+		return name+ " ("+id.toString() +")";
 	}
 	
 	@Override
