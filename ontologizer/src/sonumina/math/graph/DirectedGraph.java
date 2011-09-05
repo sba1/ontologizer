@@ -1083,7 +1083,6 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 		for (VertexType vertex2 : eqVertices){
 
 			if ( ! vertices.containsKey(vertex2)){
-				System.out.println("   not found vertex2. prob. already removed");
 				return;
 			}
 

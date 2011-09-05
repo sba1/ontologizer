@@ -1216,8 +1216,15 @@ public class Ontology implements Iterable<Term>
 	 */
 	public void mergeTerms(Term t1, HashSet<Term> eqTerms){
 
+
+		HashSet<TermID> t1ExistingAlternatives = new HashSet<TermID>(t1.getAlternatives());
 		for (Term t : eqTerms){
-			t1.addAlternativeId(t.getID());
+			TermID tId = t.getID();
+
+			if ( t1ExistingAlternatives.contains(tId))
+				continue;
+
+			t1.addAlternativeId(tId);
 		}
 
 		this.graph.mergeVertices(t1,eqTerms);
