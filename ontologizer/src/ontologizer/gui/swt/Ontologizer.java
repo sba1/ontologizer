@@ -124,6 +124,22 @@ public class Ontologizer
 			}
 		};
 
+	/**
+	 * Returns the menu item for the given id or null.
+	 *
+	 * @param menu
+	 * @param id
+	 * @return
+	 */
+	static MenuItem getItem(Menu menu, int id)
+	{
+		MenuItem[] items = menu.getItems();
+		for (int i = 0; i < items.length; i++) {
+			if (items[i].getID() == id) return items[i];
+		}
+		return null;
+	}
+
 	public static void main(String[] args)
 	{
 		boolean useSleak = false;
@@ -530,7 +546,7 @@ public class Ontologizer
 		Menu systemMenu = display.getSystemMenu();
 		if (systemMenu != null)
 		{
-			MenuItem item = systemMenu.getItems()[0];
+			MenuItem item = getItem(systemMenu,SWT.ID_ABOUT);
 			if (item != null)
 			{
 				item.setText("About Ontologizer");
@@ -539,6 +555,19 @@ public class Ontologizer
 					@Override
 					public void widgetSelected(SelectionEvent e) {
 						about.open();
+					}
+				});
+			}
+
+			item = getItem(systemMenu,SWT.ID_PREFERENCES);
+			if (item != null)
+			{
+				item.addSelectionListener(new SelectionAdapter()
+				{
+					@Override
+					public void widgetSelected(SelectionEvent e)
+					{
+						prefs.open();
 					}
 				});
 			}
