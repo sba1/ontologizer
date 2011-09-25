@@ -43,9 +43,14 @@ import ontologizer.statistics.TestCorrectionRegistry;
 import ontologizer.worksets.WorkSet;
 import ontologizer.worksets.WorkSetList;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.DeviceData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 
 import tools.Sleak;
@@ -521,6 +526,23 @@ public class Ontologizer
 		/* Prepare the file cache */
 		FileCache.setCacheDirectory(new File(workspace,".cache").getAbsolutePath());
 		fileCache.setDirectoryText(FileCache.getCacheDirectory());
+
+		Menu systemMenu = display.getSystemMenu();
+		if (systemMenu != null)
+		{
+			MenuItem item = systemMenu.getItems()[0];
+			if (item != null)
+			{
+				item.setText("About Ontologizer");
+				item.addSelectionListener(new SelectionAdapter()
+				{
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						about.open();
+					}
+				});
+			}
+		}
 
 		Shell shell = main.getShell();
 		shell.open();
