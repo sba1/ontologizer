@@ -10,36 +10,55 @@ public class DescriptionParserTest extends TestCase
 
 	private final String [] txts = new String[]{
 			"Distention",
-			"of the",
+			" of the ",
 			"abdomen",
 			"."
 	};
-	private final TermID [] tids = new TermID[]{
-			new TermID(new Prefix("PATO:"),1602),
+	private final String [] tids = new String[]{
+			"PATO:0001602",
 			null,
-			new TermID(new Prefix("FMA:"),9577),
+			"FMA:9577",
 			null
 	};
 
 	public void test()
 	{
-		final ArrayList<TermID> termIDList = new ArrayList<TermID>();
+		final ArrayList<String> refList = new ArrayList<String>();
 		
 		DescriptionParser.parse(testDescription, new DescriptionParser.IDescriptionPartCallback() {
 			int i;
 
-			public boolean part(String txt, TermID tid)
+			public boolean part(String txt, String ref)
 			{
-				termIDList.add(tid);
-				
+				refList.add(ref);
+
 				assertEquals(txts[i],txt);
-				assertEquals(tids[i],tid);
-				
+				assertEquals(tids[i],ref);
+
 				i++;
 				return true;
 			}
 		});
-		
-		assertEquals(4,termIDList.size());
+		assertEquals(4,refList.size());
+	}
+	
+	public void test2()
+	{
+		final ArrayList<String> refList = new ArrayList<String>();
+		DescriptionParser.parse("Single Line", new DescriptionParser.IDescriptionPartCallback() {
+			int i;
+
+			public boolean part(String txt, String ref)
+			{
+				refList.add(ref);
+				
+				assertEquals("Single Line", txt);
+				assertNull(ref);
+
+				i++;
+				return true;
+			}
+		});
+		assertEquals(1,refList.size());
 	}
 }
