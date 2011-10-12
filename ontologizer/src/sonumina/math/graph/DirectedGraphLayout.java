@@ -85,12 +85,14 @@ public class DirectedGraphLayout<T>
 			});
 		}
 	}
-	
+
 	private void layout()
 	{
-		final int horizSpace = 0;
-		final int vertSpace = 0;
-
+		layout(2,2);
+	}
+	
+	private void layout(final int horizSpace, final int vertSpace)
+	{
 		if (graph.getNumberOfVertices() == 0)
 			return;
 
@@ -330,8 +332,13 @@ public class DirectedGraphLayout<T>
 
 	public static <T> void layout(DirectedGraph<T> graph, IGetDimension<T> dimensionCallback, IPosition<T> positionCallback)
 	{
+		layout(graph,dimensionCallback,positionCallback,2,2);
+	}
+
+	public static <T> void layout(DirectedGraph<T> graph, IGetDimension<T> dimensionCallback, IPosition<T> positionCallback, int horizSpace, int vertSpace)
+	{
 		if (graph.getNumberOfVertices() == 0)
 			return;
-		new DirectedGraphLayout<T>(graph,dimensionCallback,positionCallback).layout();
+		new DirectedGraphLayout<T>(graph,dimensionCallback,positionCallback).layout(horizSpace,vertSpace);
 	}
 }
