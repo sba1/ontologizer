@@ -74,7 +74,11 @@ public class DirectedGraphLayout<T>
 			graph.singleSourceLongestPath(root,new DirectedGraph.IDistanceVisitor<T>() {
 				public boolean visit(T n, List<T> path, int distance)
 				{
-					attrs[slimGraph.getVertexIndex(n)].distanceToRoot = distance;
+					/* Note that we could have more than one root, for which the distance
+					 * could be different. We remember the largest distance.
+					 */
+					if (distance > attrs[slimGraph.getVertexIndex(n)].distanceToRoot)
+						attrs[slimGraph.getVertexIndex(n)].distanceToRoot = distance;
 					if (distance > maxDistanceToRoot) maxDistanceToRoot = distance;
 					return true;
 				}
