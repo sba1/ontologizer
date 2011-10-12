@@ -86,11 +86,6 @@ public class DirectedGraphLayout<T>
 		}
 	}
 
-	private void layout()
-	{
-		layout(2,2);
-	}
-
 	private void layout(final int horizSpace, final int vertSpace)
 	{
 		if (graph.getNumberOfVertices() == 0)
