@@ -5,6 +5,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.logging.Logger;
+
+import ontologizer.association.AssociationParser;
 
 import att.grappa.Element;
 import att.grappa.GraphEnumeration;
@@ -25,12 +28,14 @@ import sonumina.math.graph.AbstractGraph.DotAttributesProvider;
  */
 public class DirectedGraphDotLayout<T> extends DirectedGraphLayout<T>
 {
+	private static Logger logger = Logger.getLogger(DirectedGraphDotLayout.class.getCanonicalName());
+
 	private DirectedGraphDotLayout(DirectedGraph<T> graph, IGetDimension<T> dimensionCallback, IPosition<T> positionCallback)
 	{
 		super(graph,dimensionCallback,positionCallback);
 	}
 
-	private void emitPosition(Element e)
+	private void emitPosition(Element e, int miny)
 	{
 		switch (e.getType())
 		{
@@ -40,7 +45,7 @@ public class DirectedGraphDotLayout<T> extends DirectedGraphLayout<T>
 						GrappaPoint center = node.getCenterPoint();
 		
 						int x = (int)center.x;
-						int y = (int)center.y;
+						int y = (int)center.y - miny;
 						double w = (Double)node.getAttributeValue(Node.WIDTH_ATTR);
 						double h = (Double)node.getAttributeValue(Node.HEIGHT_ATTR);
 						
@@ -61,7 +66,7 @@ public class DirectedGraphDotLayout<T> extends DirectedGraphLayout<T>
 						{
 							Element ne = en.nextGraphElement();
 							if (e != ne)
-								emitPosition(ne);
+								emitPosition(ne, miny);
 						}
 					}
 					break;
@@ -115,16 +120,18 @@ public class DirectedGraphDotLayout<T> extends DirectedGraphLayout<T>
 
 			if (dotProcess.exitValue() == 0)
 			{
+				logger.info("Layouted graph at " + layoutedDotTmpFile.getCanonicalPath());
+
 				Parser parser = new Parser(new FileInputStream(layoutedDotTmpFile), System.err);
 				parser.parse();
 
 				att.grappa.Graph g = parser.getGraph();
 				g.setEditable(false);
-				emitPosition(g);
+				emitPosition(g,(int)g.getBoundingBox().getMinY());
 				rc = true;
 			} else
 			{
-				System.out.println(errStr.toString());
+				logger.severe(errStr.toString());
 			}
 		} catch (IOException e) {
 			
