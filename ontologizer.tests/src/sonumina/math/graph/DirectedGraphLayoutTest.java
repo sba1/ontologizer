@@ -62,12 +62,12 @@ public class DirectedGraphLayoutTest extends TestCase
 		DirectedGraph<java.lang.Integer> g = new DirectedGraph<java.lang.Integer>();
 		g.addVertex(0);
 		g.addVertex(10);
-		g.addVertex(1540);
 		g.addVertex(232);
 		g.addVertex(311);
-		g.addVertex(2667);
 		g.addVertex(443);
 		g.addVertex(681);
+		g.addVertex(1540);
+		g.addVertex(2667);
 		g.addEdge(new Edge(0, 1540));
 		g.addEdge(new Edge(10, 232));
 		g.addEdge(new Edge(1540, 311));
