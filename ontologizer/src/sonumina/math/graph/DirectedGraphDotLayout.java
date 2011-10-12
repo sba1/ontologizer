@@ -30,6 +30,12 @@ public class DirectedGraphDotLayout<T> extends DirectedGraphLayout<T>
 {
 	private static Logger logger = Logger.getLogger(DirectedGraphDotLayout.class.getCanonicalName());
 
+	/**
+	 * Dimensions of dot are specified using inches, this
+	 * is the used dots per inch conversion number.
+	 */
+	final private static double DPI = 72;
+
 	private DirectedGraphDotLayout(DirectedGraph<T> graph, IGetDimension<T> dimensionCallback, IPosition<T> positionCallback)
 	{
 		super(graph,dimensionCallback,positionCallback);
@@ -44,10 +50,10 @@ public class DirectedGraphDotLayout<T> extends DirectedGraphLayout<T>
 						Node node = (Node)e;
 						GrappaPoint center = node.getCenterPoint();
 		
-						int x = (int)center.x;
-						int y = (int)center.y - miny;
-						double w = (Double)node.getAttributeValue(Node.WIDTH_ATTR);
-						double h = (Double)node.getAttributeValue(Node.HEIGHT_ATTR);
+						double w = (Double)node.getAttributeValue(Node.WIDTH_ATTR) * DPI;
+						double h = (Double)node.getAttributeValue(Node.HEIGHT_ATTR) * DPI;
+						int x = (int)(center.x - w/2);
+						int y = (int)(center.y - miny - h/2);
 						
 						int index = Integer.parseInt((String) node.getAttributeValue(Node.LABEL_ATTR));
 
@@ -83,8 +89,6 @@ public class DirectedGraphDotLayout<T> extends DirectedGraphLayout<T>
 	private boolean layoutViaDot(int horizSpace, int vertSpace)
 	{
 		final Dimension dim = new Dimension();
-		final float DPI = 72;
-		
 		boolean rc = false;
 		
 		try {
