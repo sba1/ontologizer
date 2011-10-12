@@ -1,10 +1,29 @@
 package sonumina.math.graph;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
+
+import org.eclipse.swt.graphics.GC;
+
+import att.grappa.Edge;
+import att.grappa.Element;
+import att.grappa.GraphEnumeration;
+import att.grappa.GrappaConstants;
+import att.grappa.GrappaPoint;
+import att.grappa.Node;
+import att.grappa.Parser;
+import att.grappa.Subgraph;
+
+import sonumina.math.graph.AbstractGraph.DotAttributesProvider;
 
 /**
  * A very basic layout algorithm for directed graphs.
@@ -42,15 +61,15 @@ public class DirectedGraphLayout<T>
 		void set(T vertex, int left, int top);
 	}
 
-	private DirectedGraph<T> graph;
-	private IGetDimension<T> dimensionCallback;
-	private IPosition<T> positionCallback;
-	private SlimDirectedGraphView<T> slimGraph;
+	protected DirectedGraph<T> graph;
+	protected IGetDimension<T> dimensionCallback;
+	protected IPosition<T> positionCallback;
+	protected SlimDirectedGraphView<T> slimGraph;
 
 	private int maxDistanceToRoot = -1;
 	private Attr [] attrs;
 
-	private DirectedGraphLayout(DirectedGraph<T> graph, IGetDimension<T> dimensionCallback, IPosition<T> positionCallback)
+	DirectedGraphLayout(DirectedGraph<T> graph, IGetDimension<T> dimensionCallback, IPosition<T> positionCallback)
 	{
 		this.graph = graph;
 		this.dimensionCallback = dimensionCallback;
@@ -237,7 +256,6 @@ public class DirectedGraphLayout<T>
 
 						if (newScore == bestScore)
 						{
-//							System.out.println("Node \"" + n.toString() + "\" attains same score at pos " + na.layoutPosX);
 							queueIter.remove();
 							savedNodes.addLast(n);
 						} else
@@ -249,8 +267,6 @@ public class DirectedGraphLayout<T>
 
 				na.layoutPosX = savedLayoutPosX; /* Restore */
 			}
-
-//			System.out.println(run + "  " + improved + " " + bestNode);
 
 			if (bestNode != null)
 			{
