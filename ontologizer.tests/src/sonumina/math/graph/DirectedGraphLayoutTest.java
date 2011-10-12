@@ -55,6 +55,43 @@ public class DirectedGraphLayoutTest extends TestCase
 
 
 		System.out.println(str.toString());
+	}
 
+	public void testLayout2()
+	{
+		DirectedGraph<java.lang.Integer> g = new DirectedGraph<java.lang.Integer>();
+		g.addVertex(0);
+		g.addVertex(10);
+		g.addVertex(1540);
+		g.addVertex(232);
+		g.addVertex(311);
+		g.addVertex(2667);
+		g.addVertex(443);
+		g.addVertex(681);
+		g.addEdge(new Edge(0, 1540));
+		g.addEdge(new Edge(10, 232));
+		g.addEdge(new Edge(1540, 311));
+		g.addEdge(new Edge(232, 2667));
+		g.addEdge(new Edge(443, 2667));
+		g.addEdge(new Edge(311, 443));
+		g.addEdge(new Edge(2667, 681));
+
+		DirectedGraphLayout.layout(g,new DirectedGraphLayout.IGetDimension<Integer>()
+				{
+					@Override
+					public void get(Integer vertex, Dimension d) {
+						/* Not needed for this test */
+					}
+				},
+				 new DirectedGraphLayout.IPosition<Integer>()
+				 {
+					@Override
+					public void set(Integer vertex, int left, int top) {
+					}
+
+					@Override
+					public void setSize(int width, int height) {
+					}
+				 });
 	}
 }
