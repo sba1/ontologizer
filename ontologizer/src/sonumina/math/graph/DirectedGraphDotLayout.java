@@ -8,8 +8,6 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import ontologizer.association.AssociationParser;
-
 import att.grappa.Element;
 import att.grappa.GraphEnumeration;
 import att.grappa.GrappaConstants;
@@ -42,6 +40,13 @@ public class DirectedGraphDotLayout<T> extends DirectedGraphLayout<T>
 		super(graph,dimensionCallback,positionCallback);
 	}
 
+	/**
+	 * Walks through the graph hierarchy and emits the positions
+	 * for each node using the supplied positionCallback.
+	 * 
+	 * @param e
+	 * @param miny
+	 */
 	private void emitPosition(Element e, int miny)
 	{
 		switch (e.getType())
@@ -56,6 +61,7 @@ public class DirectedGraphDotLayout<T> extends DirectedGraphLayout<T>
 						int x = (int)(center.x - w/2);
 						int y = (int)(center.y - miny - h/2);
 						
+						/* Retrieve back the slim graph index which was stored as a label */
 						int index = Integer.parseInt((String) node.getAttributeValue(Node.LABEL_ATTR));
 
 						positionCallback.set(slimGraph.getVertex(index), x, y);
@@ -99,15 +105,16 @@ public class DirectedGraphDotLayout<T> extends DirectedGraphLayout<T>
 			dotTmpFile.deleteOnExit();
 			layoutedDotTmpFile.deleteOnExit();
 			
-			graph.writeDOT(new FileOutputStream(dotTmpFile), new DotAttributesProvider<T>()
+			graph.writeDOT(new FileOutputStream(dotTmpFile), graph.getVertices(), new DotAttributesProvider<T>()
 					{
 						public String getDotNodeAttributes(T vt)
 						{
 							dimensionCallback.get(vt, dim);
 							
+							/* We store the unique slim graph index of this vertex as label */
 							return "width=" + dim.width / DPI + ",height=" + dim.height / DPI + ",fixedsize=true,shape=box,label=\"" + slimGraph.getVertexIndex(vt) + "\"";
 						};
-					});
+					}, horizSpace / DPI, vertSpace / DPI);
 			String [] args = new String[]{
 					"dot", dotTmpFile.getCanonicalPath(),
 					"-Tdot", "-o", layoutedDotTmpFile.getCanonicalPath()};
@@ -125,13 +132,16 @@ public class DirectedGraphDotLayout<T> extends DirectedGraphLayout<T>
 
 			if (dotProcess.exitValue() == 0)
 			{
-				logger.info("Layouted graph at " + layoutedDotTmpFile.getCanonicalPath());
+				logger.info("Layouted graph that was stored at " + layoutedDotTmpFile.getCanonicalPath());
 
+				/* Now parse the dot file using Grappa */
 				Parser parser = new Parser(new FileInputStream(layoutedDotTmpFile), System.err);
 				parser.parse();
-
+				
 				att.grappa.Graph g = parser.getGraph();
 				g.setEditable(false);
+				
+				/* And walk though the graph and emit the positions */
 				emitPosition(g,(int)g.getBoundingBox().getMinY());
 				rc = true;
 			} else
