@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import ontologizer.association.AssociationParser;
@@ -137,17 +138,24 @@ public class DirectedGraphDotLayout<T> extends DirectedGraphLayout<T>
 			{
 				logger.severe(errStr.toString());
 			}
-		} catch (IOException e) {
-			
-		} catch (InterruptedException e) {
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		} catch (IOException e) { logger.log(Level.WARNING, "Unable to layout the graph", e);		
+		} catch (InterruptedException e) { logger.log(Level.WARNING, "Unable to layout the graph", e);
+		} catch (Exception e) { logger.log(Level.WARNING, "Unable to layout the graph", e);
 		}
 
 		return rc;
 	}
 
+	/**
+	 * Lays out the graph using DirectedGraphDotLayout. If this for some reasons fail,
+	 * the limited algorithm of DirectedGraphLayout is employed.
+	 * 
+	 * @param graph
+	 * @param dimensionCallback
+	 * @param positionCallback
+	 * @param horizSpace
+	 * @param vertSpace
+	 */
 	public static <T> void layout(DirectedGraph<T> graph, IGetDimension<T> dimensionCallback, IPosition<T> positionCallback, int horizSpace, int vertSpace)
 	{
 		DirectedGraphDotLayout<T> layout = new DirectedGraphDotLayout<T>(graph,dimensionCallback,positionCallback);
