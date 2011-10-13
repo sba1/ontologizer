@@ -1,29 +1,9 @@
 package sonumina.math.graph;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
-
-import org.eclipse.swt.graphics.GC;
-
-import att.grappa.Edge;
-import att.grappa.Element;
-import att.grappa.GraphEnumeration;
-import att.grappa.GrappaConstants;
-import att.grappa.GrappaPoint;
-import att.grappa.Node;
-import att.grappa.Parser;
-import att.grappa.Subgraph;
-
-import sonumina.math.graph.AbstractGraph.DotAttributesProvider;
 
 /**
  * A very basic layout algorithm for directed graphs.
