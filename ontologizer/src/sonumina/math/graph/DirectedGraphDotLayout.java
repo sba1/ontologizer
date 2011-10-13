@@ -175,6 +175,8 @@ public class DirectedGraphDotLayout<T> extends DirectedGraphLayout<T>
 	 */
 	public static <T> void layout(DirectedGraph<T> graph, IGetDimension<T> dimensionCallback, IPosition<T> positionCallback, int horizSpace, int vertSpace)
 	{
+		if (graph.getNumberOfVertices() == 0)
+			return;
 		DirectedGraphDotLayout<T> layout = new DirectedGraphDotLayout<T>(graph,dimensionCallback,positionCallback);
 		if (!layout.layoutViaDot(horizSpace,vertSpace))
 			DirectedGraphLayout.layout(graph,dimensionCallback,positionCallback,horizSpace,vertSpace);
