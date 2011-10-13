@@ -331,9 +331,23 @@ abstract public class AbstractGraph<VertexType>
 	 */
 	public void writeDOT(OutputStream fos, Iterable<VertexType> nodeSet, DotAttributesProvider<VertexType> provider)
 	{
+		writeDOT(fos,nodeSet,provider,0.4,0.4);
+	}
+
+	/**
+	 * Writes out the graph as a dot file.
+	 *
+	 * @param fos. For the output.
+	 * @param nodeSet. Defines the subset of nodes to be written out.
+	 * @param provider. Provides the attributes.
+	 * @param nodeSep. The space between nodes of the same rank.
+	 * @param rankSep. The space between two nodes of subsequent ranks.
+	 */
+	public void writeDOT(OutputStream fos, Iterable<VertexType> nodeSet, DotAttributesProvider<VertexType> provider, double nodeSep, double rankSep)
+	{
 		PrintWriter out = new PrintWriter(fos);
 
-		out.write("digraph G {nodesep=0.4;\n");
+		out.format("digraph G {nodesep=%f; ranksep=%f\n", nodeSep,rankSep);
 
 		/* Write out all nodes, call the given interface. Along the way, remember the indices. */
 		HashMap<VertexType,Integer> v2idx = new HashMap<VertexType,Integer>();
