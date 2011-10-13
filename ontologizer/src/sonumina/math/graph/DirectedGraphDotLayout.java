@@ -1,5 +1,6 @@
 package sonumina.math.graph;
 
+import java.awt.geom.Rectangle2D;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -111,7 +112,8 @@ public class DirectedGraphDotLayout<T> extends DirectedGraphLayout<T>
 						{
 							dimensionCallback.get(vt, dim);
 
-							/* We store the unique slim graph index of this vertex as label */
+							/* The fixedsize attribute tells dot not to change width and height.
+							 * We store the unique slim graph index of this vertex as label. */
 							return "width=" + dim.width / DPI + ",height=" + dim.height / DPI + ",fixedsize=true,shape=box,label=\"" + slimGraph.getVertexIndex(vt) + "\"";
 						};
 					}, horizSpace / DPI, vertSpace / DPI);
@@ -141,8 +143,13 @@ public class DirectedGraphDotLayout<T> extends DirectedGraphLayout<T>
 				att.grappa.Graph g = parser.getGraph();
 				g.setEditable(false);
 
+				/* Inform the client about the size
+				 * FIXME: Check for rounding errors */
+				Rectangle2D bb = g.getBoundingBox();
+				positionCallback.setSize((int)(bb.getMaxX() - bb.getMinX()), (int)(bb.getMaxY() - bb.getMinY()));
+
 				/* And walk though the graph and emit the positions */
-				emitPosition(g,(int)g.getBoundingBox().getMinY());
+				emitPosition(g,(int)bb.getMinY());
 				rc = true;
 			} else
 			{
