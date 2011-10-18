@@ -54,6 +54,28 @@ public class DescriptionParser
 
 			}
 		}
-
 	}
+
+	/**
+	 * Parse the given description using the default filter. It will simply skip over the reference.
+	 *
+	 * @param txt
+	 * @return
+	 */
+	public static String parse(String txt)
+	{
+		final StringBuilder str = new StringBuilder();
+
+		DescriptionParser.parse(txt, new DescriptionParser.IDescriptionPartCallback() {
+			@Override
+			public boolean part(String txt, String ref)
+			{
+				str.append(txt);
+				return true;
+			}
+		});
+
+		return str.toString();
+	}
+
 }
