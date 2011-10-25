@@ -44,12 +44,12 @@ public class BuildInfo {
 		<!-- set global properties for this build -->
 		<property environment="env" />
 		<property name="src.dir" location="src" />
+		<property name="src.grappa.dir" location="src.grappa" />
 		<property name="build.dir" location="build" />
 		<property name="build.classes" location="${build.dir}/classes" />
 		<property name="dist"  location="dist"/>
 		<property name="dist.cmdline" location="${dist}/cmdline" />
 		<property name="dist.gui" location="${dist}/gui" />
-		<property name="java.dir" location="${src.dir}/" />
 		<property name="debug" value="off" />
 		<property name="project" value="Ontologizer" />
 
@@ -82,7 +82,9 @@ public class BuildInfo {
 
 	<target name="compile" depends="init" description="compile the main source">
 		<mkdir dir="${build.classes}" />
-		<javac srcdir="${java.dir}" destdir="${build.classes}" debug="${debug}" verbose="no" >
+		<javac destdir="${build.classes}" debug="${debug}" verbose="yes">
+			<src path="${src.dir}" /> 
+			<src path="${src.grappa.dir}" />
 			<exclude name="**/ontologizer/tests/*.java" />
 			<exclude name="**/ontologizer/gui/**" />
 			<exclude name="**/ontologizer/calculation/svd/*.java" />
@@ -101,7 +103,7 @@ public class BuildInfo {
 	</target>
 
 	<target name="compile.gui" depends="compile,init.gui" description="compile the gui sources">
-		<javac srcdir="${java.dir}" destdir="${build.classes}" debug="${debug}" verbose="yes">
+		<javac srcdir="${src.dir}" destdir="${build.classes}" debug="${debug}" verbose="yes">
 			<include name="**/ontologizer/gui/**" />
 			<classpath refid="classpath"/>
 			<classpath refid="gui.classpath"/>
@@ -113,7 +115,7 @@ public class BuildInfo {
              depends="init"
             description="Copy the Helps files to the build directory">
 		<copy todir="${build.classes}/ontologizer/help">
-			<fileset dir="${java.dir}/ontologizer/help"/>
+			<fileset dir="${src.dir}/ontologizer/help"/>
 		</copy>
 	</target>
 
