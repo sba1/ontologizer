@@ -67,7 +67,6 @@ public class DescriptionParser
 		final StringBuilder str = new StringBuilder();
 
 		DescriptionParser.parse(txt, new DescriptionParser.IDescriptionPartCallback() {
-			@Override
 			public boolean part(String txt, String ref)
 			{
 				str.append(txt);
