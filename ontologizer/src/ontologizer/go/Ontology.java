@@ -166,6 +166,23 @@ public class Ontology implements Iterable<Term>
 	}
 
 	/**
+	 * Returns term id of terms that have no descendants.
+	 *
+	 * @return
+	 */
+	public Collection<TermID> getLeafTermIDs()
+	{
+		ArrayList<TermID> leafTerms = new ArrayList<TermID>();
+		for (Term t : graph.getVertices())
+		{
+			if (graph.getOutDegree(t) == 0)
+				leafTerms.add(t.getID());
+		}
+
+		return leafTerms;
+	}
+
+	/**
 	 * Returns the term in topological order.
 	 *
 	 * @return
