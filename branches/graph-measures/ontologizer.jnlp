@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?> 
+<jnlp 
+  spec="1.0+" 
+  codebase="http://compbio.charite.de/tl_files/ontologizer/webstart/" href="ontologizer.jnlp"> 
+  <information> 
+    <title>Ontologizer</title> 
+    <vendor>Ontologizer Open Source Team</vendor> 
+    <homepage href="http://compbio.charite.de/ontologizer/"/> 
+    <description>A Multifunctional Tool for GO Term Enrichment Analysis and Data Exploration</description>
+    <offline-allowed/> 
+  </information> 
+  <security> 
+      <all-permissions/> 
+  </security> 
+  <resources> 
+    <j2se version="1.5+" max-heap-size="768m" />
+    <jar href="ontologizer.jar"/> 
+    <jar href="swt/nattable-core-1.6.2.jar"/>
+    <jar href="log4j-1.2.15.jar"/>
+  </resources> 
+  <resources os="Windows"> 
+    <jar href="swt/win-x86/swt.jar"/>
+  </resources>
+  <resources os="Linux" arch="i386">
+    <jar href="swt/linux-x86/swt.jar"/>
+  </resources>
+  <resources os="Linux" arch="amd64">
+    <jar href="swt/linux-x86_64/swt.jar"/>
+  </resources>
+  <resources os="Mac OS X">
+    <j2se version="1.5*" java-vm-args="-XstartOnFirstThread"/>
+    <jar href="swt/macosx/swt.jar" />
+  </resources>
+
+  <application-desc main-class="ontologizer.gui.swt.Ontologizer"/> 
+</jnlp> 
