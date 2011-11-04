@@ -12,6 +12,8 @@ import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import att.grappa.Grappa;
+
 final class VertexAttributes<VertexType>
 {
 	/** All edges where the vertex is appearing as dest */
@@ -1101,5 +1103,186 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 
 	public boolean containsVertex(VertexType vertex){
 		return vertices.containsKey(vertex);
+	}
+	/**
+	 * Calculates the average connectivity of the neighbourhood of a particular node
+	 * @param v is the node whose neighbourhood connectivity should be calculated
+	 * @return
+	 */
+	public double getNeighbourhoodConnectivity(VertexType v)
+	{
+		Iterator<VertexType> neighboursIt = getChildNodes(v);
+		int numOfNeighbours = 0;
+		int neighbourConns = 0;
+		while(neighboursIt.hasNext())
+		{
+			VertexType n = neighboursIt.next();
+			neighbourConns += getNumberOfOutEdges(n);
+			++numOfNeighbours;
+		}
+
+		return neighbourConns / (double) numOfNeighbours;
+	}
+
+	/**
+	 * Get the common neighbours of two nodes m and n
+	 * @param m
+	 * @param n
+	 */
+	public ArrayList<VertexType> getSharedNeighbours(VertexType m, VertexType n)
+	{
+		//get neighbours of m
+		Iterator<VertexType> mNeighboursIt = getChildNodes(m);
+
+		ArrayList<VertexType> sharedNeighbours = new ArrayList<VertexType>();
+		int numOfShared = 0;
+		//iterate over all neighbours
+		while(mNeighboursIt.hasNext())
+		{
+			VertexType k = mNeighboursIt.next();
+			//if there exists an edge between the neighbour node k of m and n
+			if(hasEdge(n, k))
+			{
+				sharedNeighbours.add(k);
+				++numOfShared;
+			}
+		}
+
+		return sharedNeighbours;
+	}
+	/**
+	 * Calculates the betweenness centrality of a particular node.
+	 * This measure describes how often a node lies on the shortest path between two other nodes with respect to the total number of shortest paths.
+	 * It is computed as follows: Cb(n) = sum[s != n != t] (sigma_s->t(n) / sigma_s->t)
+	 * The betweenness centrality is implemented according to Brandes, 2001, A Faster Algorithm for Betweenness Centrality
+	 * @param n
+	 * @return
+	 */
+	public double getBetweennessCentrality(VertexType s)
+	{
+		double Cb = 0.0;
+
+		Iterable<VertexType> nodes = getVertices();
+
+		java.util.Stack<VertexType> S = new java.util.Stack<VertexType>();
+		//nodes that have to be visited
+		java.util.Queue<VertexType> Q = new LinkedList<VertexType>();
+		HashMap<VertexType, ArrayList<VertexType>> P = new HashMap<VertexType, ArrayList<VertexType>>();
+
+		//todo: change to hashmap to keep node - value relationship
+		HashMap<VertexType, Integer> sigma = new HashMap<VertexType, Integer>();
+		HashMap<VertexType, Integer> d = new HashMap<VertexType, Integer>();
+		HashMap<VertexType, Double> delta = new HashMap<VertexType, Double>();
+
+		S.clear();
+		for(VertexType w : nodes)
+			P.put(w, new ArrayList<VertexType>());
+
+		for(VertexType t : nodes)
+		{
+			if(!t.equals(s))
+			{
+				d.put(t, -1);
+				sigma.put(t, 0);
+			}
+		}
+		d.put(s, 0);
+		sigma.put(s, 1);
+
+		Q.clear();
+		Q.offer(s);
+
+		while(!Q.isEmpty())
+		{
+			VertexType v = Q.remove();
+			S.push(v);
+
+			Iterator<VertexType> wIt = getChildNodes(v); //neighbours of v
+			while(wIt.hasNext())
+			{
+				VertexType w = wIt.next();
+
+				//seen the first time?
+				if(d.get(w) < 0)
+				{
+					Q.offer(w);
+					d.put(w, d.get(v) + 1);
+				}
+
+				//shortest path to w via v?
+				if(d.get(w) == (d.get(v) + 1))
+				{
+					sigma.put(w, sigma.get(w) + sigma.get(v));
+					ArrayList<VertexType> temp = P.get(w);
+					temp.add(v);
+					P.put(w, temp);
+				}
+			}
+		}
+		for(VertexType v : nodes)
+			delta.put(v, 0.0);
+
+		while(!S.isEmpty())
+		{
+			VertexType w = S.pop();
+			for(VertexType v : P.get(w))
+			{
+				double deltaVal = delta.get(v) + (sigma.get(v)/ (double) sigma.get(w)) * (1 + delta.get(w));
+				delta.put(v, deltaVal);
+			}
+			if(!w.equals(s))
+			{
+				double val = delta.get(w);
+				Cb += val;
+			}
+
+		}
+
+		return Cb;
+	}
+
+	public void degreeDistributions()
+	{
+		HashMap<Integer, Integer> degreeCounter = new HashMap<Integer, Integer>();
+		for(VertexType n : getVertices())
+		{
+			int deg = getOutDegree(n);
+			if(!degreeCounter.containsKey(deg))
+			{
+				degreeCounter.put(deg, 0); //initialize
+				degreeCounter.put(deg, degreeCounter.get(deg) + 1);
+			}
+			else
+				degreeCounter.put(deg, degreeCounter.get(deg) + 1);
+		}
+
+
+		//to do: plot stuff
+	}
+
+	public double getClosenessCentrality(VertexType n)
+	{
+		//TODO: testing
+		final ArrayList<Integer> totalShortestPathLengths = new ArrayList<Integer>();
+		singleSourceShortestPath(	n,
+									false,
+									new IDistanceVisitor<VertexType>()
+									{
+										@Override
+										public boolean visit(VertexType vertex, List<VertexType> path, int distance)
+										{
+											totalShortestPathLengths.add(distance);
+											return false;
+										}
+									}
+		);
+
+		double CC = 0.0;
+		int sum = 0;
+		for(int len : totalShortestPathLengths)
+			sum += len;
+
+		CC = sum / (double) totalShortestPathLengths.size();
+		return CC;
 	}
 }
