@@ -270,10 +270,15 @@ public class GraphMeasureTest extends TestCase {
 		G.addVertex(e);
 
 		G.addEdge( new Edge<VertexData>(a, b) );
+		G.addEdge( new Edge<VertexData>(b, a) );
 		G.addEdge( new Edge<VertexData>(b, c) );
 		G.addEdge( new Edge<VertexData>(b, d) );
+		G.addEdge( new Edge<VertexData>(c, b) );
 		G.addEdge( new Edge<VertexData>(c, e) );
 		G.addEdge( new Edge<VertexData>(d, e) );
+		G.addEdge( new Edge<VertexData>(d, b) );
+		G.addEdge( new Edge<VertexData>(e, c) );
+		G.addEdge( new Edge<VertexData>(e, d) );
 
 		/*		   c
 		 * 		 /	  \
@@ -282,8 +287,9 @@ public class GraphMeasureTest extends TestCase {
 		 *         d
 		 */
 
-		HashMap<VertexData, Double> res = G.getBetweennessCentrality();
-		assertEquals(0.583, res.get(b), 0.0001);
+		double cb = G.getBetweennessCentrality(b);
+		System.out.println("Cb(b): " + cb);
+		assertEquals(0.583, cb, 0.0001);
 
 	}
 
