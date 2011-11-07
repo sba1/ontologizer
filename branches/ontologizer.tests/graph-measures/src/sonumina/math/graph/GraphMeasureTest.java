@@ -1,6 +1,7 @@
 package sonumina.math.graph;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import junit.framework.TestCase;
 
@@ -752,9 +753,9 @@ public class GraphMeasureTest extends TestCase {
 
 		//deg: a = c = d = e = 2; f = g = 1; b = 6;
 		int chk = 0; //target value 3 if all degrees are correct
-		for(int key : G.degreeDistributions().keySet())
+		for(int key : G.getDegreeDistribution().keySet())
 		{
-			int val = G.degreeDistributions().get(key);
+			int val = G.getDegreeDistribution().get(key);
 			if(key == 2 && val == 4)
 				++chk;
 			else if(key == 1 && val == 2)
@@ -763,5 +764,39 @@ public class GraphMeasureTest extends TestCase {
 				++chk;
 		}
 		assertEquals(3, chk);
+
+		// a \
+		// |  c - d
+		// | /
+		// b - -  e
+
+		DirectedGraph<VertexData> g4 = new DirectedGraph<VertexData>();
+
+		g4.addVertex(a);
+		g4.addVertex(b);
+		g4.addVertex(c);
+		g4.addVertex(d);
+		g4.addVertex(e);
+
+		g4.addEdge( new Edge<VertexData>(a, b) );
+		g4.addEdge( new Edge<VertexData>(b, a) );
+
+		g4.addEdge( new Edge<VertexData>(a, c) );
+		g4.addEdge( new Edge<VertexData>(c, a) );
+
+		g4.addEdge( new Edge<VertexData>(b, c) );
+		g4.addEdge( new Edge<VertexData>(c, b) );
+
+		g4.addEdge( new Edge<VertexData>(c, d) );
+		g4.addEdge( new Edge<VertexData>(d, c) );
+
+		g4.addEdge( new Edge<VertexData>(b, e) );
+		g4.addEdge( new Edge<VertexData>(e, b) );
+
+		HashMap<Integer, Integer> map = g4.getDegreeDistribution();
+		assertEquals(2, (int) map.get(3)); //2 nodes w/ degree 3
+		assertEquals(1, (int) map.get(2));
+		assertEquals(2, (int) map.get(1));
+
 	}
 }
