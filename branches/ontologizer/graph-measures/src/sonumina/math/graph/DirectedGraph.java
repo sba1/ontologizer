@@ -1105,7 +1105,9 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 		return vertices.containsKey(vertex);
 	}
 	/**
-	 * Calculates the average connectivity of the neighbourhood of a particular node
+	 * Calculates the average connectivity of the neighbourhood of a particular node.
+	 * Neighbourhood-Connectivity = Number of Neighbour's connections / Number of Neighbours
+	 * Source: http://med.bioinf.mpi-inf.mpg.de/netanalyzer/help/2.6.1/index.html#complex
 	 * @param v is the node whose neighbourhood connectivity should be calculated
 	 * @return
 	 */
@@ -1126,6 +1128,7 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 	
 	/**
 	 * Get the common neighbours of two nodes m and n
+	 * Source: http://med.bioinf.mpi-inf.mpg.de/netanalyzer/help/2.6.1/index.html#complex
 	 * @param m
 	 * @param n
 	 */
@@ -1135,32 +1138,29 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 		Iterator<VertexType> mNeighboursIt = getChildNodes(m);
 		
 		ArrayList<VertexType> sharedNeighbours = new ArrayList<VertexType>();
-		int numOfShared = 0;
 		//iterate over all neighbours
 		while(mNeighboursIt.hasNext())
 		{
 			VertexType k = mNeighboursIt.next();
 			//if there exists an edge between the neighbour node k of m and n
 			if(hasEdge(n, k))
-			{
 				sharedNeighbours.add(k);
-				++numOfShared;
-			}
 		}
 		
 		return sharedNeighbours;
 	}
 	/**
-	 * Calculates the betweenness centrality of a particular node.
+	 * Calculates the betweenness centrality
 	 * This measure describes how often a node lies on the shortest path between two other nodes with respect to the total number of shortest paths.
 	 * It is computed as follows: Cb(n) = sum[s != n != t] (sigma_s->t(n) / sigma_s->t)
 	 * The betweenness centrality is implemented according to Brandes, 2001, A Faster Algorithm for Betweenness Centrality
-	 * @param n
+	 * @param
 	 * @return
 	 */
-	public double getBetweennessCentrality(VertexType s)
+	/*
+	public HashMap<VertexType, Double> getBetweennessCentrality()
 	{
-		double Cb = 0.0;
+		HashMap<VertexType, Double> Cb = new HashMap<VertexType, Double>();
 
 		Iterable<VertexType> nodes = getVertices();
 
@@ -1174,74 +1174,85 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 		HashMap<VertexType, Integer> d = new HashMap<VertexType, Integer>();
 		HashMap<VertexType, Double> delta = new HashMap<VertexType, Double>();
 
-		S.clear();
-		for(VertexType w : nodes)
-			P.put(w, new ArrayList<VertexType>());
-
-		for(VertexType t : nodes)
+		for( VertexType s : nodes)
 		{
-			if(!t.equals(s))
+			S.clear();
+			for(VertexType w : nodes)
+				P.put(w, new ArrayList<VertexType>());
+
+			for(VertexType t : nodes)
 			{
-				d.put(t, -1);
-				sigma.put(t, 0);
-			}
-		}
-		d.put(s, 0);
-		sigma.put(s, 1);
-
-		Q.clear();
-		Q.offer(s);
-
-		while(!Q.isEmpty())
-		{
-			VertexType v = Q.remove();
-			S.push(v);
-
-			Iterator<VertexType> wIt = getChildNodes(v); //neighbours of v
-			while(wIt.hasNext())
-			{
-				VertexType w = wIt.next();
-
-				//seen the first time?
-				if(d.get(w) < 0)
+				if(!t.equals(s))
 				{
-					Q.offer(w);
-					d.put(w, d.get(v) + 1);
-				}
-
-				//shortest path to w via v?
-				if(d.get(w) == (d.get(v) + 1))
-				{
-					sigma.put(w, sigma.get(w) + sigma.get(v));
-					ArrayList<VertexType> temp = P.get(w);
-					temp.add(v);
-					P.put(w, temp);
+					d.put(t, -1);
+					sigma.put(t, 0);
 				}
 			}
-		}
-		for(VertexType v : nodes)
-			delta.put(v, 0.0);
+			d.put(s, 0);
+			sigma.put(s, 1);
 
-		while(!S.isEmpty())
-		{
-			VertexType w = S.pop();
-			for(VertexType v : P.get(w))
+			Q.clear();
+			Q.offer(s);
+
+			while(!Q.isEmpty())
 			{
-				double deltaVal = delta.get(v) + (sigma.get(v)/ (double) sigma.get(w)) * (1 + delta.get(w));
-				delta.put(v, deltaVal);
+				VertexType v = Q.remove();
+				S.push(v);
+
+				Iterator<VertexType> wIt = getChildNodes(v); //neighbours of v
+				while(wIt.hasNext())
+				{
+					VertexType w = wIt.next();
+
+					//seen the first time?
+					if(d.get(w) < 0)
+					{
+						Q.offer(w);
+						d.put(w, d.get(v) + 1);
+					}
+
+					//shortest path to w via v?
+					if(d.get(w) == (d.get(v) + 1))
+					{
+						sigma.put(w, sigma.get(w) + sigma.get(v));
+						ArrayList<VertexType> temp = P.get(w);
+						temp.add(v);
+						P.put(w, temp);
+					}
+				}
 			}
-			if(!w.equals(s))
+			for(VertexType v : nodes)
 			{
-				double val = delta.get(w);
-				Cb += val;
+				delta.put(v, 0.0);
+				Cb.put(v, 0.0);
 			}
 				
-		}
 
+			while(!S.isEmpty())
+			{
+				VertexType w = S.pop();
+				for(VertexType v : P.get(w))
+				{
+					double deltaVal = delta.get(v) + (sigma.get(v)/ (double) sigma.get(w)) * (1 + delta.get(w));
+					delta.put(v, deltaVal);
+				}
+				if(!w.equals(s))
+				{
+					double val = Cb.get(w) + delta.get(w);
+					Cb.put(w, val);
+				}
+
+			}
+		}
 		return Cb;
 	}
+	*/
 	
-	public void degreeDistributions()
+	/**
+	 * Determines the degree distribution of the graph
+	 * @return
+	 */
+	public HashMap<Integer, Integer> degreeDistributions()
 	{
 		HashMap<Integer, Integer> degreeCounter = new HashMap<Integer, Integer>();
 		for(VertexType n : getVertices())
@@ -1256,13 +1267,85 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 				degreeCounter.put(deg, degreeCounter.get(deg) + 1);					
 		}
 		
-		
-		//to do: plot stuff
+		return degreeCounter;
 	}
 	
+	/**
+	 * Determines the average shortest shortest path of the complete graph.
+	 * @return
+	 */
+	/*
+	public double getAverageShortestPath()
+	{
+	//TODO: find ALL shortest pathes !!
+		final ArrayList<VertexType> oldRoots = new ArrayList<VertexType>();
+		final int[] stats = new int[]{0, 0}; //0: total length, 1: total number
+		
+		for(VertexType n : getVertices())
+		{
+			singleSourceShortestPath(n, 
+									 false,
+									 new IDistanceVisitor<VertexType>() 
+									 {
+
+										@Override
+										public boolean visit(VertexType vertex, List<VertexType> path, int distance) 
+										{
+											if( !oldRoots.contains(vertex) ) //do not count the same path twice, e.g. a - b, b - a
+											{
+												stats[0] += distance;
+												++stats[1];
+											}
+											return true;
+										}
+									 }
+									);
+		}
+		
+		return (double)stats[0]/stats[1];
+	}
+	*/
+	/**
+	 * Determine the average shortest path for a particular node.
+	 * @param n
+	 * @return
+	 */
+	/*
+	public double getAverageShortestPath(final VertexType n)
+	{
+		final int[] stats = new int[]{0, 0}; //0: total length, 1: total number
+
+		singleSourceShortestPath(n, 
+								 false,
+								 new IDistanceVisitor<VertexType>() 
+								 {
+									@Override
+									public boolean visit(VertexType vertex, List<VertexType> path, int distance) 
+									{
+										if( !vertex.equals(n) ) //do not count the same path twice, e.g. a - b, b - a
+										{
+											stats[0] += distance;
+											++stats[1];
+										}
+										return true;
+									}
+								 }
+								);
+		return (double)stats[0]/stats[1];
+	}
+	*/
+	/**
+	 * Determines the closeness centrality of a node n.
+	 * It is the inverse of the average shortest path length and describes how fast information spreads among the nodes in the network.
+	 * Source: http://med.bioinf.mpi-inf.mpg.de/netanalyzer/help/2.6.1/index.html#complex
+	 * @param n
+	 * @return
+	 */
+	/*
 	public double getClosenessCentrality(VertexType n)
 	{
-		//TODO: testing
+		//TODO: need correct average shortest path method
+		 
 		final ArrayList<Integer> totalShortestPathLengths = new ArrayList<Integer>();
 		singleSourceShortestPath(	n, 
 									false,
@@ -1284,5 +1367,43 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 		
 		CC = sum / (double) totalShortestPathLengths.size();
 		return CC;
+	}
+	*/
+	
+	/**
+	 * Determines the topological coefficient of a particular node n.
+	 * It is a measure for the tendency of a node to share neighbours.
+	 * @param n
+	 * @return
+	 */
+	public double getTopologicalCoefficient(VertexType n)
+	{
+		// tc_n = avg( J(n,m) ) / kn;
+		// J(n,m) number of shared neighbours between n and m (+1 if a direct link exists between n and m)
+		// m all nodes that share at least one neighbour with n
+		// kn number of neighbours of n
+		// source: http://med.bioinf.mpi-inf.mpg.de/netanalyzer/help/2.6.1/index.html#topCoefs
+		
+		int k = getOutDegree(n);
+		int numOfShared = 0; //number of nodes that share nodes with n
+		double TC = 0.0;
+		ArrayList<VertexType> shared;
+		Iterable<VertexType> mIter = getVertices();
+		for(VertexType v : mIter)
+		{
+			if(!v.equals(n))
+			{
+				shared = getSharedNeighbours(n, v);
+				if(shared.size() > 0)
+				{
+					TC += shared.size();
+					if(hasEdge(n, v)) //if there is a direct connection
+						TC += 1.0;
+					++numOfShared;
+				}
+			}
+		}
+		TC = (double) (TC /numOfShared) / k;
+		return TC;
 	}
 }
