@@ -1252,7 +1252,7 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 	 * Determines the degree distribution of the graph
 	 * @return
 	 */
-	public HashMap<Integer, Integer> degreeDistributions()
+	public HashMap<Integer, Integer> getDegreeDistribution()
 	{
 		HashMap<Integer, Integer> degreeCounter = new HashMap<Integer, Integer>();
 		for(VertexType n : getVertices())
