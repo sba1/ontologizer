@@ -800,6 +800,21 @@ public class Ontology implements Iterable<Term>
 		return graph.getOutDegree(getTerm(term)) != -1;
 	}
 
+	
+	/**
+	 * Returns the set of terms given from the set of term ids.
+	 * 
+	 * @param termIDs
+	 * @return
+	 */
+	public Set<Term> getSetOfTermsFromSetOfTermIds(Set<TermID> termIDs)
+	{
+		HashSet<Term> termSet = new HashSet<Term>();
+		for (TermID tid : termIDs)
+			termSet.add(getTerm(tid));
+		return termSet;
+	}
+
 	/**
 	 * Returns a set of induced terms that are the terms of the induced graph.
 	 * Providing null as root-term-ID will induce all terms up to the root to be included.
