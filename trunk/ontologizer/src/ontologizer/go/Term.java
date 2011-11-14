@@ -331,7 +331,7 @@ public class Term
 	 *
 	 * @param definition defines the definition ;)
 	 */
-	protected void setDefinition(String definition)
+	public void setDefinition(String definition)
 	{
 		this.definition = definition;
 	}
