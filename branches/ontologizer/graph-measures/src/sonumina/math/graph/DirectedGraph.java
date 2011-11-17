@@ -1134,9 +1134,11 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 	 */
 	public HashSet<VertexType> getSharedNeighbours(VertexType m, VertexType n)
 	{
-		//get neighbours of m
-		Iterator<VertexType> iter = getChildNodes(m);
 		HashSet<VertexType> sharedNeighbours = new HashSet<VertexType>();
+		//get neighbours of m
+		/*
+		Iterator<VertexType> iter = getChildNodes(m);
+		
 		while(iter.hasNext())
 			sharedNeighbours.add(iter.next());
 		
@@ -1146,17 +1148,25 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 			VertexType k = iter.next();
 			if(!sharedNeighbours.contains(k))
 				sharedNeighbours.remove(k);
-		}
-			
-		/*//iterate over all neighbours
-		while(mNeighboursIt.hasNext())
-		{
-			VertexType k = mNeighboursIt.next();
-			//if there exists an edge between the neighbour node k of m and n
-			if(hasEdge(n, k))
-				sharedNeighbours.add(k);
 		}*/
 
+		
+		Iterator<VertexType> mIter = getChildNodes(m);
+		Iterator<VertexType> nIter = getChildNodes(n);
+		while(mIter.hasNext())
+		{
+			VertexType v = mIter.next();
+			while(nIter.hasNext())
+			{
+				VertexType u = nIter.next();
+				if(v.equals(u))
+				{
+					sharedNeighbours.add(v);
+					break;
+				}
+			}
+		}
+		
 		return sharedNeighbours;
 	}
 	/**
