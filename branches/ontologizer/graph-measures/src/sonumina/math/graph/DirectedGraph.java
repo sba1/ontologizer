@@ -1156,13 +1156,17 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 			else if(nChildren[nPtr] < mChildren[mPtr])
 				nPtr = (nPtr < nChildren.length) ? nPtr+1 : nChildren.length;
 			else
+			{
 				sN.add(slimGraph.getVertex(mPtr));
+				mPtr = (mPtr < mChildren.length) ? mPtr+1 : mChildren.length;
+				nPtr = (nPtr < nChildren.length) ? nPtr+1 : nChildren.length;
+			}
 			
 			if(mPtr == mChildren.length && nPtr == nChildren.length)
 				break;
 		}
-			
-		
+		return sN;
+		/*
 		HashSet<VertexType> sharedNeighbours = new HashSet<VertexType>();
 		//get neighbours of m
 		/*
@@ -1177,7 +1181,7 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 			VertexType k = iter.next();
 			if(!sharedNeighbours.contains(k))
 				sharedNeighbours.remove(k);
-		}*/
+		}
 
 		
 		Iterator<VertexType> mIter = getChildNodes(m);
@@ -1196,7 +1200,7 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 			}
 		}
 		
-		return sharedNeighbours;
+		return sharedNeighbours;*/
 	}
 	/**
 	 * Calculates the betweenness centrality
