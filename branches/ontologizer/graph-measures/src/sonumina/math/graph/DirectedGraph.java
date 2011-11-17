@@ -34,7 +34,9 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 {
 	/** Contains the vertices associated to meta information (edges) */
 	private LinkedHashMap<VertexType,VertexAttributes<VertexType>> vertices;
-
+	
+	SlimDirectedGraphView<VertexType> slimGraph;
+	
 	public interface IDistanceVisitor<VertexType>
 	{
 		/**
@@ -192,6 +194,7 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 
 		vaSource.outEdges.add(edge);
 		vaDest.inEdges.add(edge);
+		
 	}
 
 	/**
@@ -1134,6 +1137,32 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 	 */
 	public HashSet<VertexType> getSharedNeighbours(VertexType m, VertexType n)
 	{
+		if(slimGraph == null)
+			slimGraph = new SlimDirectedGraphView<VertexType>(this);
+		
+		int mIndex = slimGraph.getVertexIndex(m);
+		int nIndex = slimGraph.getVertexIndex(n);
+		
+		int[] mChildren = slimGraph.vertexChildren[mIndex];
+		int[] nChildren = slimGraph.vertexChildren[nIndex];
+		
+		int mPtr = 0;
+		int nPtr = 0;
+		HashSet<VertexType> sN = new HashSet<VertexType>();
+		while(mPtr < mChildren.length || nPtr < nChildren.length) //probably an endless loop
+		{
+			if(mChildren[mPtr] < nChildren[nPtr])
+				mPtr = (mPtr < mChildren.length) ? mPtr+1 : mChildren.length;
+			else if(nChildren[nPtr] < mChildren[mPtr])
+				nPtr = (nPtr < nChildren.length) ? nPtr+1 : nChildren.length;
+			else
+				sN.add(slimGraph.getVertex(mPtr));
+			
+			if(mPtr == mChildren.length && nPtr == nChildren.length)
+				break;
+		}
+			
+		
 		HashSet<VertexType> sharedNeighbours = new HashSet<VertexType>();
 		//get neighbours of m
 		/*
