@@ -1498,7 +1498,7 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 			}
 		}
 		
-		TC = (double) (TC /numOfShared) / k;
+		TC = (numOfShared > 0) ? (double) (TC /numOfShared) / k : 0;
 		return TC;
 	}
 }
