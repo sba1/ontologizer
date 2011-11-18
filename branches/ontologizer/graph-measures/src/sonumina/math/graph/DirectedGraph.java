@@ -1,6 +1,7 @@
 package sonumina.math.graph;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -1144,26 +1145,25 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 		int nIndex = slimGraph.getVertexIndex(n);
 		
 		int[] mChildren = slimGraph.vertexChildren[mIndex];
+		Arrays.sort(mChildren);
 		int[] nChildren = slimGraph.vertexChildren[nIndex];
+		Arrays.sort(nChildren);
 		
 		int mPtr = 0;
 		int nPtr = 0;
 		HashSet<VertexType> sN = new HashSet<VertexType>();
-		while(mPtr < mChildren.length || nPtr < nChildren.length) //probably an endless loop
+		while(mPtr < mChildren.length && nPtr < nChildren.length) //probably an endless loop; Index Out of Range
 		{
 			if(mChildren[mPtr] < nChildren[nPtr])
-				mPtr = (mPtr < mChildren.length) ? mPtr+1 : mChildren.length;
+				++mPtr;
 			else if(nChildren[nPtr] < mChildren[mPtr])
-				nPtr = (nPtr < nChildren.length) ? nPtr+1 : nChildren.length;
+				++nPtr;
 			else
 			{
-				sN.add(slimGraph.getVertex(mPtr));
-				mPtr = (mPtr < mChildren.length) ? mPtr+1 : mChildren.length;
-				nPtr = (nPtr < nChildren.length) ? nPtr+1 : nChildren.length;
+				sN.add(slimGraph.getVertex(mChildren[mPtr]));
+				++mPtr;
+				++nPtr;
 			}
-			
-			if(mPtr == mChildren.length && nPtr == nChildren.length)
-				break;
 		}
 		return sN;
 		/*
