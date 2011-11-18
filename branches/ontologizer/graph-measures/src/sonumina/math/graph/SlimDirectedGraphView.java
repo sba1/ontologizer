@@ -59,33 +59,33 @@ public class SlimDirectedGraphView<VertexType>
 			i++;
 		}
 
-		/* Term parents stuff */
-		vertexParents = new int[vertices.length][];
-		for (i=0;i<vertices.length;i++)
-		{
-			VertexType v 					= (VertexType)vertices[i];
-			Iterator<VertexType> parentIter = graph.getParentNodes(v);
-			vertexParents[i] 				= createIndicesFromIter(parentIter);
-		}
-
-		/* Term ancestor stuff */
-		vertexAncestors = new int[vertices.length][];
-		for (i=0;i<vertices.length;i++)
-		{
-			VertexType v = (VertexType)vertices[i];
-			final List<VertexType> ancestors = new ArrayList<VertexType>(20);
-			graph.bfs(v, true, new IVisitor<VertexType>() {
-				public boolean visited(VertexType vertex)
-				{
-					ancestors.add(vertex);
-					return true;
-				};
-			});
-			vertexAncestors[i] = createIndicesFromIter(ancestors.iterator());
-
-			/* Sort them, as we require this for binary search in isAncestor() */
-			Arrays.sort(vertexAncestors[i]);
-		}
+//		/* Term parents stuff */
+//		vertexParents = new int[vertices.length][];
+//		for (i=0;i<vertices.length;i++)
+//		{
+//			VertexType v 					= (VertexType)vertices[i];
+//			Iterator<VertexType> parentIter = graph.getParentNodes(v);
+//			vertexParents[i] 				= createIndicesFromIter(parentIter);
+//		}
+//
+//		/* Term ancestor stuff */
+//		vertexAncestors = new int[vertices.length][];
+//		for (i=0;i<vertices.length;i++)
+//		{
+//			VertexType v = (VertexType)vertices[i];
+//			final List<VertexType> ancestors = new ArrayList<VertexType>(20);
+//			graph.bfs(v, true, new IVisitor<VertexType>() {
+//				public boolean visited(VertexType vertex)
+//				{
+//					ancestors.add(vertex);
+//					return true;
+//				};
+//			});
+//			vertexAncestors[i] = createIndicesFromIter(ancestors.iterator());
+//
+//			/* Sort them, as we require this for binary search in isAncestor() */
+//			Arrays.sort(vertexAncestors[i]);
+//		}
 
 		/* Term children stuff */
 		vertexChildren = new int[vertices.length][];
@@ -95,26 +95,27 @@ public class SlimDirectedGraphView<VertexType>
 
 			Iterator<VertexType> childrenIter 	= graph.getChildNodes(v);
 			vertexChildren[i] 					= createIndicesFromIter(childrenIter);
+			Arrays.sort(vertexChildren[i]);
 		}
 
 		/* Term descendants stuff */
-		vertexDescendants = new int[vertices.length][];
-		for (i=0;i<vertices.length;i++)
-		{
-			VertexType v = (VertexType)vertices[i];
-			final List<VertexType> descendants = new ArrayList<VertexType>(20);
-			graph.bfs(v, false, new IVisitor<VertexType>() {
-				public boolean visited(VertexType vertex)
-				{
-					descendants.add(vertex);
-					return true;
-				};
-			});
-			vertexDescendants[i] = createIndicesFromIter(descendants.iterator());
-
-			/* Sort them, as we require this for binary search in isDescendant() */
-			Arrays.sort(vertexDescendants[i]);
-		}
+//		vertexDescendants = new int[vertices.length][];
+//		for (i=0;i<vertices.length;i++)
+//		{
+//			VertexType v = (VertexType)vertices[i];
+//			final List<VertexType> descendants = new ArrayList<VertexType>(20);
+//			graph.bfs(v, false, new IVisitor<VertexType>() {
+//				public boolean visited(VertexType vertex)
+//				{
+//					descendants.add(vertex);
+//					return true;
+//				};
+//			});
+//			vertexDescendants[i] = createIndicesFromIter(descendants.iterator());
+//
+//			/* Sort them, as we require this for binary search in isDescendant() */
+//			Arrays.sort(vertexDescendants[i]);
+//		}
 	}
 
 	/**
@@ -263,6 +264,23 @@ public class SlimDirectedGraphView<VertexType>
 		int jIdx = vertex2Index.get(j);
 
 		return isDescendant(iIdx, jIdx);
+	}
+	/**
+	 * Determines whether a node i is directly connected to a node j
+	 * @return
+	 */
+	public boolean hasEdge(VertexType i, VertexType j)
+	{
+		if ( (! isVertexInGraph(i)) || (! isVertexInGraph(j)))
+			return false;
+		int iIdx = vertex2Index.get(i);
+		int jIdx = vertex2Index.get(j);
+
+		int k = Arrays.binarySearch(vertexChildren[iIdx], jIdx);
+		if(k>=0)
+			if(vertexChildren[iIdx][k] == jIdx)
+				return true;
+		return false;
 	}
 
 	/**

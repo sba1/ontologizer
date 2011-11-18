@@ -1138,52 +1138,16 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 	 */
 	public HashSet<VertexType> getSharedNeighbours(VertexType m, VertexType n)
 	{
-		HashMap<Integer, VertexType> index2Vertex = new HashMap<Integer, VertexType>();
+		//HashMap<Integer, VertexType> index2Vertex = new HashMap<Integer, VertexType>();
 		if(slimGraph == null)
-		{
-			/*int idx = 0;
-
-			HashMap<VertexType,Integer> vertex2Index = new HashMap<VertexType, Integer>();
-			int[][] vertexChildren = new int[getNumberOfVertices()][];
-
-			for(VertexType v : getVertices())
-			{
-				vertex2Index.put(v, idx);
-				index2Vertex.put(idx,v);
-				++idx;
-			}
-
-			ArrayList<Integer> children = new ArrayList<Integer>();
-			for(VertexType v : getVertices())
-			{
-				Iterator<VertexType> iter = getChildNodes(v);
-				while(iter.hasNext())
-					children.add(vertex2Index.get(iter.next()));
-
-				int[] tmp = new int[children.size()];
-
-				for(int i = 0; i < children.size(); i++)
-					tmp[i] = children.get(i);
-
-				Arrays.sort(tmp);
-				vertexChildren[vertex2Index.get(v)] = tmp;
-				children.clear();
-			}
-
-			slimGraph = new SlimDirectedGraphView<VertexType>( new DirectedGraph<VertexType>() );
-			slimGraph.vertex2Index = vertex2Index;
-			slimGraph.vertexChildren = vertexChildren;*/
-
 			slimGraph = new SlimDirectedGraphView<VertexType>(this);
-		}
+
 
 		int mIndex = slimGraph.getVertexIndex(m);
 		int nIndex = slimGraph.getVertexIndex(n);
 
 		int[] mChildren = slimGraph.vertexChildren[mIndex];
-		Arrays.sort(mChildren);
 		int[] nChildren = slimGraph.vertexChildren[nIndex];
-		Arrays.sort(nChildren);
 
 		int mPtr = 0;
 		int nPtr = 0;
@@ -1196,7 +1160,7 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 				++nPtr;
 			else
 			{
-				sN.add(index2Vertex.get(mChildren[mPtr]));
+				sN.add(slimGraph.getVertex(mChildren[mPtr]));
 				++mPtr;
 				++nPtr;
 			}
@@ -1523,7 +1487,7 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 							if(shared > 0)
 							{
 								TC += shared;
-								if(hasEdge(n, u))
+								if(slimGraph.hasEdge(n, u))
 									TC += 1.0;
 							}
 							++numOfShared;
