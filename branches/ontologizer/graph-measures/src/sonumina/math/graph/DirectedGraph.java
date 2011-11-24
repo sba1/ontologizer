@@ -1501,4 +1501,52 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 		TC = (numOfShared > 0) ? (double) (TC /numOfShared) / k : 0;
 		return TC;
 	}
+	public interface IGeneSelector<VertexType, CriterionType>
+	{
+		public boolean matchesCriterion(VertexType v, CriterionType criterion);
+	}
+	public <CriterionType> HashMap<Double,Integer> getEmpiricalDegreeDistribution(int numOfRepetitions, IGeneSelector<VertexType, CriterionType> selector, CriterionType criterion)
+	{
+		HashMap<Integer,VertexType> genes = new HashMap<Integer,VertexType>();
+		final ArrayList<Integer> indices = new ArrayList<Integer>();
+		int idx = 0;
+		int sampleSize = 0;
+		//initialization
+		for(VertexType v : getVertices())
+		{
+			genes.put(idx, v);
+			indices.add(idx);
+			++idx;
+
+			if(selector.matchesCriterion(v, criterion))
+				++sampleSize;
+		}
+
+
+
+		java.util.Random rng = new java.util.Random();
+		ArrayList<Integer> availableIndices;
+		ArrayList<VertexType> sample = new ArrayList<VertexType>();
+		HashMap<Double, Integer> empDegDistri = new HashMap<Double, Integer>();
+
+		for(int i = 0; i < numOfRepetitions; i++)
+		{
+			availableIndices = (ArrayList<Integer>) indices.clone();
+			for(int j = 0; j < sampleSize; j++)
+			{
+				int posInAvailIdx = rng.nextInt(availableIndices.size());
+				int gIdx = availableIndices.get(posInAvailIdx);
+				sample.add(genes.get(gIdx));
+				availableIndices.remove(posInAvailIdx);
+			}
+			double deg = 0.0;
+			for(VertexType v: sample)
+				deg += getOutDegree(v);
+
+			double avgDeg = (double) deg/sample.size();
+			empDegDistri.put(avgDeg, empDegDistri.get(avgDeg) + 1);
+		}
+
+		return empDegDistri;
+	}
 }
