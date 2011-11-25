@@ -1501,37 +1501,58 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 		TC = (numOfShared > 0) ? (double) (TC /numOfShared) / k : 0;
 		return TC;
 	}
-	public interface IGeneSelector<VertexType, CriterionType>
+	
+	public interface ICatchResult<ReturnType>
+	{
+		public ReturnType returnResult();
+	}
+	public interface IVertexSelector<VertexType, CriterionType>
 	{
 		public boolean matchesCriterion(VertexType v, CriterionType criterion);
 	}
-	public <CriterionType> HashMap<Double,Integer> getEmpiricalDegreeDistribution(int numOfRepetitions, IGeneSelector<VertexType, CriterionType> selector, CriterionType criterion)
+	/**
+	 * Determines an empirical degree distribution of the graph. 
+	 * This function samples randomly nodes and calculates the average degree of these.
+	 * The sample size is determined by the selector which counts all genes that match a given condition
+	 * @param numOfRepetitions number of repeated samplings
+	 * @param selector instance of IVertexSelector which implements the action happening when node fulfills the criterion
+	 * @param criterion the condition that the node has to be comply with
+	 * @return
+	 */
+	public <CriterionType> HashMap<Double,Integer> getEmpiricalDegreeDistribution(int numOfRepetitions, float binSize, IVertexSelector<VertexType, CriterionType> selector, CriterionType criterion)
 	{
 		HashMap<Integer,VertexType> genes = new HashMap<Integer,VertexType>();
 		final ArrayList<Integer> indices = new ArrayList<Integer>();
 		int idx = 0;
 		int sampleSize = 0;
+		double observedDeg = 0;
+		
 		//initialization
 		for(VertexType v : getVertices())
 		{
-			genes.put(idx, v);
-			indices.add(idx);
+			genes.put(idx, v); //map indices onto vertices
+			indices.add(idx); //hold indices
 			++idx;
-			
+			//if vertex fulfills criterion increase sample size and track observed degree
 			if(selector.matchesCriterion(v, criterion))
-				++sampleSize;	
+			{
+				++sampleSize;
+				observedDeg += getOutDegree(v);
+			}
 		}
-		
+		System.out.println("Observed degree: " + observedDeg/sampleSize);
 		
 		
 		java.util.Random rng = new java.util.Random();
-		ArrayList<Integer> availableIndices;
-		ArrayList<VertexType> sample = new ArrayList<VertexType>();
-		HashMap<Double, Integer> empDegDistri = new HashMap<Double, Integer>();
+		ArrayList<Integer> availableIndices; //index list from which used indices will be removed
+		ArrayList<VertexType> sample = new ArrayList<VertexType>(); //the sampled nodes
+		HashMap<Double, Integer> empDegDistri = new HashMap<Double, Integer>(); //output map: degree onto count
+		double[] avgDegs = new double[numOfRepetitions]; //array used for binning
 		
 		for(int i = 0; i < numOfRepetitions; i++)
 		{
 			availableIndices = (ArrayList<Integer>) indices.clone();
+			sample.clear();
 			for(int j = 0; j < sampleSize; j++)
 			{
 				int posInAvailIdx = rng.nextInt(availableIndices.size());
@@ -1542,11 +1563,25 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 			double deg = 0.0;
 			for(VertexType v: sample)
 				deg += getOutDegree(v);
-			
-			double avgDeg = (double) deg/sample.size();
-			empDegDistri.put(avgDeg, empDegDistri.get(avgDeg) + 1);
+
+			avgDegs[i] = (double) deg/sample.size();
 		}
 		
+		Arrays.sort(avgDegs);
+		double currentBin = avgDegs[0];
+		int counter = 0; 
+		for(int j = 0; j < numOfRepetitions; j++)
+		{
+			if(avgDegs[j] < currentBin + binSize)
+				++counter;
+			else
+			{
+				empDegDistri.put(currentBin, counter);
+				currentBin = avgDegs[j];
+				counter = 1;
+			}
+				
+		}
 		return empDegDistri;
 	}
 }
