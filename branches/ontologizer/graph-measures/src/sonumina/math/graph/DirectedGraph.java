@@ -1428,43 +1428,6 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 	 * It is a measure for the tendency of a node to share neighbours.
 	 * @param n
 	 * @return
-	 * @deprecated
-	 */
-	public double getTopologicalCoefficient2(VertexType n)
-	{
-		// tc_n = avg( J(n,m) ) / kn;
-		// J(n,m) number of shared neighbours between n and m (+1 if a direct link exists between n and m)
-		// m all nodes that share at least one neighbour with n
-		// kn number of neighbours of n
-		// source: http://med.bioinf.mpi-inf.mpg.de/netanalyzer/help/2.6.1/index.html#topCoefs
-
-		int k = getOutDegree(n);
-		int numOfShared = 0; //number of nodes that share nodes with n
-		double TC = 0.0;
-		HashSet<VertexType> shared;
-		Iterable<VertexType> mIter = getVertices();
-		for(VertexType v : mIter)
-		{
-			if(!v.equals(n))
-			{
-				shared = getSharedNeighbours(n, v);
-				if(shared.size() > 0)
-				{
-					TC += shared.size();
-					if(hasEdge(n, v)) //if there is a direct connection
-						TC += 1.0;
-					++numOfShared;
-				}
-			}
-		}
-		TC = (double) (TC /numOfShared) / k;
-		return TC;
-	}
-	/**
-	 * Determines the topological coefficient of a particular node n.
-	 * It is a measure for the tendency of a node to share neighbours.
-	 * @param n
-	 * @return
 	 */
 	public double getTopologicalCoefficient(VertexType n)
 	{
@@ -1509,6 +1472,7 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 	public interface IVertexSelector<VertexType, CriterionType>
 	{
 		public boolean matchesCriterion(VertexType v, CriterionType criterion);
+		public double getMeasure(VertexType v);
 	}
 	/**
 	 * Determines an empirical degree distribution of the graph. 
@@ -1519,14 +1483,18 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 	 * @param criterion the condition that the node has to be comply with
 	 * @return
 	 */
-	public <CriterionType> HashMap<Double,Integer> getEmpiricalDegreeDistribution(int numOfRepetitions, float binSize, IVertexSelector<VertexType, CriterionType> selector, CriterionType criterion)
+	public <CriterionType> HashMap<Double,Integer> getEmpiricalDistributions(int numOfRepetitions, float binSize, IVertexSelector<VertexType, CriterionType> selector, CriterionType criterion)
 	{
 		HashMap<Integer,VertexType> genes = new HashMap<Integer,VertexType>();
 		final ArrayList<Integer> indices = new ArrayList<Integer>();
 		int idx = 0;
 		int sampleSize = 0;
-		double observedDeg = 0;
+		double observedMeasure = 0.0;
 		
+/*		double observedDeg = 0.0;
+		double observedCC = 0.0;
+		double observedNC = 0.0;
+		double observedTC = 0.0;*/
 		//initialization
 		for(VertexType v : getVertices())
 		{
@@ -1537,22 +1505,36 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 			if(selector.matchesCriterion(v, criterion))
 			{
 				++sampleSize;
-				observedDeg += getOutDegree(v);
+				observedMeasure += selector.getMeasure(v);
+				
+/*				observedDeg += getOutDegree(v);
+				observedCC += getClusteringCoefficient(v);
+				observedNC += getNeighbourhoodConnectivity(v);
+				observedTC += getTopologicalCoefficient(v);*/
 			}
 		}
-		System.out.println("Observed degree: " + observedDeg/sampleSize);
+		System.out.println(String.format("Avg Measure: %f", observedMeasure/sampleSize));
+		//System.out.println(String.format("Avg: Deg: %f, CC: %f, NC: %f, TC: %f", observedDeg/sampleSize, observedCC/sampleSize, observedNC/sampleSize, observedTC/sampleSize));
+		//System.out.println("Observed degree: " + observedDeg/sampleSize);
 		
 		
 		java.util.Random rng = new java.util.Random();
 		ArrayList<Integer> availableIndices; //index list from which used indices will be removed
 		ArrayList<VertexType> sample = new ArrayList<VertexType>(); //the sampled nodes
-		HashMap<Double, Integer> empDegDistri = new HashMap<Double, Integer>(); //output map: degree onto count
-		double[] avgDegs = new double[numOfRepetitions]; //array used for binning
+		HashMap<String,HashMap<Double, Integer>> empDistribs = new HashMap<String,HashMap<Double, Integer>>(); //output map: degree onto count
+		double[] sampledAvgMeasure = new double[numOfRepetitions];
 		
+/*		double[] sampledAvgDegs = new double[numOfRepetitions]; //array used for binning
+		double[] sampledAvgCC = new double[numOfRepetitions];
+		double[] sampledAvgNC = new double[numOfRepetitions];
+		double[] sampledAvgTC = new double[numOfRepetitions];*/
+		//sampling runs
 		for(int i = 0; i < numOfRepetitions; i++)
 		{
+			System.out.println(String.format("Run no. %d", i+1));
 			availableIndices = (ArrayList<Integer>) indices.clone();
 			sample.clear();
+			//draw as many nodes as are in the group under study
 			for(int j = 0; j < sampleSize; j++)
 			{
 				int posInAvailIdx = rng.nextInt(availableIndices.size());
@@ -1560,28 +1542,67 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 				sample.add(genes.get(gIdx));
 				availableIndices.remove(posInAvailIdx);
 			}
+			double measure = 0.0;
+			
 			double deg = 0.0;
+			double cc = 0.0;
+			double nc = 0.0;
+			double tc = 0.0;
 			for(VertexType v: sample)
+				measure += selector.getMeasure(v);
+/*			{
 				deg += getOutDegree(v);
-
-			avgDegs[i] = (double) deg/sample.size();
+				cc += getClusteringCoefficient(v);
+				nc += getNeighbourhoodConnectivity(v);
+				tc += getTopologicalCoefficient(v);
+			}*/
+			sampledAvgMeasure[i] = (double) measure/sample.size();
+			
+/*			sampledAvgDegs[i] = (double) deg/sample.size();
+			sampledAvgCC[i] = (double) cc/sample.size();
+			sampledAvgNC[i] = (double) nc/sample.size();
+			sampledAvgTC[i] = (double) tc/sample.size();*/
 		}
+		Arrays.sort(sampledAvgMeasure);
+		return empiricialDistributionBinner(binSize, sampledAvgMeasure);
 		
-		Arrays.sort(avgDegs);
-		double currentBin = avgDegs[0];
+/*		Arrays.sort(sampledAvgDegs);
+		Arrays.sort(sampledAvgCC);
+		Arrays.sort(sampledAvgNC);
+		Arrays.sort(sampledAvgTC);*/
+		
+		
+		
+/*		empDistribs.put("degree", empiricialDistributionBinner(binSize, sampledAvgDegs));
+		empDistribs.put("cc", empiricialDistributionBinner(binSize, sampledAvgCC));
+		empDistribs.put("nc", empiricialDistributionBinner(binSize, sampledAvgNC));
+		empDistribs.put("tc", empiricialDistributionBinner(binSize, sampledAvgTC));*/
+		
+		//return empDistribs;
+	}
+	
+	/**
+	 * A method for binning and counting the sampled average of a measure
+	 * @param binSize size of a bin
+	 * @param sampledAvgX array that constains the sampled values of a measure X
+	 * @return
+	 */
+	private HashMap<Double, Integer> empiricialDistributionBinner(float binSize, double[] sampledAvgX)
+	{
+		HashMap<Double, Integer> distribution = new HashMap<Double, Integer>();
+		double currentBin = sampledAvgX[0];
 		int counter = 0; 
-		for(int j = 0; j < numOfRepetitions; j++)
+		for(int j = 0; j < sampledAvgX.length; j++)
 		{
-			if(avgDegs[j] < currentBin + binSize)
+			if(sampledAvgX[j] < currentBin + binSize)
 				++counter;
 			else
 			{
-				empDegDistri.put(currentBin, counter);
-				currentBin = avgDegs[j];
+				distribution.put(currentBin, counter);
+				currentBin = sampledAvgX[j];
 				counter = 1;
-			}
-				
+			}			
 		}
-		return empDegDistri;
+		return distribution;
 	}
 }
