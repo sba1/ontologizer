@@ -13,6 +13,10 @@ import java.util.PriorityQueue;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import sonumina.math.graph.DirectedGraph.IDistributionBinner;
+
+import de.charite.compbio.ppi.Protein;
+
 import att.grappa.Grappa;
 
 final class VertexAttributes<VertexType>
@@ -1130,18 +1134,17 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 		return neighbourConns / (double) numOfNeighbours;
 	}
 
+
 	/**
 	 * Get the common neighbours of two nodes m and n
-	 * Source: http://med.bioinf.mpi-inf.mpg.de/netanalyzer/help/2.6.1/index.html#complex
 	 * @param m
 	 * @param n
+	 * @return set of shared neighbours
 	 */
 	public HashSet<VertexType> getSharedNeighbours(VertexType m, VertexType n)
 	{
-		//HashMap<Integer, VertexType> index2Vertex = new HashMap<Integer, VertexType>();
 		if(slimGraph == null)
 			slimGraph = new SlimDirectedGraphView<VertexType>(this);
-
 
 		int mIndex = slimGraph.getVertexIndex(m);
 		int nIndex = slimGraph.getVertexIndex(n);
@@ -1166,140 +1169,42 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 			}
 		}
 		return sN;
-		/*
-		HashSet<VertexType> sharedNeighbours = new HashSet<VertexType>();
-		//get neighbours of m
-		/*
-		Iterator<VertexType> iter = getChildNodes(m);
-
-		while(iter.hasNext())
-			sharedNeighbours.add(iter.next());
-
-		iter = getChildNodes(n);
-		while(iter.hasNext())
-		{
-			VertexType k = iter.next();
-			if(!sharedNeighbours.contains(k))
-				sharedNeighbours.remove(k);
-		}
-
-
-		Iterator<VertexType> mIter = getChildNodes(m);
-		Iterator<VertexType> nIter = getChildNodes(n);
-		while(mIter.hasNext())
-		{
-			VertexType v = mIter.next();
-			while(nIter.hasNext())
-			{
-				VertexType u = nIter.next();
-				if(v.equals(u))
-				{
-					sharedNeighbours.add(v);
-					break;
-				}
-			}
-		}
-
-		return sharedNeighbours;*/
 	}
 	/**
-	 * Calculates the betweenness centrality
-	 * This measure describes how often a node lies on the shortest path between two other nodes with respect to the total number of shortest paths.
-	 * It is computed as follows: Cb(n) = sum[s != n != t] (sigma_s->t(n) / sigma_s->t)
-	 * The betweenness centrality is implemented according to Brandes, 2001, A Faster Algorithm for Betweenness Centrality
-	 * @param
-	 * @return
+	 * determines the number of shared neighbours between m and n
+	 * @param m
+	 * @param n
+	 * @return number of common nodes
 	 */
-	/*
-	public HashMap<VertexType, Double> getBetweennessCentrality()
+	public int getNumberOfSharedNeighbours(VertexType m, VertexType n)
 	{
-		HashMap<VertexType, Double> Cb = new HashMap<VertexType, Double>();
+		if(slimGraph == null)
+			slimGraph = new SlimDirectedGraphView<VertexType>(this);
 
-		Iterable<VertexType> nodes = getVertices();
+		int mIndex = slimGraph.getVertexIndex(m);
+		int nIndex = slimGraph.getVertexIndex(n);
 
-		java.util.Stack<VertexType> S = new java.util.Stack<VertexType>();
-		//nodes that have to be visited
-		java.util.Queue<VertexType> Q = new LinkedList<VertexType>();
-		HashMap<VertexType, ArrayList<VertexType>> P = new HashMap<VertexType, ArrayList<VertexType>>();
+		int[] mChildren = slimGraph.vertexChildren[mIndex];
+		int[] nChildren = slimGraph.vertexChildren[nIndex];
 
-		//todo: change to hashmap to keep node - value relationship
-		HashMap<VertexType, Integer> sigma = new HashMap<VertexType, Integer>();
-		HashMap<VertexType, Integer> d = new HashMap<VertexType, Integer>();
-		HashMap<VertexType, Double> delta = new HashMap<VertexType, Double>();
-
-		for( VertexType s : nodes)
+		int mPtr = 0;
+		int nPtr = 0;
+		int numOfSharedNeighbours = 0;
+		while(mPtr < mChildren.length && nPtr < nChildren.length)
 		{
-			S.clear();
-			for(VertexType w : nodes)
-				P.put(w, new ArrayList<VertexType>());
-
-			for(VertexType t : nodes)
+			if(mChildren[mPtr] < nChildren[nPtr])
+				++mPtr;
+			else if(nChildren[nPtr] < mChildren[mPtr])
+				++nPtr;
+			else
 			{
-				if(!t.equals(s))
-				{
-					d.put(t, -1);
-					sigma.put(t, 0);
-				}
-			}
-			d.put(s, 0);
-			sigma.put(s, 1);
-
-			Q.clear();
-			Q.offer(s);
-
-			while(!Q.isEmpty())
-			{
-				VertexType v = Q.remove();
-				S.push(v);
-
-				Iterator<VertexType> wIt = getChildNodes(v); //neighbours of v
-				while(wIt.hasNext())
-				{
-					VertexType w = wIt.next();
-
-					//seen the first time?
-					if(d.get(w) < 0)
-					{
-						Q.offer(w);
-						d.put(w, d.get(v) + 1);
-					}
-
-					//shortest path to w via v?
-					if(d.get(w) == (d.get(v) + 1))
-					{
-						sigma.put(w, sigma.get(w) + sigma.get(v));
-						ArrayList<VertexType> temp = P.get(w);
-						temp.add(v);
-						P.put(w, temp);
-					}
-				}
-			}
-			for(VertexType v : nodes)
-			{
-				delta.put(v, 0.0);
-				Cb.put(v, 0.0);
-			}
-
-
-			while(!S.isEmpty())
-			{
-				VertexType w = S.pop();
-				for(VertexType v : P.get(w))
-				{
-					double deltaVal = delta.get(v) + (sigma.get(v)/ (double) sigma.get(w)) * (1 + delta.get(w));
-					delta.put(v, deltaVal);
-				}
-				if(!w.equals(s))
-				{
-					double val = Cb.get(w) + delta.get(w);
-					Cb.put(w, val);
-				}
-
+				++numOfSharedNeighbours;
+				++mPtr;
+				++nPtr;
 			}
 		}
-		return Cb;
+		return numOfSharedNeighbours;
 	}
-	 */
 
 	/**
 	 * Determines the degree distribution of the graph
@@ -1324,106 +1229,6 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 	}
 
 	/**
-	 * Determines the average shortest shortest path of the complete graph.
-	 * @return
-	 */
-	/*
-	public double getAverageShortestPath()
-	{
-	//TODO: find ALL shortest pathes !!
-		final ArrayList<VertexType> oldRoots = new ArrayList<VertexType>();
-		final int[] stats = new int[]{0, 0}; //0: total length, 1: total number
-
-		for(VertexType n : getVertices())
-		{
-			singleSourceShortestPath(n,
-									 false,
-									 new IDistanceVisitor<VertexType>()
-									 {
-
-										@Override
-										public boolean visit(VertexType vertex, List<VertexType> path, int distance)
-										{
-											if( !oldRoots.contains(vertex) ) //do not count the same path twice, e.g. a - b, b - a
-											{
-												stats[0] += distance;
-												++stats[1];
-											}
-											return true;
-										}
-									 }
-									);
-		}
-
-		return (double)stats[0]/stats[1];
-	}
-	 */
-	/**
-	 * Determine the average shortest path for a particular node.
-	 * @param n
-	 * @return
-	 */
-	/*
-	public double getAverageShortestPath(final VertexType n)
-	{
-		final int[] stats = new int[]{0, 0}; //0: total length, 1: total number
-
-		singleSourceShortestPath(n,
-								 false,
-								 new IDistanceVisitor<VertexType>()
-								 {
-									@Override
-									public boolean visit(VertexType vertex, List<VertexType> path, int distance)
-									{
-										if( !vertex.equals(n) ) //do not count the same path twice, e.g. a - b, b - a
-										{
-											stats[0] += distance;
-											++stats[1];
-										}
-										return true;
-									}
-								 }
-								);
-		return (double)stats[0]/stats[1];
-	}
-	 */
-	/**
-	 * Determines the closeness centrality of a node n.
-	 * It is the inverse of the average shortest path length and describes how fast information spreads among the nodes in the network.
-	 * Source: http://med.bioinf.mpi-inf.mpg.de/netanalyzer/help/2.6.1/index.html#complex
-	 * @param n
-	 * @return
-	 */
-	/*
-	public double getClosenessCentrality(VertexType n)
-	{
-		//TODO: need correct average shortest path method
-
-		final ArrayList<Integer> totalShortestPathLengths = new ArrayList<Integer>();
-		singleSourceShortestPath(	n,
-									false,
-									new IDistanceVisitor<VertexType>()
-									{
-										@Override
-										public boolean visit(VertexType vertex, List<VertexType> path, int distance)
-										{
-											totalShortestPathLengths.add(distance);
-											return false;
-										}
-									}
-		);
-
-		double CC = 0.0;
-		int sum = 0;
-		for(int len : totalShortestPathLengths)
-			sum += len;
-
-		CC = sum / (double) totalShortestPathLengths.size();
-		return CC;
-	}
-	 */
-
-	/**
 	 * Determines the topological coefficient of a particular node n.
 	 * It is a measure for the tendency of a node to share neighbours.
 	 * @param n
@@ -1444,17 +1249,16 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 				{
 					if(!u.equals(n)) //ignore start node
 					{
-						if(!known.contains(u)) //only calculate if this node was not seen already
+						if(known.add(u)) //only calculate if this node was not seen already //contains -> add
 						{
-							shared = getSharedNeighbours(n, u).size();
+							shared = getNumberOfSharedNeighbours(n, u);
 							if(shared > 0)
 							{
 								TC += shared;
 								if(slimGraph.hasEdge(n, u))
 									TC += 1.0;
+								++numOfShared;
 							}
-							++numOfShared;
-							known.add(u);
 						}
 					}
 				}
@@ -1465,136 +1269,142 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 		return TC;
 	}
 
-	public interface ICatchResult<ReturnType>
-	{
-		public ReturnType returnResult();
-	}
+	/**
+	 * IVertexSelector provides a method for finding particular nodes
+	 * @param <VertexType>
+	 * @param <CriterionType>
+	 */
 	public interface IVertexSelector<VertexType, CriterionType>
 	{
 		public boolean matchesCriterion(VertexType v, CriterionType criterion);
+	}
+	/**
+	 * IVertexMeasure provides a method stub for obtaining a particular measure
+	 * @param <VertexType>
+	 */
+	public interface IVertexMeasure<VertexType>
+	{
 		public double getMeasure(VertexType v);
+	}
+	/**
+	 * Finds all nodes that fulfill the given criterion
+	 * @param criterion
+	 * @param selector
+	 * @return subset of nodes
+	 */
+	public <CriterionType> ArrayList<VertexType> getVertexSubset(CriterionType criterion, IVertexSelector<VertexType, CriterionType> selector)
+	{
+		ArrayList<VertexType> subset = new ArrayList<VertexType>();
+		for(VertexType v : getVertices())
+		{
+			if(selector.matchesCriterion(v, criterion))
+				subset.add(v);
+		}
+		return subset;
+	}
+	/**
+	 * Calculates the average measure specified by selector in a subset of nodes that fulfill the given criterion
+	 * @param criterion condition that has to be fulfilled
+	 * @param selector implementation of IVertexSelector
+	 * @return
+	 */
+	public <CriterionType> double getAverageMeasureInVertexSubset(ArrayList<VertexType> subset, IVertexMeasure<VertexType> measure)
+	{
+		double avgMeasureInSubset = 0.0;
+		for(VertexType v : subset)
+			avgMeasureInSubset += measure.getMeasure(v);
+
+		return (double) avgMeasureInSubset/subset.size();
 	}
 	/**
 	 * Determines an empirical degree distribution of the graph.
 	 * This function samples randomly nodes and calculates the average degree of these.
 	 * The sample size is determined by the selector which counts all genes that match a given condition
 	 * @param numOfRepetitions number of repeated samplings
-	 * @param selector instance of IVertexSelector which implements the action happening when node fulfills the criterion
+	 * @param sampleSize TODO
+	 * @param vertexMeasure instance of IVertexSelector which implements the action happening when node fulfills the criterion
+	 * @param distributionBinner TODO
 	 * @param criterion the condition that the node has to be comply with
 	 * @return
 	 */
-	public <CriterionType> HashMap<Double,Integer> getEmpiricalDistributions(int numOfRepetitions, float binSize, IVertexSelector<VertexType, CriterionType> selector, CriterionType criterion)
+	public <CriterionType> HashMap<Double,Integer> getEmpiricalDistribution(int numOfRepetitions, int sampleSize, float binSize, IVertexMeasure<VertexType> vertexMeasure, IDistributionBinner distributionBinner)
 	{
 		HashMap<Integer,VertexType> genes = new HashMap<Integer,VertexType>();
-		final ArrayList<Integer> indices = new ArrayList<Integer>();
 		int idx = 0;
-		int sampleSize = 0;
-		double observedMeasure = 0.0;
+		ArrayList<Integer> allIndices = new ArrayList<Integer>(); //required for resetting availableIndices
 
-/*		double observedDeg = 0.0;
-		double observedCC = 0.0;
-		double observedNC = 0.0;
-		double observedTC = 0.0;*/
 		//initialization
 		for(VertexType v : getVertices())
 		{
 			genes.put(idx, v); //map indices onto vertices
-			indices.add(idx); //hold indices
+			allIndices.add(idx);
 			++idx;
-			//if vertex fulfills criterion increase sample size and track observed degree
-			if(selector.matchesCriterion(v, criterion))
-			{
-				++sampleSize;
-				observedMeasure += selector.getMeasure(v);
-
-/*				observedDeg += getOutDegree(v);
-				observedCC += getClusteringCoefficient(v);
-				observedNC += getNeighbourhoodConnectivity(v);
-				observedTC += getTopologicalCoefficient(v);*/
-			}
 		}
-		System.out.println(String.format("Avg Measure: %f", observedMeasure/sampleSize));
-		//System.out.println(String.format("Avg: Deg: %f, CC: %f, NC: %f, TC: %f", observedDeg/sampleSize, observedCC/sampleSize, observedNC/sampleSize, observedTC/sampleSize));
-		//System.out.println("Observed degree: " + observedDeg/sampleSize);
-
 
 		java.util.Random rng = new java.util.Random();
-		ArrayList<Integer> availableIndices; //index list from which used indices will be removed
+		ArrayList<Integer> availableIndices; //required for unique random numbers //index list from which used indices will be removed
+
 		ArrayList<VertexType> sample = new ArrayList<VertexType>(); //the sampled nodes
-		HashMap<String,HashMap<Double, Integer>> empDistribs = new HashMap<String,HashMap<Double, Integer>>(); //output map: degree onto count
 		double[] sampledAvgMeasure = new double[numOfRepetitions];
 
-/*		double[] sampledAvgDegs = new double[numOfRepetitions]; //array used for binning
-		double[] sampledAvgCC = new double[numOfRepetitions];
-		double[] sampledAvgNC = new double[numOfRepetitions];
-		double[] sampledAvgTC = new double[numOfRepetitions];*/
+		int gIdx;
+		int posInAvailIndex;
 		//sampling runs
 		for(int i = 0; i < numOfRepetitions; i++)
 		{
 			System.out.println(String.format("Run no. %d", i+1));
-			availableIndices = (ArrayList<Integer>) indices.clone();
+			availableIndices = (ArrayList<Integer>) allIndices.clone(); //refresh availableIndices
 			sample.clear();
 			//draw as many nodes as are in the group under study
 			for(int j = 0; j < sampleSize; j++)
 			{
-				int posInAvailIdx = rng.nextInt(availableIndices.size());
-				int gIdx = availableIndices.get(posInAvailIdx);
+				posInAvailIndex = rng.nextInt(availableIndices.size());
+				gIdx = allIndices.get(posInAvailIndex);
 				sample.add(genes.get(gIdx));
-				availableIndices.remove(posInAvailIdx);
+				availableIndices.remove(posInAvailIndex); //for unique random numbers
 			}
+
 			double measure = 0.0;
 
-			double deg = 0.0;
-			double cc = 0.0;
-			double nc = 0.0;
-			double tc = 0.0;
 			for(VertexType v: sample)
-				measure += selector.getMeasure(v);
-/*			{
-				deg += getOutDegree(v);
-				cc += getClusteringCoefficient(v);
-				nc += getNeighbourhoodConnectivity(v);
-				tc += getTopologicalCoefficient(v);
-			}*/
-			sampledAvgMeasure[i] = (double) measure/sample.size();
+				measure += vertexMeasure.getMeasure(v);
 
-/*			sampledAvgDegs[i] = (double) deg/sample.size();
-			sampledAvgCC[i] = (double) cc/sample.size();
-			sampledAvgNC[i] = (double) nc/sample.size();
-			sampledAvgTC[i] = (double) tc/sample.size();*/
+			sampledAvgMeasure[i] = (double) measure/sampleSize;
+
 		}
 		Arrays.sort(sampledAvgMeasure);
-		return empiricialDistributionBinner(binSize, sampledAvgMeasure);
-
-/*		Arrays.sort(sampledAvgDegs);
-		Arrays.sort(sampledAvgCC);
-		Arrays.sort(sampledAvgNC);
-		Arrays.sort(sampledAvgTC);*/
-
-
-
-/*		empDistribs.put("degree", empiricialDistributionBinner(binSize, sampledAvgDegs));
-		empDistribs.put("cc", empiricialDistributionBinner(binSize, sampledAvgCC));
-		empDistribs.put("nc", empiricialDistributionBinner(binSize, sampledAvgNC));
-		empDistribs.put("tc", empiricialDistributionBinner(binSize, sampledAvgTC));*/
-
-		//return empDistribs;
+		return empiricialDistributionBinner(binSize, sampledAvgMeasure, distributionBinner);
 	}
-
+	/**
+	 * Helper interface for dealing with doubles smaller than 1
+	 *
+	 */
+	public interface IDistributionBinner
+	{
+		/**
+		 * Checks if a double value lies within an interval
+		 * @param currentValue the value to be checked
+		 * @param binEnd corresponds to the right limit of a bin
+		 * @return
+		 */
+		public boolean isInBin(double currentValue, double binEnd);
+	}
 	/**
 	 * A method for binning and counting the sampled average of a measure
 	 * @param binSize size of a bin
 	 * @param sampledAvgX array that constains the sampled values of a measure X
+	 * @param distributionBinner TODO
 	 * @return
 	 */
-	private HashMap<Double, Integer> empiricialDistributionBinner(float binSize, double[] sampledAvgX)
+	private HashMap<Double, Integer> empiricialDistributionBinner(float binSize, double[] sampledAvgX, IDistributionBinner distributionBinner)
 	{
 		HashMap<Double, Integer> distribution = new HashMap<Double, Integer>();
 		double currentBin = sampledAvgX[0];
 		int counter = 0;
 		for(int j = 0; j < sampledAvgX.length; j++)
 		{
-			if(sampledAvgX[j] < currentBin + binSize)
+			//if(sampledAvgX[j] < currentBin + binSize)
+			if(distributionBinner.isInBin(sampledAvgX[j], currentBin + binSize))
 				++counter;
 			else
 			{
