@@ -1384,34 +1384,42 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 		/**
 		 * Checks if a double value lies within an interval
 		 * @param currentValue the value to be checked
-		 * @param binEnd corresponds to the right limit of a bin
+		 * @param currentBin TODO
+		 * @param binSize corresponds to the right limit of a bin
 		 * @return
 		 */
-		public boolean isInBin(double currentValue, double binEnd);
+		public boolean isInBin(double currentValue, double currentBin, float binSize);
 	}
 	/**
 	 * A method for binning and counting the sampled average of a measure
 	 * @param binSize size of a bin
-	 * @param sampledAvgX array that constains the sampled values of a measure X
-	 * @param distributionBinner TODO
+	 * @param sampledAvgX array that contains the sampled values of a measure X
+	 * @param distributionBinner 
 	 * @return
 	 */
 	private HashMap<Double, Integer> empiricialDistributionBinner(float binSize, double[] sampledAvgX, IDistributionBinner distributionBinner)
 	{
 		HashMap<Double, Integer> distribution = new HashMap<Double, Integer>();
 		double currentBin = sampledAvgX[0];
-		int counter = 0; 
+		distribution.put(currentBin, 0);
+		int counter = 0;
+		int debugCounter = 0;
+		//for all sampled values
 		for(int j = 0; j < sampledAvgX.length; j++)
-		{
-			//if(sampledAvgX[j] < currentBin + binSize)
-			if(distributionBinner.isInBin(sampledAvgX[j], currentBin + binSize))
-				++counter;
-			else
+		{			
+			//if the current value is inside the current bin
+			if(distributionBinner.isInBin(sampledAvgX[j], currentBin, binSize))
 			{
-				distribution.put(currentBin, counter);
-				currentBin = sampledAvgX[j];
-				counter = 1;
-			}			
+				counter = distribution.get(currentBin) + 1; //increase the counter
+				distribution.put(currentBin, counter); //save it in the distribution map
+			}
+			else
+			{	
+				debugCounter += distribution.get(currentBin); //sum up all previously counted elements (sum must be equal to numOfRepetitions)
+				currentBin = sampledAvgX[j]; //the current value is the next bin
+				counter = 0; //reset counter
+				distribution.put(currentBin, 0); //initialize the bin counter	
+			}		
 		}
 		return distribution;
 	}
