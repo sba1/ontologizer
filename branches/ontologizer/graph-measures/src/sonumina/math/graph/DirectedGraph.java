@@ -1407,19 +1407,29 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 		//for all sampled values
 		for(int j = 0; j < sampledAvgX.length; j++)
 		{
+			//small bug: omits values of the interval that is not followed by a new interval
 			//if the current value is inside the current bin
-			if(distributionBinner.isInBin(sampledAvgX[j], currentBin, binSize))
+//			if(distributionBinner.isInBin(sampledAvgX[j], currentBin, binSize))
+//			{
+//				counter = distribution.get(currentBin) + 1; //increase the counter
+//				distribution.put(currentBin, counter); //save it in the distribution map
+//			}
+//			else
+//			{
+//				debugCounter += distribution.get(currentBin); //sum up all previously counted elements (sum must be equal to numOfRepetitions)
+//				currentBin = sampledAvgX[j]; //the current value is the next bin
+//				counter = 0; //reset counter
+//				distribution.put(currentBin, 0); //initialize the bin counter
+//			}
+			//if a value lies outside the current bin set this value as the new bin and initialize the counter to 0
+			if(!distributionBinner.isInBin(sampledAvgX[j], currentBin, binSize))
 			{
-				counter = distribution.get(currentBin) + 1; //increase the counter
-				distribution.put(currentBin, counter); //save it in the distribution map
+				currentBin = sampledAvgX[j];
+				distribution.put(currentBin, 0);
 			}
-			else
-			{
-				debugCounter += distribution.get(currentBin); //sum up all previously counted elements (sum must be equal to numOfRepetitions)
-				currentBin = sampledAvgX[j]; //the current value is the next bin
-				counter = 0; //reset counter
-				distribution.put(currentBin, 0); //initialize the bin counter
-			}
+
+			//increase the counter in the current bin by one
+			distribution.put(currentBin, distribution.get(currentBin) + 1);
 		}
 		return distribution;
 	}
