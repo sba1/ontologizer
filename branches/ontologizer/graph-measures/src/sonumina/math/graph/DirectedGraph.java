@@ -9,15 +9,10 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.PriorityQueue;
 import java.util.Set;
-import java.util.Map.Entry;
-
-import sonumina.math.graph.DirectedGraph.IDistributionBinner;
-
-import de.charite.compbio.ppi.Protein;
-
-import att.grappa.Grappa;
+import java.util.Stack;
 
 final class VertexAttributes<VertexType>
 {
@@ -1406,21 +1401,7 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 		int debugCounter = 0;
 		//for all sampled values
 		for(int j = 0; j < sampledAvgX.length; j++)
-		{			
-			//small bug: omits values of the interval that is not followed by a new interval
-			//if the current value is inside the current bin
-//			if(distributionBinner.isInBin(sampledAvgX[j], currentBin, binSize))
-//			{
-//				counter = distribution.get(currentBin) + 1; //increase the counter
-//				distribution.put(currentBin, counter); //save it in the distribution map
-//			}
-//			else
-//			{	
-//				debugCounter += distribution.get(currentBin); //sum up all previously counted elements (sum must be equal to numOfRepetitions)
-//				currentBin = sampledAvgX[j]; //the current value is the next bin
-//				counter = 0; //reset counter
-//				distribution.put(currentBin, 0); //initialize the bin counter	
-//			}	
+		{				
 			//if a value lies outside the current bin set this value as the new bin and initialize the counter to 0
 			if(!distributionBinner.isInBin(sampledAvgX[j], currentBin, binSize))
 			{
@@ -1432,5 +1413,37 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 			distribution.put(currentBin, distribution.get(currentBin) + 1);
 		}
 		return distribution;
+	}
+	
+	public void getAllPaths(VertexType source, VertexType dest, List<List<VertexType>> allPaths)
+	{
+		LinkedList<VertexType> visited = new LinkedList<VertexType>();
+		visited.add(source);
+		Stack<VertexType> S = new Stack<VertexType>();
+		for(VertexType v : getDescendantVertices(source))
+			S.push(v);
+		List<VertexType> path = new ArrayList<VertexType>();
+		path.add(source);
+		while(!S.isEmpty())
+		{
+			VertexType v = S.pop();
+			for(VertexType u : getDescendantVertices(v))
+			{
+				if(u.equals(dest))
+				{
+					path.add(v);
+					path.add(u);
+					allPaths.add(path);
+					path = new ArrayList<VertexType>();
+					path.add(source);
+					path.add(v);
+				}
+				if(!visited.contains(u))
+				{
+					visited.add(u);
+					S.push(u);
+				}
+			}
+		}
 	}
 }
