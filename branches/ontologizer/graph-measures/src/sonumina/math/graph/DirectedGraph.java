@@ -1460,6 +1460,8 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 	{
 //		//http://www.csl.mtu.edu/cs2321/www/newLectures/26_Depth_First_Search.html
 		HashSet<VertexType> markedNodes = new HashSet<VertexType>();
+		markedNodes.add(dest);
+
 		HashSet<VertexType> visited = new HashSet<VertexType>();
 		HashSet<VertexType> activeNodesOnStack = new HashSet<VertexType>();
 
@@ -1478,50 +1480,33 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 		while(!S.isEmpty())
 		{
 			VertexType v = S.pop();
-			//visited.add(v);
-			activeNodesOnStack.remove(v);
-			//remember the nodes along the path
 			nodesSeenSoFar.add(v);
 
-			//get all of its neighbours
 			for(VertexType u : getDescendantVertices(v))
 			{
-				if(u.equals(source)) //skip source node
+				if(u.equals(source))
 					continue;
 
-				//if the considered node is not the destination
-				if(!v.equals(dest))
-				{
-					//if the neighbours are not already on the stack add them to the stack and the visited list
-					if(!activeNodesOnStack.contains(u))
-					{
-						//check whether this neighbour has already a connection to a valid path
-						if(visited.contains(u))
-						{
-							if(markedNodes.contains(u))
-								markedNodes.add(v);
-						}
-						else
-						{
-							activeNodesOnStack.add(u);
-							S.push(u);
-						}
-					}
-				}
-				else //otherwise add all nodes seen to markedNodes and clear the seen nodes
+				if(v.equals(dest))
+					markedNodes.add(u);
+
+				//case one: the destination is a neighbour
+				//mark all seen nodes as valid path
+				// OR
+				//case two: v is connected to a valid path
+				if(u.equals(dest) || markedNodes.contains(u))
 				{
 					for(VertexType w : nodesSeenSoFar)
-					{
-						visited.add(w);
 						markedNodes.add(w);
-					}
-
 					nodesSeenSoFar.clear();
 				}
+				else
+				{
+					S.push(u);
+				}
 			}
-
 		}
-
+		markedNodes.add(source);
 		return markedNodes;
 	}
 }
