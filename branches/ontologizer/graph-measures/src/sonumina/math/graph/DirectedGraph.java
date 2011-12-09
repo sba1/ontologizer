@@ -1415,35 +1415,113 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 		return distribution;
 	}
 	
-	public void getAllPaths(VertexType source, VertexType dest, List<List<VertexType>> allPaths)
+	public HashSet<VertexType> connectedVertexSubset(VertexType source, VertexType dest)
 	{
-		LinkedList<VertexType> visited = new LinkedList<VertexType>();
-		visited.add(source);
-		Stack<VertexType> S = new Stack<VertexType>();
-		for(VertexType v : getDescendantVertices(source))
-			S.push(v);
-		List<VertexType> path = new ArrayList<VertexType>();
-		path.add(source);
-		while(!S.isEmpty())
+		HashSet<VertexType> visitedNodes = new HashSet<VertexType>();
+		HashSet<VertexType> subgraphNodes = new HashSet<VertexType>();
+		visitedNodes.add(source);
+		
+		subgraphNodes.add(dest);
+		
+		nodeOnPath(source, dest, visitedNodes, subgraphNodes);
+		
+		return subgraphNodes;
+	}
+	private boolean nodeOnPath(VertexType node, VertexType dest, HashSet<VertexType> visitedNodes, HashSet<VertexType> markedNodes)
+	{
+		boolean marked = false;
+		
+		visitedNodes.add(node);
+		
+		if(markedNodes.contains(node))
+			return true;
+		
+		for(VertexType v : getDescendantVertices(node))
 		{
-			VertexType v = S.pop();
-			for(VertexType u : getDescendantVertices(v))
+			
+			if(markedNodes.contains(v))
 			{
-				if(u.equals(dest))
+				markedNodes.add(node);
+				marked = true;
+			}
+			else
+			{
+				if(nodeOnPath(v, dest, visitedNodes, markedNodes))
 				{
-					path.add(v);
-					path.add(u);
-					allPaths.add(path);
-					path = new ArrayList<VertexType>();
-					path.add(source);
-					path.add(v);
-				}
-				if(!visited.contains(u))
-				{
-					visited.add(u);
-					S.push(u);
+					markedNodes.add(node);
+					marked = true;
 				}
 			}
 		}
+		return marked;
+	}
+	
+	public HashSet<VertexType> getAllPaths(VertexType source, VertexType dest)
+	{
+//		//http://www.csl.mtu.edu/cs2321/www/newLectures/26_Depth_First_Search.html
+		HashSet<VertexType> markedNodes = new HashSet<VertexType>();
+		HashSet<VertexType> visited = new HashSet<VertexType>();
+		HashSet<VertexType> activeNodesOnStack = new HashSet<VertexType>();
+		
+		ArrayList<VertexType> nodesSeenSoFar = new ArrayList<VertexType>();
+		
+		
+		Stack<VertexType> S = new Stack<VertexType>();
+
+		//initialize stack with direct neighbours of the source
+		for(VertexType v : getDescendantVertices(source))
+		{
+			activeNodesOnStack.add(v);
+			S.push(v);
+		}
+
+		while(!S.isEmpty())
+		{
+			VertexType v = S.pop();
+			//visited.add(v);
+			activeNodesOnStack.remove(v);
+			//remember the nodes along the path
+			nodesSeenSoFar.add(v);
+			
+			//get all of its neighbours
+			for(VertexType u : getDescendantVertices(v))
+			{
+				if(u.equals(source)) //skip source node
+					continue;
+				
+				//if the considered node is not the destination
+				if(!v.equals(dest))
+				{
+					//if the neighbours are not already on the stack add them to the stack and the visited list
+					if(!activeNodesOnStack.contains(u))
+					{
+						//check whether this neighbour has already a connection to a valid path
+						if(visited.contains(u))
+						{
+							if(markedNodes.contains(u))
+								markedNodes.add(v);
+						}
+						else
+						{
+							activeNodesOnStack.add(u);
+							S.push(u);
+						}
+					}
+				}
+				else //otherwise add all nodes seen to markedNodes and clear the seen nodes
+				{
+					for(VertexType w : nodesSeenSoFar)
+					{
+						visited.add(w);
+						markedNodes.add(w);
+					}
+					
+					nodesSeenSoFar.clear();
+				}
+			}
+		
+		}
+		
+		return markedNodes;
 	}
 }
