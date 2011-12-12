@@ -1509,4 +1509,58 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 		markedNodes.add(source);
 		return markedNodes;
 	}
+	
+	public HashSet<VertexType> getAllPathsSandbox(VertexType source, VertexType dest)
+	{
+//		//http://www.csl.mtu.edu/cs2321/www/newLectures/26_Depth_First_Search.html
+		HashSet<VertexType> markedNodes = new HashSet<VertexType>();
+		markedNodes.add(dest);
+		HashSet<VertexType> visited = new HashSet<VertexType>();
+		HashSet<VertexType> activeNodesOnStack = new HashSet<VertexType>();		
+		ArrayList<VertexType> nodesSeenSoFar = new ArrayList<VertexType>();
+		Stack<VertexType> S = new Stack<VertexType>();
+
+		//initialize stack with direct neighbours of the source
+		for(VertexType v : getDescendantVertices(source))
+		{
+			activeNodesOnStack.add(v);
+			//the neighbour MUST have at least two edges to be a path candidate
+			if(getOutDegree(v) > 1)
+				S.push(v);
+		}
+
+		while(!S.isEmpty())
+		{
+			VertexType v = S.pop();
+			visited.add(v);
+			nodesSeenSoFar.add(v); //track the nodes that were visited until the destination is found
+//			activeNodesOnStack.remove(v);
+			for(VertexType u : getDescendantVertices(v))
+			{
+				if(u.equals(dest))
+				{
+					//if the destination is found set the nodes as marked and reset the seen nodes
+					for(VertexType w : nodesSeenSoFar)
+						markedNodes.add(w);
+					nodesSeenSoFar.clear();
+				}
+				else if(markedNodes.contains(u))
+				{
+					//if the neighbour belongs to a valid path add v
+					markedNodes.add(v);
+				}
+				else
+				{	
+					//if the neighbour node was not processed (visited) already OR lies on the stack (i.e. will be processed in some time)
+					// AND the neighbour is not the source AND its degree is larger than one
+					//this should prevent loops by adding nodes multiple times on the stack and excludes leaves
+					if( ( !visited.contains(u) || !activeNodesOnStack.contains(u) )
+							&& !u.equals(source) && getOutDegree(u) > 1)
+						S.push(u);
+				}
+			}
+		}
+		markedNodes.add(source);
+		return markedNodes;
+	}
 }
