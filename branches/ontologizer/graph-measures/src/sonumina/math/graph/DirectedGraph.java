@@ -1461,60 +1461,6 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 //		//http://www.csl.mtu.edu/cs2321/www/newLectures/26_Depth_First_Search.html
 		HashSet<VertexType> markedNodes = new HashSet<VertexType>();
 		markedNodes.add(dest);
-
-		HashSet<VertexType> visited = new HashSet<VertexType>();
-		HashSet<VertexType> activeNodesOnStack = new HashSet<VertexType>();
-
-		ArrayList<VertexType> nodesSeenSoFar = new ArrayList<VertexType>();
-
-
-		Stack<VertexType> S = new Stack<VertexType>();
-
-		//initialize stack with direct neighbours of the source
-		for(VertexType v : getDescendantVertices(source))
-		{
-			activeNodesOnStack.add(v);
-			S.push(v);
-		}
-
-		while(!S.isEmpty())
-		{
-			VertexType v = S.pop();
-			nodesSeenSoFar.add(v);
-
-			for(VertexType u : getDescendantVertices(v))
-			{
-				if(u.equals(source))
-					continue;
-
-				if(v.equals(dest))
-					markedNodes.add(u);
-
-				//case one: the destination is a neighbour
-				//mark all seen nodes as valid path
-				// OR
-				//case two: v is connected to a valid path
-				if(u.equals(dest) || markedNodes.contains(u))
-				{
-					for(VertexType w : nodesSeenSoFar)
-						markedNodes.add(w);
-					nodesSeenSoFar.clear();
-				}
-				else
-				{
-					S.push(u);
-				}
-			}
-		}
-		markedNodes.add(source);
-		return markedNodes;
-	}
-
-	public HashSet<VertexType> getAllPathsSandbox(VertexType source, VertexType dest)
-	{
-//		//http://www.csl.mtu.edu/cs2321/www/newLectures/26_Depth_First_Search.html
-		HashSet<VertexType> markedNodes = new HashSet<VertexType>();
-		markedNodes.add(dest);
 		HashSet<VertexType> visited = new HashSet<VertexType>();
 		HashSet<VertexType> activeNodesOnStack = new HashSet<VertexType>();
 		ArrayList<VertexType> nodesSeenSoFar = new ArrayList<VertexType>();
