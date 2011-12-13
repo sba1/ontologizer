@@ -235,7 +235,8 @@ public class AssociationParser
 		int obsolete = 0;
 
 		HashSet<ByteString> myEvidences; /* Evidences converted to ByteString */
-		if (evidences != null) {
+		if (evidences != null)
+		{
 			myEvidences = new HashSet<ByteString>();
 			for (String e : evidences)
 				myEvidences.add(new ByteString(e));
@@ -247,7 +248,11 @@ public class AssociationParser
 		/* Used for alternative ids */
 		HashMap<TermID, Term> altTermID2Term = null;
 
+		/* Items as identified by the object symbol to the list of associations */
 		HashMap<ByteString, ArrayList<Association>> gene2Associations = new HashMap<ByteString, ArrayList<Association>>();
+
+		HashMap<ByteString,ByteString> dbObject2ObjectSymbol = new HashMap<ByteString,ByteString>();
+		HashMap<ByteString,ByteString> objectSymbol2dbObject = new HashMap<ByteString,ByteString>();
 
 		int lineno = 0;
 		long millis = 0;
@@ -281,24 +286,28 @@ public class AssociationParser
 			if (buf.startsWith("!"))
 				continue;
 
-			try {
+			try
+			{
 				Association assoc = new Association(buf);
 				TermID currentTermID = assoc.getTermID();
 				Term currentTerm;
 
 				good++;
 
-				if (assoc.hasNotQualifier()) {
+				if (assoc.hasNotQualifier())
+				{
 					skipped++;
 					continue;
 				}
 
-				if (myEvidences != null) {
+				if (myEvidences != null)
+				{
 					/*
 					 * Skip if evidence of the annotation was not supplied as
 					 * argument
 					 */
-					if (!myEvidences.contains(assoc.getEvidence())) {
+					if (!myEvidences.contains(assoc.getEvidence()))
+					{
 						skipped++;
 						evidenceMismatch++;
 						continue;
@@ -306,8 +315,10 @@ public class AssociationParser
 				}
 
 				currentTerm = terms.get(currentTermID);
-				if (currentTerm == null) {
-					if (altTermID2Term == null) {
+				if (currentTerm == null)
+				{
+					if (altTermID2Term == null)
+					{
 						/* Create the alternative ID to Term map */
 						altTermID2Term = new HashMap<TermID, Term>();
 
@@ -321,14 +332,10 @@ public class AssociationParser
 					 * giving up.
 					 */
 					currentTerm = altTermID2Term.get(currentTermID);
-					if (currentTerm == null) {
-						System.err.println("Skipping association of item \""
-								+ assoc.getObjectSymbol() + "\" to "
-								+ currentTermID
-								+ " because the term was not found!");
-						System.err
-								.println("(Are the obo file and the association "
-										+ "file both up-to-date?)");
+					if (currentTerm == null)
+					{
+						System.err.println("Skipping association of item \"" + assoc.getObjectSymbol() + "\" to " + currentTermID + " because the term was not found!");
+						System.err.println("(Are the obo file and the association " + "file both up-to-date?)");
 						skipped++;
 						continue;
 					} else {
@@ -340,12 +347,10 @@ public class AssociationParser
 
 				usedGoTerms.add(currentTermID);
 
-				if (currentTerm.isObsolete()) {
-					System.err.println("Skipping association of item \""
-							+ assoc.getObjectSymbol() + "\" to "
-							+ currentTermID + " because term is obsolete!");
-					System.err.println("(Are the obo file and the association "
-							+ "file in sync?)");
+				if (currentTerm.isObsolete())
+				{
+					System.err.println("Skipping association of item \"" + assoc.getObjectSymbol() + "\" to " + currentTermID + " because term is obsolete!");
+					System.err.println("(Are the obo file and the association file in sync?)");
 					skipped++;
 					obsolete++;
 					continue;
@@ -354,8 +359,8 @@ public class AssociationParser
 				ByteString[] synonyms;
 
 				/* populate synonym string field */
-				if (assoc.getSynonym() != null
-						&& assoc.getSynonym().length() > 2) {
+				if (assoc.getSynonym() != null && assoc.getSynonym().length() > 2)
+				{
 					/*
 					 * Note that there can be mutiple synonyms, separated by a
 					 * pipe
@@ -364,45 +369,73 @@ public class AssociationParser
 				} else
 					synonyms = null;
 
-				if (names != null) {
+				if (names != null)
+				{
 					/* We are only interested in associations to given genes */
 					boolean keep = false;
 
 					/* Check if synoyms are contained */
-					if (synonyms != null) {
-						for (int i = 0; i < synonyms.length; i++) {
-							if (names.contains(synonyms[i])) {
+					if (synonyms != null)
+					{
+						for (int i = 0; i < synonyms.length; i++)
+						{
+							if (names.contains(synonyms[i]))
+							{
 								keep = true;
 								break;
 							}
 						}
 					}
 
-					if (keep || names.contains(assoc.getObjectSymbol())
-							|| names.contains(assoc.getDB_Object())) {
+					if (keep || names.contains(assoc.getObjectSymbol()) || names.contains(assoc.getDB_Object()))
+					{
 						kept++;
-					} else {
+					} else
+					{
 						skipped++;
 						continue;
 					}
 				} else
+				{
 					kept++;
+				}
 
-				if (synonyms != null) {
+				if (synonyms != null)
+				{
 					for (int i = 0; i < synonyms.length; i++)
 						synonym2gene.put(synonyms[i], assoc.getObjectSymbol());
 				}
 
-				// assoc.setGoTermName(currentTermName);
+				{
+					/* Check if db object id and object symbol are really bijective */
+					ByteString dbObject = objectSymbol2dbObject.get(assoc.getObjectSymbol());
+					if (dbObject == null) objectSymbol2dbObject.put(assoc.getObjectSymbol(),assoc.getDB_Object());
+					else
+					{
+						if (!dbObject.equals(assoc.getDB_Object()))
+							logger.warning("Line " + lineno + ": Expected that symbol \"" + assoc.getObjectSymbol() + "\" maps to \"" + dbObject + "\" but it maps to \"" + assoc.getDB_Object() + "\"");
+
+					}
+
+					ByteString objectSymbol = dbObject2ObjectSymbol.get(assoc.getDB_Object());
+					if (objectSymbol == null) dbObject2ObjectSymbol.put(assoc.getDB_Object(),assoc.getObjectSymbol());
+					else
+					{
+						if (!objectSymbol.equals(assoc.getObjectSymbol()))
+							logger.warning("Line " + lineno + ": Expected that dbObject \"" + assoc.getDB_Object() + "\" maps to symbol \"" + objectSymbol + "\" but it maps to \"" + assoc.getObjectSymbol() + "\"");
+
+					}
+
+				}
+
 				/* Add the Association to ArrayList */
 				associations.add(assoc);
 
-				ArrayList<Association> gassociations = gene2Associations
-						.get(assoc.getObjectSymbol());
-				if (gassociations == null) {
+				ArrayList<Association> gassociations = gene2Associations.get(assoc.getObjectSymbol());
+				if (gassociations == null)
+				{
 					gassociations = new ArrayList<Association>();
-					gene2Associations.put(assoc.getObjectSymbol(),
-							gassociations);
+					gene2Associations.put(assoc.getObjectSymbol(),gassociations);
 				}
 				gassociations.add(assoc);
 
