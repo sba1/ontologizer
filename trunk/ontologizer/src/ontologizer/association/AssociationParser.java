@@ -224,7 +224,7 @@ public class AssociationParser
 	 * @throws IOException
 	 */
 	@SuppressWarnings("unused")
-	private void importAssociationFile(BufferedReader is, FileInputStream fis, HashSet<ByteString> names, TermContainer terms, Collection<String> evidences, IAssociationParserProgress progress) throws IOException
+	private void importAssociationFile(BufferedReader is, FileInputStream fis, HashSet<ByteString> names, TermContainer terms, 	Collection<String> evidences, IAssociationParserProgress progress) throws IOException
 	{
 		String buf;
 		int good = 0;
@@ -234,236 +234,238 @@ public class AssociationParser
 		int kept = 0;
 		int obsolete = 0;
 
-		HashSet<ByteString> myEvidences; /* Evidences converted to Bytestring */
-		if (evidences != null)
-		{
+		HashSet<ByteString> myEvidences; /* Evidences converted to ByteString */
+		if (evidences != null) {
 			myEvidences = new HashSet<ByteString>();
 			for (String e : evidences)
 				myEvidences.add(new ByteString(e));
-		} else myEvidences = null;
+		} else
+			myEvidences = null;
 
 		HashSet<TermID> usedGoTerms = new HashSet<TermID>();
 
 		/* Used for alternative ids */
-		HashMap<TermID,Term> altTermID2Term = null;
+		HashMap<TermID, Term> altTermID2Term = null;
 
-		HashMap<ByteString, ArrayList<Association>> gene2Associations = new HashMap<ByteString,ArrayList<Association>>();
+		HashMap<ByteString, ArrayList<Association>> gene2Associations = new HashMap<ByteString, ArrayList<Association>>();
 
+		int lineno = 0;
+		long millis = 0;
 
-			int lineno = 0;
-			long millis = 0;
+		FileChannel fc = fis.getChannel();
 
-			FileChannel fc = fis.getChannel();
+		if (progress != null)
+			progress.init((int) fc.size());
 
+		while ((buf = is.readLine()) != null)
+		{
+			/* Progress stuff */
 			if (progress != null)
-				progress.init((int)fc.size());
-
-			while ((buf = is.readLine()) != null)
 			{
-				/* Progress stuff */
-				if (progress != null)
+				long newMillis = System.currentTimeMillis();
+				if (newMillis - millis > 250)
 				{
-					long newMillis = System.currentTimeMillis();
-					if (newMillis - millis > 250)
-					{
-						progress.update((int)fc.position());
-						millis = newMillis;
+					progress.update((int) fc.position());
+					millis = newMillis;
+				}
+			}
+
+			lineno++;
+
+			/*
+			 * -- 1) Construct an Association object from the gene_association.*
+			 * file.
+			 */
+			/* comment lines start with ! */
+
+			if (buf.startsWith("!"))
+				continue;
+
+			try {
+				Association assoc = new Association(buf);
+				TermID currentTermID = assoc.getTermID();
+				Term currentTerm;
+
+				good++;
+
+				if (assoc.hasNotQualifier()) {
+					skipped++;
+					continue;
+				}
+
+				if (myEvidences != null) {
+					/*
+					 * Skip if evidence of the annotation was not supplied as
+					 * argument
+					 */
+					if (!myEvidences.contains(assoc.getEvidence())) {
+						skipped++;
+						evidenceMismatch++;
+						continue;
 					}
 				}
 
-				lineno++;
+				currentTerm = terms.get(currentTermID);
+				if (currentTerm == null) {
+					if (altTermID2Term == null) {
+						/* Create the alternative ID to Term map */
+						altTermID2Term = new HashMap<TermID, Term>();
 
-				/*
-				 * -- 1) Construct an Association object from the
-				 * gene_association.* file.
-				 */
-				/* comment lines start with ! */
-
-				if (buf.startsWith("!"))
-					continue;
-
-				try
-				{
-					Association assoc = new Association(buf);
-					TermID currentTermID = assoc.getTermID();
-					Term currentTerm;
-
-					good++;
-
-					if (assoc.hasNotQualifier())
-					{
-						skipped++;
-						continue;
+						for (Term t : terms)
+							for (TermID altID : t.getAlternatives())
+								altTermID2Term.put(altID, t);
 					}
 
-					if (myEvidences != null)
-					{
-						/* Skip if evidence of the annotation was not supplied as argument */
-						if (!myEvidences.contains(assoc.getEvidence()))
-						{
-							skipped++;
-							evidenceMismatch++;
-							continue;
-						}
-					}
-
-					currentTerm = terms.get(currentTermID);
-					if (currentTerm == null)
-					{
-						if (altTermID2Term == null)
-						{
-							/* Create the alternative ID to Term map */
-							altTermID2Term = new HashMap<TermID, Term>();
-
-							for (Term t : terms)
-								for (TermID altID : t.getAlternatives())
-									altTermID2Term.put(altID, t);
-						}
-
-						/* Try to find the term among the alternative terms before
-						 * giving up.
-						 */
-						currentTerm = altTermID2Term.get(currentTermID);
-						if (currentTerm == null)
-						{
-							System.err.println("Skipping association of item \""
-									+ assoc.getObjectSymbol() + "\" to " + currentTermID
-									+ " because the term was not found!");
-							System.err.println("(Are the obo file and the association "
-									+ "file both up-to-date?)");
-							skipped++;
-							continue;
-						} else
-						{
-							/* Okay, found, so set the new attributes */
-							assoc.setTermID(currentTerm.getID());
-							currentTermID = currentTerm.getID();
-						}
-					}
-
-					usedGoTerms.add(currentTermID);
-
-					if (currentTerm.isObsolete())
-					{
+					/*
+					 * Try to find the term among the alternative terms before
+					 * giving up.
+					 */
+					currentTerm = altTermID2Term.get(currentTermID);
+					if (currentTerm == null) {
 						System.err.println("Skipping association of item \""
-								+ assoc.getObjectSymbol() + "\" to " + currentTermID
-								+ " because term is obsolete!");
-						System.err.println("(Are the obo file and the association "
-								+ "file in sync?)");
+								+ assoc.getObjectSymbol() + "\" to "
+								+ currentTermID
+								+ " because the term was not found!");
+						System.err
+								.println("(Are the obo file and the association "
+										+ "file both up-to-date?)");
 						skipped++;
-						obsolete++;
 						continue;
+					} else {
+						/* Okay, found, so set the new attributes */
+						assoc.setTermID(currentTerm.getID());
+						currentTermID = currentTerm.getID();
 					}
+				}
 
-					ByteString [] synonyms;
+				usedGoTerms.add(currentTermID);
 
-					/* populate synonym string field */
-					if (assoc.getSynonym() != null && assoc.getSynonym().length() > 2)
-					{
-						/* Note that there can be mutiple synonyms, separated by a pipe */
-						synonyms = assoc.getSynonym().splitBySingleChar('|');
-					} else synonyms = null;
+				if (currentTerm.isObsolete()) {
+					System.err.println("Skipping association of item \""
+							+ assoc.getObjectSymbol() + "\" to "
+							+ currentTermID + " because term is obsolete!");
+					System.err.println("(Are the obo file and the association "
+							+ "file in sync?)");
+					skipped++;
+					obsolete++;
+					continue;
+				}
 
-					if (names != null)
-					{
-						/* We are only interested in associations to given genes */
-						boolean keep = false;
+				ByteString[] synonyms;
 
-						/* Check if synoyms are contained */
-						if (synonyms != null)
-						{
-							for (int i = 0;i<synonyms.length;i++)
-							{
-								if (names.contains(synonyms[i]))
-								{
-									keep = true;
-									break;
-								}
+				/* populate synonym string field */
+				if (assoc.getSynonym() != null
+						&& assoc.getSynonym().length() > 2) {
+					/*
+					 * Note that there can be mutiple synonyms, separated by a
+					 * pipe
+					 */
+					synonyms = assoc.getSynonym().splitBySingleChar('|');
+				} else
+					synonyms = null;
+
+				if (names != null) {
+					/* We are only interested in associations to given genes */
+					boolean keep = false;
+
+					/* Check if synoyms are contained */
+					if (synonyms != null) {
+						for (int i = 0; i < synonyms.length; i++) {
+							if (names.contains(synonyms[i])) {
+								keep = true;
+								break;
 							}
 						}
-
-						if (keep || names.contains(assoc.getObjectSymbol())
-							     || names.contains(assoc.getDB_Object()))
-						{
-							kept++;
-						} else
-						{
-							skipped++;
-							continue;
-						}
-					} else kept++;
-
-					if (synonyms != null)
-					{
-						for (int i = 0; i < synonyms.length; i++)
-							synonym2gene.put(synonyms[i],assoc.getObjectSymbol());
 					}
 
-//					assoc.setGoTermName(currentTermName);
-					/* Add the Association to ArrayList */
-					associations.add(assoc);
-
-					ArrayList<Association> gassociations = gene2Associations.get(assoc.getObjectSymbol());
-					if (gassociations == null)
-					{
-						gassociations = new ArrayList<Association>();
-						gene2Associations.put(assoc.getObjectSymbol(), gassociations);
+					if (keep || names.contains(assoc.getObjectSymbol())
+							|| names.contains(assoc.getDB_Object())) {
+						kept++;
+					} else {
+						skipped++;
+						continue;
 					}
-					gassociations.add(assoc);
+				} else
+					kept++;
 
-					/* dbObject2Gene has a mapping from dbObjects to gene names */
-					dbObjectID2gene.put(assoc.getDB_Object(), assoc.getObjectSymbol());
-				} catch (Exception ex)
-				{
-					bad++;
-					System.err.println("Nonfatal error: "
-							+ "malformed line in association file \n"
-							+ /*associationFile + */"\nCould not parse line "
-							+ lineno + "\n" + ex.getMessage() +"\n\"" + buf + "\"\n");
+				if (synonyms != null) {
+					for (int i = 0; i < synonyms.length; i++)
+						synonym2gene.put(synonyms[i], assoc.getObjectSymbol());
+				}
+
+				// assoc.setGoTermName(currentTermName);
+				/* Add the Association to ArrayList */
+				associations.add(assoc);
+
+				ArrayList<Association> gassociations = gene2Associations
+						.get(assoc.getObjectSymbol());
+				if (gassociations == null) {
+					gassociations = new ArrayList<Association>();
+					gene2Associations.put(assoc.getObjectSymbol(),
+							gassociations);
+				}
+				gassociations.add(assoc);
+
+				/* dbObject2Gene has a mapping from dbObjects to gene names */
+				dbObjectID2gene.put(assoc.getDB_Object(),
+						assoc.getObjectSymbol());
+			} catch (Exception ex) {
+				bad++;
+				System.err.println("Nonfatal error: "
+						+ "malformed line in association file \n"
+						+ /* associationFile + */"\nCould not parse line "
+						+ lineno + "\n" + ex.getMessage() + "\n\"" + buf
+						+ "\"\n");
+			}
+		}
+
+		if (progress != null)
+			progress.update((int) fc.size());
+
+		is.close();
+
+		logger.info(good + " associations parsed, " + kept
+				+ " of which were kept while " + bad
+				+ " malformed lines had to be ignored.");
+		logger.info("A further " + skipped
+				+ " associations were skipped due to various reasons whereas "
+				+ obsolete + " of those referred to obsolete terms and "
+				+ evidenceMismatch + " didn't"
+				+ " match the requested evidence codes");
+		logger.info("A total of " + usedGoTerms.size()
+				+ " terms are directly associated to " + dbObjectID2gene.size()
+				+ " items.");
+
+		/*
+		 * Code is disabled for now. The problem with approach above is that if
+		 * a synonym of a gene is entered that also stand for a object symbol
+		 * then both genes are not filtered.
+		 */
+		if (false && names != null) {
+			for (ByteString name : names) {
+				ByteString objectSymbol = synonym2gene.get(name);
+
+				if (objectSymbol != null && !objectSymbol.equals(name)
+						&& !names.contains(objectSymbol)) {
+					/*
+					 * Now check whether there is any object symbol with the
+					 * same name. If so, we remove the evidence of that gene.
+					 */
+					if (gene2Associations.containsKey(name)) {
+						/*
+						 * Here, we know that we have names referring to
+						 * different objects. As we give precedence over object
+						 * symbols, we remove the evidence for the other one.
+						 */
+						System.out.println("nn " + name);
+						ArrayList<Association> gassociations = gene2Associations
+								.get(name);
+						for (Association a : gassociations)
+							associations.remove(a);
+					}
 				}
 			}
-
-			if (progress != null)
-				progress.update((int)fc.size());
-
-			is.close();
-
-			logger.info(good + " associations parsed, "
-					+ kept + " of which were kept while "
-					+ bad + " malformed lines had to be ignored.");
-			logger.info("A further "
-					+ skipped
-					+ " associations were skipped due to various reasons whereas " + obsolete
-					+ " of those referred to obsolete terms and " + evidenceMismatch + " didn't"
-					+ " match the requested evidence codes");
-			logger.info("A total of " + usedGoTerms.size() + " terms are directly associated to " + dbObjectID2gene.size() + " items.");
-
-			/* Code is disabled for now. The problem with approach above is that if a synonym of a gene is entered that also
-			 * stand for a object symbol then both genes are not filtered. */
-			if (false && names != null)
-			{
-				for (ByteString name : names)
-				{
-					ByteString objectSymbol = synonym2gene.get(name);
-
-					if (objectSymbol != null && !objectSymbol.equals(name) && !names.contains(objectSymbol))
-					{
-						/* Now check whether there is any object symbol with the same name. If
-						 * so, we remove the evidence of that gene. */
-						if (gene2Associations.containsKey(name))
-						{
-							/* Here, we know that we have names referring to different objects.
-							 * As we give precedence over object symbols, we remove the evidence
-							 * for the other one.
-							 */
-							System.out.println("nn " + name);
-							ArrayList<Association> gassociations = gene2Associations.get(name);
-							for (Association a : gassociations)
-								associations.remove(a);
-						}
-					}
-				}
-			}
+		}
 	}
 
 	/**
