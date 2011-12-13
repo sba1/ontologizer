@@ -436,7 +436,7 @@ public class AssociationParser
 					+ " associations were skipped due to various reasons whereas " + obsolete
 					+ " of those referred to obsolete terms and " + evidenceMismatch + " didn't"
 					+ " match the requested evidence codes");
-			logger.info("A total of " + usedGoTerms.size() + " terms are directly associated.");
+			logger.info("A total of " + usedGoTerms.size() + " terms are directly associated to " + dbObjectID2gene.size() + " items.");
 
 			/* Code is disabled for now. The problem with approach above is that if a synonym of a gene is entered that also
 			 * stand for a object symbol then both genes are not filtered. */
