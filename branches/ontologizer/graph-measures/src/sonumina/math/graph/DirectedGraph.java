@@ -1287,9 +1287,9 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 	 * @param selector
 	 * @return subset of nodes
 	 */
-	public <CriterionType> ArrayList<VertexType> getVertexSubset(CriterionType criterion, IVertexSelector<VertexType, CriterionType> selector)
+	public <CriterionType> HashSet<VertexType> getVertexSubset(CriterionType criterion, IVertexSelector<VertexType, CriterionType> selector)
 	{
-		ArrayList<VertexType> subset = new ArrayList<VertexType>();
+		HashSet<VertexType> subset = new HashSet<VertexType>();
 		for(VertexType v : getVertices())
 		{
 			if(selector.matchesCriterion(v, criterion))
