@@ -1125,8 +1125,7 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 			neighbourConns += getNumberOfOutEdges(n);
 			++numOfNeighbours;
 		}
-
-		return neighbourConns / (double) numOfNeighbours;
+		return (numOfNeighbours > 0) ? neighbourConns / (double) numOfNeighbours : 0;
 	}
 
 
