@@ -277,9 +277,9 @@ public class OntologizerCMD
 						System.exit(-1);
 					}
 				
-					if (!(alpha > 0 && alpha <= 0.5))
+					if (!(alpha > 0 && alpha <= 0.99))
 					{
-						System.err.println("The argument given to the 'dot' option is not in a valid range (between 0 and 0.5)!");
+						System.err.println("The argument given to the 'dot' option is not in a valid range (between 0 and 0.99)!");
 						System.exit(-1);
 					}
 
