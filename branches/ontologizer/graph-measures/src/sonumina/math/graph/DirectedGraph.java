@@ -1363,7 +1363,7 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 			for(VertexType v: sample)
 				measure += vertexMeasure.getMeasure(v);
 
-			sampledAvgMeasure[i] = (double) measure/sampleSize;
+			sampledAvgMeasure[i] = (double) measure/ (double) sampleSize;
 
 		}
 		Arrays.sort(sampledAvgMeasure);
