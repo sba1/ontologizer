@@ -55,7 +55,7 @@ public class BuildInfo {
 
 		<path id="classpath">
 			<pathelement location="./" />
-			<pathelement location="./commons-cli-1.1.jar" />
+			<pathelement location="./local-maven-repo/ontologizer/commons-cli/1.1/commons-cli-1.1.jar" />
 		</path>
 		
 	</target>
@@ -157,7 +157,7 @@ public class BuildInfo {
 				<attribute name="Main-Class" value="ontologizer.OntologizerCMD" />
 			</manifest>
 
-			<zipfileset src="commons-cli-1.1.jar" />
+			<zipfileset src="local-maven-repo/ontologizer/commons-cli/1.1/commons-cli-1.1.jar" />
 
 			<fileset dir="${build.classes}">
 				<!-- Exclude class only useful for GUI version -->
