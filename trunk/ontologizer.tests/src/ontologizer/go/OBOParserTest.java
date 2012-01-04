@@ -5,14 +5,14 @@ import junit.framework.TestCase;
 
 public class OBOParserTest extends TestCase
 {
-	// reusable fields for dependent tests
+	/* reusable fields for dependent tests */
 	public OBOParser oboParser;
 
-	// internal fields
+	/* internal fields */
 	private String GOtermsOBOFile = "data/GO_test.obo";
-	private int nTermCount = 18;
-	private String formatVersion = "1.0";
-	private String date = "12:04:2006 20:50";
+	private int nTermCount = 21;
+	private String formatVersion = "1.2";
+	private String date = "09:12:2010 17:51";
 
 	@Override
 	protected void setUp() throws Exception
@@ -24,12 +24,18 @@ public class OBOParserTest extends TestCase
 	}
 
 
-	public void testBasicStructure()
+	public void testTermCount()
 	{
-		Assert.assertTrue("TermMap size test", oboParser.getTermMap().size() == nTermCount);
-		Assert.assertTrue("format version test", oboParser.getFormatVersion().equals(formatVersion));
-		Assert.assertTrue("date test", oboParser.getDate().equals(date));
+		Assert.assertEquals(nTermCount, oboParser.getTermMap().size());
 	}
 
+	public void testFormatVersion()
+	{
+		Assert.assertEquals(formatVersion,oboParser.getFormatVersion());
+	}
 
+	public void testDate()
+	{
+		Assert.assertEquals(date,oboParser.getDate());
+	}
 }
