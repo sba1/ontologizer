@@ -4,14 +4,7 @@
   <artifactId>ontologizer.parent</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
-  
-  <repositories>
-   <repository>
-   <id>eclipse</id>
-   <url>http://maven.eclipse.org/nexus/content/repositories/testing/</url>
-   </repository>
-  </repositories>
-  
+
   <build>
    <plugins>
     <plugin>
@@ -28,6 +21,7 @@
   
   <modules>
   	<module>../ontologizer</module>
+  	<module>../ontologizer.tests</module>
   </modules>
   
 </project>
