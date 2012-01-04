@@ -27,13 +27,27 @@ install_swt () {
 	BASENAME=`basename $1 .zip`
 	VERSION=`echo $BASENAME | cut -d- -f 2`
 	ARTIFACTID=`echo $BASENAME | cut -d- -f 2 --complement`
-	mv tmp/swt.jar tmp/$ARTIFACTID.jar
-	mvn org.apache.maven.plugins:maven-install-plugin:2.3.1:install-file -Dfile=tmp/$ARTIFACTID.jar -DgroupId=ontologizer -DartifactId=$ARTIFACTID -Dversion=$VERSION -Dpackaging=jar -DlocalRepositoryPath=../local-maven-repo
-	rm -Rf tmp
+	mvn org.apache.maven.plugins:maven-install-plugin:2.3.1:install-file -Dfile=tmp/swt.jar -Dsources=tmp/src.zip -DgroupId=ontologizer -DartifactId=$ARTIFACTID -Dversion=$VERSION -Dpackaging=jar -DlocalRepositoryPath=../local-maven-repo
 }
 
+# Install all swt archives
 for file in *.zip; do
 	install_swt $file
 done
+
+# Install apache commons cli
+wget -N http://archive.apache.org/dist/commons/cli/binaries/commons-cli-1.1.zip
+rm -Rf commons-cli-1.1
+unzip commons-cli-1.1.zip
+mvn org.apache.maven.plugins:maven-install-plugin:2.3.1:install-file -Dfile=commons-cli-1.1/commons-cli-1.1.jar -DgroupId=ontologizer -DartifactId=commons-cli -Dversion=1.1 -Dpackaging=jar -DlocalRepositoryPath=../local-maven-repo
+
+# Install Nat Table
+wget -N http://sourceforge.net/projects/nattable/files/NatTable/1.6.5/nattable-core-1.6.5.jar
+mvn org.apache.maven.plugins:maven-install-plugin:2.3.1:install-file -Dfile=nattable-core-1.6.5.jar -DgroupId=ontologizer -DartifactId=nattable-core -Dversion=1.6.5 -Dpackaging=jar -DlocalRepositoryPath=../local-maven-repo
+
+# Install Colt
+wget -N http://acs.lbl.gov/software/colt/colt-download/releases/colt-1.2.0.zip
+unzip colt-1.2.0.zip
+mvn org.apache.maven.plugins:maven-install-plugin:2.3.1:install-file -Dfile=./colt/lib/colt.jar -DgroupId=ontologizer -DartifactId=colt -Dversion=1.2.0 -Dpackaging=jar -DlocalRepositoryPath=../local-maven-repo
 
 popd
