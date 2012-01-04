@@ -47,8 +47,8 @@ public class StudySetTest extends TestCase
 		for (int i=0;i<100;i++)
 		{
 			StudySet shuffledArray [] = StudySet.generateShuffledStudySets(array);
-			Assert.assertTrue(shuffledArray[0].getGeneCount() == 200);
-			Assert.assertTrue(shuffledArray[1].getGeneCount() == 300);
+			Assert.assertEquals(200, shuffledArray[0].getGeneCount());
+			Assert.assertEquals(300, shuffledArray[1].getGeneCount());
 		}
 	}
 
