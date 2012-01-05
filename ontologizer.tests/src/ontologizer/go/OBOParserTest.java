@@ -9,10 +9,10 @@ public class OBOParserTest extends TestCase
 	public OBOParser oboParser;
 	
 	/* internal fields */
-	private String GOtermsOBOFile = "data/GO_test.obo";
-	private int nTermCount = 21;
+	private String GOtermsOBOFile = "data/gene_ontology.1_2.obo.gz";
+	private int nTermCount = 35520;
 	private String formatVersion = "1.2";
-	private String date = "09:12:2010 17:51";
+	private String date = "04:01:2012 11:50";
 
 	@Override
 	protected void setUp() throws Exception
