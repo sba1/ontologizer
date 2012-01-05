@@ -15,14 +15,14 @@ public class AssociationParserTest extends TestCase
 	public AssociationContainer assocContainer;
 	
 	// data for testing
-	private String GOAssociationFile = "data/gene_association.sgd_select";
-	private int nAnnotatedGenes = 189;
-	private int nAssociations = 235;
-	private int nSynonyms = 309;
-	private int nDBObjects = 189;
+	private String GOAssociationFile = "data/gene_association.sgd.gz";
+	private int nAnnotatedGenes = 6359;
+	private int nAssociations = 87599;
+	private int nSynonyms = 9317;
+	private int nDBObjects = 6359;
 	
 	private String[] someGenes = {"SRL1", "DDR2", "UFO1"};
-	private int[] someGeneTermCounts = {1, 1, 1};
+	private int[] someGeneTermCounts = {11, 4, 8};
 	
 	@Override
 	protected void setUp() throws Exception
@@ -41,13 +41,12 @@ public class AssociationParserTest extends TestCase
 
 	public void testBasicStructure()
 	{
-		Assert.assertTrue("number of parsed associations", assocParser.getAssociations().size() == nAssociations);
-		Assert.assertTrue("number of parsed synonyms", assocParser.getSynonym2gene().size() == nSynonyms);
-		Assert.assertTrue("number of parsed DB objects", assocParser.getDbObject2gene().size() == nDBObjects);
-		Assert.assertTrue("number of annotated genes", assocContainer.getAllAnnotatedGenes().size() == nAnnotatedGenes);
+		Assert.assertEquals("number of parsed associations", nAssociations, assocParser.getAssociations().size());
+		Assert.assertEquals("number of parsed synonyms", nSynonyms,assocParser.getSynonym2gene().size());
+		Assert.assertEquals("number of parsed DB objects", nDBObjects,assocParser.getDbObject2gene().size());
+		Assert.assertEquals("number of annotated genes", nAnnotatedGenes,assocContainer.getAllAnnotatedGenes().size());
 		
 		for (int i=0; i<someGenes.length; i++) {
-//			System.err.println(assocContainer.get(someGenes[i]).getAssociations().size());
 			Assert.assertEquals(assocContainer.get(new ByteString(someGenes[i])).getAssociations().size(), someGeneTermCounts[i]);
 		}
 	}
