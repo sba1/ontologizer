@@ -23,15 +23,5 @@ public class TermIDTest extends TestCase
 		Assert.assertTrue(gid.equals(gid7));  // yes, decimal
 		Assert.assertFalse(gid.equals(gid8)); // no, different prefix
 		Assert.assertTrue(gid.equals(gid9));  // yes, uses explicit prefix construction
-
-		try
-		{
-			new TermID("GO:01202111");
-			Assert.assertTrue(false);
-		} catch(IllegalArgumentException ex)
-		{
-			Assert.assertTrue(true);
-		}
-
 	}
 }
