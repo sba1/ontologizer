@@ -47,8 +47,8 @@ public class ParsedContainerTest extends TestCase
 		Assert.assertTrue(container.get("GO:0003674").equals(molfunc));
 		Assert.assertTrue(container.get(molfunc.getID()).equals(molfunc));
 
-		Assert.assertTrue(container.get("GO:0000815") == null);
-		Term anotherTerm = new Term("GO:0000815", "dummy", null);
+		Assert.assertTrue(container.get("GO:9999999") == null);
+		Term anotherTerm = new Term("GO:9999999", "dummy");
 		Assert.assertTrue(container.get(anotherTerm.getID()) == null);
 	}
 
