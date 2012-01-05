@@ -16,7 +16,7 @@ public class OntologyTest extends TestCase
 	@Override
 	protected void setUp() throws Exception
 	{
-		String GOtermsOBOFile = "data/GO_test.obo";
+		String GOtermsOBOFile = "data/gene_ontology.1_2.obo.gz";
 
 		/* Parse file and create term container */
 		System.out.println("Parse OBO file");
@@ -74,6 +74,7 @@ public class OntologyTest extends TestCase
 			public boolean visited(Term term)
 			{
 				count++;
+				System.out.println(term + " " + count);
 				return true;
 			}
 
@@ -93,17 +94,17 @@ public class OntologyTest extends TestCase
 
 		/*
 		 * Note, if GO changes these values are no longer correct. But you can
-		 * verfiy them then via www.godatabase.org.
+		 * verify them then via www.godatabase.org.
 		 */
 		graph.walkToSource(new TermID("GO:0008152"), vistingGOVertex);
-		Assert.assertTrue(vistingGOVertex.getCount() == 4);
+		Assert.assertEquals(3,vistingGOVertex.getCount());
 		vistingGOVertex.resetCount();
 
 		graph.walkToSource(new TermID("GO:0044237"), vistingGOVertex);
-		Assert.assertTrue(vistingGOVertex.getCount() == 7);
+		Assert.assertEquals(5,vistingGOVertex.getCount());
 		vistingGOVertex.resetCount();
 
 		graph.walkToSource(new TermID("GO:0006281"), vistingGOVertex);
-		Assert.assertTrue(vistingGOVertex.getCount() == 17);
+		Assert.assertEquals(19,vistingGOVertex.getCount());
 	}
 }
