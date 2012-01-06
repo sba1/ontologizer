@@ -155,7 +155,7 @@ public class OntologizerCMD
 
 			if (cmd.hasOption("v"))
 			{
-				System.out.println("Ontologizer 2.0 (Build: " + BuildInfo.date + "-" + BuildInfo.revisionNumber + ")");
+				System.out.println("Ontologizer " + BuildInfo.getVersion() + " (Build: " + BuildInfo.getDate() + "-" + BuildInfo.getRevisionNumber() + ")");
 				System.out.println();
 				System.out.println("Copyright (C) 2004-2011 Ontologizer Development Team.");
 				System.exit(0);

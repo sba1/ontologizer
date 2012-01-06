@@ -25,10 +25,10 @@
 		    <format property="DATE" pattern="yyyyMMdd" locale="ENGLISH, GERMANY"/>
 		</tstamp>
 		
-		<echo file="${basedir}/src/ontologizer/BuildInfo.java">
+		<echo file="${basedir}/src/ontologizer/BuildInfoData.java">
 package ontologizer;
 
-public class BuildInfo {
+public class BuildInfoData {
 	public static final String revisionNumber="${svn.revision}";
 	public static final String date ="${DATE}";
 }
