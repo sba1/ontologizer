@@ -15,21 +15,20 @@
   <resources> 
     <j2se version="1.5+" max-heap-size="768m" />
     <jar href="ontologizer.jar"/> 
-    <jar href="swt/nattable-core-1.6.2.jar"/>
-    <jar href="log4j-1.2.15.jar"/>
+    <jar href="local-maven-repo/ontologizer/nattable-core/1.6.5/nattable-core-1.6.5.jar"/>
   </resources> 
   <resources os="Windows"> 
-    <jar href="swt/win-x86/swt.jar"/>
+    <jar href="local-maven-repo/ontologizer/swt-win32-win32-x86/3.7.1/swt-win32-win32-x86-3.7.1.jar"/>
   </resources>
   <resources os="Linux" arch="i386">
-    <jar href="swt/linux-x86/swt.jar"/>
+    <jar href="local-maven-repo/ontologizer/swt-gtk-linux-x86/3.7.1/swt-gtk-linux-x86-3.7.1.jar"/>
   </resources>
   <resources os="Linux" arch="amd64">
-    <jar href="swt/linux-x86_64/swt.jar"/>
+    <jar href="local-maven-repo/ontologizer/swt-gtk-linux-x86_64/3.7.1/swt-gtk-linux-x86_64-3.7.1.jar"/>
   </resources>
   <resources os="Mac OS X">
-    <j2se version="1.5*" java-vm-args="-XstartOnFirstThread"/>
-    <jar href="swt/macosx/swt.jar" />
+    <j2se version="1.5*" java-vm-args="-d32 -XstartOnFirstThread"/>
+    <jar href="local-maven-repo/ontologizer/swt-cocoa-macosx/3.7.1/swt-cocoa-macosx-3.7.1.jar" />
   </resources>
 
   <application-desc main-class="ontologizer.gui.swt.Ontologizer"/> 
