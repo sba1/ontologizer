@@ -23,6 +23,7 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 
+import ontologizer.BuildInfo;
 import ontologizer.FileCache;
 import ontologizer.GlobalPreferences;
 import ontologizer.OntologizerCore;
@@ -143,6 +144,7 @@ public class Ontologizer
 	public static void main(String[] args)
 	{
 		boolean useSleak = false;
+
 		String os = System.getProperty("os.name");
 		if (os.contains("Linux"))
 		{
