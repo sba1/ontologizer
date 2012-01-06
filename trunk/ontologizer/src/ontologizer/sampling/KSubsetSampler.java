@@ -49,7 +49,7 @@ public class KSubsetSampler<T>
 	public KSubsetSampler(Iterable<T> object)
 	{
 		this.objects = new ArrayList<T>();
-		for (T obj : objects)
+		for (T obj : object)
 		{
 			this.objects.add(obj);
 		}
