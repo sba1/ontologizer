@@ -692,6 +692,7 @@ public class Ontologizer
 	private static void copyFileToTemp(String file, String tempDir)
 	{
 		InputStream is = OntologizerCore.class.getResourceAsStream(file);
+		if (is == null) return;
 
 		try
 		{
