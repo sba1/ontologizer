@@ -2,7 +2,7 @@
 #
 # This script prepares the "local" maven repository for ontologizer.
 # We use an local maven repository in order to not to rely on
-# the maven plugin for eclipse.
+# the maven plugin for eclipse. This also keeps the compiles consitent.
 #
 
 rm -Rf work
