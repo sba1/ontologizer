@@ -62,7 +62,7 @@ public class AboutWindow extends ApplicationWindow
 		text.setText(String.format(aboutText,verisonText));
 		text.append("\n");
 		text.append("\n");
-		text.append("Build: " + BuildInfo.date + "-" + BuildInfo.revisionNumber);
+		text.append("Build: " + BuildInfo.getDate() + "-" + BuildInfo.getRevisionNumber());
 		text.append("\n");
 		text.append("\n");
 		text.append(String.format(visitText,homepageText));
