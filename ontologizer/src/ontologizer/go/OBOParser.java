@@ -480,7 +480,7 @@ public class OBOParser
 			IOException
 	{
 		value = value.trim();
-
+		
 		if (name.equals("import"))
 		{
 			if (currentStanza != null)
@@ -543,28 +543,18 @@ public class OBOParser
 		{
 			readSubset(value);
 		}
-		else if ((options & PARSE_INTERSECTIONS) != 0)
+		else if (name.equals("intersection_of") && (options & PARSE_INTERSECTIONS) != 0)
 		{
-			if (name.equals("intersection_of"))
-			{
-				currentIntersections.add(value);
-			}
+			currentIntersections.add(value);
 		}
-		else if ((options & PARSE_DEFINITIONS) != 0)
+		else if (name.equals("def") && (options & PARSE_DEFINITIONS) != 0)
 		{
-			if (name.equals("def"))
-			{
-				if (value.startsWith("\""))
-					currentDefintion = unescape(value, '\"', 1, value.length(),
-							false).str;
-			}
+			if (value.startsWith("\""))
+				currentDefintion = unescape(value, '\"', 1, value.length(),false).str;
 		}
-		else if ((options & PARSE_XREFS) != 0)
+		else if (name.equals("xref") && (options & PARSE_XREFS) != 0)
 		{
-			if (name.equals("xref"))
-			{
-				readXref(value);
-			}
+			readXref(value);
 		}
 		/*
 			 * else if (name.equals("comment")) { return; } else if
@@ -591,7 +581,7 @@ public class OBOParser
 			}
 			String[] xrefSplit 	= value.split(":");
 			String dbName		= xrefSplit[0];
-			TermXref xref = new TermXref(dbName, xrefSplit[1]);
+			TermXref xref 		= new TermXref(dbName, xrefSplit[1]);
 			currentXrefs.add(xref);
 		} catch (IllegalArgumentException e)
 		{
