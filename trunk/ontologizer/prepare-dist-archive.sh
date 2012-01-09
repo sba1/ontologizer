@@ -16,6 +16,7 @@ cp target/ontologizer-0.0.1-SNAPSHOT.jar  work/ontologizer/ontologizer.jar
 cp ontologizer.jnlp work/ontologizer
 find work/ontologizer | grep .jar$ | xargs -n 1 -I'{}' jarsigner -keystore $KEYSTORE -storepass $PASS '{}' myself
 
+rm -Rf ontologizer.zip
 pushd work 
 zip -r ../ontologizer.zip ontologizer
 popd
