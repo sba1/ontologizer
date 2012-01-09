@@ -14,7 +14,8 @@ public class BuildInfo
 {
 	private static String revisionNumber="NA";
 	private static String date ="NA";
-	private static String version = "2.0";
+	private static String version = "2.1";
+	private static String copyright = "2005-2012";
 	private static boolean infoExtracted = false;
 
 
@@ -74,5 +75,24 @@ public class BuildInfo
 	{
 		return version;
 	}
+
+	/**
+	 * Returns the copyright years.
+	 * 
+	 * @return
+	 */
+	public static String getCopyright()
+	{
+		return copyright;
+	}
+	
+	/**
+	 * Returns the build string.
+	 * 
+	 * @return
+	 */
+	public static String getBuildString()
+	{
+		return BuildInfo.getDate() + "-" + BuildInfo.getRevisionNumber();
+	}
 }
-		
