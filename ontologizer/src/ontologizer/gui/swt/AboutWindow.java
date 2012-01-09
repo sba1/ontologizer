@@ -32,10 +32,9 @@ import org.eclipse.swt.widgets.Display;
  */
 public class AboutWindow extends ApplicationWindow
 {
-	final static String aboutText = "Ontologizer\n\nVersion %s\nCopyright (c) Ontologizer Development Team 2005-2010.\nAll rights reserved.";
+	final static String aboutText = "Ontologizer\n\nVersion %s\nCopyright (c) Ontologizer Development Team %s.\nAll rights reserved.";
 	final static String visitText = "Visit %s for more information.";
 
-	final static String verisonText = "2.1";
 	final static String homepageText = "http://compbio.charite.de/ontologizer/";
 	
 	public AboutWindow(Display display)
@@ -59,10 +58,10 @@ public class AboutWindow extends ApplicationWindow
 		final StyledText text = new StyledText(shell,SWT.BORDER|SWT.READ_ONLY);
 		text.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL|GridData.GRAB_VERTICAL|GridData.HORIZONTAL_ALIGN_FILL|GridData.VERTICAL_ALIGN_FILL));
 		text.setEditable(false);
-		text.setText(String.format(aboutText,verisonText));
+		text.setText(String.format(aboutText,BuildInfo.getVersion(),BuildInfo.getCopyright()));
 		text.append("\n");
 		text.append("\n");
-		text.append("Build: " + BuildInfo.getDate() + "-" + BuildInfo.getRevisionNumber());
+		text.append("Build: " + BuildInfo.getBuildString());
 		text.append("\n");
 		text.append("\n");
 		text.append(String.format(visitText,homepageText));
