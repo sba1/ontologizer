@@ -7,6 +7,7 @@
 package ontologizer.gui.swt.images;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.LinkedList;
 
 import org.eclipse.swt.graphics.Image;
@@ -50,7 +51,10 @@ public class Images
 		}
 		catch(Exception e)
 		{
-			source = new ImageData(Images.class.getResourceAsStream(fileName));
+			InputStream stream = Images.class.getResourceAsStream(fileName);
+			if (stream == null)
+				return null;
+			source = new ImageData(stream);
 		}
 			ImageData mask = source.getTransparencyMask();
 			Image image = new Image(display, source, mask);
