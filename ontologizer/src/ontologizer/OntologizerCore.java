@@ -221,7 +221,7 @@ public class OntologizerCore
 						{
 							/* Show progress */
 							System.err.print("\033[1A\033[K");
-							System.err.println("Reading annotation file: " + String.format("%.2g%%",current / (double)max * 100));
+							System.err.println("Reading annotation file: " + String.format("%.1f%%",current / (double)max * 100));
 						}
 					}
 					
