@@ -50,6 +50,12 @@ public class AssociationParser
 	/** Predefined three slashes string */
 	private static ByteString THREE_SLASHES = new ByteString("///");
 
+	/** Counts the symbol warnings */
+	private static int symbolWarnings;
+
+	/** Counts the dbObject warnings */
+	private static int dbObjectWarnings;
+
 	/**
 	 * Construct the association parser object. The given file name will
 	 * parsed. Convenience constructor when not using progress monitor.
@@ -413,7 +419,13 @@ public class AssociationParser
 					else
 					{
 						if (!dbObject.equals(assoc.getDB_Object()))
-							logger.warning("Line " + lineno + ": Expected that symbol \"" + assoc.getObjectSymbol() + "\" maps to \"" + dbObject + "\" but it maps to \"" + assoc.getDB_Object() + "\"");
+						{
+							symbolWarnings++;
+							if (symbolWarnings < 1000)
+							{
+								logger.warning("Line " + lineno + ": Expected that symbol \"" + assoc.getObjectSymbol() + "\" maps to \"" + dbObject + "\" but it maps to \"" + assoc.getDB_Object() + "\"");
+							}
+						}
 
 					}
 
@@ -422,7 +434,13 @@ public class AssociationParser
 					else
 					{
 						if (!objectSymbol.equals(assoc.getObjectSymbol()))
-							logger.warning("Line " + lineno + ": Expected that dbObject \"" + assoc.getDB_Object() + "\" maps to symbol \"" + objectSymbol + "\" but it maps to \"" + assoc.getObjectSymbol() + "\"");
+						{
+							dbObjectWarnings++;
+							if (dbObjectWarnings < 1000)
+							{
+								logger.warning("Line " + lineno + ": Expected that dbObject \"" + assoc.getDB_Object() + "\" maps to symbol \"" + objectSymbol + "\" but it maps to \"" + assoc.getObjectSymbol() + "\"");
+							}
+						}
 
 					}
 
@@ -468,6 +486,11 @@ public class AssociationParser
 		logger.info("A total of " + usedGoTerms.size()
 				+ " terms are directly associated to " + dbObjectID2gene.size()
 				+ " items.");
+
+		if (symbolWarnings >= 1000)
+			logger.warning("The symbols of a total of " + symbolWarnings + " entries mapped ambiguously");
+		if (dbObjectWarnings >= 1000)
+			logger.warning("The objects of a  total of " + dbObjectWarnings + " entries mapped ambiguously");
 
 		/*
 		 * Code is disabled for now. The problem with approach above is that if
