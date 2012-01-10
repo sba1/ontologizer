@@ -5,6 +5,7 @@ import java.util.*;
 
 import ontologizer.association.AssociationContainer;
 import ontologizer.association.AssociationParser;
+import ontologizer.association.IAssociationParserProgress;
 import ontologizer.calculation.CalculationRegistry;
 import ontologizer.calculation.EnrichedGOTermsResult;
 import ontologizer.calculation.ICalculation;
@@ -139,7 +140,7 @@ public class OntologizerCore
 		testCorrection = TestCorrectionRegistry.getCorrectionByName(args.correctionName);
 		if (testCorrection == null)
 			testCorrection = TestCorrectionRegistry.getDefault();
-		/*Empty cache for resampling based MTCs and set number of sampling steps */
+		/* Empty cache for resampling based MTCs and set number of sampling steps */
 		if (testCorrection instanceof IResampling) {
 			IResampling resampling = (IResampling) testCorrection;
 			resampling.resetCache();
@@ -201,7 +202,30 @@ public class OntologizerCore
 		/* Parse the GO association file containing GO annotations for genes or gene
 		 * products. Results are placed in associationparser.
 		 */
-		AssociationParser ap = new AssociationParser(args.associationFile,goTerms,populationSet.getAllGeneNames());
+		AssociationParser ap = new AssociationParser(args.associationFile,goTerms,populationSet.getAllGeneNames(),
+				new IAssociationParserProgress() {
+					private int max;
+					private long startTime;
+
+					public void init(int max)
+					{
+						this.max = max;
+						this.startTime = System.currentTimeMillis();
+					}
+
+					public void update(int current)
+					{
+						long currentTime = System.currentTimeMillis();
+
+						if (currentTime - startTime > 20000)
+						{
+							/* Show progress */
+							System.err.print("\033[1A\033[K");
+							System.err.println("Reading annotation file: " + String.format("%.2g%%",current / (double)max * 100));
+						}
+					}
+
+				});
 		goAssociations = new AssociationContainer(ap.getAssociations(), ap.getSynonym2gene(), ap.getDbObject2gene());
 
 		/* Filter out duplicate genes (i.e. different gene names refering
