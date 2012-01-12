@@ -52,6 +52,15 @@
 
 	<build>
 		<sourceDirectory>src</sourceDirectory>
+		<resources>
+		 <resource>
+		  <directory>src</directory>
+		  <includes>
+		   <include>**/*.html</include>
+		   <include>**/*.png</include>
+		  </includes>
+		 </resource>
+		</resources>
 
 		<plugins>
 			<plugin>
