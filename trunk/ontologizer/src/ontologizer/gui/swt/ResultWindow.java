@@ -139,25 +139,22 @@ public class ResultWindow extends ApplicationWindow
 			cTabItem.setText(enrichedGOTermsResult.getStudySet().getName());
 			cTabItem.setControl(studyResultComposite);
 			added = true;
-		} else
+		} else if (result instanceof SVDResult)
 		{
-			if (result instanceof SVDResult)
-			{
-				SVDResult svdResult = (SVDResult)result;
+			SVDResult svdResult = (SVDResult)result;
 
-				CTabItem cTabItem = new CTabItem(cTabFolder, SWT.NONE);
-				SVDGOTermsComposite svdComposite;
+			CTabItem cTabItem = new CTabItem(cTabFolder, SWT.NONE);
+			SVDGOTermsComposite svdComposite;
 
-				if (svdResult.isPValues())
-					svdComposite = new PValuesSVDGOTermsComposite(cTabFolder,0);
-				else
-					svdComposite = new SVDGOTermsComposite(cTabFolder,0); 
+			if (svdResult.isPValues())
+				svdComposite = new PValuesSVDGOTermsComposite(cTabFolder,0);
+			else
+				svdComposite = new SVDGOTermsComposite(cTabFolder,0); 
 
-				svdComposite.setResult(svdResult);
-				cTabItem.setText(svdComposite.getTitle());;
-				cTabItem.setControl(svdComposite);
-				added = true;
-			}
+			svdComposite.setResult(svdResult);
+			cTabItem.setText(svdComposite.getTitle());;
+			cTabItem.setControl(svdComposite);
+			added = true;
 		}
 
 		if (added && cTabFolder.getSelectionIndex() == -1)
