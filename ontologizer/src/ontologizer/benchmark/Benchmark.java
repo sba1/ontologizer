@@ -33,7 +33,6 @@ import ontologizer.sampling.StudySetSampler;
 import ontologizer.set.PopulationSet;
 import ontologizer.set.StudySet;
 import ontologizer.statistics.AbstractTestCorrection;
-import ontologizer.statistics.Bonferroni;
 import ontologizer.statistics.None;
 import ontologizer.types.ByteString;
 
