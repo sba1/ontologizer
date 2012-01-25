@@ -24,6 +24,7 @@ import ontologizer.calculation.AbstractGOTermProperties;
 import ontologizer.calculation.EnrichedGOTermsResult;
 import ontologizer.calculation.b2g.Bayes2GOEnrichedGOTermsResult;
 import ontologizer.calculation.b2g.Bayes2GOGOTermProperties;
+import ontologizer.calculation.b2g.FixedAlphaBetaScore;
 import ontologizer.enumeration.GOTermEnumerator;
 import ontologizer.enumeration.GOTermEnumerator.GOTermAnnotatedGenes;
 import ontologizer.go.Namespace;
@@ -71,7 +72,10 @@ import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.swt.widgets.Text;
+import org.swtchart.Chart;
+import org.swtchart.ILineSeries;
+import org.swtchart.ISeries;
+import org.swtchart.ISeries.SeriesType;
 
 /**
  *
@@ -117,6 +121,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 	private TableColumn [] columns = new TableColumn[LAST];
 
 	private SashForm termSashForm;
+	private CTabFolder tableFolder;
 	private GraphCanvas graphVisual = null;
 
 	private Composite significanceComposite;
@@ -145,6 +150,12 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 	/** Used to get the color of a term. The color is determined by the term's significance */
 	private HashMap<TermID,Color> termID2Color;
 
+	/** Color for the alpha series */
+	private Color alphaColor;
+
+	/** Color for the beta series */
+	private Color betaColor;
+
 	/** Has the user changed set set of checked terms manually? */
 	private boolean checkedTermsChanged;
 
@@ -170,6 +181,9 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 		createSashForm();
 		verticalSashForm.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
 
+		alphaColor = getDisplay().getSystemColor(SWT.COLOR_RED);
+		betaColor = getDisplay().getSystemColor(SWT.COLOR_BLUE);
+
 		/* Add the dispose listener */
 		addDisposeListener(new DisposeListener(){
 			public void widgetDisposed(DisposeEvent e)
@@ -190,7 +204,40 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 
 		this.result = result;
 
-		if (result instanceof Bayes2GOEnrichedGOTermsResult) {
+		if (result instanceof Bayes2GOEnrichedGOTermsResult)
+		{
+			Bayes2GOEnrichedGOTermsResult b2gResult = (Bayes2GOEnrichedGOTermsResult)result;
+			FixedAlphaBetaScore fixedScore;
+			if (b2gResult.getScore() instanceof FixedAlphaBetaScore)
+			{
+				fixedScore = (FixedAlphaBetaScore) b2gResult.getScore();
+				tableFolder.setSingle(false);
+
+				Composite chartComposite = new Composite(tableFolder, 0);
+				chartComposite.setLayout(new FillLayout());
+
+				Chart chart = new Chart(chartComposite, SWT.NONE);
+				chart.getTitle().setVisible(false);
+				ILineSeries alphaSeries = (ILineSeries)chart.getSeriesSet().createSeries(SeriesType.LINE, "alpha");
+				alphaSeries.setXSeries(fixedScore.getAlphaValues());
+				alphaSeries.setYSeries(fixedScore.getAlphaDistribution());
+				alphaSeries.setAntialias(SWT.ON);
+				alphaSeries.setLineColor(alphaColor);
+				alphaSeries.setLineColor(alphaColor);
+
+				ILineSeries betaSeries = (ILineSeries)chart.getSeriesSet().createSeries(SeriesType.LINE, "beta");
+				betaSeries.setXSeries(fixedScore.getBetaValues());
+				betaSeries.setYSeries(fixedScore.getBetaDistribution());
+				betaSeries.setAntialias(SWT.ON);
+				betaSeries.setLineColor(betaColor);
+				betaSeries.setLineColor(betaColor);
+
+				CTabItem parameterItem = new CTabItem(tableFolder,0);
+				parameterItem.setText("Parameter");
+				parameterItem.setControl(chartComposite);
+
+			}
+
 			useMarginal = true;
 
 			/* This hides the given columns. Should perhaps find better variant to hide them
@@ -204,6 +251,8 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 			/* Also set a new default significance selection */
 			significanceSpinner.setSelection(SIGNIFICANCE_RESOLUTION/2);
 			significanceLabel.setText("Threshold (higher is more important)");
+
+
 		} else
 		{
 			useMarginal = false;
@@ -751,7 +800,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 		/* Term Overview Sash Form */
 		termSashForm = new SashForm(verticalSashForm, SWT.HORIZONTAL);
 
-		final CTabFolder tableFolder = new CTabFolder(termSashForm,SWT.BORDER);
+		tableFolder = new CTabFolder(termSashForm,SWT.BORDER);
 		tableFolder.setSingle(true);
 		tableFolder.setMaximizeVisible(true);
 		tableFolder.setSelectionBackground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
@@ -983,6 +1032,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 				} catch (Exception ex) {}
 			}
 		});
+		graphItem.setControl(graphVisual);
 
 		/* The context menu */
 		Menu contextMenu = graphVisual.getMenu();
