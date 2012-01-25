@@ -13,7 +13,7 @@ import ontologizer.types.ByteString;
  *
  * @author Sebastian Bauer
  */
-class FixedAlphaBetaScore extends Bayes2GOScore
+public class FixedAlphaBetaScore extends Bayes2GOScore
 {
 	private int proposalSwitch;
 	private TermID proposalT1;
