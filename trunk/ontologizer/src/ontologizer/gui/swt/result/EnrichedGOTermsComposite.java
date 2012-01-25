@@ -218,6 +218,8 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 
 				Chart chart = new Chart(chartComposite, SWT.NONE);
 				chart.getTitle().setVisible(false);
+				chart.getAxisSet().getYAxis(0).getTitle().setText("Posterior Probability");
+				chart.getAxisSet().getXAxis(0).getTitle().setVisible(false);
 				ILineSeries alphaSeries = (ILineSeries)chart.getSeriesSet().createSeries(SeriesType.LINE, "alpha");
 				alphaSeries.setXSeries(fixedScore.getAlphaValues());
 				alphaSeries.setYSeries(fixedScore.getAlphaDistribution());
