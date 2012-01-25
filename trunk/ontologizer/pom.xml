@@ -48,6 +48,12 @@
 			<artifactId>swt-gtk-linux-x86_64</artifactId>
 			<version>${swt.version}</version>
 		</dependency>
+		
+		<dependency>
+		 	<groupId>ontologizer</groupId>
+		 	<artifactId>swtchart</artifactId>
+		 	<version>0.7.0</version>
+		</dependency>
 	</dependencies>
 
 	<build>
