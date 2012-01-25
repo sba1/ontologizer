@@ -327,5 +327,65 @@ public class FixedAlphaBetaScore extends Bayes2GOScore
 	{
 		return (double)totalT / numRecords;
 	}
+
+	/**
+	 * Returns possible alpha values.
+	 *
+	 * @return
+	 */
+	public double [] getAlphaValues()
+	{
+		return ALPHA;
+	}
+
+	/**
+	 * Returns the distribution of the given counts.
+	 *
+	 * @param counts
+	 * @return
+	 */
+	private double [] getDistribution(int [] counts)
+	{
+		double [] dist = new double[counts.length];
+		int total = 0;
+		for (int a : counts)
+			total += a;
+		for (int i=0;i<counts.length;i++)
+		{
+			dist[i] = counts[i] / (double)total;
+		}
+		return dist;
+	}
+
+	/**
+	 * Returns the inferred alpha distribution.
+	 *
+	 * @return
+	 */
+	public double [] getAlphaDistribution()
+	{
+		return getDistribution(totalAlpha);
+	}
+
+	/**
+	 * Returns possible alpha values.
+	 *
+	 * @return
+	 */
+	public double [] getBetaValues()
+	{
+		return BETA;
+	}
+
+	/**
+	 * Returns the inferred alpha distribution.
+	 *
+	 * @return
+	 */
+	public double [] getBetaDistribution()
+	{
+		return getDistribution(totalBeta);
+	}
+
 }
 

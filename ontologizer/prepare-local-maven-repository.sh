@@ -50,4 +50,9 @@ wget -N http://acs.lbl.gov/software/colt/colt-download/releases/colt-1.2.0.zip
 unzip colt-1.2.0.zip
 mvn org.apache.maven.plugins:maven-install-plugin:2.3.1:install-file -Dfile=./colt/lib/colt.jar -DgroupId=ontologizer -DartifactId=colt -Dversion=1.2.0 -Dpackaging=jar -DlocalRepositoryPath=../local-maven-repo
 
+# Install SWTChart
+wget -N http://sourceforge.net/projects/swt-chart/files/SWTChart/0.7.0/org.swtchart_0.7.0.zip/download
+unzip org.swtchart_0.7.0.zip
+mvn org.apache.maven.plugins:maven-install-plugin:2.3.1:install-file -Dfile=./plugins/org.swtchart_0.7.0.v20110128.jar -DgroupId=ontologizer -DartifactId=swtchart -Dversion=0.7.0 -Dpackaging=jar -DlocalRepositoryPath=../local-maven-repo
+
 popd

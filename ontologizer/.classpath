@@ -10,5 +10,6 @@
 	<classpathentry kind="lib" path="local-maven-repo/ontologizer/colt/1.2.0/colt-1.2.0.jar"/>
 	<classpathentry kind="lib" path="local-maven-repo/ontologizer/commons-cli/1.1/commons-cli-1.1.jar"/>
 	<classpathentry kind="lib" path="local-maven-repo/ontologizer/nattable-core/1.6.5/nattable-core-1.6.5.jar"/>
+	<classpathentry kind="lib" path="local-maven-repo/ontologizer/swtchart/0.7.0/swtchart-0.7.0.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
