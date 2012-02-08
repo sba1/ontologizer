@@ -14,7 +14,7 @@ public class BuildChangeLog
 	public static Change [] process(String string)
 	{
 		ArrayList<Change> list = new ArrayList<Change>(100);
-		Pattern pat = Pattern.compile("r(\\d+)\\s+\\|\\s+(\\w+)\\s+\\|\\s+(.+?)\\s+\\|.*?\\$userlog\\$(.*?)-----",Pattern.DOTALL);
+		Pattern pat = Pattern.compile("r(\\d+)\\s+\\|\\s+(\\w+)\\s+\\|\\s+(.+?)\\s+\\|.*?\\$foruser\\$(.*?)-----",Pattern.DOTALL);
 		Matcher mat = pat.matcher(string);
 		while (mat.find())
 		{
