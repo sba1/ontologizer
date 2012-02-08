@@ -94,8 +94,19 @@ public class GraphPaint
 						h *= 72;
 		
 						Path nodePath = new Path(display);
-						if (shape != GrappaConstants.PLAINTEXT_SHAPE)
-							nodePath.addArc((float)(x - w/2), (float)(y-h/2), (float)w, (float)h, 0f, 360f);
+						switch (shape)
+						{
+							case	GrappaConstants.PLAINTEXT_SHAPE:
+									break;
+
+							case	GrappaConstants.OVAL_SHAPE:
+									nodePath.addArc((float)(x - w/2), (float)(y-h/2), (float)w, (float)h, 0f, 360f);
+									break;
+
+							default:
+									nodePath.addPath(pathIterator2Path(node.getGrappaNexus().getPathIterator()));
+									break;
+						}
 					    node2Path.put(node,nodePath);
 					}
 					break;
