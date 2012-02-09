@@ -67,17 +67,23 @@ public class BuildChangeLog
 
 	public static void main(String[] args) throws IOException, InterruptedException
 	{
-		System.err.println("Getting log of \"" + new File(".").getAbsolutePath() + "\"");
 		PrintStream out = System.out;
+
+		String path = ".";
 
 		if (args.length > 0)
 		{
-			System.err.println("Writing to \"" + args[0] + "\"");
-			out = new PrintStream(new FileOutputStream(args[0]));
+			path = args[0];
+			if (args.length > 1)
+			{
+				System.err.println("Writing to \"" + args[1] + "\"");
+				out = new PrintStream(new FileOutputStream(args[1]));
+			}
 		}
+		System.err.println("Getting log of \"" + new File(path).getCanonicalPath() + "\"");
 
 		/* Start svn log and read the output */
-		Process svnProcess = Runtime.getRuntime().exec(new String[]{"svn","log"});
+		Process svnProcess = Runtime.getRuntime().exec(new String[]{"svn","log", path});
 		BufferedReader br = new BufferedReader(new InputStreamReader(svnProcess.getInputStream()));
 		StringBuilder str = new StringBuilder();
 		String line;
