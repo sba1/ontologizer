@@ -19,7 +19,6 @@ import ontologizer.dotwriter.AbstractDotAttributesProvider;
 import ontologizer.go.Ontology;
 import ontologizer.go.Namespace;
 import ontologizer.go.Term;
-import ontologizer.go.TermContainer;
 import ontologizer.go.TermID;
 import ontologizer.go.Ontology.IVisitingGOVertex;
 import ontologizer.set.StudySet;
@@ -216,7 +215,7 @@ public class EnrichedGOTermsResult extends AbstractGOTermsResult
 			public String getDotNodeAttributes(TermID id)
 			{
 				StringBuilder attributes = new StringBuilder();
-				attributes.append("label=\"");
+				attributes.append("shape=\"box\",label=\"");
 
 				if (graph.isRootTerm(id))
 				{
