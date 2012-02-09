@@ -71,7 +71,7 @@ public class BuildInfoData {
          debug="on" />
 		<java classname="sonumina.util.changelog.BuildChangeLog">
 			<classpath path="${build.classes}"/>
-			<redirector output="src/ChangeLog"/>
+			<arg file="src/ChangeLog"/>
 		</java>
 	</target>
 
