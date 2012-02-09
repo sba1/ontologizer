@@ -6,7 +6,15 @@
  */
 package ontologizer.gui.swt;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
 import ontologizer.BuildInfo;
+import ontologizer.gui.swt.images.Images;
 import ontologizer.util.BareBonesBrowserLaunch;
 
 import org.eclipse.swt.SWT;
@@ -18,6 +26,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -55,7 +64,7 @@ public class AboutWindow extends ApplicationWindow
 		});
 
 		/* Styled text */
-		final StyledText text = new StyledText(shell,SWT.BORDER|SWT.READ_ONLY);
+		final StyledText text = new StyledText(shell,SWT.BORDER|SWT.READ_ONLY|SWT.V_SCROLL|SWT.WRAP);
 		text.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL|GridData.GRAB_VERTICAL|GridData.HORIZONTAL_ALIGN_FILL|GridData.VERTICAL_ALIGN_FILL));
 		text.setEditable(false);
 		text.setText(String.format(aboutText,BuildInfo.getVersion(),BuildInfo.getCopyright()));
@@ -65,6 +74,23 @@ public class AboutWindow extends ApplicationWindow
 		text.append("\n");
 		text.append("\n");
 		text.append(String.format(visitText,homepageText));
+
+		InputStream changeLog = this.getClass().getResourceAsStream("/ChangeLog");
+		if (changeLog  != null)
+		{
+			text.append("\n\nChangeLog:\n\n");
+
+			BufferedReader br = new BufferedReader(new InputStreamReader(changeLog));
+			String line;
+			try {
+				while ((line = br.readLine()) != null)
+				{
+					text.append(" ");
+					text.append(line);
+					text.append("\n");
+				}
+			} catch (IOException e1) { }
+		}
 
 		String txt = text.getText();
 		final int homepageLinkStart = txt.indexOf(homepageText);
