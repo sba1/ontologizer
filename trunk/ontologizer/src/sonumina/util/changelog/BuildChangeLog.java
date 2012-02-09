@@ -93,5 +93,7 @@ public class BuildChangeLog
 			out.println(" - " + change.logString + " (" + change.authorString + ")");
 			out.println();
 		}
+		
+		System.err.println("Wrote " + changes.length + " entries");
 	}
 }
