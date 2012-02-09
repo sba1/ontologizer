@@ -27,11 +27,11 @@ public class BuildChangeLogTest extends TestCase
 						"------------------------------------------------------------------------\n";
 		Change [] result = BuildChangeLog.process(string);
 		Assert.assertEquals(3,result.length);
-		Assert.assertEquals("Test", result[0].log);
-		Assert.assertEquals("sba", result[0].author);
-		Assert.assertEquals("Test2", result[1].log);
-		Assert.assertEquals("sba", result[1].author);
-		Assert.assertEquals("Test3", result[2].log);
-		Assert.assertEquals("sba", result[2].author);
+		Assert.assertEquals("Test", result[0].logString);
+		Assert.assertEquals("sba", result[0].authorString);
+		Assert.assertEquals("Test2", result[1].logString);
+		Assert.assertEquals("sba", result[1].authorString);
+		Assert.assertEquals("Test3", result[2].logString);
+		Assert.assertEquals("sba", result[2].authorString);
 	}
 }
