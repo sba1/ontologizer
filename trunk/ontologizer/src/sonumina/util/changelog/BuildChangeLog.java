@@ -1,8 +1,12 @@
 package sonumina.util.changelog;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -63,6 +67,15 @@ public class BuildChangeLog
 
 	public static void main(String[] args) throws IOException, InterruptedException
 	{
+		System.err.println("Getting log of \"" + new File(".").getAbsolutePath() + "\"");
+		PrintStream out = System.out;
+
+		if (args.length > 0)
+		{
+			System.err.println("Writing to \"" + args[0] + "\"");
+			out = new PrintStream(new FileOutputStream(args[0]));
+		}
+
 		/* Start svn log and read the output */
 		Process svnProcess = Runtime.getRuntime().exec(new String[]{"svn","log"});
 		BufferedReader br = new BufferedReader(new InputStreamReader(svnProcess.getInputStream()));
@@ -76,9 +89,9 @@ public class BuildChangeLog
 		Change [] changes = process(str.toString());
 		for (Change change : changes)
 		{
-			System.out.println(DateFormat.getDateInstance(DateFormat.MEDIUM).format(change.date) + " - r" + change.revisionString);
-			System.out.println(" - " + change.logString + " (" + change.authorString + ")");
-			System.out.println();
+			out.println(DateFormat.getDateInstance(DateFormat.MEDIUM).format(change.date) + " - r" + change.revisionString);
+			out.println(" - " + change.logString + " (" + change.authorString + ")");
+			out.println();
 		}
 	}
 }
