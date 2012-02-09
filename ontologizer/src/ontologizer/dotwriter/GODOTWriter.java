@@ -39,7 +39,7 @@ public class GODOTWriter
 	 */
 	public static void writeDOT(Ontology graph, File file, TermID rootTerm, Set<TermID> terms, IDotAttributesProvider provider)
 	{
-		writeDOT(graph, file, rootTerm, terms, provider, "nodesep=0.4;", true, false, null);
+		writeDOT(graph, file, rootTerm, terms, provider, "nodesep=0.4;", false, false, null);
 	}
 
 	/**
