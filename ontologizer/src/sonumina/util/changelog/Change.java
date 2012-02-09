@@ -1,5 +1,7 @@
 package sonumina.util.changelog;
 
+import java.util.Date;
+
 /**
  * Represents a simple change.
  *
@@ -7,8 +9,9 @@ package sonumina.util.changelog;
  */
 public class Change
 {
-	public String revision;
-	public String author;
-	public String date;
-	public String log;
+	public String revisionString;
+	public String authorString;
+	public Date date;
+	public String dateString;
+	public String logString;
 }
