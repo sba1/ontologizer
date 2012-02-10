@@ -17,6 +17,7 @@ import ontologizer.worksets.WorkSet;
 import ontologizer.worksets.WorkSetList;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -180,7 +181,9 @@ public class ProjectSettingsComposite extends Composite
 	private Table evidenceTable;
 	private TableColumn evidenceNameColumn;
 	private TableColumn evidenceDescColumn;
+	private Composite advancedComposite;
 	private Expander advancedExpander;
+	private StyledText infoText;
 
 	private Button subsetCheckbox;
 	private Button considerCheckbox;
@@ -226,17 +229,16 @@ public class ProjectSettingsComposite extends Composite
 
 /* TODO: Use ExpandableComposite comp of JFace */
 
-		
 		advancedExpander = new Expander(this,0);
 		gd = new GridData(GridData.FILL_HORIZONTAL|GridData.GRAB_VERTICAL|GridData.GRAB_HORIZONTAL|GridData.GRAB_VERTICAL|GridData.VERTICAL_ALIGN_BEGINNING);
 		gd.horizontalSpan = 3;
 		advancedExpander.setLayoutData(gd);
 
-		Composite mappingComposite = new Composite(advancedExpander, 0);
-		mappingComposite.setLayout(SWTUtil.newEmptyMarginGridLayout(3));
-		advancedExpander.setControl(mappingComposite);
+		advancedComposite = new Composite(advancedExpander, 0);
+		advancedComposite.setLayout(SWTUtil.newEmptyMarginGridLayout(3));
+		advancedExpander.setControl(advancedComposite);
 
-		subsetCheckbox = new Button(mappingComposite,SWT.CHECK);
+		subsetCheckbox = new Button(advancedComposite,SWT.CHECK);
 		subsetCheckbox.setText("Use Subset of Ontology");
 		subsetCheckbox.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		subsetCheckbox.setEnabled(false);
@@ -249,13 +251,13 @@ public class ProjectSettingsComposite extends Composite
 			}
 		});
 		
-		subsetCombo = new Combo(mappingComposite,SWT.BORDER);
+		subsetCombo = new Combo(advancedComposite,SWT.BORDER);
 		gd = new GridData(GridData.FILL_HORIZONTAL|GridData.GRAB_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		subsetCombo.setLayoutData(gd);
 		subsetCombo.setEnabled(false);
 
-		considerCheckbox = new Button(mappingComposite,SWT.CHECK);
+		considerCheckbox = new Button(advancedComposite,SWT.CHECK);
 		considerCheckbox.setText("Consider Terms from");
 		considerCheckbox.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 		considerCheckbox.setEnabled(false);
@@ -267,45 +269,27 @@ public class ProjectSettingsComposite extends Composite
 				updateConsiderEnabled();
 			}
 		});
-		considerCombo = new Combo(mappingComposite,SWT.BORDER);
+		considerCombo = new Combo(advancedComposite,SWT.BORDER);
 		considerCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL|GridData.GRAB_HORIZONTAL));
-		Label subOntologyLabel = new Label(mappingComposite,0);
+		Label subOntologyLabel = new Label(advancedComposite,0);
 		subOntologyLabel.setText("Subontology");
 		considerCombo.setEnabled(false);
 
 		if (mapping)
 		{
-//			new Label(mappingComposite,0);
-//			mappingCheckBox = new Button(mappingComposite,SWT.CHECK);
-//			mappingCheckBox.setText("Use Mapping");
-//			gd = new GridData();
-//			gd.horizontalSpan = 2;
-//
-//			mappingCheckBox.setLayoutData(gd);
-//			mappingCheckBox.addSelectionListener(new SelectionAdapter()
-//			{
-//				@Override
-//				public void widgetSelected(SelectionEvent e)
-//				{
-//					updateMappingEnabled();
-//				}
-//			});
-			
-			mappingFileGridCompositeWidgets = new FileGridCompositeWidgets(mappingComposite,true);
+			mappingFileGridCompositeWidgets = new FileGridCompositeWidgets(advancedComposite,true);
 			mappingFileGridCompositeWidgets.setLabel("Mapping");
 			mappingFileGridCompositeWidgets.setToolTipText("Specifies an additional mapping file in which each line consits of a single name mapping. The name of the first column is mapped to the name of the second column before the annotation process begins. Columns should be tab-separated.");
 			mappingFileGridCompositeWidgets.setFilterExtensions(new String[]{"*.*"});
 			mappingFileGridCompositeWidgets.setFilterNames(new String[]{"All files"});
-			
-//			updateMappingEnabled();
 		}
 		
-		Label evidenceLabel = new Label(mappingComposite,0);
+		Label evidenceLabel = new Label(advancedComposite,0);
 		evidenceLabel.setText("Evidences");
 		evidenceLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-		gd = new GridData(GridData.GRAB_VERTICAL|GridData.GRAB_HORIZONTAL|GridData.FILL_BOTH);
+		gd = new GridData(GridData.GRAB_HORIZONTAL|GridData.FILL_BOTH);
 		gd.horizontalSpan = 2;
-		evidenceTable = new Table(mappingComposite, SWT.BORDER|SWT.CHECK);
+		evidenceTable = new Table(advancedComposite, SWT.BORDER|SWT.CHECK);
 		evidenceTable.setLayoutData(gd);
 		evidenceTable.setEnabled(false);
 		evidenceNameColumn = new TableColumn(evidenceTable, SWT.NONE);
@@ -328,8 +312,26 @@ public class ProjectSettingsComposite extends Composite
 				}
 			}
 		});
+		
+		createInfoText(advancedComposite);
 	}
 
+	/**
+	 * Makes the info styled text visible (if not done)
+	 */
+	private void createInfoText(Composite parent)
+	{
+		if (infoText != null) return;
+		
+		infoText = new StyledText(parent, SWT.WRAP);
+		infoText.setBackground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+		GridData gd = new GridData(GridData.GRAB_HORIZONTAL|GridData.FILL_BOTH);
+		gd.horizontalSpan = 3;
+		gd.minimumHeight = 20;
+		infoText.setLayoutData(gd);
+		this.layout(true);
+	}
+	
 	/**
 	 * Updates the enable status of the subset widget in accordance to
 	 * the current state of the checkbox.
@@ -500,6 +502,16 @@ public class ProjectSettingsComposite extends Composite
 
 		if (subset.length() > 0)
 			advancedExpander.setExpandedState(true);
+	}
+	
+	/**
+	 * Sets the given text to the information.
+	 * 
+	 * @param text
+	 */
+	public void setInfoText(String text)
+	{
+		infoText.setText(text);
 	}
 	
 	/**
