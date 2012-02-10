@@ -34,6 +34,8 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
+import ontologizer.FileCache;
+import ontologizer.FileCache.FileState;
 import ontologizer.association.Association;
 import ontologizer.association.AssociationContainer;
 import ontologizer.association.Gene2Associations;
@@ -655,6 +657,17 @@ public class MainWindow extends ApplicationWindow
 
 				settingsComposite.setRestrictionChoices(null);
 				settingsComposite.setConsiderChoices(null);
+
+				StringBuilder info = new StringBuilder();
+
+				FileState fs = FileCache.getState(currentWorkSet.getOboPath());
+				if (fs == FileState.CACHED)
+					info.append("Remote definition file was downloaded at " + FileCache.getDownloadTime(currentWorkSet.getOboPath()) + ". ");
+				fs = FileCache.getState(currentWorkSet.getAssociationPath());
+				if (fs == FileState.CACHED)
+					info.append("Remote annotation file was downloaded at " + FileCache.getDownloadTime(currentWorkSet.getAssociationPath()) + ". ");
+
+				settingsComposite.setInfoText(info.toString());
 
 				WorkSetLoadThread.obtainDatafiles(currentWorkSet,
 						new Runnable(){
