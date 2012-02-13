@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Random;
 
-import ontologizer.math.Hypergeometric;
+import ontologizer.statistics.Hypergeometric;
 
 /**
  * Provides functionality to sample one or many k-subsets from a collection of
