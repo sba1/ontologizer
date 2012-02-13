@@ -1,4 +1,4 @@
-package ontologizer;
+package ontologizer.math;
 
 import java.util.Vector;
 import java.lang.Math;

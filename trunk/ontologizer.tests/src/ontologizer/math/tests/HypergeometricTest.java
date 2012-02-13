@@ -1,6 +1,6 @@
-package ontologizer.tests;
+package ontologizer.math.tests;
 
-import ontologizer.Hypergeometric;
+import ontologizer.math.Hypergeometric;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
