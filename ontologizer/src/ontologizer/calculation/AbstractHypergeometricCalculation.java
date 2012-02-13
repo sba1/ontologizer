@@ -1,6 +1,6 @@
 package ontologizer.calculation;
 
-import ontologizer.Hypergeometric;
+import ontologizer.math.Hypergeometric;
 
 /**
  *
