@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Locale;
 
 import sonumina.collections.TinyQueue;
 
@@ -347,7 +348,7 @@ abstract public class AbstractGraph<VertexType>
 	{
 		PrintWriter out = new PrintWriter(fos);
 
-		out.format("digraph G {nodesep=%f; ranksep=%f\n", nodeSep,rankSep);
+		out.format(Locale.US,"digraph G {nodesep=%f; ranksep=%f\n", nodeSep,rankSep);
 
 		/* Write out all nodes, call the given interface. Along the way, remember the indices. */
 		HashMap<VertexType,Integer> v2idx = new HashMap<VertexType,Integer>();
