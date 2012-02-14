@@ -399,6 +399,11 @@ public class StudySet implements Iterable<ByteString>
 		return enumerateGOTerms(graph, associationContainer, null);
 	}
 
+	public GOTermEnumerator enumerateGOTerms(Ontology graph, AssociationContainer associationContainer, Set<ByteString> evidences)
+	{
+		return enumerateGOTerms(graph, associationContainer, evidences, null);
+	}
+
 	/**
 	 * Enumerate genes annotated for every term. Multiple
 	 * calls to this method are fast, if the gene set has not
@@ -408,7 +413,7 @@ public class StudySet implements Iterable<ByteString>
      * @param associationContainer
      * @param evidences
 	 */
-	public synchronized GOTermEnumerator enumerateGOTerms(Ontology graph, AssociationContainer associationContainer, Set<ByteString> evidences)
+	public synchronized GOTermEnumerator enumerateGOTerms(Ontology graph, AssociationContainer associationContainer, Set<ByteString> evidences, GOTermEnumerator.IRemover remover)
 	{
 		/* Return cached enumerator if available */
 		if (goTermEnumerator != null) return goTermEnumerator;
@@ -423,6 +428,8 @@ public class StudySet implements Iterable<ByteString>
 				goTermEnumerator.push(geneAssociations,evidences);
 		}
 
+		if (remover != null)
+			goTermEnumerator.removeTerms(remover);
 		return goTermEnumerator;
 	}
 
