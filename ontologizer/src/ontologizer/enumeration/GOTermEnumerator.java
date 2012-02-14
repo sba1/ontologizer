@@ -324,6 +324,11 @@ public class GOTermEnumerator implements Iterable<TermID>
 		return at;
 	}
 
+	/**
+	 * Returns all genes contained within this set.
+	 * 
+	 * @return
+	 */
 	public Set<ByteString> getGenes()
 	{
 		LinkedHashSet<ByteString> genes = new LinkedHashSet<ByteString>();
@@ -332,5 +337,34 @@ public class GOTermEnumerator implements Iterable<TermID>
 			genes.addAll(ent.getValue().totalAnnotated);
 
 		return genes;
+	}
+
+
+	public static interface IRemover
+	{
+		/**
+		 * Returns whether the given term should be removed.
+		 * 
+		 * @param tag
+		 * @return
+		 */
+		public boolean remove(TermID tid, GOTermAnnotatedGenes tag);
+	}
+	
+	/**
+	 * Removes existing terms from the enumerator according to
+	 * the remover.
+	 * @param remove
+	 */
+	public void removeTerms(IRemover remove)
+	{
+		ArrayList<TermID> toBeRemoved = new ArrayList<TermID>();
+		for (Entry<TermID, GOTermAnnotatedGenes> entry : map.entrySet())
+		{
+			if (remove.remove(entry.getKey(),entry.getValue()))
+					toBeRemoved.add(entry.getKey());
+		}
+		for (TermID tid : toBeRemoved)
+			map.remove(tid);
 	}
 }
