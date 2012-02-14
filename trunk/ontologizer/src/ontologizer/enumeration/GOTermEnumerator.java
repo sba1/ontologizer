@@ -340,6 +340,7 @@ public class GOTermEnumerator implements Iterable<TermID>
 	}
 
 
+	/** Callback to decide whether an term should be removed */
 	public static interface IRemover
 	{
 		/**
