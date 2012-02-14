@@ -303,13 +303,8 @@ public class SlimDirectedGraphView<VertexType>
 	 */
 	public ArrayList<VertexType> getAncestors(VertexType t){
 		
-		/* check that this vertex is found in the graph */
-		if ( ! isVertexInGraph(t)){
-			return null;
-		}
-		
 		/* get the index of the vertex */
-		int indexOfTerm 						= getVertexIndex(t);
+		int indexOfTerm 							= getVertexIndex(t);
 		/* get all descendent indices of the vertex */
 		int[] ancestorIndices					= vertexAncestors[indexOfTerm];
 		
