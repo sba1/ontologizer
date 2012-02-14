@@ -160,5 +160,21 @@ public class StudySetTest extends TestCase
 
 		GOTermEnumerator gote = studySet.enumerateGOTerms(idf.graph, idf.assoc);
 		Assert.assertEquals(idf.graph.getNumberOfTerms(), gote.getTotalNumberOfAnnotatedTerms());
+
+		assertEquals(5,gote.getAnnotatedGenes(new TermID("GO:0000001")).totalAnnotated.size());
+		assertEquals(0,gote.getAnnotatedGenes(new TermID("GO:0000001")).directAnnotated.size());
+		assertEquals(4,gote.getAnnotatedGenes(new TermID("GO:0000007")).totalAnnotated.size());
+		assertEquals(1,gote.getAnnotatedGenes(new TermID("GO:0000007")).directAnnotated.size());
+		assertEquals(2,gote.getAnnotatedGenes(new TermID("GO:0000009")).totalAnnotated.size());
+		assertEquals(0,gote.getAnnotatedGenes(new TermID("GO:0000009")).directAnnotated.size());
+		assertEquals(1,gote.getAnnotatedGenes(new TermID("GO:0000011")).totalAnnotated.size());
+		assertEquals(1,gote.getAnnotatedGenes(new TermID("GO:0000011")).directAnnotated.size());
+		assertEquals(1,gote.getAnnotatedGenes(new TermID("GO:0000012")).totalAnnotated.size());
+		assertEquals(1,gote.getAnnotatedGenes(new TermID("GO:0000012")).directAnnotated.size());
+		assertEquals(2,gote.getAnnotatedGenes(new TermID("GO:0000013")).totalAnnotated.size());
+		assertEquals(2,gote.getAnnotatedGenes(new TermID("GO:0000013")).directAnnotated.size());
+		assertEquals(2,gote.getAnnotatedGenes(new TermID("GO:0000014")).totalAnnotated.size());
+		assertEquals(2,gote.getAnnotatedGenes(new TermID("GO:0000014")).directAnnotated.size());
+
 	}
 }
