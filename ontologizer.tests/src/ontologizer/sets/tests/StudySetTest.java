@@ -12,6 +12,7 @@ import ontologizer.benchmark.Datafiles;
 import ontologizer.dotwriter.AbstractDotAttributesProvider;
 import ontologizer.dotwriter.GODOTWriter;
 import ontologizer.enumeration.GOTermEnumerator;
+import ontologizer.enumeration.GOTermEnumerator.GOTermAnnotatedGenes;
 import ontologizer.go.Ontology;
 import ontologizer.go.ParentTermID;
 import ontologizer.go.Term;
@@ -175,6 +176,22 @@ public class StudySetTest extends TestCase
 		assertEquals(2,gote.getAnnotatedGenes(new TermID("GO:0000013")).directAnnotated.size());
 		assertEquals(2,gote.getAnnotatedGenes(new TermID("GO:0000014")).totalAnnotated.size());
 		assertEquals(2,gote.getAnnotatedGenes(new TermID("GO:0000014")).directAnnotated.size());
+
+		/* Remove all terms with less than two annotations */
+		gote.removeTerms(new GOTermEnumerator.IRemover() {
+			@Override
+			public boolean remove(TermID tid, GOTermAnnotatedGenes tag)
+			{
+				return tag.totalAnnotated.size() < 3;
+			}
+		});
+
+		assertEquals(7,gote.getTotalNumberOfAnnotatedTerms());
+
+		assertEquals(4,gote.getAnnotatedGenes(new TermID("GO:0000007")).totalAnnotated.size());
+		assertEquals(1,gote.getAnnotatedGenes(new TermID("GO:0000007")).directAnnotated.size());
+		assertEquals(0,gote.getAnnotatedGenes(new TermID("GO:0000014")).totalAnnotated.size());
+		assertEquals(0,gote.getAnnotatedGenes(new TermID("GO:0000014")).directAnnotated.size());
 
 	}
 }
