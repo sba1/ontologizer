@@ -83,8 +83,7 @@ public class FileGridCompositeWidgets
 		text.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
-				for (ISimpleAction act : actions)
-					act.act();
+				executeActions();
 			}
 		});
 		button = new Button(parent,0);
@@ -107,8 +106,7 @@ public class FileGridCompositeWidgets
 				if (fileName != null)
 				{
 					text.setText(fileName);
-					for (ISimpleAction act : actions)
-						act.act();
+					executeActions();
 				}
 			}
 		});
@@ -219,12 +217,22 @@ public class FileGridCompositeWidgets
 	}
 	
 	/**
-	 * Add an action that is called when the contens changes.
+	 * Add an action that is called when the contents changes.
 	 * 
 	 * @param act
 	 */
 	public void addTextChangedAction(ISimpleAction act)
 	{
 		actions.add(act);
+	}
+
+	/**
+	 * Executes actions that were registered using
+	 * addTextChangedAction(). 
+	 */
+	private void executeActions()
+	{
+		for (ISimpleAction act : actions)
+			act.act();
 	}
 }
