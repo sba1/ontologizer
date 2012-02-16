@@ -252,6 +252,8 @@ public class Ontologizer
 		main.addAnalyseAction(new ISimpleAction(){public void act()
 		{
 			List<MainWindow.Set> list = main.getSetEntriesOfCurrentPopulation();
+			if (list == null) return;
+
 			if (list.size() > 1)
 			{
 				PopulationSet populationSet = getPopulationSetFromList(list);
@@ -316,6 +318,8 @@ public class Ontologizer
 			public void act()
 			{
 				List<MainWindow.Set> list = main.getSetEntriesOfCurrentPopulation();
+				if (list == null) return;
+
 				if (list.size() > 1)
 				{
 					final Display display = main.getShell().getDisplay();
