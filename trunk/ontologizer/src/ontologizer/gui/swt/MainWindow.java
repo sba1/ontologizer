@@ -307,6 +307,7 @@ public class MainWindow extends ApplicationWindow
 		newItemData.settings.annotationsFileName = getAssociationsFileString();
 		newItemData.settings.ontologyFileName = getDefinitionFileString();
 		newItemData.settings.subontology = getSubontologyString();
+		newItemData.settings.subset = getSubsetString();
 
 		TreeItem newItem = new TreeItem(workspaceTree,0);
 		newItem.setData(newItemData);
