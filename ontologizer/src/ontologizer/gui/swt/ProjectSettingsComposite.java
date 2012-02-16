@@ -188,7 +188,8 @@ public class ProjectSettingsComposite extends Composite
 	private Button subsetCheckbox;
 	private Button considerCheckbox;
 
-	private ArrayList<ISimpleAction> definitionChangedList = new ArrayList<ISimpleAction>();
+	private ArrayList<ISimpleAction> ontologyChangedList = new ArrayList<ISimpleAction>();
+	private ArrayList<ISimpleAction> associationChangedList = new ArrayList<ISimpleAction>();
 
 	private WorkSetList wsl;
 
@@ -308,6 +309,11 @@ public class ProjectSettingsComposite extends Composite
 					{
 						setAssociationsFileString(ws.getAssociationPath());
 						setDefinitonFileString(ws.getOboPath());
+
+						for (ISimpleAction act : ontologyChangedList)
+							act.act();
+						for (ISimpleAction act : associationChangedList)
+							act.act();
 					}
 				}
 			}
@@ -353,17 +359,6 @@ public class ProjectSettingsComposite extends Composite
 	public String getDefinitionFileString()
 	{
 		return ontologyFileGridCompositeWidgets.getPath();
-	}
-
-	/**
-	 * Add an action that is invoked if the definition file
-	 * has been changed.
-	 *
-	 * @param act
-	 */
-	public void addDefinitionChanged(ISimpleAction act)
-	{
-		definitionChangedList.add(act);
 	}
 
 	/**
@@ -587,6 +582,7 @@ public class ProjectSettingsComposite extends Composite
 	public void addOntologyChangedAction(ISimpleAction act)
 	{
 		ontologyFileGridCompositeWidgets.addTextChangedAction(act);
+		ontologyChangedList.add(act);
 	}
 
 	/**
@@ -608,5 +604,6 @@ public class ProjectSettingsComposite extends Composite
 	public void addAssociationChangedAction(ISimpleAction act)
 	{
 		assocFileGridCompositeWidgets.addTextChangedAction(act);
+		associationChangedList.add(act);
 	}
 }
