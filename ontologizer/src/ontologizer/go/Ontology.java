@@ -232,7 +232,6 @@ public class Ontology implements Iterable<Term>
 
 			rootTerm = new Term(level1terms.get(0).getID().getPrefix().toString()+":0000000", "root");
 
-			System.out.println(level1terms.get(0).getID().getPrefix().toString()+":0000000" + "  " + rootTerm.toString());
 			logger.info("Ontology contains multiple level-one terms: " + level1StringBuilder.toString() + ". Adding artificial root term \"" + rootTerm.getID().toString() + "\".");
 
 			rootTerm.setSubsets(new ArrayList<Subset>(availableSubsets));
