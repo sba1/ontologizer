@@ -43,7 +43,7 @@ public abstract class AbstractResultComposite extends Composite
 	private AbstractGOTermsResult result;
 
 	/** The composite for the sub term filter */
-	private GOTermFilterSelectionComposite subtermFilterComposite;
+	private TermFilterSelectionComposite subtermFilterComposite;
 
 	/** The composite for the graph display */
 	protected GraphCanvas graphVisual;
@@ -161,7 +161,7 @@ public abstract class AbstractResultComposite extends Composite
 	 */
 	protected void createSubtermFilter(Composite parent)
 	{
-		subtermFilterComposite = new GOTermFilterSelectionComposite(parent,0);
+		subtermFilterComposite = new TermFilterSelectionComposite(parent,0);
 		subtermFilterComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL|GridData.GRAB_HORIZONTAL));
 		subtermFilterComposite.setNewTermAction(new ISimpleAction()
 		{
