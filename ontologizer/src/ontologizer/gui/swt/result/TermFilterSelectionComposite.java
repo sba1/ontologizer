@@ -33,11 +33,11 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * A class comprising of a text field in which the user may enter
- * a GO term. GO terms can be selected via by using a selection list.
+ * a term. Terms can be selected via by using a selection list.
  *
  * @author Sebastian Bauer
  */
-public class GOTermFilterSelectionComposite extends Composite
+public class TermFilterSelectionComposite extends Composite
 {
 	/** Contains terms that possibly could be selected */
 	private Term [] terms;
@@ -66,7 +66,7 @@ public class GOTermFilterSelectionComposite extends Composite
 	 * @param parent
 	 * @param style
 	 */
-	public GOTermFilterSelectionComposite(Composite parent, int style)
+	public TermFilterSelectionComposite(Composite parent, int style)
 	{
 		super(parent, style);
 
