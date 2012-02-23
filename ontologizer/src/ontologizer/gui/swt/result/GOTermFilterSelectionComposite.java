@@ -39,7 +39,7 @@ import org.eclipse.swt.widgets.Text;
  */
 public class GOTermFilterSelectionComposite extends Composite
 {
-	/** Contains the possibly selectable terms */
+	/** Contains terms that possibly could be selected */
 	private Term [] terms;
 
 	/** Contains the terms which are currently displayed within the suggestion list */
@@ -77,7 +77,7 @@ public class GOTermFilterSelectionComposite extends Composite
 		subtermFilterSuggestionShell.setLayout(new FillLayout());
 		subtermFilterSuggestionTable = new Table(subtermFilterSuggestionShell,SWT.BORDER|SWT.VIRTUAL|SWT.FULL_SELECTION);
 		subtermFilterSuggestionTableIDColumn = new TableColumn(subtermFilterSuggestionTable,0);
-		subtermFilterSuggestionTableIDColumn.setText("GO ID");
+		subtermFilterSuggestionTableIDColumn.setText("Term ID");
 		subtermFilterSuggestionTableNamespaceColumn = new TableColumn(subtermFilterSuggestionTable,0);
 		subtermFilterSuggestionTableNamespaceColumn.setText("Namespace");
 		subtermFilterSuggestionTableNameColumn = new TableColumn(subtermFilterSuggestionTable,0);
@@ -160,7 +160,7 @@ public class GOTermFilterSelectionComposite extends Composite
 		subtermFilterText.addModifyListener(new ModifyListener(){
 			public void modifyText(ModifyEvent e)
 			{
-				String text = subtermFilterText.getText();
+				String text = subtermFilterText.getText().toLowerCase();
 
 				/* Populate the term suggestion list */
 				suggestionList = new ArrayList<Term>();
@@ -168,12 +168,11 @@ public class GOTermFilterSelectionComposite extends Composite
 				for (int i=0;i<terms.length;i++)
 				{
 					Term term = terms[i];
-					if (term.getName().startsWith(text) ||
-					  (term.getIDAsString().startsWith(text) && !(text.equalsIgnoreCase("g") || text.equalsIgnoreCase("go") || text.equalsIgnoreCase("go:"))) ||
-					    term.getIDAsString().substring(3).startsWith(text))
-					{
+
+					if (term.getName().toLowerCase().contains(text))
 						suggestionList.add(term);
-					}
+					else if (term.getIDAsString().toLowerCase().contains(text))
+						suggestionList.add(term);
 				}
 
 				/* Sort the suggestion list according to names of the terms alphabetically */
@@ -183,7 +182,7 @@ public class GOTermFilterSelectionComposite extends Composite
 						return o1.getName().compareTo(o2.getName());
 					}});
 
-				/* We display the list if eighter we have more than one suggestion or if the single suggestion
+				/* We display the list if either we have more than one suggestion or if the single suggestion
 				 * is no exact match
 				 */
 				if (suggestionList.size() > 1 || (suggestionList.size() == 1 && !text.equalsIgnoreCase(suggestionList.get(0).getName())))
@@ -195,7 +194,9 @@ public class GOTermFilterSelectionComposite extends Composite
 						subtermFilterSuggestionTableIDColumn.setWidth(85);
 					subtermFilterSuggestionTableNamespaceColumn.setWidth(20);
 
+					subtermFilterSuggestionTableIDColumn.pack();
 					subtermFilterSuggestionTableNameColumn.pack();
+					subtermFilterSuggestionTableNamespaceColumn.pack();
 
 					if (!subtermFilterSuggestionShell.isVisible())
 					{
@@ -237,11 +238,21 @@ public class GOTermFilterSelectionComposite extends Composite
 		this.terms = supportedTerms;
 	}
 
+	/**
+	 * Returns the currently selected term.
+	 *
+	 * @return
+	 */
 	public Term getSelectedTerm()
 	{
 		return selectedTerm;
 	}
 
+	/**
+	 * Action to be executed if a new term is selected.
+	 *
+	 * @param act
+	 */
 	public void setNewTermAction(ISimpleAction act)
 	{
 		newTermAction = act;
