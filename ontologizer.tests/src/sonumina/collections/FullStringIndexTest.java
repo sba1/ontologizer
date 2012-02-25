@@ -14,5 +14,10 @@ public class FullStringIndexTest extends TestCase
 		fsi.add("GDUJK", 4);
 		fsi.add("ABCD", 5);
 		Assert.assertEquals(5,fsi.size());
+
+		int cnt = 0;
+		for (Integer i : fsi.contains("A"))
+			cnt++;
+		Assert.assertEquals(3,cnt);
 	}
 }
