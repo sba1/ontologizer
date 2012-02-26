@@ -34,5 +34,12 @@ public class FullStringIndexTest extends TestCase
 		for (Integer i : fsi.contains("Z"))
 			cnt++;
 		Assert.assertEquals(0,cnt);
+
+		fsi.clear();
+		cnt = 0;
+		for (Integer i : fsi.contains("A"))
+			cnt++;
+		Assert.assertEquals(0,cnt);
+
 	}
 }

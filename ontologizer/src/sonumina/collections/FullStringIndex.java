@@ -13,6 +13,12 @@ public class FullStringIndex<T>
 	private ArrayList<String> stringList = new ArrayList<String>();
 	private ArrayList<T> objectList = new ArrayList<T>();
 
+	/**
+	 * Private class to iterate over strings containing
+	 * a given string.
+	 *
+	 * @author Sebastian Bauer
+	 */
 	private class StringIterator implements Iterator<T>
 	{
 		private String str;
@@ -55,6 +61,15 @@ public class FullStringIndex<T>
 	{
 		stringList.add(string);
 		objectList.add(o);
+	}
+
+	/**
+	 * Clears the container.
+	 */
+	public void clear()
+	{
+		stringList.clear();
+		objectList.clear();
 	}
 
 	/**
