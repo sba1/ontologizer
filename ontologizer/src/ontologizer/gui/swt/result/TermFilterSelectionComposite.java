@@ -3,6 +3,7 @@ package ontologizer.gui.swt.result;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 
 import ontologizer.go.Term;
 import ontologizer.gui.swt.ISimpleAction;
@@ -31,6 +32,8 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
+import sonumina.collections.FullStringIndex;
+
 /**
  * A class comprising of a text field in which the user may enter
  * a term. Terms can be selected via by using a selection list.
@@ -39,8 +42,8 @@ import org.eclipse.swt.widgets.Text;
  */
 public class TermFilterSelectionComposite extends Composite
 {
-	/** Contains terms that possibly could be selected */
-	private Term [] terms;
+	/** Contains terms that possibly could be chosen */
+	private FullStringIndex<Term> fsi = new FullStringIndex<Term>();
 
 	/** Contains the terms which are currently displayed within the suggestion list */
 	private ArrayList<Term> suggestionList;
@@ -69,8 +72,6 @@ public class TermFilterSelectionComposite extends Composite
 	public TermFilterSelectionComposite(Composite parent, int style)
 	{
 		super(parent, style);
-
-		terms = new Term[0];
 
 		/* Subterm filter */
 		subtermFilterSuggestionShell = new Shell(getShell(),SWT.TOOL|SWT.ON_TOP);
@@ -140,17 +141,11 @@ public class TermFilterSelectionComposite extends Composite
 							}
 	
 							/* Find the proper term. This is implemented very naively */
-							selectedTerm = null;
-							for (i=0;i<terms.length;i++)
-							{
-								if (subtermFilterText.getText().equalsIgnoreCase(terms[i].getName()))
-								{
-									selectedTerm = terms[i];
-									/* Make the suggestion list invisible */
-									subtermFilterSuggestionShell.setVisible(false);
-									break;
-								}
-							}
+							Iterator<Term> iter = fsi.contains(subtermFilterText.getText()).iterator();
+							if (iter.hasNext())
+								selectedTerm = iter.next();
+							else
+								selectedTerm = null;
 							if (newTermAction != null) newTermAction.act();
 							break;
 				}
@@ -164,17 +159,10 @@ public class TermFilterSelectionComposite extends Composite
 	
 				/* Populate the term suggestion list */
 				suggestionList = new ArrayList<Term>();
-	
-				for (int i=0;i<terms.length;i++)
-				{
-					Term term = terms[i];
 
-					if (term.getName().toLowerCase().contains(text))
-						suggestionList.add(term);
-					else if (term.getIDAsString().toLowerCase().contains(text))
-						suggestionList.add(term);
-				}
-	
+				for (Term t : fsi.contains(text))
+					suggestionList.add(t);
+
 				/* Sort the suggestion list according to names of the terms alphabetically */
 				Collections.sort(suggestionList, new Comparator<Term>(){
 					public int compare(Term o1, Term o2)
@@ -235,7 +223,12 @@ public class TermFilterSelectionComposite extends Composite
 	 */
 	public void setSupportedTerms(Term [] supportedTerms)
 	{
-		this.terms = supportedTerms; 
+		fsi.clear();
+		for (int i=0;i<supportedTerms.length;i++)
+		{
+			fsi.add(supportedTerms[i].getName(),supportedTerms[i]);
+			fsi.add(supportedTerms[i].getIDAsString(),supportedTerms[i]);
+		}
 	}
 
 	/**
