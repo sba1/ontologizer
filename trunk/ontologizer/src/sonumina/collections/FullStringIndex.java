@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
- * A class mapping strings to other objects.
+ * A class mapping strings to other objects. The data structure compares
+ * the strings in a case-insensitive manner.
  * 
  * @author Sebastian Bauer
  */
@@ -59,7 +60,7 @@ public class FullStringIndex<T>
 	 */
 	public void add(String string, T o)
 	{
-		stringList.add(string);
+		stringList.add(string.toLowerCase());
 		objectList.add(o);
 	}
 	
@@ -97,7 +98,7 @@ public class FullStringIndex<T>
 					@Override
 					public Iterator<T> iterator()
 					{
-						return new StringIterator(string);
+						return new StringIterator(string.toLowerCase());
 					}
 				};
 	}
