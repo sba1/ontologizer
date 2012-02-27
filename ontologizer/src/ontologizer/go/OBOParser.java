@@ -54,6 +54,7 @@ public class OBOParser
 	/** Ignore synonyms */
 	public final static int IGNORE_SYNONYMS     = 1 << 4;
 
+	
 	/**
 	 * Escaped characters such as \\ in the gene_ontology.obo file.
 	 */
@@ -109,8 +110,8 @@ public class OBOParser
 	/** Statistics */
 	private int numberOfRelations;
 	
-	/** Contains all the ontology prefixes */
-	private HashSet<Prefix> prefixes = new HashSet<Prefix>();
+	/** Pool for prefixes. */
+	private PrefixPool prefixPool = new PrefixPool();
 
 	/** All parsed namespaces */
 	private HashMap<String,Namespace> namespaces = new HashMap<String,Namespace>(); 
@@ -596,7 +597,7 @@ public class OBOParser
 	{
 		try
 		{
-			currentAlternatives.add(new TermID(value));
+			currentAlternatives.add(new TermID(value,prefixPool));
 		} catch (IllegalArgumentException e)
 		{
 			logger.warning("Unable to parse alternative ID: \""+value+"\"");
@@ -608,7 +609,7 @@ public class OBOParser
 	{
 		try
 		{
-			currentEquivalents.add(new TermID(value));
+			currentEquivalents.add(new TermID(value,prefixPool));
 		} catch (IllegalArgumentException e)
 		{
 			logger.warning("Unable to parse equivalent ID: \""+value+"\"");
@@ -706,7 +707,7 @@ public class OBOParser
 	public void readISA(String value)
 	{
 		if (currentStanza == Stanza.TERM)
-			currentParents.add(new ParentTermID(new TermID(value),TermRelation.IS_A));
+			currentParents.add(new ParentTermID(new TermID(value,prefixPool),TermRelation.IS_A));
 	}
 
 	private void readRelationship(String type, String id)
@@ -724,7 +725,7 @@ public class OBOParser
 			else if (type.equals("positively_regulates"))
 				tr = TermRelation.POSITIVELY_REGULATES;
 
-			currentParents.add(new ParentTermID(new TermID(id),tr));
+			currentParents.add(new ParentTermID(new TermID(id,prefixPool),tr));
 		}
 	}
 
