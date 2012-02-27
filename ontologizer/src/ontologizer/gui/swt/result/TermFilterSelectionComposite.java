@@ -178,14 +178,17 @@ public class TermFilterSelectionComposite extends Composite
 					subtermFilterSuggestionTable.setItemCount(suggestionList.size());
 					subtermFilterSuggestionTable.clearAll();
 					subtermFilterSuggestionTableIDColumn.pack();
-					if (subtermFilterSuggestionTableIDColumn.getWidth() < 85)
-						subtermFilterSuggestionTableIDColumn.setWidth(85);
-					subtermFilterSuggestionTableNamespaceColumn.setWidth(20);
-					
-					subtermFilterSuggestionTableIDColumn.pack();
 					subtermFilterSuggestionTableNameColumn.pack();
 					subtermFilterSuggestionTableNamespaceColumn.pack();
-	
+					if (subtermFilterSuggestionTableIDColumn.getWidth() < 85)
+						subtermFilterSuggestionTableIDColumn.setWidth(85);
+					if (subtermFilterSuggestionTableNamespaceColumn.getWidth()<30)
+						subtermFilterSuggestionTableNamespaceColumn.setWidth(30);
+					if (subtermFilterSuggestionTableNameColumn.getWidth()<100)
+					{
+						subtermFilterSuggestionTableNameColumn.setWidth(subtermFilterSuggestionTable.getClientArea().width - subtermFilterSuggestionTableIDColumn.getWidth() - subtermFilterSuggestionTableNamespaceColumn.getWidth()); 
+					}
+					
 					if (!subtermFilterSuggestionShell.isVisible())
 					{
 						Point loc = subtermFilterText.toDisplay(0, 0);
