@@ -658,6 +658,12 @@ public class Ontologizer
 
 		if (!display.isDisposed())
 			display.dispose();
+
+		/* On MacOSX we have to explicitly exit */
+		if (System.getProperty("os.name","unknown").toLowerCase().contains("mac"))
+		{		
+			System.exit(0);
+		}
 	}
 
 	private static PopulationSet getPopulationSetFromList(List<Set> list)
