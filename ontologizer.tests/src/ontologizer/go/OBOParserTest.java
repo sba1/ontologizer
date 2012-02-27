@@ -1,5 +1,7 @@
 package ontologizer.go;
 
+import java.io.IOException;
+
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
@@ -37,5 +39,13 @@ public class OBOParserTest extends TestCase
 	public void testDate()
 	{
 		Assert.assertEquals(date,oboParser.getDate());
+	}
+	
+	public void testIgnoreSynonyms() throws IOException, OBOParserException
+	{
+		OBOParser oboParser = new OBOParser(GOtermsOBOFile,OBOParser.IGNORE_SYNONYMS);
+		oboParser.doParse();
+		for (Term t : oboParser.getTermMap())
+			Assert.assertEquals(0,t.getSynonyms().length);
 	}
 }
