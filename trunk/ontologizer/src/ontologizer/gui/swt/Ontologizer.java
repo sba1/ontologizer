@@ -563,7 +563,7 @@ public class Ontologizer
 						about.open();
 					}
 				});
-			}
+			} else logger.info("About menu entry not found!");
 
 			item = getItem(systemMenu,SWT.ID_PREFERENCES);
 			if (item != null)
@@ -576,8 +576,23 @@ public class Ontologizer
 						prefs.open();
 					}
 				});
-			}
-		}
+			} else logger.info("Preferences menu entry not found!");
+
+			item = getItem(systemMenu,SWT.ID_QUIT);
+			if (item != null)
+			{
+				item.addSelectionListener(new SelectionAdapter()
+				{
+					@Override
+					public void widgetSelected(SelectionEvent e)
+					{
+						main.getShell().dispose();
+					}
+				});
+			} else logger.info("Quit menu entry not found!");
+
+
+		} else logger.info("System menu entry not found!");
 
 		Shell shell = main.getShell();
 		shell.open();
