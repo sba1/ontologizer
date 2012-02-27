@@ -747,18 +747,23 @@ public class OBOParser
 	 * and can disregard the [COMMENT/REF]. This may change later, so do not depend on this.
 	 * @param value
 	 */
-	private void readSynonym(String value) {
+	private void readSynonym(String value)
+	{
 		int a,b;
 		a=0;
-		while (value.charAt(a) == '\"')a++;
-		if (a != 1) {
-			System.err.println("Error Parsing Synonym \""+value+"\"");
-			System.err.println("Synonym does not begin with a aingle quotation mark.");
-			System.exit(1);
+		while (value.charAt(a) == '\"')
+			a++;
+
+		/* Ignore mis-formated entries */
+		if (a != 1)
+		{
+			logger.info("Ignoring badly formatted synonym \"" + value + "\"");
+			return;
 		}
+
 		b=1;
 		while (value.charAt(b) != '\"') b++;
-		this.currentSynonyms.add(value.substring(1,b).trim());
+		this.currentSynonyms.add(new String(value.substring(1,b).trim()));
 	}
 
 	public String getFormatVersion()
