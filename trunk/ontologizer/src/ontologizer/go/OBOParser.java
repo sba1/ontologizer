@@ -51,6 +51,9 @@ public class OBOParser
 	/** Takes the id as name, if the name is not present */
 	public final static int SETNAMEEQUALTOID	= 1 << 3;
 
+	/** Ignore synonyms */
+	public final static int IGNORE_SYNONYMS     = 1 << 4;
+
 	/**
 	 * Escaped characters such as \\ in the gene_ontology.obo file.
 	 */
@@ -527,7 +530,7 @@ public class OBOParser
 		{
 			currentObsolete = value.equalsIgnoreCase("true");
 		}
-		else if (name.equals("synonym")) {
+		else if (name.equals("synonym") && (options & IGNORE_SYNONYMS) == 0) {
 			readSynonym(value);
 		}
 		else if (name.equals("namespace"))
