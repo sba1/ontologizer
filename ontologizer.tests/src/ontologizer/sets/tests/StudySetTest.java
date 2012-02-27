@@ -9,6 +9,9 @@ import ontologizer.association.Association;
 import ontologizer.association.AssociationContainer;
 import ontologizer.association.Gene2Associations;
 import ontologizer.benchmark.Datafiles;
+import ontologizer.calculation.AbstractGOTermProperties;
+import ontologizer.calculation.EnrichedGOTermsResult;
+import ontologizer.calculation.TermForTermCalculation;
 import ontologizer.dotwriter.AbstractDotAttributesProvider;
 import ontologizer.dotwriter.GODOTWriter;
 import ontologizer.enumeration.GOTermEnumerator;
@@ -19,7 +22,9 @@ import ontologizer.go.Term;
 import ontologizer.go.TermContainer;
 import ontologizer.go.TermID;
 import ontologizer.go.TermRelation;
+import ontologizer.set.PopulationSet;
 import ontologizer.set.StudySet;
+import ontologizer.statistics.None;
 import ontologizer.types.ByteString;
 import sonumina.math.graph.DirectedGraph;
 import sonumina.math.graph.Edge;
@@ -159,7 +164,15 @@ public class StudySetTest extends TestCase
 		studySet.addGene(new ByteString("item4"), "");
 		studySet.addGene(new ByteString("item5"), "");
 
-		GOTermEnumerator gote = studySet.enumerateGOTerms(idf.graph, idf.assoc);
+		PopulationSet populationSet = new PopulationSet();
+		populationSet.addGene(new ByteString("item1"), "");
+		populationSet.addGene(new ByteString("item2"), "");
+		populationSet.addGene(new ByteString("item3"), "");
+		populationSet.addGene(new ByteString("item4"), "");
+		populationSet.addGene(new ByteString("item5"), "");
+
+
+		GOTermEnumerator gote = populationSet.enumerateGOTerms(idf.graph, idf.assoc);
 		Assert.assertEquals(idf.graph.getNumberOfTerms(), gote.getTotalNumberOfAnnotatedTerms());
 
 		assertEquals(5,gote.getAnnotatedGenes(new TermID("GO:0000001")).totalAnnotated.size());
@@ -177,6 +190,13 @@ public class StudySetTest extends TestCase
 		assertEquals(2,gote.getAnnotatedGenes(new TermID("GO:0000014")).totalAnnotated.size());
 		assertEquals(2,gote.getAnnotatedGenes(new TermID("GO:0000014")).directAnnotated.size());
 
+		TermForTermCalculation tft = new TermForTermCalculation();
+		EnrichedGOTermsResult result = tft.calculateStudySet(idf.graph, idf.assoc, populationSet, studySet, new None());
+		int number = 0;
+		for (AbstractGOTermProperties prop : result)
+			number++;
+		assertEquals(15,number);
+
 		/* Remove all terms with less than two annotations */
 		gote.removeTerms(new GOTermEnumerator.IRemover() {
 			@Override
@@ -185,6 +205,7 @@ public class StudySetTest extends TestCase
 				return tag.totalAnnotated.size() < 3;
 			}
 		});
+		populationSet.resetCounterAndEnumerator();
 
 		assertEquals(7,gote.getTotalNumberOfAnnotatedTerms());
 
@@ -193,5 +214,12 @@ public class StudySetTest extends TestCase
 		assertEquals(0,gote.getAnnotatedGenes(new TermID("GO:0000014")).totalAnnotated.size());
 		assertEquals(0,gote.getAnnotatedGenes(new TermID("GO:0000014")).directAnnotated.size());
 
+//		tft = new TermForTermCalculation();
+//		result = tft.calculateStudySet(idf.graph, idf.assoc, populationSet, studySet, new None());
+//		number = 0;
+//		for (AbstractGOTermProperties prop : result)
+//			number++;
+//
+//		assertEquals(7,number);
 	}
 }
