@@ -46,6 +46,6 @@ public class OBOParserTest extends TestCase
 		OBOParser oboParser = new OBOParser(GOtermsOBOFile,OBOParser.IGNORE_SYNONYMS);
 		oboParser.doParse();
 		for (Term t : oboParser.getTermMap())
-			Assert.assertEquals(0,t.getSynonyms().length);
+			Assert.assertTrue(t.getSynonyms() == null || t.getSynonyms().length == 0);
 	}
 }
