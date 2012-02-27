@@ -58,15 +58,30 @@ public class TermID
 
 	/**
 	 * Constructs the TermID from a string value assumed in the format defined
-	 * by the OBO foundry (i.e. %s:%07d).
+	 * by the OBO foundry.
 	 * 
 	 * @param stringID
-	 *            specifies the go term id string.
+	 *            specifies the term id string.
 	 * 
 	 * @throws IllegalArgumentException
 	 *             if the string could not be parsed.
 	 */
 	public TermID(String stringID)
+	{
+		this(stringID,null);
+	}
+
+	/**
+	 * Constructs the TermID from a string value assumed in the format defined
+	 * by the OBO foundry.
+	 * 
+	 * @param stringID specifies the term id string.
+	 * @param prefixPool specifies the prefix pool which is used to map the prefix
+	 *          
+	 * @throws IllegalArgumentException
+	 *             if the string could not be parsed.
+	 */
+	public TermID(String stringID, PrefixPool prefixPool)
 	{
 		int colon = stringID.indexOf(':');
 
@@ -76,7 +91,10 @@ public class TermID
 		/* condition, sine qua non for the integer part */
 //		if (stringID.length() - colon != 8) throw new IllegalArgumentException("Failed to parse the integer part of termid: \"" + stringID + "\"");
 		
-		prefix = new Prefix(stringID,colon);
+		Prefix newPrefix = new Prefix(stringID,colon); 
+		if (prefixPool != null) prefix = prefixPool.map(newPrefix);
+		else prefix = newPrefix;
+		
 		int parsedId;
 		String parseIdFrom = stringID.substring(colon+1);
 		try

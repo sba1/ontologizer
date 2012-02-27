@@ -24,4 +24,12 @@ public class TermIDTest extends TestCase
 		Assert.assertFalse(gid.equals(gid8)); // no, different prefix
 		Assert.assertTrue(gid.equals(gid9));  // yes, uses explicit prefix construction
 	}
+	
+	public void testWithPrefix()
+	{
+		PrefixPool pool = new PrefixPool();
+		TermID tid = new TermID("HPO:0000100",pool);
+		TermID tid2 = new TermID("HPO:0001001",pool);
+		Assert.assertSame(tid.getPrefix(), tid2.getPrefix());
+	}
 }
