@@ -414,7 +414,7 @@ public class WorkSetLoadThread extends Thread
 		Ontology graph;
 		if (!graphMap.containsKey(oboName))
 		{
-			OBOParser oboParser = new OBOParser(oboName);
+			OBOParser oboParser = new OBOParser(oboName, OBOParser.IGNORE_SYNONYMS);
 			workSetProgress.message("Parsing OBO file");
 			oboParser.doParse(new IOBOParserProgress()
 			{
