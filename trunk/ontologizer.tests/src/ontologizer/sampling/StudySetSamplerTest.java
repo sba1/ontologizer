@@ -5,9 +5,9 @@ import java.util.Set;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 import ontologizer.association.AssociationContainer;
+import ontologizer.association.AssociationParserTest2;
 import ontologizer.set.StudySet;
 import ontologizer.set.StudySetFactory;
-import ontologizer.tests.AssociationParserTest;
 import ontologizer.types.ByteString;
 
 public class StudySetSamplerTest extends TestCase
@@ -19,7 +19,7 @@ public class StudySetSamplerTest extends TestCase
 	@Override
 	protected void setUp() throws Exception
 	{
-		AssociationParserTest assocPT = new AssociationParserTest();
+		AssociationParserTest2 assocPT = new AssociationParserTest2();
 		assocPT.run();
 		// container = assocPT.container;
 		AssociationContainer assocContainer = assocPT.assocContainer;
