@@ -142,7 +142,7 @@ public class AssociationParser
 
 			in.mark(2000);
 
-			/* Skip affy coments */
+			/* Skip affy comments */
 			String line;
 			while ((line = in.readLine()) != null)
 				if (!line.startsWith("#")) break;
@@ -236,6 +236,7 @@ public class AssociationParser
 		int good = 0;
 		int bad = 0;
 		int skipped = 0;
+		int nots = 0;
 		int evidenceMismatch = 0;
 		int kept = 0;
 		int obsolete = 0;
@@ -303,6 +304,7 @@ public class AssociationParser
 				if (assoc.hasNotQualifier())
 				{
 					skipped++;
+					nots++;
 					continue;
 				}
 
@@ -480,7 +482,8 @@ public class AssociationParser
 				+ " malformed lines had to be ignored.");
 		logger.info("A further " + skipped
 				+ " associations were skipped due to various reasons whereas "
-				+ obsolete + " of those referred to obsolete terms and "
+				+ nots + " of those where explicitly qualified with NOT, " +
+				+ obsolete + " referred to obsolete terms and "
 				+ evidenceMismatch + " didn't"
 				+ " match the requested evidence codes");
 		logger.info("A total of " + usedGoTerms.size()
