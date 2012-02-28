@@ -5,6 +5,7 @@ import java.io.IOException;
 import ontologizer.go.OBOParser;
 import ontologizer.go.OBOParserException;
 import ontologizer.go.TermContainer;
+import junit.framework.Assert;
 import junit.framework.TestCase;
 
 public class AssociationParserTest extends TestCase
@@ -17,6 +18,14 @@ public class AssociationParserTest extends TestCase
 		OBOParser oboParser = new OBOParser(OBO_FILE);
 		oboParser.doParse();
 		AssociationParser ap = new AssociationParser(ASSOCIATION_FILE, new TermContainer(oboParser.getTermMap(), "", ""));
+		assertEquals(ap.getFileType(),AssociationParser.Type.GAF);
 		assertEquals(87599, ap.getAssociations().size());
+
+		Association a = ap.getAssociations().get(0);
+		Assert.assertEquals("S000007287",a.getDB_Object().toString());
+
+		/* Note that this excludes NOT annotations */
+		a = ap.getAssociations().get(49088);
+		Assert.assertEquals("S000004009",a.getDB_Object().toString());
 	}
 }
