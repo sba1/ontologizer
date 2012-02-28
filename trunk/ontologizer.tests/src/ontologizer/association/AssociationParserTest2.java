@@ -1,4 +1,4 @@
-package ontologizer.tests;
+package ontologizer.association;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -8,7 +8,7 @@ import ontologizer.go.ParsedContainerTest;
 import ontologizer.go.TermContainer;
 import ontologizer.types.ByteString;
 
-public class AssociationParserTest extends TestCase
+public class AssociationParserTest2 extends TestCase
 {
 	public TermContainer container;
 	private AssociationParser assocParser;
