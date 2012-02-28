@@ -51,8 +51,7 @@ import ontologizer.types.ByteString;
  * DB_Object_Symbol are null.
  * </P>
  * 
- * @author Peter Robinson
- * @version 0.2 (2005-02-28)
+ * @author Peter Robinson, Sebastian Bauer
  */
 
 public class Association
@@ -116,6 +115,7 @@ public class Association
 	private static final Pattern pattern = Pattern.compile(DELIM);
 
 	private static final ByteString emptyString = new ByteString("");
+
 	/**
 	 * @param line :
 	 *            line from a gene_association file
@@ -123,9 +123,7 @@ public class Association
 	 */
 	public Association(String line) throws Exception
 	{
-		DB_Object = DB_Object_Symbol = synonym = emptyString;
-		termID = null;
-		parseLine(line);
+		initFromLine(this, line);
 	}
 
 	public Association(ByteString db_object_symbol, int goIntID)
@@ -149,63 +147,8 @@ public class Association
 		termID = new TermID(goTerm);
 	}
 
-	/**
-	 * Parse one line and distribute extracted values. Note that we use the
-	 * String class method trim to remove leading and trailing whitespace, which
-	 * occasionally is found (mistakenly) in some GO association files (for
-	 * instance, in 30 entries of one such file that will go nameless :-) ).
-	 * 
-	 * We are interested in 2) DB_Object, 3) DB_Object_Symbol, NOT, GOid,
-	 * Aspect, synonym Use Java 1.4's String split method, which is similar to
-	 * the Perl split function.
-	 * 
-	 * @param line
-	 *            A line from a gene_association file
-	 * @throws Exception which contains a failure message
-	 */
-	private void parseLine(String line) throws Exception
-	{
-		/* Split the tab-separated line: */
-		String[] fields = pattern.split(line, FIELDS);
-
-		this.DB_Object = new ByteString(fields[DBOBJECTFIELD].trim());
-
-		/*
-		 * DB_Object_Symbol should always be at 2 (or is missing, then this
-		 * entry wont make sense for this program anyway)
-		 */
-		this.DB_Object_Symbol = new ByteString(fields[DBOBJECTSYMBOLFIELD].trim());
-
-		this.evidence = new ByteString(fields[EVIDENCEFIELD].trim());
-		this.aspect = new ByteString(fields[ASPECTFIELD].trim());
-		
-		/* TODO: There are new fields (colocalizes_with (a component) and 
-		 * contributes_to (a molecular function term) ), checkout how
-		 * these should be fitted into this framework */
-
-		String [] qualifiers = fields[QUALIFIERFIELD].trim().split("\\|");
-		for (String qual : qualifiers)
-			if (qual.equalsIgnoreCase("not")) notQualifier = true;
-		
-		/* Find GO:nnnnnnn */
-		fields[GOFIELD] = fields[GOFIELD].trim();
-		this.termID = new TermID(fields[GOFIELD]);
-
-		/* aspect can be P, F or C */
-/*		if (fields[ASPECTFIELD].equals("P") 
-				|| fields[ASPECTFIELD].equals("F")
-				|| fields[ASPECTFIELD].equals("C"))
-		{
-			this.aspect = fields[ASPECTFIELD];
-		} else
-		{
-			throw new Exception("Parsing the aspect field failed");
-		}*/
-
-		this.synonym = new ByteString(fields[SYNONYMFIELD].trim());
-
-	}
-
+	private Association() {};
+	
 	/**
 	 * Returns the Term ID of this association.
 	 * 
@@ -283,5 +226,77 @@ public class Association
 	void setTermID(TermID termID)
 	{
 		this.termID = termID;
+	}
+	
+	
+	/**
+	 * Parse one line and distribute extracted values. Note that we use the
+	 * String class method trim to remove leading and trailing whitespace, which
+	 * occasionally is found (mistakenly) in some GO association files (for
+	 * instance, in 30 entries of one such file that will go nameless :-) ).
+	 * 
+	 * We are interested in 2) DB_Object, 3) DB_Object_Symbol, NOT, GOid,
+	 * Aspect, synonym.
+	 * 
+	 * @param line
+	 *            A line from a gene_association file
+	 * @throws Exception which contains a failure message
+	 */
+	private static void initFromLine(Association a, String line)
+	{
+		a.DB_Object = a.DB_Object_Symbol = a.synonym = emptyString;
+		a.termID = null;
+
+		/* Split the tab-separated line: */
+		String[] fields = pattern.split(line, FIELDS);
+
+		a.DB_Object = new ByteString(fields[DBOBJECTFIELD].trim());
+
+		/*
+		 * DB_Object_Symbol should always be at 2 (or is missing, then this
+		 * entry wont make sense for this program anyway)
+		 */
+		a.DB_Object_Symbol = new ByteString(fields[DBOBJECTSYMBOLFIELD].trim());
+
+		a.evidence = new ByteString(fields[EVIDENCEFIELD].trim());
+		a.aspect = new ByteString(fields[ASPECTFIELD].trim());
+			
+		/* TODO: There are new fields (colocalizes_with (a component) and 
+		 * contributes_to (a molecular function term) ), checkout how
+		 * these should be fitted into this framework */
+
+		String [] qualifiers = fields[QUALIFIERFIELD].trim().split("\\|");
+		for (String qual : qualifiers)
+			if (qual.equalsIgnoreCase("not")) a.notQualifier = true;
+			
+		/* Find GO:nnnnnnn */
+		fields[GOFIELD] = fields[GOFIELD].trim();
+		a.termID = new TermID(fields[GOFIELD]);
+
+		/* aspect can be P, F or C */
+	/*		if (fields[ASPECTFIELD].equals("P") 
+					|| fields[ASPECTFIELD].equals("F")
+					|| fields[ASPECTFIELD].equals("C"))
+			{
+				this.aspect = fields[ASPECTFIELD];
+			} else
+			{
+				throw new Exception("Parsing the aspect field failed");
+			}*/
+
+		a.synonym = new ByteString(fields[SYNONYMFIELD].trim());
+	}
+
+	/**
+	 * Create an association from a GAF line.
+	 * 
+	 * @param line
+	 * @return
+	 */
+	public static Association createFromGAFLine(String line)
+	{
+		Association a = new Association();
+		initFromLine(a, line);
+		return a;
 	}
 }
