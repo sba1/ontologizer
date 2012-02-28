@@ -2,6 +2,7 @@ package ontologizer.association;
 
 import java.util.regex.*;
 
+import ontologizer.go.PrefixPool;
 import ontologizer.go.TermID;
 import ontologizer.types.ByteString;
 
@@ -123,7 +124,7 @@ public class Association
 	 */
 	public Association(String line) throws Exception
 	{
-		initFromLine(this, line);
+		initFromLine(this, line, null);
 	}
 
 	public Association(ByteString db_object_symbol, int goIntID)
@@ -238,11 +239,12 @@ public class Association
 	 * We are interested in 2) DB_Object, 3) DB_Object_Symbol, NOT, GOid,
 	 * Aspect, synonym.
 	 * 
-	 * @param line
-	 *            A line from a gene_association file
+	 * @param a the object to be initialized
+	 * @param line a line from a gene_association file
+	 * @param prefixPool the prefix pool to be used (may be null).
 	 * @throws Exception which contains a failure message
 	 */
-	private static void initFromLine(Association a, String line)
+	private static void initFromLine(Association a, String line, PrefixPool prefixPool)
 	{
 		a.DB_Object = a.DB_Object_Symbol = a.synonym = emptyString;
 		a.termID = null;
@@ -271,7 +273,7 @@ public class Association
 			
 		/* Find GO:nnnnnnn */
 		fields[GOFIELD] = fields[GOFIELD].trim();
-		a.termID = new TermID(fields[GOFIELD]);
+		a.termID = new TermID(fields[GOFIELD],prefixPool);
 
 		/* aspect can be P, F or C */
 	/*		if (fields[ASPECTFIELD].equals("P") 
@@ -288,6 +290,19 @@ public class Association
 	}
 
 	/**
+	 * Create an association from a GAF line. Uses the supplied prefix pool.
+	 * 
+	 * @param line
+	 * @return
+	 */
+	public static Association createFromGAFLine(String line, PrefixPool pp)
+	{
+		Association a = new Association();
+		initFromLine(a, line, pp);
+		return a;
+	}
+
+	/**
 	 * Create an association from a GAF line.
 	 * 
 	 * @param line
@@ -295,9 +310,7 @@ public class Association
 	 */
 	public static Association createFromGAFLine(String line)
 	{
-		Association a = new Association();
-		initFromLine(a, line);
-		return a;
+		return createFromGAFLine(line, null);
 	}
 	
 	/**
@@ -308,8 +321,6 @@ public class Association
 	 */
 	public static Association createFromGAFLine(ByteString line)
 	{
-		Association a = new Association();
-		initFromLine(a, line.toString());
-		return a;
+		return createFromGAFLine(line.toString());
 	}
 }
