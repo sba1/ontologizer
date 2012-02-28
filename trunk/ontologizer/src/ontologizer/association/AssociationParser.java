@@ -301,6 +301,7 @@ public class AssociationParser
 			{
 				Association assoc = Association.createFromGAFLine(buf,prefixPool);
 				TermID currentTermID = assoc.getTermID();
+
 				Term currentTerm;
 
 				good++;
@@ -339,10 +340,7 @@ public class AssociationParser
 								altTermID2Term.put(altID, t);
 					}
 
-					/*
-					 * Try to find the term among the alternative terms before
-					 * giving up.
-					 */
+					/* Try to find the term among the alternative terms before giving up. */
 					currentTerm = altTermID2Term.get(currentTermID);
 					if (currentTerm == null)
 					{
@@ -350,11 +348,17 @@ public class AssociationParser
 						System.err.println("(Are the obo file and the association " + "file both up-to-date?)");
 						skipped++;
 						continue;
-					} else {
+					} else
+					{
 						/* Okay, found, so set the new attributes */
-						assoc.setTermID(currentTerm.getID());
 						currentTermID = currentTerm.getID();
+						assoc.setTermID(currentTermID);
 					}
+				} else
+				{
+					/* Reset the term id so a unique id is used */
+					currentTermID = currentTerm.getID();
+					assoc.setTermID(currentTermID);
 				}
 
 				usedGoTerms.add(currentTermID);
