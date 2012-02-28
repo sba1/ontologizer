@@ -13,6 +13,8 @@ import java.util.Set;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 
+import sonumina.collections.ReferencePool;
+
 /*
  * I gratefully acknowledge the help of John Richter Day, who provided the
  * source of DAGEdit on which I based this parser for the Ontologizer and also
@@ -112,6 +114,9 @@ public class OBOParser
 	
 	/** Pool for prefixes. */
 	private PrefixPool prefixPool = new PrefixPool();
+	
+	/** Pool for term ids */
+	private ReferencePool<TermID> termIDPool = new ReferencePool<TermID>();
 
 	/** All parsed namespaces */
 	private HashMap<String,Namespace> namespaces = new HashMap<String,Namespace>(); 
@@ -597,7 +602,7 @@ public class OBOParser
 	{
 		try
 		{
-			currentAlternatives.add(new TermID(value,prefixPool));
+			currentAlternatives.add(termIDPool.map(new TermID(value,prefixPool)));
 		} catch (IllegalArgumentException e)
 		{
 			logger.warning("Unable to parse alternative ID: \""+value+"\"");
@@ -609,7 +614,7 @@ public class OBOParser
 	{
 		try
 		{
-			currentEquivalents.add(new TermID(value,prefixPool));
+			currentEquivalents.add(termIDPool.map(new TermID(value,prefixPool)));
 		} catch (IllegalArgumentException e)
 		{
 			logger.warning("Unable to parse equivalent ID: \""+value+"\"");
@@ -707,7 +712,7 @@ public class OBOParser
 	public void readISA(String value)
 	{
 		if (currentStanza == Stanza.TERM)
-			currentParents.add(new ParentTermID(new TermID(value,prefixPool),TermRelation.IS_A));
+			currentParents.add(new ParentTermID(termIDPool.map(new TermID(value,prefixPool)),TermRelation.IS_A));
 	}
 
 	private void readRelationship(String type, String id)
@@ -725,7 +730,7 @@ public class OBOParser
 			else if (type.equals("positively_regulates"))
 				tr = TermRelation.POSITIVELY_REGULATES;
 
-			currentParents.add(new ParentTermID(new TermID(id,prefixPool),tr));
+			currentParents.add(new ParentTermID(termIDPool.map(new TermID(id,prefixPool)),tr));
 		}
 	}
 
