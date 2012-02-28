@@ -369,10 +369,7 @@ public class AssociationParser
 				/* populate synonym string field */
 				if (assoc.getSynonym() != null && assoc.getSynonym().length() > 2)
 				{
-					/*
-					 * Note that there can be mutiple synonyms, separated by a
-					 * pipe
-					 */
+					/* Note that there can be multiple synonyms, separated by a pipe */
 					synonyms = assoc.getSynonym().splitBySingleChar('|');
 				} else
 					synonyms = null;
@@ -460,8 +457,7 @@ public class AssociationParser
 				gassociations.add(assoc);
 
 				/* dbObject2Gene has a mapping from dbObjects to gene names */
-				dbObjectID2gene.put(assoc.getDB_Object(),
-						assoc.getObjectSymbol());
+				dbObjectID2gene.put(assoc.getDB_Object(), assoc.getObjectSymbol());
 			} catch (Exception ex) {
 				bad++;
 				System.err.println("Nonfatal error: "
