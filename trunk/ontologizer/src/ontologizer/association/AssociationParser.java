@@ -6,6 +6,7 @@ import java.util.*;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 
+import ontologizer.go.PrefixPool;
 import ontologizer.go.Term;
 import ontologizer.go.TermContainer;
 import ontologizer.go.TermID;
@@ -43,6 +44,9 @@ public class AssociationParser
 
 	/** key: dbObjectID, value: main gene name (dbObject_Symbol) */
 	private HashMap<ByteString, ByteString> dbObjectID2gene;
+
+	/** Our prefix pool */
+	private PrefixPool prefixPool = new PrefixPool();
 
 	/** The file type of the association file which was parsed */
 	private Type fileType = Type.UNKNOWN;
@@ -295,7 +299,7 @@ public class AssociationParser
 
 			try
 			{
-				Association assoc = new Association(buf);
+				Association assoc = Association.createFromGAFLine(buf,prefixPool);
 				TermID currentTermID = assoc.getTermID();
 				Term currentTerm;
 
