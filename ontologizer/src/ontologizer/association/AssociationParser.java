@@ -51,11 +51,11 @@ public class AssociationParser
 	private static ByteString THREE_SLASHES = new ByteString("///");
 
 	/** Counts the symbol warnings */
-	private static int symbolWarnings;
+	private int symbolWarnings;
 	
 	/** Counts the dbObject warnings */
-	private static int dbObjectWarnings;
-	
+	private int dbObjectWarnings;
+		
 	/**
 	 * Construct the association parser object. The given file name will
 	 * parsed. Convenience constructor when not using progress monitor.
