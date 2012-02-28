@@ -299,4 +299,17 @@ public class Association
 		initFromLine(a, line);
 		return a;
 	}
+	
+	/**
+	 * Create an association from a GAF Bytestring line.
+	 * 
+	 * @param line
+	 * @return
+	 */
+	public static Association createFromGAFLine(ByteString line)
+	{
+		Association a = new Association();
+		initFromLine(a, line.toString());
+		return a;
+	}
 }
