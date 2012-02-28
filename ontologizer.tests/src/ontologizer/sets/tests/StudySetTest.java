@@ -7,6 +7,7 @@ import java.util.HashSet;
 
 import ontologizer.association.Association;
 import ontologizer.association.AssociationContainer;
+import ontologizer.association.AssociationParserTest2;
 import ontologizer.association.Gene2Associations;
 import ontologizer.benchmark.Datafiles;
 import ontologizer.calculation.AbstractGOTermProperties;
@@ -18,6 +19,7 @@ import ontologizer.enumeration.GOTermEnumerator;
 import ontologizer.enumeration.GOTermEnumerator.GOTermAnnotatedGenes;
 import ontologizer.go.Ontology;
 import ontologizer.go.ParentTermID;
+import ontologizer.go.ParsedContainerTest;
 import ontologizer.go.Term;
 import ontologizer.go.TermContainer;
 import ontologizer.go.TermID;
@@ -153,7 +155,7 @@ class InternalDatafiles extends Datafiles
 
 public class StudySetTest extends TestCase
 {
-	public void testEnumerate()
+	public void testEnumerateOnInternal()
 	{
 		InternalDatafiles idf = new InternalDatafiles();
 
@@ -221,5 +223,23 @@ public class StudySetTest extends TestCase
 //			number++;
 //
 //		assertEquals(7,number);
+	}
+
+	public void testEnumerateOnExternal()
+	{
+		AssociationParserTest2 apt = new AssociationParserTest2();
+		apt.run();
+
+		StudySet s = new StudySet();
+		s.addGenes(apt.assocContainer.getAllAnnotatedGenes());
+
+		Ontology o = new Ontology(apt.container);
+		TermID rootTerm = o.getRootTerm().getID();
+		Assert.assertEquals(rootTerm,new TermID("GO:0000000"));
+
+		GOTermEnumerator e = s.enumerateGOTerms(o,apt.assocContainer);
+		Assert.assertEquals(6721,e.getTotalNumberOfAnnotatedTerms());
+		Assert.assertEquals(apt.assocContainer.getAllAnnotatedGenes().size(),e.getGenes().size());
+		Assert.assertEquals(apt.assocContainer.getAllAnnotatedGenes().size(),e.getAnnotatedGenes(rootTerm).totalAnnotated.size());
 	}
 }
