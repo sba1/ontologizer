@@ -225,7 +225,7 @@ public class ProjectSettingsComposite extends Composite
 		assocFileGridCompositeWidgets = new FileGridCompositeWidgets(this);
 		assocFileGridCompositeWidgets.setLabel("Annotations");
 		assocFileGridCompositeWidgets.setToolTipText("Specifies the annotation (association) file, which assigns GO terms to the names of the gene products.");
-		assocFileGridCompositeWidgets.setFilterExtensions(new String[]{"gene_association.*","*.csv","*.*"});
+		assocFileGridCompositeWidgets.setFilterExtensions(new String[]{"gene_association.*","*.csv","*.ids","*.*"});
 		assocFileGridCompositeWidgets.setFilterNames(new String[]{"Association File","Affymetrix","All files"});
 
 /* TODO: Use ExpandableComposite comp of JFace */
