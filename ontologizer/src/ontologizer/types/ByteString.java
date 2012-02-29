@@ -80,6 +80,21 @@ public final class ByteString
 	}
 
 	/**
+	 *
+	 * @param beginIndex
+	 * @param endIndex
+	 * @return
+	 * @see String.substring()
+	 */
+	public ByteString substring(int beginIndex, int endIndex)
+	{
+		ByteString bs = new ByteString();
+		bs.bytes = new byte[endIndex - beginIndex];
+		System.arraycopy(bytes, beginIndex, bs.bytes, 0, endIndex - beginIndex);
+		return bs;
+	}
+
+	/**
 	 * Returns whether this string is a prefix of the given string.
 	 *
 	 * @param string
