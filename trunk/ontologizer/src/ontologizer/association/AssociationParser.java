@@ -135,14 +135,16 @@ public class AssociationParser
 			/* We support compressed association files */
 			BufferedReader in;
 			FileInputStream fis = new FileInputStream(filename);
+			InputStream is;
 			try
 			{
-				in = new BufferedReader(new InputStreamReader(new GZIPInputStream(fis)));
+				is = new GZIPInputStream(fis);
 			} catch (IOException exp)
 			{
 				fis = new FileInputStream(filename);
-				in = new BufferedReader(new InputStreamReader(fis));
+				is = fis;
 			}
+			in = new BufferedReader(new InputStreamReader(is));
 
 			in.mark(2000);
 
