@@ -13,7 +13,7 @@ import java.util.ArrayList;
  *
  * @author Sebastian Bauer
  */
-public class ByteString
+public final class ByteString
 {
 	private byte [] bytes;
 
@@ -233,5 +233,34 @@ public class ByteString
 		ByteString [] bsArray = new ByteString[bl.size()];
 		bl.toArray(bsArray);
 		return bsArray;
+	}
+
+	/**
+	 * Parse the first appearing decimal integer.
+	 *
+	 * @param byteString
+	 * @return the converted number.
+	 * @throws NumberFormatException if nothing has been converted.
+	 */
+	public static int parseFirstInt(ByteString byteString)
+	{
+		int number = 0;
+		boolean converting = false;
+
+		for (int i=0;i<byteString.length();i++)
+		{
+			byte b = byteString.bytes[i];
+			if (b>='0' && b<='9')
+			{
+				number *= 10;
+				number += b - '0';
+				converting = true;
+			} else if (converting)
+			{
+				break;
+			}
+		}
+		if (!converting) throw new NumberFormatException();
+		return number;
 	}
 }
