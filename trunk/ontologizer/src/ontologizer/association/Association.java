@@ -336,4 +336,20 @@ public class Association
 	{
 		return createFromGAFLine(line,null);
 	}
+
+	/**
+	 * Create an association from a byte array.
+	 *
+	 * @param lineBuf
+	 * @param offset
+	 * @param len
+	 * @param prefixPool
+	 * @return
+	 */
+	public static Association createFromGAFLine(byte[] byteBuf, int offset, int len, PrefixPool prefixPool)
+	{
+		byte [] lineBuf = new byte[len];
+		System.arraycopy(byteBuf, offset, lineBuf, 0, len);
+		return createFromGAFLine(new ByteString(lineBuf));
+	}
 }
