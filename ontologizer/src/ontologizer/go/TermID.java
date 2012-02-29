@@ -2,6 +2,8 @@ package ontologizer.go;
 
 import java.util.HashMap;
 
+import ontologizer.types.ByteString;
+
 /**
  * This is a simple wrapper class for representing a term identifier such
  * as GO:0001004.
@@ -14,7 +16,9 @@ import java.util.HashMap;
 public class TermID
 {
 	/** The default prefix. Only used with no prefix is specified */
-	public static final Prefix DEFAULT_PREFIX = new Prefix("GO"); 
+	public static final Prefix DEFAULT_PREFIX = new Prefix("GO");
+	
+	public static final ByteString COLON = new ByteString(":");
 
 	/** Term's prefix */
 	private final Prefix prefix;
@@ -88,9 +92,6 @@ public class TermID
 		/* Ensure that there is a proper prefix */
 		if (colon < 1) throw new IllegalArgumentException("Failed to find a proper prefix of termid: \"" + stringID + "\"");
 
-		/* condition, sine qua non for the integer part */
-//		if (stringID.length() - colon != 8) throw new IllegalArgumentException("Failed to parse the integer part of termid: \"" + stringID + "\"");
-		
 		Prefix newPrefix = new Prefix(stringID,colon); 
 		if (prefixPool != null) prefix = prefixPool.map(newPrefix);
 		else prefix = newPrefix;
@@ -109,6 +110,27 @@ public class TermID
 		id = parsedId;
 	}
 
+
+	public TermID(ByteString stringID, PrefixPool prefixPool)
+	{
+		int colon = stringID.indexOf(COLON);
+		
+		/* Ensure that there is a proper prefix */
+		if (colon < 1) throw new IllegalArgumentException("Failed to find a proper prefix of termid: \"" + stringID.toString() + "\"");
+
+		Prefix newPrefix = new Prefix(stringID.substring(0, colon)); 
+		if (prefixPool != null) prefix = prefixPool.map(newPrefix);
+		else prefix = newPrefix;
+
+		try
+		{
+			int parsedId = ByteString.parseFirstInt(stringID);
+			id = parsedId;
+		} catch(NumberFormatException ex)
+		{
+			throw new IllegalArgumentException("Failed to parse the integer part of termid: \"" + stringID.toString() + "\"");
+		}
+	}
 
 	private int makeIdFromString(String parseIdFrom) {
 		if ( string2id.containsKey(parseIdFrom))
