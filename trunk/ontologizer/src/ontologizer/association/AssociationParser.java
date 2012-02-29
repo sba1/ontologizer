@@ -178,45 +178,42 @@ public class AssociationParser
 		try
 		{
 			BufferedReader is = new BufferedReader(new FileReader(filename));
-			String line = is.readLine();
+			String line;
 
-			if (line.equalsIgnoreCase("GoStat IDs Format Version 1.0"))
+			while ((line = is.readLine()) != null)
 			{
-				while ((line = is.readLine()) != null)
+				if (line.equalsIgnoreCase("GoStat IDs Format Version 1.0"))
+					continue;
+
+				String [] fields = line.split("\t",2);
+				
+				if (fields.length != 2) continue;
+
+				String [] annotatedTerms = fields[1].split(",");
+
+				for (int i = 0; i <annotatedTerms.length; i++)
 				{
-					String [] fields = line.split("\t",2);
-					
-					if (fields.length != 2) continue;
 
-					String [] annotatedTerms = fields[1].split(",");
+					TermID tid;
 
-					for (int i = 0; i <annotatedTerms.length; i++)
+					try
 					{
-
-						TermID tid;
-
-						try
-						{
-							tid = new TermID(annotatedTerms[i]);
-						} catch (IllegalArgumentException ex)
-						{
-							int id = new Integer(annotatedTerms[i]);
-							tid = new TermID(TermID.DEFAULT_PREFIX,id);
-						}
-						
-						if (terms.get(tid) != null)
-						{
-							Association assoc = new Association(new ByteString(fields[0]),tid.toString());
-							associations.add(assoc);
-						} else
-						{
-							logger.warning(tid.toString() + " which annotates " + fields[0] + " not found");
-						}
+						tid = new TermID(annotatedTerms[i]);
+					} catch (IllegalArgumentException ex)
+					{
+						int id = new Integer(annotatedTerms[i]);
+						tid = new TermID(TermID.DEFAULT_PREFIX,id);
+					}
+					
+					if (terms.get(tid) != null)
+					{
+						Association assoc = new Association(new ByteString(fields[0]),tid.toString());
+						associations.add(assoc);
+					} else
+					{
+						logger.warning(tid.toString() + " which annotates " + fields[0] + " not found");
 					}
 				}
-			} else
-			{
-				System.err.println("Format of " + filename + " is unknown");
 			}
 		} catch (FileNotFoundException e)
 		{
