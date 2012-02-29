@@ -22,4 +22,9 @@ public class ByteStringTest extends TestCase
 
 
 	}
+
+	public void testSubstring()
+	{
+		assertEquals("TEst",new ByteString("TestTEstTest").substring(4,8).toString());
+	}
 }
