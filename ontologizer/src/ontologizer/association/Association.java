@@ -116,6 +116,8 @@ public class Association
 	private static final Pattern pattern = Pattern.compile(DELIM);
 
 	private static final ByteString emptyString = new ByteString("");
+	
+	private static final ByteString notString = new ByteString("NOT");
 
 	/**
 	 * @param line :
@@ -275,17 +277,6 @@ public class Association
 		fields[GOFIELD] = fields[GOFIELD].trim();
 		a.termID = new TermID(fields[GOFIELD],prefixPool);
 
-		/* aspect can be P, F or C */
-	/*		if (fields[ASPECTFIELD].equals("P") 
-					|| fields[ASPECTFIELD].equals("F")
-					|| fields[ASPECTFIELD].equals("C"))
-			{
-				this.aspect = fields[ASPECTFIELD];
-			} else
-			{
-				throw new Exception("Parsing the aspect field failed");
-			}*/
-
 		a.synonym = new ByteString(fields[SYNONYMFIELD].trim());
 	}
 
@@ -348,8 +339,35 @@ public class Association
 	 */
 	public static Association createFromGAFLine(byte[] byteBuf, int offset, int len, PrefixPool prefixPool)
 	{
-		byte [] lineBuf = new byte[len];
-		System.arraycopy(byteBuf, offset, lineBuf, 0, len);
-		return createFromGAFLine(new ByteString(lineBuf));
+		Association a = new Association();
+		a.DB_Object = a.DB_Object_Symbol = a.synonym = emptyString;
+		
+		int fieldOffset = offset;
+		int p = offset;
+		int fieldNo = 0;
+		
+		while (p < offset + len)
+		{
+			if (byteBuf[p] == '\t')
+			{
+				/* New field */
+				switch (fieldNo)
+				{
+					case 	DBOBJECTFIELD: 	a.DB_Object = new ByteString(byteBuf,fieldOffset,p); break;
+					case	DBOBJECTSYMBOLFIELD:	a.DB_Object_Symbol = new ByteString(byteBuf,fieldOffset,p); break;
+					case	EVIDENCEFIELD:	a.evidence = new ByteString(byteBuf,fieldOffset,p); break;
+					case	ASPECTFIELD:	a.aspect = new ByteString(byteBuf,fieldOffset,p); break;
+					case	QUALIFIERFIELD: a.notQualifier = new ByteString(byteBuf,fieldOffset,p).indexOf(notString) != -1; break;
+					case	SYNONYMFIELD:	a.synonym = new ByteString(byteBuf,fieldOffset,p); break;
+					case	GOFIELD:		a.termID = new TermID(new ByteString(byteBuf,fieldOffset,p),prefixPool); break;
+
+				}
+
+				fieldOffset = p + 1;
+				fieldNo++;
+			}
+			p++;
+		}
+		return a;
 	}
 }
