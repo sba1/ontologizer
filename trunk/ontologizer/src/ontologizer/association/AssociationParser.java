@@ -298,10 +298,7 @@ public class AssociationParser
 				if (len < 1 || buf[start]=='!')
 					return true;
 				
-				byte [] lineBuf = new byte[len];
-				System.arraycopy(byteBuf, start, lineBuf, 0, len);
-				
-				Association assoc = Association.createFromGAFLine(new ByteString(lineBuf),prefixPool);
+				Association assoc = Association.createFromGAFLine(buf,start,len,prefixPool);
 
 				try 
 				{
