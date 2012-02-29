@@ -293,6 +293,7 @@ public class Association
 	 * Create an association from a GAF line. Uses the supplied prefix pool.
 	 * 
 	 * @param line
+	 * @param pp
 	 * @return
 	 */
 	public static Association createFromGAFLine(String line, PrefixPool pp)
@@ -319,8 +320,20 @@ public class Association
 	 * @param line
 	 * @return
 	 */
+	public static Association createFromGAFLine(ByteString line, PrefixPool pp)
+	{
+		return createFromGAFLine(line.toString(),pp);
+	}
+
+	/**
+	 * Create an association from a GAF Bytestring line.
+	 * 
+	 * @param line
+	 * @param pp
+	 * @return
+	 */
 	public static Association createFromGAFLine(ByteString line)
 	{
-		return createFromGAFLine(line.toString());
+		return createFromGAFLine(line,null);
 	}
 }
