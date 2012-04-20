@@ -1,6 +1,7 @@
 package ontologizer.types.tests;
 
 import ontologizer.types.ByteString;
+import junit.framework.Assert;
 import junit.framework.TestCase;
 
 public class ByteStringTest extends TestCase
@@ -27,4 +28,30 @@ public class ByteStringTest extends TestCase
 	{
 		assertEquals("TEst",new ByteString("TestTEstTest").substring(4,8).toString());
 	}
+	
+	public void testSplit()
+	{
+		ByteString [] split = new ByteString("str1|str2|str3").splitBySingleChar('|');
+		Assert.assertEquals(3,split.length);
+		Assert.assertEquals("str1", split[0].toString());
+		Assert.assertEquals("str2", split[1].toString());
+		Assert.assertEquals("str3", split[2].toString());
+		
+		split = new ByteString("str1|str2|str3|").splitBySingleChar('|');
+		Assert.assertEquals(4,split.length);
+		Assert.assertEquals("str1", split[0].toString());
+		Assert.assertEquals("str2", split[1].toString());
+		Assert.assertEquals("str3", split[2].toString());
+		Assert.assertEquals("", split[3].toString());
+		
+		split = new ByteString("str1").splitBySingleChar('|');
+		Assert.assertEquals(1,split.length);
+		Assert.assertEquals("str1", split[0].toString());
+
+		split = new ByteString("str1||str3").splitBySingleChar('|');
+		Assert.assertEquals(3,split.length);
+		Assert.assertEquals("str1", split[0].toString());
+		Assert.assertEquals("", split[1].toString());
+		Assert.assertEquals("str3", split[2].toString());
+}
 }
