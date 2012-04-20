@@ -236,14 +236,12 @@ public final class ByteString
 			{
 				ByteString bs = new ByteString(bytes,from,to);
 				bl.add(bs);
+				from = to+1;
 			}
 		}
 
-		if (from != to)
-		{
-			ByteString bs = new ByteString(bytes,from,to);
-			bl.add(bs);
-		}
+		ByteString bs = new ByteString(bytes,from,to);
+		bl.add(bs);
 
 		ByteString [] bsArray = new ByteString[bl.size()];
 		bl.toArray(bsArray);
