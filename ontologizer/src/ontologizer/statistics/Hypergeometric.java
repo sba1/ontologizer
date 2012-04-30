@@ -136,14 +136,16 @@ public class Hypergeometric
 
 	/**
 	 * Calculates P(X > x) where X is the hypergeometric distribution
-	 * with indices N,M,n. If lowerTail is specified, then P(X <= x)
+	 * with indices N,M,n. If lowerTail is set to true, then P(X <= x)
 	 * is calculated.
 	 * 
 	 * @param x number of white balls drawn without replacement
 	 * @param N number of balls in the urn
 	 * @param M number of white balls in the urn
 	 * @param n number of balls drawn from the urn
-	 * @param lowerTail defines if P(X > x) or P(X <= x) is calculated.
+	 * @param lowerTail defines if the lower tail should be calculated, i.e., if the
+	 *      parameter is set to true then P(X<=x) is calculated, otherwise P(X > x) is
+	 *      calculated.
 	 * @return the probability
 	 */
 	public double phyper(int x, int N, int M, int n, boolean lowerTail)
