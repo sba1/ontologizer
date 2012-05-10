@@ -13,10 +13,8 @@ public class HypergeometricTest extends TestCase
 	 */
 	public void testDhyper()
 	{
-		double result = hyper.dhyper(4,45,20,10);
-
-		Assert.assertTrue(result > 0.268 && result < 0.269);
-		Assert.assertTrue(hyper.dhyper(10,10,10,10) == 1);
+		Assert.assertEquals(0.268,hyper.dhyper(4,45,20,10),0.001);
+		Assert.assertEquals(1,hyper.dhyper(10,10,10,10),0.00001);
 	}
 
 	public void testPhyper()
