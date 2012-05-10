@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Handler;
+import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
@@ -828,7 +829,8 @@ public class Ontologizer
 	 */
 	public static void logException(final Exception e)
 	{
-		log("Exception",e.getLocalizedMessage());
+		log("Exception",e.getLocalizedMessage(),e);
+		logger.log(Level.SEVERE, "Exception", e);
 		if (main != null && !main.getShell().isDisposed())
 		{
 			main.display.syncExec(new Runnable()
