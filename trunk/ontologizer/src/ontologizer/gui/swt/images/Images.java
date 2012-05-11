@@ -56,8 +56,8 @@ public class Images
 				return null;
 			source = new ImageData(stream);
 		}
-			ImageData mask = source.getTransparencyMask();
-			Image image = new Image(display, source, mask);
+
+		Image image = new Image(display, source);
 
 		if (image != null)
 			imageList.add(image);
