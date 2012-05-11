@@ -43,6 +43,7 @@ import ontologizer.calculation.CalculationRegistry;
 import ontologizer.go.Ontology;
 import ontologizer.go.Subset;
 import ontologizer.go.Term;
+import ontologizer.gui.swt.images.Images;
 import ontologizer.gui.swt.support.SWTUtil;
 import ontologizer.statistics.TestCorrectionRegistry;
 import ontologizer.types.ByteString;
@@ -1489,6 +1490,7 @@ public class MainWindow extends ApplicationWindow
 		toolbar = new ToolBar(parent,SWT.FLAT);
 		newProjectToolItem = new ToolItem(toolbar,0);
 		newProjectToolItem.setText("New Project");
+		newProjectToolItem.setImage(Images.loadImage("projects.png"));
 		newProjectToolItem.addSelectionListener(new SelectionAdapter()
 		{
 			public void widgetSelected(SelectionEvent e)
@@ -1498,7 +1500,8 @@ public class MainWindow extends ApplicationWindow
 		});
 
 		ToolItem newPopToolItem = new ToolItem(toolbar,0);
-		newPopToolItem.setText("New Pop");
+		newPopToolItem.setText("New Population");
+		newPopToolItem.setImage(Images.loadImage("newpop.png"));
 		newPopToolItem.addSelectionListener(new SelectionAdapter()
 		{
 			public void widgetSelected(SelectionEvent e)
@@ -1509,6 +1512,7 @@ public class MainWindow extends ApplicationWindow
 
 		ToolItem newStudyItem = new ToolItem(toolbar,0);
 		newStudyItem.setText("New Study");
+		newStudyItem.setImage(Images.loadImage("newstudy.png"));
 		newStudyItem.addSelectionListener(new SelectionAdapter()
 		{
 			public void widgetSelected(SelectionEvent e)
@@ -1519,6 +1523,7 @@ public class MainWindow extends ApplicationWindow
 
 		removeToolItem = new ToolItem(toolbar,0);
 		removeToolItem.setText("Remove");
+		removeToolItem.setImage(Images.loadImage("delete_obj.gif"));
 		removeToolItem.addSelectionListener(new SelectionAdapter()
 		{
 			public void widgetSelected(SelectionEvent e)
@@ -1534,11 +1539,14 @@ public class MainWindow extends ApplicationWindow
 		new ToolItem(toolbar,SWT.SEPARATOR);
 		similarityToolItem = new ToolItem(toolbar,0);
 		similarityToolItem.setText("Similarity");
+		similarityToolItem.setImage(Images.loadImage("sim.png"));
+		similarityToolItem.setToolTipText("Calculates the Semantic Similarity");
 
 		new ToolItem(toolbar,SWT.SEPARATOR);
 
 		analyzeToolItem = new ToolItem(toolbar,0);
 		analyzeToolItem.setText("Ontologize");
+		analyzeToolItem.setImage(Images.loadImage("ontologize.png"));
 
 		new ToolItem(toolbar,SWT.SEPARATOR);
 
