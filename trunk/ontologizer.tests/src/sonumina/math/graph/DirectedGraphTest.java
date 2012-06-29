@@ -227,9 +227,9 @@ public class DirectedGraphTest extends TestCase
 			public boolean visited(TestData vertex)
 			{
 				Assert.assertFalse(visited.contains(vertex));
-				Assert.assertTrue(prev == e && vertex == f);
-				Assert.assertTrue(prev == g && (vertex == d || vertex == e));
-				Assert.assertTrue(prev == a && (vertex == b || vertex == c));
+				if (prev == e) Assert.assertEquals(f,vertex);
+				if (prev == g) Assert.assertTrue(vertex == d || vertex == e);
+				if (prev == a) Assert.assertTrue(vertex == b || vertex == c);
 
 				visited.add(vertex);
 				prev = vertex;
