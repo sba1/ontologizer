@@ -223,6 +223,24 @@ abstract public class AbstractGraph<VertexType>
 		}
 	}
 
+	private void getDFSShotcutLinks(VertexType vt, HashMap<VertexType,VertexType> map)
+	{
+	}
+
+	/**
+	 * Identifies nodes.
+	 *
+	 * @param vt
+	 * @return
+	 */
+	public HashMap<VertexType,VertexType> getDFSShotcutLinks(VertexType vt)
+	{
+		HashMap<VertexType,VertexType> map = new HashMap<VertexType,VertexType>();
+
+		return map;
+	}
+
+
 	/**
 	 * Returns whether there is a path from source to dest.
 	 * @param source
