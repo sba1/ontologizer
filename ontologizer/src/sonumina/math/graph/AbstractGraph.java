@@ -217,11 +217,12 @@ abstract public class AbstractGraph<VertexType>
 				VertexType n = iter.next();
 				if (visited.contains(n)) continue;
 				stack.push(n);
+				visited.add(n);
 			}
 
 		}
 	}
-	
+
 	/**
 	 * Returns whether there is a path from source to dest.
 	 * @param source
