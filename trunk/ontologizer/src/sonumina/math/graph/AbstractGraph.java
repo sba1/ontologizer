@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Locale;
+import java.util.Stack;
 
 import sonumina.collections.TinyQueue;
 
@@ -188,6 +189,36 @@ abstract public class AbstractGraph<VertexType>
 						return;
 				}
 			}
+		}
+	}
+
+	/**
+	 * Performs a depth-first like search starting at the given vertex.
+	 *
+	 * @param vertex
+	 * @param visitor
+	 */
+	public void dfs(VertexType vertex, INeighbourGrabber<VertexType> grabber, IVisitor<VertexType> visitor)
+	{
+		HashSet<VertexType> visited = new HashSet<VertexType>();
+		Stack<VertexType> stack = new Stack<VertexType>();
+
+		visited.add(vertex);
+		stack.push(vertex);
+
+		while (!stack.isEmpty())
+		{
+			VertexType v = stack.pop();
+			visitor.visited(v);
+
+			Iterator<VertexType> iter = grabber.grabNeighbours(v);
+			while (iter.hasNext())
+			{
+				VertexType n = iter.next();
+				if (visited.contains(n)) continue;
+				stack.push(n);
+			}
+
 		}
 	}
 
