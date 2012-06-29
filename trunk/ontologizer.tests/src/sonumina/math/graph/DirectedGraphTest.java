@@ -15,6 +15,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import sonumina.math.graph.AbstractGraph.DotAttributesProvider;
+import sonumina.math.graph.AbstractGraph.INeighbourGrabber;
+import sonumina.math.graph.AbstractGraph.IVisitor;
 import sonumina.math.graph.DirectedGraph.IDistanceVisitor;
 
 import junit.framework.Assert;
@@ -61,15 +63,15 @@ public class DirectedGraphTest extends TestCase
 
 	public void testGraph()
 	{
-		DirectedGraph<TestData> graph = new DirectedGraph<TestData>();
-		TestData root = new TestData("root");
-		TestData a = new TestData("a");
-		TestData b = new TestData("b");
-		TestData c = new TestData("c");
-		TestData d = new TestData("d");
-		TestData e = new TestData("e");
-		TestData f = new TestData("f");
-		TestData g = new TestData("g");
+		final DirectedGraph<TestData> graph = new DirectedGraph<TestData>();
+		final TestData root = new TestData("root");
+		final TestData a = new TestData("a");
+		final TestData b = new TestData("b");
+		final TestData c = new TestData("c");
+		final TestData d = new TestData("d");
+		final TestData e = new TestData("e");
+		final TestData f = new TestData("f");
+		final TestData g = new TestData("g");
 
 		/* Add some vertices */
 		graph.addVertex(root);
@@ -209,6 +211,31 @@ public class DirectedGraphTest extends TestCase
 			e1.printStackTrace();
 		}
 		
+		final HashSet<TestData> visited = new HashSet<TestData>();
 		
+		graph.dfs(root, new INeighbourGrabber<TestData>() {
+			@Override
+			public Iterator<TestData> grabNeighbours(TestData t)
+			{
+				return graph.getChildNodes(t);
+			}
+			
+		}, new IVisitor<TestData>() {
+			private TestData prev;
+
+			@Override
+			public boolean visited(TestData vertex)
+			{
+				Assert.assertFalse(visited.contains(vertex));
+				Assert.assertTrue(prev == e && vertex == f);
+				Assert.assertTrue(prev == g && (vertex == d || vertex == e));
+				Assert.assertTrue(prev == a && (vertex == b || vertex == c));
+				
+				visited.add(vertex);
+				prev = vertex;
+				return true;
+			}
+		});
+		Assert.assertEquals(graph.getNumberOfVertices(), visited.size());
 	}
 }
