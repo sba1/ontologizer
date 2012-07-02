@@ -212,15 +212,14 @@ public class DirectedGraphTest extends TestCase
 		}
 		
 		final HashSet<TestData> visited = new HashSet<TestData>();
-		
-		graph.dfs(root, new INeighbourGrabber<TestData>() {
+		final INeighbourGrabber<TestData> childGrabber = new INeighbourGrabber<TestData>() {
 			@Override
 			public Iterator<TestData> grabNeighbours(TestData t)
 			{
 				return graph.getChildNodes(t);
-			}
-			
-		}, new IVisitor<TestData>() {
+			}};
+
+		graph.dfs(root,childGrabber, new IVisitor<TestData>() {
 			private TestData prev;
 
 			@Override
@@ -237,5 +236,52 @@ public class DirectedGraphTest extends TestCase
 			}
 		});
 		Assert.assertEquals(graph.getNumberOfVertices(), visited.size());
+		HashMap<TestData,TestData> shortCutLinks = graph.getDFSShotcutLinks(root, childGrabber);
+	}
+	
+	public void testShortLinksOnTree()
+	{
+		final DirectedGraph<TestData> graph = new DirectedGraph<TestData>();
+		final TestData n0 = new TestData("n0");
+		final TestData n1 = new TestData("n1");
+		final TestData n2 = new TestData("n2");
+		final TestData n3 = new TestData("n3");
+		final TestData n4 = new TestData("n4");
+		final TestData n5 = new TestData("n5");
+		final TestData n6 = new TestData("n6");
+		
+		graph.addVertex(n0);
+		graph.addVertex(n1);
+		graph.addVertex(n2);
+		graph.addVertex(n3);
+		graph.addVertex(n4);
+		graph.addVertex(n5);
+		graph.addVertex(n6);
+
+		graph.addEdge(new Edge<TestData>(n0,n1));
+		graph.addEdge(new Edge<TestData>(n1,n2));
+		graph.addEdge(new Edge<TestData>(n1,n3));
+		graph.addEdge(new Edge<TestData>(n0,n4));
+		graph.addEdge(new Edge<TestData>(n4,n5));
+		graph.addEdge(new Edge<TestData>(n4,n6));
+
+		final INeighbourGrabber<TestData> childGrabber = new INeighbourGrabber<TestData>() {
+			@Override
+			public Iterator<TestData> grabNeighbours(TestData t)
+			{
+				return graph.getChildNodes(t);
+			}};
+
+		/*
+		 *       0
+		 *      / \
+		 *     /   \
+		 *    1     4
+		 *   / \   / \
+		 *  2   3 5   6
+		 *
+		 */
+		HashMap<TestData,TestData> shortCutLinks = graph.getDFSShotcutLinks(n0, childGrabber);
+		Assert.assertEquals(graph.getNumberOfVertices(),shortCutLinks.keySet().size());
 	}
 }
