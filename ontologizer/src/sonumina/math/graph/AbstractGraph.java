@@ -223,8 +223,27 @@ abstract public class AbstractGraph<VertexType>
 		}
 	}
 
-	private void getDFSShotcutLinks(VertexType vt, HashMap<VertexType,VertexType> map)
+	private void getDFSShotcutLinks(VertexType v, HashMap<VertexType,VertexType> map, HashSet<VertexType> visited, INeighbourGrabber<VertexType> grabber, ArrayList<VertexType> upwardQueue)
 	{
+		Iterator<VertexType> iter = grabber.grabNeighbours(v);
+		while (iter.hasNext())
+		{
+			VertexType n = iter.next();
+			if (visited.contains(n)) continue;
+
+			if (upwardQueue.size() > 0)
+			{
+				for (VertexType t : upwardQueue)
+					map.put(t, n);
+				upwardQueue.clear();
+			}
+
+			visited.add(n);
+
+			getDFSShotcutLinks(n, map, visited, grabber, upwardQueue);
+		}
+
+		upwardQueue.add(v);
 	}
 
 	/**
@@ -233,9 +252,15 @@ abstract public class AbstractGraph<VertexType>
 	 * @param vt
 	 * @return
 	 */
-	public HashMap<VertexType,VertexType> getDFSShotcutLinks(VertexType vt)
+	public HashMap<VertexType,VertexType> getDFSShotcutLinks(VertexType vt, INeighbourGrabber<VertexType> grabber)
 	{
 		HashMap<VertexType,VertexType> map = new HashMap<VertexType,VertexType>();
+		ArrayList<VertexType> upwardQueue = new ArrayList<VertexType>();
+
+		getDFSShotcutLinks(vt, map, new HashSet<VertexType>(), grabber, upwardQueue);
+
+		for (VertexType t : upwardQueue)
+			map.put(t, null);
 
 		return map;
 	}
