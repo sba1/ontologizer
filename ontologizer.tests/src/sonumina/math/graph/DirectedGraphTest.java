@@ -237,6 +237,15 @@ public class DirectedGraphTest extends TestCase
 		});
 		Assert.assertEquals(graph.getNumberOfVertices(), visited.size());
 		HashMap<TestData,TestData> shortCutLinks = graph.getDFSShotcutLinks(root, childGrabber);
+
+		Assert.assertEquals(null,shortCutLinks.get(root));
+		Assert.assertEquals(c,shortCutLinks.get(a));
+		Assert.assertEquals(c,shortCutLinks.get(b));
+		Assert.assertEquals(null,shortCutLinks.get(c));
+		Assert.assertEquals(e,shortCutLinks.get(d));
+		Assert.assertEquals(null,shortCutLinks.get(e));
+		Assert.assertEquals(null,shortCutLinks.get(f));
+		Assert.assertEquals(e,shortCutLinks.get(g));
 	}
 
 	public void testShortLinksOnTree()
@@ -283,5 +292,17 @@ public class DirectedGraphTest extends TestCase
 		 */
 		HashMap<TestData,TestData> shortCutLinks = graph.getDFSShotcutLinks(n0, childGrabber);
 		Assert.assertEquals(graph.getNumberOfVertices(),shortCutLinks.keySet().size());
+
+		Assert.assertNull(shortCutLinks.get(n0));
+		Assert.assertTrue((shortCutLinks.get(n1) == n4 && shortCutLinks.get(n4) == null ) ||
+				          (shortCutLinks.get(n4) == n1 && shortCutLinks.get(n1) == null));
+
+		if (shortCutLinks.get(n2) == n3)
+			Assert.assertTrue(shortCutLinks.get(n3) == n4 || shortCutLinks.get(n3) == null);
+		else
+		{
+			/* Can happen but did not occur yet */
+			Assert.assertFalse(true);
+		}
 	}
 }
