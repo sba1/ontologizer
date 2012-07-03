@@ -11,8 +11,18 @@ public class MultisetEnumeratorTest extends TestCase
 		{
 			private int stepCount;
 
+			private int [][] asserted;
+			
+			public MultisetCallback(int [][] asserted)
+			{
+				this.asserted = asserted;
+			}
+			
 			public void visit(int[] elementList, int[] multiplicitiesPerElement)
 			{
+				for (int i=0;i<elementList.length;i++)
+					assertEquals(asserted[stepCount][i],elementList[i]);
+				
 				stepCount++;
 				
 				System.out.print(stepCount + ": ");
@@ -69,7 +79,23 @@ public class MultisetEnumeratorTest extends TestCase
 //
 		/* A basic multiset enumerator with max restrictions */
 		System.out.println("Multiset");
-		m.enumerate(new MultisetCallback() {
+		m.enumerate(new MultisetCallback(new int[][]{
+			new int[]{0,1,1},
+			new int[]{0,1,2},
+			new int[]{0,1,3},
+			new int[]{0,2,2},
+			new int[]{0,2,3},
+			new int[]{0,3,3},
+			new int[]{1,1,2},
+			new int[]{1,1,3},
+			new int[]{1,2,2},
+			new int[]{1,2,3},
+			new int[]{1,3,3},
+			new int[]{2,2,2},
+			new int[]{2,2,3},
+			new int[]{2,3,3},
+			new int[]{3,3,3},})
+		{
 			int [] maxCard = new int[] {1,2,3,3};
 			
 			public int enter(int pos, int[] elementList, int[] multiplicitiesPerElement)
