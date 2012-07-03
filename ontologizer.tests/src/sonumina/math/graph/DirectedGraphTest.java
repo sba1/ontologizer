@@ -212,14 +212,10 @@ public class DirectedGraphTest extends TestCase
 		}
 		
 		final HashSet<TestData> visited = new HashSet<TestData>();
-		final INeighbourGrabber<TestData> childGrabber = new INeighbourGrabber<TestData>() {
-			@Override
-			public Iterator<TestData> grabNeighbours(TestData t)
-			{
-				return graph.getChildNodes(t);
-			}};
 
-		graph.dfs(root,childGrabber, new IVisitor<TestData>() {
+		final INeighbourGrabber<TestData> childGrabber = getChildNodeNeighbourGrabber(graph);
+		class MyVisitor implements IVisitor<TestData>
+		{
 			private TestData prev;
 
 			@Override
@@ -234,9 +230,14 @@ public class DirectedGraphTest extends TestCase
 				prev = vertex;
 				return true;
 			}
-		});
+		}; 
+
+		graph.dfs(root,childGrabber, new MyVisitor());
 		Assert.assertEquals(graph.getNumberOfVertices(), visited.size());
-		HashMap<TestData,TestData> shortCutLinks = graph.getDFSShotcutLinks(root, childGrabber);
+
+		visited.clear();
+		HashMap<TestData,TestData> shortCutLinks = graph.getDFSShotcutLinks(root, childGrabber, new MyVisitor());
+		Assert.assertEquals(graph.getNumberOfVertices(), visited.size());
 
 		Assert.assertEquals(null,shortCutLinks.get(root));
 		Assert.assertEquals(c,shortCutLinks.get(a));
@@ -247,9 +248,36 @@ public class DirectedGraphTest extends TestCase
 		Assert.assertEquals(null,shortCutLinks.get(f));
 		Assert.assertEquals(e,shortCutLinks.get(g));
 	}
+
+	/**
+	 * @param graph
+	 * @return
+	 */
+	private INeighbourGrabber<TestData> getChildNodeNeighbourGrabber(
+			final DirectedGraph<TestData> graph) {
+		final INeighbourGrabber<TestData> childGrabber = new INeighbourGrabber<TestData>() {
+			@Override
+			public Iterator<TestData> grabNeighbours(TestData t)
+			{
+				return graph.getChildNodes(t);
+			}};
+		return childGrabber;
+	}
 	
 	public void testShortLinksOnTree()
 	{
+		/*
+		 * Build a graph like this
+		 * 
+		 *       0
+		 *      / \
+		 *     /   \
+		 *    1     4
+		 *   / \   / \
+		 *  2   3 5   6
+		 *
+		 */
+
 		final DirectedGraph<TestData> graph = new DirectedGraph<TestData>();
 		final TestData n0 = new TestData("n0");
 		final TestData n1 = new TestData("n1");
@@ -274,23 +302,22 @@ public class DirectedGraphTest extends TestCase
 		graph.addEdge(new Edge<TestData>(n4,n5));
 		graph.addEdge(new Edge<TestData>(n4,n6));
 
-		final INeighbourGrabber<TestData> childGrabber = new INeighbourGrabber<TestData>() {
-			@Override
-			public Iterator<TestData> grabNeighbours(TestData t)
-			{
-				return graph.getChildNodes(t);
-			}};
+		final INeighbourGrabber<TestData> childGrabber = getChildNodeNeighbourGrabber(graph);
+		final HashSet<TestData> visited = new HashSet<TestData>();
+		final IVisitor<TestData> visitor = new IVisitor<TestData>() {
+			private TestData prev;
 
-		/*
-		 *       0
-		 *      / \
-		 *     /   \
-		 *    1     4
-		 *   / \   / \
-		 *  2   3 5   6
-		 *
-		 */
-		HashMap<TestData,TestData> shortCutLinks = graph.getDFSShotcutLinks(n0, childGrabber);
+			@Override
+			public boolean visited(TestData vertex)
+			{
+				Assert.assertFalse(visited.contains(vertex));
+				
+				visited.add(vertex);
+				prev = vertex;
+				return true;
+			}
+		}; 
+		HashMap<TestData,TestData> shortCutLinks = graph.getDFSShotcutLinks(n0, childGrabber, visitor);
 		Assert.assertEquals(graph.getNumberOfVertices(),shortCutLinks.keySet().size());
 		
 		Assert.assertNull(shortCutLinks.get(n0));
