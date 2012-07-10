@@ -487,6 +487,9 @@ public final class Attribute extends java.util.Observable
 	    case COLOR_TYPE:
 		value = GrappaColor.getColor(stringValue,null);
 		break;
+	    case COLOR_LIST_TYPE:
+	    value = GrappaColor.getColorList(stringValue);
+	    break;
 	    case DIR_TYPE:
 		value = new Integer(GrappaSupport.xlateDirString(stringValue));
 		break;
@@ -594,6 +597,19 @@ public final class Attribute extends java.util.Observable
 		throw new IllegalArgumentException("value of attribute \"" + name + "\" is not an instance of Color");
 	    }
 	    break;
+	case COLOR_LIST_TYPE:
+		if(value instanceof List) {
+			/* We don't copy the color as this isn't done for COLOR_TYPE either */
+			List<java.awt.Color> valueList = (List<java.awt.Color>)value;
+			List<java.awt.Color> newList = new ArrayList<java.awt.Color>(valueList.size());
+			for (java.awt.Color c : valueList)
+				newList.add(c);
+			copy_value = newList;
+		} else {
+		throw new IllegalArgumentException("value of attribute \"" + name + "\" is not an instance of Color");
+	    }
+		break;
+
 	case DIR_TYPE:
 	    if(value instanceof Integer) {
 		copy_value = value;

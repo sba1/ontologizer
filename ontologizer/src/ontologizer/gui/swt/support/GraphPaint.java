@@ -2,6 +2,7 @@ package ontologizer.gui.swt.support;
 
 import java.awt.geom.PathIterator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 
 import org.eclipse.swt.SWT;
@@ -197,17 +198,13 @@ public class GraphPaint
 
 		int x = (int)center.x;
 		int y = (int)center.y;
-		double w = (Double)node.getAttributeValue(Node.WIDTH_ATTR);
 		double h = (Double)node.getAttributeValue(Node.HEIGHT_ATTR);
 		String label = (String)node.getAttributeValue(Node.LABEL_ATTR);
 		GrappaStyle style = (GrappaStyle)node.getAttributeValue(Node.STYLE_ATTR);
-		java.awt.Color fillColorAWT = (java.awt.Color)node.getAttributeValue(Node.FILLCOLOR_ATTR);
+		@SuppressWarnings("unchecked")
+		List<java.awt.Color> fillColorAWT = (List<java.awt.Color>)node.getAttributeValue(Node.FILLCOLOR_ATTR);
 		int shape = (Integer)node.getAttributeValue(Node.SHAPE_ATTR);
 		
-		/* Here, color is used for the first color of the gradient fill only */
-		java.awt.Color colorAWT = (java.awt.Color)node.getAttributeValue(Node.COLOR_ATTR);
-
-		w *= 72;
 		h *= 72;
 
 		Path nodePath = node2Path.get(node);
@@ -217,20 +214,21 @@ public class GraphPaint
 		{
 			if (fillColorAWT != null)
 			{
-				boolean gradient_fill = style.getGradientFill();
+				boolean gradient_fill = fillColorAWT.size() > 1;
 
 				Color oldFillColor = gc.getBackground();
-				Color fillColor = new Color(display,fillColorAWT.getRed(),fillColorAWT.getGreen(),fillColorAWT.getBlue());
-				Color color = null;
 
-				gc.setBackground(fillColor);
+				Color topColor = new Color(display,fillColorAWT.get(0).getRed(),fillColorAWT.get(0).getGreen(),fillColorAWT.get(0).getBlue());
+				Color bottomColor = null;
+
+				gc.setBackground(topColor);
 
 				Pattern oldPat = gc.getBackgroundPattern();
 				Pattern pat = null;
 				if (gradient_fill)
 				{
-					color = new Color(display,colorAWT.getRed(),colorAWT.getGreen(),colorAWT.getBlue());
-					pat = new Pattern(display,0,y - (float)h / 2,0,y+(float)h/2,color,fillColor);
+					bottomColor = new Color(display,fillColorAWT.get(1).getRed(),fillColorAWT.get(1).getGreen(),fillColorAWT.get(1).getBlue());
+					pat = new Pattern(display,0,y - (float)h / 2,0,y+(float)h/2,topColor,bottomColor);
 					gc.setBackgroundPattern(pat);
 				}
 
@@ -240,9 +238,9 @@ public class GraphPaint
 		    	{
 		    		gc.setBackgroundPattern(oldPat);
 		    		pat.dispose();
-		    		color.dispose();
+		    		bottomColor.dispose();
 		    	}
-		    	fillColor.dispose();
+		    	topColor.dispose();
 		    }
 
 		    int oldLineWidth = gc.getLineWidth();

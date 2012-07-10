@@ -342,9 +342,9 @@ public class SemanticSimilarityComposite extends Composite implements IGraphActi
 				if (gene2Set.contains(id)) hue = 60.f / 360;
 			}
 
-			String style = "filled,gradientfill";
+			String style = "filled";
 			String fillcolor = String.format(Locale.US, "%f,%f,%f", hue, saturation, brightness);
-			attributes.append(",style=\""+ style + "\",color=\"white\",fillcolor=\"" + fillcolor + "\"");
+			attributes.append(",gradientangle=270,style=\""+ style + "\",fillcolor=\"white:" + fillcolor + "\"");
 
 			return attributes.toString();
 		}
