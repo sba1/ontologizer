@@ -570,6 +570,11 @@ public interface GrappaConstants
      */
     public final static int STYLE_TYPE		= 0x0D;
 
+    /**
+     * Indicator for a list of colors.
+     */
+    public final static int COLOR_LIST_TYPE = 0x0E;
+
     /*
      * The indicators used to define the underlying Shape of this object.
      */
