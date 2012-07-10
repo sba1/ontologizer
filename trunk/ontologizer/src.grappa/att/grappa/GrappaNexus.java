@@ -933,7 +933,12 @@ public class GrappaNexus
     public void updateDecoration() {
 	long thisDecorationUpdate = System.currentTimeMillis();
 	color = (Color)(element.getAttributeValue(COLOR_ATTR));
-	fillcolor = (Color)(element.getAttributeValue(FILLCOLOR_ATTR));
+	
+	@SuppressWarnings("unchecked")
+	java.util.List<Color> fillcolorList = (java.util.List<Color>)element.getAttributeValue(FILLCOLOR_ATTR);
+	if (fillcolorList != null && fillcolorList.size() > 0) 	fillcolor = fillcolorList.get(0);
+	else fillcolor = null;
+	
 	font_color = (Color)(element.getAttributeValue(FONTCOLOR_ATTR));
 	if(element.isEdge() && shape != null && shape instanceof GrappaLine) {
 	    Edge edge = (Edge)element;

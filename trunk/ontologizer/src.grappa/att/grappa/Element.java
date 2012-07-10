@@ -1348,7 +1348,7 @@ public abstract class Element
 	    } else if(hashCode == COLOR_HASH && attrname.equals(COLOR_ATTR)) {
 		convtype = COLOR_TYPE;
 	    } else if(hashCode == FILLCOLOR_HASH && attrname.equals(FILLCOLOR_ATTR)) {
-		convtype = COLOR_TYPE;
+		convtype = COLOR_LIST_TYPE;
 	    } else if(hashCode == FONTCOLOR_HASH && attrname.equals(FONTCOLOR_ATTR)) {
 		convtype = COLOR_TYPE;
 	    } else if(hashCode == FONTSIZE_HASH && attrname.equals(FONTSIZE_ATTR)) {
