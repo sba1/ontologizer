@@ -171,9 +171,9 @@ class GraphWindow extends ApplicationWindow
 
 					}
 
-					String style = "filled,gradientfill";
+					String style = "filled";
 					String fillcolor = String.format(Locale.US, "%f,%f,%f", hue, saturation, 1.0f);
-					builder.append(",style=\""+ style + "\",color=\"white\",fillcolor=\"" + fillcolor + "\"");
+					builder.append(",gradientangle=270,style=\""+ style + "\",fillcolor=\"white:" + fillcolor + "\"");
 				}
 
 				return builder.toString();

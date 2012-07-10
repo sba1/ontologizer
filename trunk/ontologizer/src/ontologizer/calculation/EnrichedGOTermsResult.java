@@ -292,10 +292,10 @@ public class EnrichedGOTermsResult extends AbstractGOTermsResult
 							break;
 					}
 
-					String style = "filled,gradientfill";
+					String style = "filled";
 					if (isExtremal) style += ",setlinewidth(3)";
 					String fillcolor = String.format(Locale.US, "%f,%f,%f", hue, saturation, brightness);
-					attributes.append(",style=\""+ style + "\",color=\"white\",fillcolor=\"" + fillcolor + "\"");
+					attributes.append(",gradientangle=270,style=\""+ style + "\",fillcolor=\"white:" + fillcolor + "\"");
 				}
 				return attributes.toString();
 			}

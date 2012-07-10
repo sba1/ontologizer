@@ -12,6 +12,7 @@ package att.grappa;
 
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 /**
  * This abstract class sets up and provides name-to-color and color-to-name
@@ -845,6 +846,26 @@ public abstract class GrappaColor
     }
 
     return retColor;
+  }
+
+  /**
+   * Returns the color list in the color table. Each valid color needs
+   * to be separated by a ":".
+   *
+   * @param name
+   * @return the list of colors or null if no valid colors were found.
+   */
+  public static List<Color> getColorList(String name)
+  {
+	  List<Color> colorList = new ArrayList<Color>();
+	  for (String c : name.split(":"))
+	  {
+		  Color color = getColor(c, null);
+		  if (color != null)
+			  colorList.add(color);
+	  }
+	  if (colorList.size() == 0) return null;
+	  return colorList;
   }
 
   /**
