@@ -1,6 +1,7 @@
 package ontologizer.go;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -53,6 +54,9 @@ class OntologyEdge extends Edge<Term>
 public class Ontology implements Iterable<Term>
 {
 	private static Logger logger = Logger.getLogger(Ontology.class.getCanonicalName());
+
+	/** This is used to identify Gene Ontology until a better way is found */
+	private static HashSet<String> goLevel1TermNames = new HashSet<String>(Arrays.asList("molecular_function","biological_process", "cellular_component"));
 
 	/** The graph */
 	private DirectedGraph<Term> graph;
@@ -230,7 +234,23 @@ public class Ontology implements Iterable<Term>
 				level1StringBuilder.append("\"");
 			}
 
-			rootTerm = new Term(level1terms.get(0).getID().getPrefix().toString()+":0000000", "root");
+			String rootName = "root";
+			if (level1terms.size() == 3)
+			{
+				boolean isGO = false;
+				for (Term t : level1terms)
+				{
+					if (goLevel1TermNames.contains(t.getName().toLowerCase())) isGO = true;
+					else
+					{
+						isGO = false;
+						break;
+					}
+				}
+				if (isGO) rootName = "Gene Ontology";
+			}
+
+			rootTerm = new Term(level1terms.get(0).getID().getPrefix().toString()+":0000000", rootName);
 
 			logger.info("Ontology contains multiple level-one terms: " + level1StringBuilder.toString() + ". Adding artificial root term \"" + rootTerm.getID().toString() + "\".");
 
@@ -247,7 +267,6 @@ public class Ontology implements Iterable<Term>
 			{
 				rootTerm = level1terms.get(0);
 				logger.info("Ontology contains a single level-one term ("+ rootTerm.toString() + "");
-
 			}
 		}
 	}
