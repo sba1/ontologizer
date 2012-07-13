@@ -217,20 +217,14 @@ public class EnrichedGOTermsResult extends AbstractGOTermsResult
 				StringBuilder attributes = new StringBuilder();
 				attributes.append("shape=\"box\",label=\"");
 
-				if (graph.isRootTerm(id))
-				{
-					attributes.append("Gene Ontology");
-				} else
-				{
-					attributes.append(id.toString());
-					attributes.append("\\n");
+				attributes.append(id.toString());
+				attributes.append("\\n");
 
-					String label = graph.getTerm(id).getName();
-					if (GlobalPreferences.getWrapColumn() != -1)
-						label = Util.wrapLine(label,"\\n",GlobalPreferences.getWrapColumn());
+				String label = graph.getTerm(id).getName();
+				if (GlobalPreferences.getWrapColumn() != -1)
+					label = Util.wrapLine(label,"\\n",GlobalPreferences.getWrapColumn());
 
-					attributes.append(label);
-				}
+				attributes.append(label);
 
 				AbstractGOTermProperties prop = getGOTermProperties(id);
 				if (prop != null && counts)
