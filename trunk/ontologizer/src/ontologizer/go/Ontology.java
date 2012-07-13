@@ -245,8 +245,9 @@ public class Ontology implements Iterable<Term>
 		{
 			if (level1terms.size() == 1)
 			{
-				logger.info("Ontology contains a single level-one term.");
 				rootTerm = level1terms.get(0);
+				logger.info("Ontology contains a single level-one term ("+ rootTerm.toString() + "");
+
 			}
 		}
 	}
