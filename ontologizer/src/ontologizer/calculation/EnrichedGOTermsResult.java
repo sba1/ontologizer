@@ -286,10 +286,7 @@ public class EnrichedGOTermsResult extends AbstractGOTermsResult
 						case BIOLOGICAL_PROCESS: hue = 120.f / 360; break;
 						case MOLECULAR_FUNCTION: hue = 60.f / 360; break;
 						case CELLULAR_COMPONENT: hue = 300.f / 360; 	break;
-						default:
-							hue = 0.f;
-							saturation = 0.f;
-							break;
+						default: hue = 120.f / 360; break;
 					}
 
 					String style = "filled";
