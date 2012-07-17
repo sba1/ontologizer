@@ -385,7 +385,7 @@ abstract public class AbstractGraph<VertexType>
 
 		public String getDotGraphAttributes()
 		{
-			return "nodesep=0.4; ranksep=0.4";
+			return "nodesep=0.4; ranksep=0.4;";
 		}
 	}
 
@@ -449,7 +449,10 @@ abstract public class AbstractGraph<VertexType>
 
 		out.append("digraph G {");
 		if (graphAttributes != null)
+		{
 			out.append(graphAttributes);
+			out.append('\n');
+		}
 
 		/* Write out all nodes, call the given interface. Along the way, remember the indices. */
 		HashMap<VertexType,Integer> v2idx = new HashMap<VertexType,Integer>();
