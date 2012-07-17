@@ -1,6 +1,7 @@
 package ontologizer.dotwriter;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashSet;
@@ -9,8 +10,12 @@ import java.util.logging.Logger;
 
 import ontologizer.go.Ontology;
 import ontologizer.go.ParentTermID;
+import ontologizer.go.Term;
 import ontologizer.go.TermID;
 import ontologizer.go.TermRelation;
+import sonumina.math.graph.AbstractGraph.DotAttributesProvider;
+import sonumina.math.graph.DirectedGraph;
+import sonumina.math.graph.Edge;
 
 public class GODOTWriter
 {
@@ -66,93 +71,82 @@ public class GODOTWriter
 	 * @param edgeLabels
 	 * @param ignoreTerms
 	 */
-	public static void writeDOT(Ontology graph, File file, TermID rootTerm, Set<TermID> terms, IDotAttributesProvider provider, String graphAttrs, boolean reverseDirection, boolean edgeLabels, Set<TermID> ignoreTerms)
+	public static void writeDOT(final Ontology graph, File file, TermID rootTerm, Set<TermID> terms, final IDotAttributesProvider provider, final String graphAttrs, final boolean reverseDirection, final boolean edgeLabels, Set<TermID> ignoreTerms)
 	{
 		/* Collect terms starting from the terms upto the root term and place them into nodeSet */
-		HashSet<TermID> nodeSet = new HashSet<TermID>();
+		HashSet<Term> nodeSet = new HashSet<Term>();
 		for (TermID term : terms)
 		{
 			if (!graph.termExists(term))
 				throw new IllegalArgumentException("Requested term " + term.toString() + " couldn't be found in the graph");
 
 			if (!nodeSet.contains(term))
-				nodeSet.addAll(graph.getTermsOfInducedGraph(rootTerm,term));
+			{
+				for (TermID it : graph.getTermsOfInducedGraph(rootTerm,term))
+					nodeSet.add(graph.getTerm(it));
+			}
 		}
-		if (ignoreTerms != null) nodeSet.removeAll(ignoreTerms);
+
+		if (ignoreTerms != null)
+		{
+			for (TermID it : ignoreTerms)
+				nodeSet.remove(graph.getTerm(it));
+		}
+
 		/* We now have a list of nodes which can be placed into the output */
 		try
 		{
-			FileWriter out = new FileWriter(file);
-
-			out.write("digraph G { " + (graphAttrs!=null?graphAttrs:""));
-			out.write("\n");
-			/* Title */
-//			out.write("title[label=\"" + file.getName() + "\",shape=plaintext]\n");
-
-			/* Write out all nodes, call the given interface */
-			for (TermID id : nodeSet)
-			{
-				String attributes = provider.getDotNodeAttributes(id);
-				out.write(id.id + "[" + attributes + "];\n");
-			}
-
-			String direction;
-
-			if (!reverseDirection)
-				direction = " dir=\"back\"";
-			else
-				direction = "";
-
-			/* Write out the edges */
-			for (TermID destID : nodeSet)
-			{
-				for (ParentTermID source : graph.getTermParentsWithRelation(destID))
-				{
-					if (nodeSet.contains(source.termid))
+			graph.getGraph().writeDOT(new FileOutputStream(file), nodeSet, new DotAttributesProvider<Term>()
 					{
-						String sourceName = graph.getTerm(source.termid).getName();
-						String destName = graph.getTerm(destID).getName();
-						String edgeAttributes = "";
+						/* Note that the default direction is assumed to be the opposite direction */
+						private String direction = reverseDirection?"":"dir=\"back\"";
 
-						if (edgeLabels)
+						@Override
+						public String getDotNodeAttributes(Term vt) { return provider.getDotNodeAttributes(vt.getID());	}
+
+						@Override
+						public String getDotGraphAttributes() { return graphAttrs; }
+
+						@Override
+						public String getDotEdgeAttributes(Term src, Term dest)
 						{
-							edgeAttributes = provider.getDotEdgeAttributes(source.termid, destID);
-							if (edgeAttributes == null)
+							String color;
+							String relationName;
+							String label;
+
+							TermRelation rel = graph.getDirectRelation(src.getID(), dest.getID());
+
+							switch (rel)
 							{
-								String relationName;
-								switch (source.relation)
-								{
-									case	IS_A: relationName = "is a"; break;
-									case	PART_OF_A: relationName = "part of"; break;
-									case	REGULATES: relationName = "regulates"; break;
-									case	POSITIVELY_REGULATES: relationName = "positively regulates"; break;
-									case	NEGATIVELY_REGULATES: relationName = "negatively regulates"; break;
-									default: relationName = "";
-								}
-								edgeAttributes = "label=\"" + relationName + "\"";
+								case	IS_A: relationName = "is a"; break;
+								case	PART_OF_A: relationName = "is part of"; break;
+								case	REGULATES: relationName = "regulates"; break;
+								case	POSITIVELY_REGULATES: relationName = "positively regulates"; break;
+								case	NEGATIVELY_REGULATES: relationName = "negatively regulates"; break;
+								default: relationName = "";
 							}
+
+							switch (rel)
+							{
+								case	IS_A: color = "black"; break;
+								case	PART_OF_A: color = "blue"; break;
+								case	REGULATES:  /* Falls through */
+								case	POSITIVELY_REGULATES:  /* Falls through */
+								case	NEGATIVELY_REGULATES: color ="green"; break;
+								default: color = "black"; break;
+							}
+
+							if (edgeLabels)
+							{
+								label = provider.getDotEdgeAttributes(src.getID(), dest.getID());
+								if (label == null)
+									label = "label=\"" + relationName + "\"";
+							} else label = null;
+
+							String tooltip = "tooltip=\"" + dest.getName() + " " + relationName + " " + src.getName() + "\"";
+							return "color=" + color + "," + direction + "," + tooltip + (label!=null?(","+label):"");
 						}
-
-						out.write(source.termid.id + " -> " + destID.id);
-
-						if (source.relation == TermRelation.PART_OF_A)
-							out.write("[color=blue, tooltip=\"" + destName + " is part of " + sourceName + "\"" + direction + edgeAttributes + " ]");
-						else if (source.relation == TermRelation.REGULATES || source.relation == TermRelation.POSITIVELY_REGULATES || source.relation == TermRelation.NEGATIVELY_REGULATES)
-							out.write("[color=green, tooltip=\"" + destName + " regulates " + sourceName + "\"" + direction + edgeAttributes + " ]");
-						else if (source.relation == TermRelation.IS_A)
-							out.write("[color=black, tooltip=\"" + destName + " is a " + sourceName + "\"" + direction + edgeAttributes + "]");
-						else
-							out.write("[" + direction + "]");
-
-						out.write(";\n");
-					}
-				}
-			}
-
-			out.write("}\n");
-
-			out.flush();
-			out.close();
+					});
 		} catch (IOException e)
 		{
 			logger.severe("Unable to create dot file: " + e.getLocalizedMessage());
