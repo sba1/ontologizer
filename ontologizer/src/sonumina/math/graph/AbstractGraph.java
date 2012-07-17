@@ -382,6 +382,11 @@ abstract public class AbstractGraph<VertexType>
 		{
 			return null;
 		}
+
+		public String getDotGraphAttributes()
+		{
+			return "nodesep=0.4; ranksep=0.4";
+		}
 	}
 
 	/**
@@ -408,10 +413,26 @@ abstract public class AbstractGraph<VertexType>
 	 * @param fos. For the output.
 	 * @param nodeSet. Defines the subset of nodes to be written out.
 	 * @param provider. Provides the attributes.
+	 * @param nodeSep. The space between nodes of the same rank.
+	 * @param rankSep. The space between two nodes of subsequent ranks.
 	 */
-	public void writeDOT(OutputStream fos, Iterable<VertexType> nodeSet, DotAttributesProvider<VertexType> provider)
+	public void writeDOT(OutputStream fos, Iterable<VertexType> nodeSet, final DotAttributesProvider<VertexType> provider, final double nodeSep, final double rankSep)
 	{
-		writeDOT(fos,nodeSet,provider,0.4,0.4);
+		DotAttributesProvider<VertexType> newProvider = new DotAttributesProvider<VertexType>()
+				{
+					@Override
+					public String getDotGraphAttributes()
+					{
+						StringBuilder attrs = new StringBuilder();
+						attrs.append(String.format(Locale.US, "nodesep=%f; ranksep=%f;", nodeSep, rankSep));
+
+						if (provider.getDotGraphAttributes() != null)
+							attrs.append(provider.getDotGraphAttributes());
+						return attrs.toString();
+					}
+
+				};
+		writeDOT(fos,nodeSet,newProvider);
 	}
 
 	/**
@@ -420,14 +441,15 @@ abstract public class AbstractGraph<VertexType>
 	 * @param fos. For the output.
 	 * @param nodeSet. Defines the subset of nodes to be written out.
 	 * @param provider. Provides the attributes.
-	 * @param nodeSep. The space between nodes of the same rank.
-	 * @param rankSep. The space between two nodes of subsequent ranks.
 	 */
-	public void writeDOT(OutputStream fos, Iterable<VertexType> nodeSet, DotAttributesProvider<VertexType> provider, double nodeSep, double rankSep)
+	public void writeDOT(OutputStream fos, Iterable<VertexType> nodeSet, DotAttributesProvider<VertexType> provider)
 	{
 		PrintWriter out = new PrintWriter(fos);
+		String graphAttributes = provider.getDotGraphAttributes();
 
-		out.format(Locale.US,"digraph G {nodesep=%f; ranksep=%f\n", nodeSep,rankSep);
+		out.append("digraph G {");
+		if (graphAttributes != null)
+			out.append(graphAttributes);
 
 		/* Write out all nodes, call the given interface. Along the way, remember the indices. */
 		HashMap<VertexType,Integer> v2idx = new HashMap<VertexType,Integer>();
