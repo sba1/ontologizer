@@ -26,9 +26,9 @@ import att.grappa.Node;
 import att.grappa.Subgraph;
 
 /**
+ * This class is responsible for drawing a Graph.
  *
  * @author Sebastian Bauer
- *
  */
 public class GraphPaint
 {
@@ -56,16 +56,22 @@ public class GraphPaint
 		paintElement(g, gc);
 	}
 
-	public void drawGraph(GC gc, float px, float py, float scale)
-	{
-
-	}
-
+	/**
+	 * Changes the state of the graph paint such that the given Node is
+	 * selected.
+	 *
+	 * @param selectedNode
+	 */
 	public void setSelectedNode(Node selectedNode)
 	{
 		this.selectedNode = selectedNode;
 	}
 
+	/**
+	 * Returns the currently selected node.
+	 *
+	 * @return
+	 */
 	public Node getSelectedNode()
 	{
 		return selectedNode;
@@ -325,6 +331,9 @@ public class GraphPaint
 		return path;
 	}
 
+	/**
+	 * Dispose all resources associated to the GraphPaint.
+	 */
 	public void dispose()
 	{
 		for (Path p : node2Path.values())
@@ -332,6 +341,13 @@ public class GraphPaint
 		node2Path = null;
 	}
 
+	/**
+	 * Returns the node below the given coordinate.
+	 *
+	 * @param x
+	 * @param y
+	 * @return
+	 */
 	public Node findNodeByCoord(float x, float y)
 	{
 		float [] points = new float[2];
@@ -353,7 +369,7 @@ public class GraphPaint
 		return null;
 	}
 
-	public Edge findEdgeByCoord(Element e, float x, float y)
+	private Edge findEdgeByCoord(Element e, float x, float y)
 	{
 		switch (e.getType())
 		{
@@ -387,6 +403,13 @@ public class GraphPaint
 		return null;
 	}
 
+	/**
+	 * Returns the edge below the given coordinate.
+	 *
+	 * @param x
+	 * @param y
+	 * @return
+	 */
 	public Edge findEdgeByCoord(float x, float y)
 	{
 		return findEdgeByCoord(g,x,y);
