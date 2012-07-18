@@ -25,6 +25,8 @@ abstract public class AbstractByteLineScanner
 	{
 		int read;
 		int read_offset = 0;
+
+		outer:
 		while ((read = is.read(byteBuf, read_offset, BUF_SIZE) + read_offset) > 0)
 		{
 			int line_start = 0;
@@ -34,7 +36,8 @@ abstract public class AbstractByteLineScanner
 			{
 				if (byteBuf[pos] == '\n')
 				{
-					newLine(byteBuf, line_start, pos - line_start);
+					if (!newLine(byteBuf, line_start, pos - line_start))
+						break outer;
 					line_start = pos + 1;
 				}
 				pos++;
