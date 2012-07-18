@@ -41,6 +41,12 @@ public final class ByteString
 		System.arraycopy(bytes,0,this.bytes,0,length);
 	}
 	
+	/**
+	 * 
+	 * @param bytes
+	 * @param from this position in inclusive
+	 * @param to this position is exclusive
+	 */
 	public ByteString(byte [] bytes, int from, int to)
 	{
 		this.bytes = new byte[to-from];
