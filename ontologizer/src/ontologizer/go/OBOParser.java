@@ -124,7 +124,6 @@ public class OBOParser
 	/* Used for parsing */
 	private String line;
 	private int linenum = 0;
-	private int bytesRead = 0;
 
 	/** The Stanza currently being processed */
 	private Stanza currentStanza;
@@ -286,6 +285,8 @@ public class OBOParser
 		int currentTerm = 0;
 		long millis = 0;
 
+		long startMillis = System.currentTimeMillis();
+		
 		BufferedReader reader;
 		FileInputStream fis = new FileInputStream(filename);
 		
@@ -316,8 +317,6 @@ public class OBOParser
 				}
 			}
 
-			bytesRead += line.length();
-			
 			line = stripSpecialCharacters(line);
 			if (line.length() == 0)
 				continue;
@@ -408,7 +407,7 @@ public class OBOParser
 			progress.update((int)fc.size(),currentTerm);
 		reader.close();
 
-		logger.info("Got " + terms.size() + " terms and " + numberOfRelations + " relations");
+		logger.info("Got " + terms.size() + " terms and " + numberOfRelations + " relations in " + (System.currentTimeMillis() - startMillis) + " ms");
 		return this.getParseDiagnostics();
 	}
 
