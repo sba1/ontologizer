@@ -2,20 +2,16 @@ package ontologizer.dotwriter;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
 
 import ontologizer.go.Ontology;
-import ontologizer.go.ParentTermID;
 import ontologizer.go.Term;
 import ontologizer.go.TermID;
 import ontologizer.go.TermRelation;
 import sonumina.math.graph.AbstractGraph.DotAttributesProvider;
-import sonumina.math.graph.DirectedGraph;
-import sonumina.math.graph.Edge;
 
 public class GODOTWriter
 {
