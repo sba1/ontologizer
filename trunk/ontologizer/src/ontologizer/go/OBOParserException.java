@@ -30,6 +30,14 @@ public class OBOParserException extends Exception
 		this.filename = "<tempfile>";
 	}
 
+	public OBOParserException(String message)
+	{
+		super(message);
+		this.line = "";
+		this.linenum = -1;
+		this.filename = "<tempfile>";
+	}
+
 	public String getLine()
 	{
 		return line;
