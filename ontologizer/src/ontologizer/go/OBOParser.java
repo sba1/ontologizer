@@ -56,7 +56,6 @@ public class OBOParser
 	/** Ignore synonyms */
 	public final static int IGNORE_SYNONYMS     = 1 << 4;
 
-
 	/**
 	 * Escaped characters such as \\ in the gene_ontology.obo file.
 	 */
@@ -66,6 +65,13 @@ public class OBOParser
 	 * Reverse direction
 	 */
 	private static final HashMap<Character, Character> unescapeChars = new HashMap<Character, Character>();
+
+
+	private static class ParserContext
+	{
+		String line;
+		int lineno;
+	}
 
 	static
 	{
@@ -120,10 +126,6 @@ public class OBOParser
 
 	/** All parsed namespaces */
 	private HashMap<String,Namespace> namespaces = new HashMap<String,Namespace>();
-
-	/* Used for parsing */
-	private String line;
-	private int linenum = 0;
 
 	/** The Stanza currently being processed */
 	private Stanza currentStanza;
@@ -304,6 +306,9 @@ public class OBOParser
 		if (progress != null)
 			progress.init((int)fc.size());
 
+		String line;
+		int linenum;
+
 		for (linenum = 1; (line = reader.readLine()) != null; linenum++)
 		{
 			/* Progress support, call only every quarter second */
@@ -320,6 +325,7 @@ public class OBOParser
 			line = stripSpecialCharacters(line);
 			if (line.length() == 0)
 				continue;
+
 			/*
 			 * The following takes care of multiline entries (lines
 			 * terminated with "\")
@@ -346,8 +352,7 @@ public class OBOParser
 				enterNewTerm();
 				currentTerm++;
 				if (line.charAt(line.length() - 1) != ']')
-					throw new OBOParserException("Unclosed stanza \"" + line
-							+ "\"", line, linenum);
+					throw new OBOParserException("Unclosed stanza \"" + line + "\"", line, linenum);
 
 				String stanzaname = line.substring(1, line.length() - 1);
 				if (stanzaname.length() < 1)
@@ -399,10 +404,16 @@ public class OBOParser
 				{
 					logger.severe("Unable to parse line at " + linenum + " " + line);
 					throw iae;
+				} catch (OBOParserException oae)
+				{
+					oae.line = line;
+					oae.linenum = linenum;
+					throw oae;
 				}
 			}
-		} // for
-		enterNewTerm(); // Get very last stanza after loop!
+		}
+
+		enterNewTerm(); /* Get very last stanza after loop! */
 		if (progress != null)
 			progress.update((int)fc.size(),currentTerm);
 		reader.close();
@@ -464,13 +475,12 @@ public class OBOParser
 	 *            version and date of the gene_ontology.obo file.
 	 */
 
-	private void readHeaderValue(String name, String value) throws OBOParserException
+	private void readHeaderValue(String name, String value)
 	{
 		value = value.trim();
 		if (name.equals("format-version"))
 		{
 			this.format_version = value;
-			return;
 		} else if (name.equals("date"))
 		{
 			this.date = value;
@@ -484,8 +494,7 @@ public class OBOParser
 		}
 	}
 
-	protected void readTagValue(String name, String value) throws OBOParserException,
-			IOException
+	protected void readTagValue(String name, String value) throws OBOParserException, IOException
 	{
 		value = value.trim();
 
@@ -493,8 +502,7 @@ public class OBOParser
 		{
 			if (currentStanza != null)
 			{
-				throw new OBOParserException("import tags may only occur "
-						+ "in the header", line, linenum);
+				throw new OBOParserException("import tags may only occur in the header");
 			}
 			return;
 		} else if (name.equals("id"))
@@ -516,7 +524,7 @@ public class OBOParser
 			int typeIndex = findUnescaped(value, ' ', 0, value.length());
 			String type = value.substring(0, typeIndex).trim();
 			if (typeIndex == -1)
-				throw new OBOParserException("No id specified for" + " relationship", line, linenum);
+				throw new OBOParserException("No id specified for" + " relationship");
 			int endoffset = findUnescaped(value, '[',
 					typeIndex + type.length(), value.length());
 			String id;
@@ -528,8 +536,7 @@ public class OBOParser
 			}
 
 			if (id.length() == 0)
-				throw new OBOParserException("Empty id specified for"
-						+ " relationship", line, linenum);
+				throw new OBOParserException("Empty id specified for relationship");
 			readRelationship(type,id);
 		} else if (name.equals("is_obsolete"))
 		{
