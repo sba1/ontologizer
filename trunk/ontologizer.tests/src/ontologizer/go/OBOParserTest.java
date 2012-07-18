@@ -1,6 +1,8 @@
 package ontologizer.go;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -25,7 +27,6 @@ public class OBOParserTest extends TestCase
 		System.out.println(oboParser.doParse());
 	}
 
-
 	public void testTermCount()
 	{
 		Assert.assertEquals(nTermCount, oboParser.getTermMap().size());
@@ -47,5 +48,24 @@ public class OBOParserTest extends TestCase
 		oboParser.doParse();
 		for (Term t : oboParser.getTermMap())
 			Assert.assertTrue(t.getSynonyms() == null || t.getSynonyms().length == 0);
+	}
+
+	public void testExceptions() throws IOException
+	{
+		File tmp = File.createTempFile("onto", ".obo");
+		PrintWriter pw = new PrintWriter(tmp);
+		pw.append("[term]\nimport: sss\n");
+		pw.close();
+
+		OBOParser oboParser = new OBOParser(tmp.getCanonicalPath());
+
+		try
+		{
+			oboParser.doParse();
+			Assert.assertTrue("Exception asserted", false);
+		} catch (OBOParserException ex)
+		{
+			Assert.assertEquals(2,ex.linenum);
+		}
 	}
 }
