@@ -18,10 +18,8 @@ public class ParsedContainerTest extends TestCase
 	@Override
 	protected void setUp() throws Exception
 	{
-		OBOParserTest oPT = new OBOParserTest();
-		oPT.run();
-
-		oboParser = oPT.oboParser;
+		OBOParser oboParser = new OBOParser(OBOParserTest.GOtermsOBOFile);
+		oboParser.doParse();
 		container = new TermContainer(oboParser.getTermMap(), oboParser.getFormatVersion(), oboParser.getDate());
 	}
 
