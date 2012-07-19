@@ -115,6 +115,23 @@ public class OBOParserTest extends TestCase
 		Assert.assertEquals("This is a so-called \"test\"", terms.get(0).getDefinition());
 	}
 	
+	public void testAltId() throws IOException, OBOParserException
+	{
+		File tmp = File.createTempFile("onto", ".obo");
+		PrintWriter pw = new PrintWriter(tmp);
+		pw.append("[term]\n" +
+		          "name: test\n" + 
+				  "id: GO:0000001\n" +
+		          "alt_id: GO:0000003\n");
+		pw.close();
+		
+		OBOParser oboParser = new OBOParser(tmp.getCanonicalPath(),OBOParser.PARSE_DEFINITIONS);
+		oboParser.doParse();
+		ArrayList<Term> terms = new ArrayList<Term>(oboParser.getTermMap());
+		Assert.assertEquals(1, terms.size());
+		Assert.assertEquals("GO:0000003", terms.get(0).getAlternatives().get(0).toString());
+	}
+	
 	public void testExceptions() throws IOException
 	{
 		File tmp = File.createTempFile("onto", ".obo");
