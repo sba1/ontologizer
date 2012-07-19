@@ -1,0 +1,343 @@
+<!-- build.xml file for the Ontologizer -->
+<!-- (c) 2005-2009 Ontologizer Development Team -->
+
+<project name="Ontologizer" default="compile" basedir=".">
+	<description>Ant file to build the Ontologizer.
+     Try ant -projecthelp if you are new to ant.
+    </description>
+
+	<!-- Target for building the version containing class. Requires svn command. -->
+	<target name="version">
+
+		<exec executable="svn" outputproperty="svn.info">
+			<arg value="info"/>
+			<arg path="${basedir}/src"/>
+		</exec>
+		<exec executable="grep" outputproperty="grep.out" inputstring="${svn.info}">
+			<arg value="^Revision:"/>
+		</exec>
+
+		<exec executable="sed" outputproperty="svn.revision" inputstring="${grep.out}">
+			<arg value="s/Revision: //"/>
+		</exec>
+		
+		<tstamp>
+		    <format property="DATE" pattern="yyyyMMdd" locale="ENGLISH, GERMANY"/>
+		</tstamp>
+		
+		<echo file="${basedir}/src/ontologizer/BuildInfoData.java">
+package ontologizer;
+
+public class BuildInfoData {
+	public static final String revisionNumber="${svn.revision}";
+	public static final String date ="${DATE}";
+}
+		</echo>
+
+	</target>
+
+	<!-- INITIALIZE BUILD -->
+
+	<target name="init">
+		<!-- Create the time stamp -->
+		<tstamp/>
+		<!-- set global properties for this build -->
+		<property environment="env" />
+		<property name="src.dir" location="src" />
+		<property name="src.grappa.dir" location="src.grappa" />
+		<property name="build.dir" location="build" />
+		<property name="build.classes" location="${build.dir}/classes" />
+		<property name="dist"  location="dist"/>
+		<property name="dist.cmdline" location="${dist}/cmdline" />
+		<property name="dist.gui" location="${dist}/gui" />
+		<property name="debug" value="off" />
+		<property name="project" value="Ontologizer" />
+
+		<path id="classpath">
+			<pathelement location="./" />
+			<pathelement location="./local-maven-repo/ontologizer/commons-cli/1.1/commons-cli-1.1.jar" />
+		</path>
+		
+	</target>
+
+	
+	<!-- Target for building the user visible change log from the log. Requires svn command.
+	   - User-visible change logs are all texts that appear as  after the keyword "$userlog$" -->
+	<target name="build-user-changelog" depends="init">
+		<mkdir dir="${build.classes}" />
+		<javac srcdir="src/sonumina/util/changelog"
+         destdir="${build.classes}"
+		 includeantruntime="false"
+         debug="on" />
+		<java classname="sonumina.util.changelog.BuildChangeLog">
+			<classpath path="${build.classes}"/>
+			<arg file="${src.dir}/.." />
+			<arg file="src/ChangeLog"/>
+		</java>
+	</target>
+
+	<target name="init.gui" depends="init">
+		<!-- SWT support -->
+		<property name="swt.jar" value="${env.SWT_LIB}" />
+		<fail message="Couldn't find the location of the SWT library. Use SWT_LIB environment variable to give a hint.">
+			<condition>
+			 <equals arg1="${swt.jar}" arg2="$${env.SWT_LIB}"/>
+			</condition>
+		</fail>
+
+		<path id="gui.classpath">
+			<pathelement location="${swt.jar}"/>
+			<pathelement location="./nattable-core-1.6.2.jar" />
+			<pathelement location="./log4j-1.2.15.jar" />
+			<pathelement location="./colt.jar" />
+		</path>
+	</target>
+
+
+	<!-- MAIN TARGET FOR COMPILING ONTOLOGIZER SOURCE -->
+
+	<target name="compile" depends="init" description="compile the main source">
+		<mkdir dir="${build.classes}" />
+		<javac destdir="${build.classes}" debug="${debug}" verbose="yes">
+			<src path="${src.dir}" /> 
+			<src path="${src.grappa.dir}" />
+			<exclude name="**/ontologizer/tests/*.java" />
+			<exclude name="**/ontologizer/gui/**" />
+			<exclude name="**/ontologizer/calculation/svd/*.java" />
+			<exclude name="**/ontologizer/sampling/*Test.java" />
+			<exclude name="**/ontologizer/go/*Test.java" />
+			<exclude name="**/sonumina/math/graph/*Test.java" />
+			<exclude name="**/ontologizer/go/ParsedContainerTest.java" />
+			<exclude name="**/ontologizer/calculation/ProbabilisticCalculationTest.java" />
+			<exclude name="**/ontologizer/graph/*Test.java" />
+			<exclude name="**/ontologizer/tests/*.java" />
+			<exclude name="**/tools/*.java" />
+			<exclude name="**/ontologizer/benchmark/**" />
+
+			<classpath refid="classpath" />
+		</javac>
+	</target>
+
+	<target name="compile.gui" depends="compile,init.gui" description="compile the gui sources">
+		<javac srcdir="${src.dir}" destdir="${build.classes}" debug="${debug}" verbose="yes">
+			<include name="**/ontologizer/gui/**" />
+			<classpath refid="classpath"/>
+			<classpath refid="gui.classpath"/>
+		</javac>     
+	</target>
+
+	<!-- We copy the help files to the build directory in order to include them in the jar file -->
+	<target name="copyHelpFiles"
+             depends="init"
+            description="Copy the Helps files to the build directory">
+		<copy todir="${build.classes}/ontologizer/help">
+			<fileset dir="${src.dir}/ontologizer/help"/>
+		</copy>
+	</target>
+
+
+	<!-- Generate Ontologizer.jar executable with GUI -->
+
+	<target name="dist" 
+        depends="compile,copyHelpFiles"
+        description="generate GUI executable" >
+		<mkdir dir="${dist.gui}"/>
+		<!-- Put everything in ${build} into the Ontologizer.jar file -->
+
+		<jar jarfile="${dist.gui}/Ontologizer.jar">
+			<manifest>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Main-Class" value="ontologizer.gui.Ontologizer" />
+			</manifest>
+
+			<fileset dir="${build.classes}">
+				<!-- Exclude files only useful for command line -->
+				<exclude name="OntologizerCMD.class"/>
+				<exclude name="myCommandline.class"/>
+				<!-- Include HTML Help files only in GUI version -->
+				<!-- <include name="../../src/ontologizer/help/**.html"/> -->
+			</fileset>
+		</jar>
+	</target>
+
+
+	<!-- Generate Ontologizer.jar as command line version -->
+
+	<target name="cmdline" 
+        depends="compile" 
+        description="generate command line executable" >
+		<mkdir dir="${dist.cmdline}"/>
+		<jar jarfile="${dist.cmdline}/Ontologizer.jar">
+			<manifest>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Main-Class" value="ontologizer.OntologizerCMD" />
+			</manifest>
+
+			<zipfileset src="local-maven-repo/ontologizer/commons-cli/1.1/commons-cli-1.1.jar" />
+
+			<fileset dir="${build.classes}">
+				<!-- Exclude class only useful for GUI version -->
+				<exclude name="gui.*"/>
+			</fileset>			
+		</jar>
+	</target>
+
+	<!-- Generate OntologizerCompare.jar as command line version -->
+
+	<target name="compare" 
+        depends="compile" 
+        description="generate command line executable which compares different analysis methods" >
+		<mkdir dir="${dist.cmdline}"/>
+		<jar jarfile="${dist.cmdline}/OntologizerCompare.jar">
+			<manifest>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Main-Class" value="ontologizer.OntologizerMethodCompareCMD" />
+<!--				<attribute name="Class-Path" value="commons-cli-1.0.jar" /> -->
+			</manifest>
+
+			<zipfileset src="commons-cli-1.0.jar" />
+
+			<fileset dir="${build.classes}">
+				<!-- Exclude class only useful for GUI version -->
+				<exclude name="gui.*"/>
+			</fileset>
+			
+		</jar>
+	</target>
+
+	<!-- Generate SetConstructor.jar as command line version -->
+
+	<target name="setconstructor" 
+        depends="compile" 
+        description="generate command line executable which constructs interesting study sets" >
+		<mkdir dir="${dist.cmdline}"/>
+		<jar jarfile="${dist.cmdline}/SetConstructor.jar">
+			<manifest>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Main-Class" value="ontologizer.sampling.SetConstructor" />
+<!--				<attribute name="Class-Path" value="commons-cli-1.0.jar" /> -->
+			</manifest>
+
+			<zipfileset src="commons-cli-1.0.jar" />
+
+			<fileset dir="${build.classes}">
+				<!-- Exclude class only useful for GUI version -->
+				<exclude name="gui.*"/>
+			</fileset>
+			
+		</jar>
+	</target>
+
+	<!-- Generate SubTermLister.jar as command line version -->
+
+	<target name="subtermlister" 
+        depends="compile" 
+        description="generate command line executable which constructs files listing subterms" >
+		<mkdir dir="${dist.cmdline}"/>
+		<jar jarfile="${dist.cmdline}/SubTermLister.jar">
+			<manifest>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Main-Class" value="ontologizer.playground.SubTermLister" />
+<!--				<attribute name="Class-Path" value="commons-cli-1.0.jar" /> -->
+			</manifest>
+
+			<zipfileset src="commons-cli-1.0.jar" />
+
+			<fileset dir="${build.classes}">
+				<!-- Exclude class only useful for GUI version -->
+				<exclude name="gui.*"/>
+			</fileset>
+			
+		</jar>
+	</target>
+
+	<!-- Generate SuperTermLister.jar as command line version -->
+
+	<target name="supertermlister" 
+        depends="compile" 
+        description="generate command line executable which constructs files listing subterms" >
+		<mkdir dir="${dist.cmdline}"/>
+		<jar jarfile="${dist.cmdline}/SuperTermLister.jar">
+			<manifest>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Main-Class" value="ontologizer.playground.SuperTermLister" />
+<!--				<attribute name="Class-Path" value="commons-cli-1.0.jar" /> -->
+			</manifest>
+
+			<zipfileset src="commons-cli-1.0.jar" />
+
+			<fileset dir="${build.classes}">
+				<!-- Exclude class only useful for GUI version -->
+				<exclude name="gui.*"/>
+			</fileset>
+			
+		</jar>
+	</target>
+
+	<!-- Generate OverlapLister.jar as command line version -->
+
+	<target name="overlaplister" 
+        depends="compile" 
+        description="generate command line executable which constructs files listing terms with overlapping associations" >
+		<mkdir dir="${dist.cmdline}"/>
+		<jar jarfile="${dist.cmdline}/OverlapLister.jar">
+			<manifest>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Main-Class" value="ontologizer.playground.OverlapLister" />
+<!--				<attribute name="Class-Path" value="commons-cli-1.0.jar" /> -->
+			</manifest>
+
+			<zipfileset src="commons-cli-1.0.jar" />
+
+			<fileset dir="${build.classes}">
+				<!-- Exclude class only useful for GUI version -->
+				<exclude name="gui.*"/>
+			</fileset>
+			
+		</jar>
+	</target>
+
+	<!-- Clean up class directory -->
+
+
+	<target name="clean" depends="init" description="clean up" >
+		<!-- Delete the ${build} directory tree -->
+		<delete dir="${build.dir}"/>
+	</target>
+
+	<target name="clean-all" depends="init" description="clean everything">
+		<!-- Delete the ${build} and ${dist} directory trees -->
+		<delete dir="${build.dir}" />
+		<delete dir="${dist}" />
+	</target>
+
+	<!-- Create javadoc documentation for the Ontologizer -->
+	<target name="javadoc" depends="init">
+		<javadoc 
+         destdir="doc" 
+         version="true" 
+         author="true"
+         windowtitle="${project} API"
+         doctitle="${project}"
+	 use="true"
+	 private="true"
+	 overview="overview.html">
+			<fileset dir="src" defaultexcludes="yes" />
+		</javadoc>
+	</target>
+
+
+	<target name="tar" >
+		<tar destfile="./ontologizer.tar">
+			<tarfileset dir=".." defaultexcludes="yes">
+			</tarfileset>
+			<tarfileset dir=".">
+				<include name="build.xml"/>
+			</tarfileset>
+		</tar>
+		<gzip src="ontologizer.tar" destfile="ontologizer.tar.gz"/>
+		<delete file="./ontologizer.tar"/>
+	</target>
+
+</project>
+
