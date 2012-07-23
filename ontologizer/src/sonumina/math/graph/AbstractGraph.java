@@ -387,6 +387,11 @@ abstract public class AbstractGraph<VertexType>
 		{
 			return "nodesep=0.4; ranksep=0.4;";
 		}
+
+		public String getDotHeader()
+		{
+			return null;
+		}
 	}
 
 	/**
@@ -445,7 +450,14 @@ abstract public class AbstractGraph<VertexType>
 	public void writeDOT(OutputStream fos, Iterable<VertexType> nodeSet, DotAttributesProvider<VertexType> provider)
 	{
 		PrintWriter out = new PrintWriter(fos);
+		String graphHeader = provider.getDotHeader();
 		String graphAttributes = provider.getDotGraphAttributes();
+
+		if (graphHeader != null)
+		{
+			out.append(graphHeader);
+			out.append("\n");
+		}
 		
 		out.append("digraph G {");
 		if (graphAttributes != null)

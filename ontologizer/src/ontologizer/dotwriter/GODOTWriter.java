@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import ontologizer.BuildInfo;
 import ontologizer.go.Ontology;
 import ontologizer.go.Term;
 import ontologizer.go.TermID;
@@ -102,7 +103,10 @@ public class GODOTWriter
 						
 						@Override
 						public String getDotGraphAttributes() { return graphAttrs; }
-						
+
+						@Override
+						public String getDotHeader(){ return "/* Generated with Ontologizer " + BuildInfo.getVersion() + " build " + BuildInfo.getBuildString() + " */"; }
+
 						@Override
 						public String getDotEdgeAttributes(Term src, Term dest)
 						{
