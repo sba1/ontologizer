@@ -1257,7 +1257,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 	}
 
 	/**
-	 * Returns the currently choosen significance level.
+	 * Returns the currently chosen significance level.
 	 *
 	 * @return the significance level (between 0 and 1)
 	 */
@@ -1315,7 +1315,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 			{
 				if (success)
 				{
-					logger.info("Layouted graph successful.");
+					logger.info("Layouted graph successful (located in \"" + dotFile.toString() + "\").");
 
 					/* make the graph display visible */
 					termSashForm.setMaximizedControl(null);
