@@ -19,6 +19,8 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.Parser;
 
+import com.sun.org.apache.bcel.internal.generic.DDIV;
+
 /**
  * OntologizerCMD.java
  * <P>
@@ -187,7 +189,7 @@ public class OntologizerCMD
 				}
 			}
 
-			/* Testing availbility of calculation method */
+			/* Testing availability of calculation method */
 			if (arguments.calculationName != null)
 			{
 				boolean found = false;
@@ -202,12 +204,13 @@ public class OntologizerCMD
 				
 				if (!found)
 				{
-					System.err.println("Given calculation method " + arguments.calculationName + " wasn't found");
+					String addInfo = " Did you mean perhaps \"" + SmithWaterman.findMostSimilar(calculations, arguments.calculationName) + "\"?";
+					System.err.println("Given calculation method " + arguments.calculationName + " wasn't found!" + addInfo);
 					System.exit(-1);
 				}
 			}
 
-			/* Testing availbility of mtc method */
+			/* Testing availability of mtc method */
 			if (arguments.correctionName != null)
 			{
 				boolean found = false;
@@ -222,7 +225,8 @@ public class OntologizerCMD
 				
 				if (!found)
 				{
-					System.err.println("Given MTC method " + arguments.correctionName + " wasn't found");
+					String addInfo = " Did you mean perhaps \"" + SmithWaterman.findMostSimilar(mtcs, arguments.correctionName) + "\"?";
+					System.err.println("Given MTC method " + arguments.correctionName + " wasn't found!" + addInfo);
 					System.exit(-1);
 				}
 			}
