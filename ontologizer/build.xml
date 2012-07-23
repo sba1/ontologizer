@@ -96,7 +96,7 @@ public class BuildInfoData {
 
 	<!-- MAIN TARGET FOR COMPILING ONTOLOGIZER SOURCE -->
 
-	<target name="compile" depends="init" description="compile the main source">
+	<target name="compile" depends="init,version" description="compile the main source">
 		<mkdir dir="${build.classes}" />
 		<javac destdir="${build.classes}" debug="${debug}" verbose="yes">
 			<src path="${src.dir}" /> 
