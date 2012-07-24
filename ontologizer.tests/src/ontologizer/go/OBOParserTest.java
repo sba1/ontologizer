@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -113,6 +114,37 @@ public class OBOParserTest extends TestCase
 		ArrayList<Term> terms = new ArrayList<Term>(oboParser.getTermMap());
 		Assert.assertEquals(1, terms.size());
 		Assert.assertEquals("This is a so-called \"test\"", terms.get(0).getDefinition());
+	}
+
+	public void testEquivalent() throws IOException, OBOParserException
+	{
+		File tmp = File.createTempFile("onto", ".obo");
+		PrintWriter pw = new PrintWriter(tmp);
+		pw.append("[term]\n" +
+		          "name: test\n" +
+				  "id: GO:0000001\n" +
+		          "def: \"This is a so-called \\\"test\\\"\"\n\n"+
+				  "[term]\n" +
+				  "name: test2\n" +
+				  "id: GO:0000002\n" +
+				  "equivalent_to: GO:0000001\n" +
+				  "equivalent_to: GO:0000003\n");
+		pw.close();
+
+		OBOParser oboParser = new OBOParser(tmp.getCanonicalPath());
+		oboParser.doParse();
+
+		ArrayList<Term> terms = new ArrayList<Term>(oboParser.getTermMap());
+		HashMap<String,Term> name2Term = new HashMap<String,Term>();
+		for (Term t : terms)
+			name2Term.put(t.getIDAsString(), t);
+
+		Assert.assertEquals(2,name2Term.get("GO:0000002").getEquivalents().length);
+		HashSet<String> ids = new HashSet<String>();
+		ids.add("GO:0000001");
+		ids.add("GO:0000003");
+		for (TermID id : name2Term.get("GO:0000002").getEquivalents())
+			Assert.assertTrue(ids.contains(id.toString()));
 	}
 
 	public void testAltId() throws IOException, OBOParserException
