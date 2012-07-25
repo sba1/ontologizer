@@ -128,7 +128,7 @@ public class OBOParserTest extends TestCase
 				  "name: test2\n" +
 				  "id: GO:0000002\n" +
 				  "equivalent_to: GO:0000001\n" +
-				  "equivalent_to: GO:0000003\n");
+				  "equivalent_to: GO:0000003 ! comment\n");
 		pw.close();
 
 		OBOParser oboParser = new OBOParser(tmp.getCanonicalPath());
@@ -145,6 +145,25 @@ public class OBOParserTest extends TestCase
 		ids.add("GO:0000003");
 		for (TermID id : name2Term.get("GO:0000002").getEquivalents())
 			Assert.assertTrue(ids.contains(id.toString()));
+	}
+
+	public void testXRef() throws IOException, OBOParserException
+	{
+		File tmp = File.createTempFile("onto", ".obo");
+		PrintWriter pw = new PrintWriter(tmp);
+		pw.append("[term]\n" +
+		          "name: test\n" +
+				  "id: GO:0000001\n" +
+		          "def: \"This is a so-called \\\"test\\\"\"\n" +
+				  "xref: db:ID \"WW\"");
+		pw.close();
+
+		OBOParser oboParser = new OBOParser(tmp.getCanonicalPath(),OBOParser.PARSE_XREFS);
+		oboParser.doParse();
+		ArrayList<Term> terms = new ArrayList<Term>(oboParser.getTermMap());
+		Assert.assertEquals(1, terms.size());
+		Assert.assertEquals("db",terms.get(0).getXrefs()[0].getDatabase());
+		Assert.assertEquals("ID \"WW\"",terms.get(0).getXrefs()[0].getXrefId());
 	}
 
 	public void testAltId() throws IOException, OBOParserException
@@ -203,5 +222,4 @@ public class OBOParserTest extends TestCase
 			Assert.assertEquals(1,ex.linenum);
 		}
 	}
-
 }
