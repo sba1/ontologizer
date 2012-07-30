@@ -417,7 +417,9 @@ public class OBOParser
 
 				for (int i=0;i<len;i++)
 				{
-					if (cmp[i] != Character.toLowerCase(buf[start+i]))
+					byte c = buf[start+i];
+					if (c>=65 && c <=90) c += 32;
+					if (cmp[i] != c)
 						return false;
 				}
 				return true;
