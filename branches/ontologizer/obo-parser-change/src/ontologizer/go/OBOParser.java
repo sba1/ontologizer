@@ -295,6 +295,7 @@ public class OBOParser
 			is = new GZIPInputStream(fis);
 		} catch (IOException exp)
 		{
+			fis.close();
 			is = fis = new FileInputStream(filename);
 		}
 
@@ -744,7 +745,6 @@ public class OBOParser
 
 					TermXref xref = new TermXref(new String(buf,dbStart,dbEnd-dbStart), new String(buf,idStart,idEnd-idStart));
 					currentXrefs.add(xref);
-
 				}
 			}
 
