@@ -76,12 +76,6 @@ public class OBOParser
 	private static final HashMap<Character, Character> unescapeChars = new HashMap<Character, Character>();
 
 
-	private static class ParserContext
-	{
-		String line;
-		int lineno;
-	}
-
 	static
 	{
 		escapeChars.put(new Character(':'), new Character(':'));
@@ -343,6 +337,8 @@ public class OBOParser
 			private final byte [] DEF_KEYWORD = new ByteString("def").toString().getBytes();
 			private final byte [] NAMESPACE_KEYWORD = new ByteString("namespace").toString().getBytes();
 			private final byte [] ALT_ID_KEYWORD = new ByteString("alt_id").toString().getBytes();
+			private final byte [] EQUIVALENT_TO_KEYWORD = new ByteString("equivalent_to").toString().getBytes();
+			private final byte [] XREF_KEYWORD = new ByteString("xref").toString().getBytes();
 
 			/* Supported relationship types */
 			private final byte [] PART_OF_KEYWORD = new ByteString("part_of").toString().getBytes();
@@ -731,6 +727,24 @@ public class OBOParser
 					}
 
 					currentNamespace = namespace;
+				} else if (equalsIgnoreCase(buf, keyStart, keyLen, EQUIVALENT_TO_KEYWORD))
+				{
+					currentEquivalents.add(readTermID(buf, valueStart, valueLen));
+				} else if (equalsIgnoreCase(buf, keyStart, keyLen, ALT_ID_KEYWORD))
+				{
+					currentAlternatives.add(readTermID(buf, valueStart, valueLen));
+				} else if (((options & PARSE_XREFS) !=0) && equalsIgnoreCase(buf, keyStart, keyLen, XREF_KEYWORD))
+				{
+					int dbStart = valueStart;
+					int dbEnd = findUnescaped(buf, valueStart, valueLen, ':');
+					if (dbEnd == -1) return;
+					int idStart = skipSpaces(buf, dbEnd + 1, valueStart + valueLen - dbEnd);
+					if (idStart == -1) return;
+					int idEnd = valueStart + valueLen;
+
+					TermXref xref = new TermXref(new String(buf,dbStart,dbEnd-dbStart), new String(buf,idStart,idEnd-idStart));
+					currentXrefs.add(xref);
+
 				}
 			}
 
