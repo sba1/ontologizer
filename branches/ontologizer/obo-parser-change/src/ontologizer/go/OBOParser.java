@@ -278,7 +278,6 @@ public class OBOParser
 	{
 		long startMillis = System.currentTimeMillis();
 
-//		BufferedReader reader;
 		FileInputStream fis = new FileInputStream(filename);
 		InputStream is;
 
@@ -556,7 +555,7 @@ public class OBOParser
 			 */
 			private TermID readTermID(byte[] buf, int valueStart, int valueLen)
 			{
-				return termIDPool.map(new TermID(new ByteString(buf,valueStart,valueStart+valueLen),prefixPool));
+				return termIDPool.map(new TermID(buf,valueStart,valueLen,prefixPool));
 			}
 
 			/**
