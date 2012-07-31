@@ -20,8 +20,14 @@ public class ByteStringTest extends TestCase
 			ByteString.parseFirstInt(new ByteString("sswwscs"));
 			assertTrue(false);
 		} catch (NumberFormatException ex) {}
+	}
 
-
+	public void testByteParseInteger()
+	{
+		byte [] buf = "xx1234xx".getBytes();
+		assertEquals(1234, ByteString.parseFirstInt(buf, 0, buf.length));
+		assertEquals(123, ByteString.parseFirstInt(buf, 0, 5));
+		assertEquals(23, ByteString.parseFirstInt(buf, 3, 2));
 	}
 
 	public void testSubstring()
