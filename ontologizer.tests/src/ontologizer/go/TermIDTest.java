@@ -25,6 +25,17 @@ public class TermIDTest extends TestCase
 		Assert.assertTrue(gid.equals(gid9));  // yes, uses explicit prefix construction
 	}
 	
+	public void testByte()
+	{
+		byte [] t1 = "GO:0120211".getBytes();
+		TermID gid1 = new TermID(t1,0,t1.length,null);
+		Assert.assertEquals("GO:0120211",gid1.toString());
+		
+		byte [] t2 = "xxxGO:0120211xxxx".getBytes();
+		TermID gid2 = new TermID(t2,3,10,null);
+		Assert.assertEquals("GO:0120211",gid2.toString());
+	}
+	
 	public void testWithPrefix()
 	{
 		PrefixPool pool = new PrefixPool();
