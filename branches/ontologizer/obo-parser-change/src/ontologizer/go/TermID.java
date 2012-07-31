@@ -132,6 +132,39 @@ public class TermID
 		}
 	}
 
+	/**
+	 * Constructs the term id from the given byte buffer.
+	 *
+	 * @param id
+	 * @param start
+	 * @param len
+	 * @param prefixPool
+	 */
+	public TermID(byte [] id, int start, int len, PrefixPool prefixPool)
+	{
+		int i;
+		int colon = -1;
+
+		for (i=start;i<start+len;i++)
+			if (id[i] == ':')
+				colon = i;
+
+		/* Ensure that there is a proper prefix */
+		if (colon < 1) throw new IllegalArgumentException("Failed to find a proper prefix of termid: \"" + new String(id,start,len) + "\"");
+
+		Prefix newPrefix = new Prefix(new ByteString(id,start,start+len));
+		if (prefixPool != null) prefix = prefixPool.map(newPrefix);
+		else prefix = newPrefix;
+
+		try
+		{
+			this.id = ByteString.parseFirstInt(id,colon,len-colon);
+		} catch(NumberFormatException ex)
+		{
+			throw new IllegalArgumentException("Failed to parse the integer part of termid: \"" + new String(id,start,len) + "\"");
+		}
+	}
+
 	private int makeIdFromString(String parseIdFrom) {
 		if ( string2id.containsKey(parseIdFrom))
 			return string2id.get(parseIdFrom);
