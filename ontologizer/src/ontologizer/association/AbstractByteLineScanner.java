@@ -27,7 +27,7 @@ abstract public class AbstractByteLineScanner
 		int read_offset = 0;
 
 		outer:
-		while ((read = is.read(byteBuf, read_offset, BUF_SIZE) + read_offset) > 0)
+		while ((read = is.read(byteBuf, read_offset, BUF_SIZE) + read_offset) > read_offset)
 		{
 			int line_start = 0;
 			int pos = 0;
@@ -47,6 +47,8 @@ abstract public class AbstractByteLineScanner
 			System.arraycopy(byteBuf, line_start, byteBuf,0, read - line_start);
 			read_offset = read - line_start;
 		}
+		if (read_offset != 0)
+			newLine(byteBuf, 0, read_offset);
 	}
 	
 	/**

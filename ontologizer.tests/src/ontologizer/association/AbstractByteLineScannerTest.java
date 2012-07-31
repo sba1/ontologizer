@@ -1,6 +1,7 @@
 package ontologizer.association;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -52,5 +53,32 @@ public class AbstractByteLineScannerTest extends TestCase
 		
 		assertEquals(tbls.expectedLineCount,tbls.actualLineCount);
 		assertNull(br.readLine());
+		
+		br.close();
+	}
+	
+	public void testMissingNewLineAtLineEnd() throws IOException
+	{
+		ByteArrayInputStream bais = new ByteArrayInputStream("test\ntest2".getBytes());
+		class TestByteLineScanner extends AbstractByteLineScanner
+		{
+			public int lines;
+
+			public TestByteLineScanner(InputStream is)
+			{
+				super(is);
+			}
+
+			@Override
+			public boolean newLine(byte[] buf, int start, int len)
+			{
+				lines++;
+				return true;
+			}
+		}
+
+		TestByteLineScanner tbls = new TestByteLineScanner(bais);
+		tbls.scan();
+		assertEquals(2, tbls.lines);
 	}
 }
