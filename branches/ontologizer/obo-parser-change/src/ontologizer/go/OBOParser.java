@@ -1,27 +1,19 @@
 package ontologizer.go;
 
-import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Locale;
 import java.util.Set;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 
-import javax.management.ValueExp;
-
-import com.sun.corba.se.pept.transport.ContactInfo;
-
 import ontologizer.association.AbstractByteLineScanner;
 import ontologizer.types.ByteString;
-
 import sonumina.collections.ReferencePool;
 
 /*
@@ -664,7 +656,7 @@ public class OBOParser
 				{
 					currentID = readTermID(buf, valueStart, valueLen);
 					if ((options & SETNAMEEQUALTOID) != 0)
-						currentName = currentName.toString(); 
+						currentName = currentID.toString(); 
 				} else if (equalsIgnoreCase(buf, keyStart, keyLen, NAME_KEYWORD))
 				{
 					currentName = new String(buf, valueStart, valueLen);
@@ -699,7 +691,7 @@ public class OBOParser
 					int synonymEnd = findUnescaped(buf, synonymStart, valueStart + valueLen - synonymStart, '\"');
 					if (synonymEnd == -1) return;
 
-					currentSynonyms.add(new ByteString(buf,synonymStart,synonymEnd).toString());
+					currentSynonyms.add(new String(buf,synonymStart,synonymEnd-synonymStart));
 				} else if ((options & PARSE_DEFINITIONS) != 0 && equalsIgnoreCase(buf, keyStart, keyLen, DEF_KEYWORD))
 				{
 					/* TODO: Refactor with the above */
