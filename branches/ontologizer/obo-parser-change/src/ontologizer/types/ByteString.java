@@ -257,18 +257,19 @@ public final class ByteString
 	/**
 	 * Parse the first appearing decimal integer.
 	 * 
-	 * @param byteString
-	 * @return the converted number.
-	 * @throws NumberFormatException if nothing has been converted.
+	 * @param buf
+	 * @param off
+	 * @param len
+	 * @return
 	 */
-	public static int parseFirstInt(ByteString byteString)
+	public static int parseFirstInt(byte [] buf, int off, int len)
 	{
 		int number = 0;
 		boolean converting = false;
 
-		for (int i=0;i<byteString.length();i++)
+		for (int i=off;i<off+len;i++)
 		{
-			byte b = byteString.bytes[i];
+			byte b = buf[i];
 			if (b>='0' && b<='9')
 			{
 				number *= 10;
@@ -281,5 +282,17 @@ public final class ByteString
 		}
 		if (!converting) throw new NumberFormatException();
 		return number;
+	}
+	
+	/**
+	 * Parse the first appearing decimal integer.
+	 * 
+	 * @param byteString
+	 * @return the converted number.
+	 * @throws NumberFormatException if nothing has been converted.
+	 */
+	public static int parseFirstInt(ByteString byteString)
+	{
+		return parseFirstInt(byteString.bytes,0,byteString.length());
 	}
 }
