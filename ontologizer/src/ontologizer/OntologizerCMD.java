@@ -19,8 +19,6 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.Parser;
 
-import com.sun.org.apache.bcel.internal.generic.DDIV;
-
 /**
  * OntologizerCMD.java
  * <P>
