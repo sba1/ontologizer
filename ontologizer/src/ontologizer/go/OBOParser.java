@@ -330,7 +330,9 @@ public class OBOParser
 			private final byte [] NAMESPACE_KEYWORD = new ByteString("namespace").toString().getBytes();
 			private final byte [] ALT_ID_KEYWORD = new ByteString("alt_id").toString().getBytes();
 			private final byte [] EQUIVALENT_TO_KEYWORD = new ByteString("equivalent_to").toString().getBytes();
+			private final byte [] IS_OBSOLETE_KEYWORD = new ByteString("is_obsolete").toString().getBytes();
 			private final byte [] XREF_KEYWORD = new ByteString("xref").toString().getBytes();
+			private final byte [] TRUE_KEYWORD = new ByteString("true").toString().getBytes();
 			
 			/* Supported relationship types */
 			private final byte [] PART_OF_KEYWORD = new ByteString("part_of").toString().getBytes();
@@ -725,6 +727,9 @@ public class OBOParser
 				} else if (equalsIgnoreCase(buf, keyStart, keyLen, EQUIVALENT_TO_KEYWORD))
 				{
 					currentEquivalents.add(readTermID(buf, valueStart, valueLen));
+				} else if (equalsIgnoreCase(buf, keyStart, keyLen, IS_OBSOLETE_KEYWORD))
+				{
+					currentObsolete = equalsIgnoreCase(buf, valueStart, valueLen, TRUE_KEYWORD);
 				} else if (equalsIgnoreCase(buf, keyStart, keyLen, ALT_ID_KEYWORD))
 				{
 					currentAlternatives.add(readTermID(buf, valueStart, valueLen));
