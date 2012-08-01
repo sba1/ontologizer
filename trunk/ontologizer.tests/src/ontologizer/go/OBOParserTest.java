@@ -25,15 +25,21 @@ public class OBOParserTest extends TestCase
 		System.out.println("Parse OBO file");
 		OBOParser oboParser = new OBOParser(GOtermsOBOFile);
 		System.out.println(oboParser.doParse());
+		HashMap<String,Term> id2Term = new HashMap<String,Term>();
 
 		int relations = 0;
 		for (Term t : oboParser.getTermMap())
+		{
 			relations += t.getParents().length;
+			id2Term.put(t.getIDAsString(),t);
+		}
 
 		Assert.assertEquals(nTermCount, oboParser.getTermMap().size());
 		Assert.assertEquals(formatVersion,oboParser.getFormatVersion());
 		Assert.assertEquals(date,oboParser.getDate());
 		Assert.assertEquals(nRelations,relations);
+		Assert.assertTrue(id2Term.containsKey("GO:0008150"));
+		Assert.assertEquals(0,id2Term.get("GO:0008150").getParents().length);
 	}
 
 	public void testIgnoreSynonyms() throws IOException, OBOParserException
@@ -145,6 +151,23 @@ public class OBOParserTest extends TestCase
 		ids.add("GO:0000003");
 		for (TermID id : name2Term.get("GO:0000002").getEquivalents())
 			Assert.assertTrue(ids.contains(id.toString()));
+	}
+
+	public void testObsolete() throws IOException, OBOParserException
+	{
+		File tmp = File.createTempFile("onto", ".obo");
+		PrintWriter pw = new PrintWriter(tmp);
+		pw.append("[term]\n" +
+		          "name: test\n" +
+				  "id: GO:0000001\n" +
+		          "def: \"This is a so-called \\\"test\\\"\"\n" +
+				  "is_obsolete: true");
+		pw.close();
+
+		OBOParser oboParser = new OBOParser(tmp.getCanonicalPath(),OBOParser.PARSE_XREFS);
+		oboParser.doParse();
+		ArrayList<Term> terms = new ArrayList<Term>(oboParser.getTermMap());
+		Assert.assertTrue(terms.get(0).isObsolete());
 	}
 
 	public void testXRef() throws IOException, OBOParserException
