@@ -35,7 +35,7 @@ public class OntologyTest extends TestCase
 
 		terms = graph.getTermChildrenAsStrings("GO:0000000");
 		Assert.assertTrue("Test we get some Set<String> object back", terms != null);
-		Assert.assertTrue("Root has three descendants", terms.size() == 3);
+		Assert.assertEquals("Root has three descendants",3, terms.size());
 
 		terms = graph.getTermParentsAsStrings("GO:0000000");
 		Assert.assertTrue("Test we gat some Set<String> object back", terms != null);
