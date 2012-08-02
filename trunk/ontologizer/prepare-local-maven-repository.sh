@@ -55,4 +55,32 @@ wget -N http://sourceforge.net/projects/swt-chart/files/SWTChart/0.7.0/org.swtch
 unzip org.swtchart_0.7.0.zip
 mvn org.apache.maven.plugins:maven-install-plugin:2.3.1:install-file -Dfile=./plugins/org.swtchart_0.7.0.v20110128.jar -DgroupId=ontologizer -DartifactId=swtchart -Dversion=0.7.0 -Dpackaging=jar -DlocalRepositoryPath=../local-maven-repo
 
+# Install LWJGL
+wget -N http://sourceforge.net/projects/java-game-lib/files/Official%20Releases/LWJGL%202.8.4/lwjgl-2.8.4.zip/download -o lwjgl.zip
+rm -Rf lwjgl
+mv lwjgl-2.8.4 lwjgl
+
+#
+# Prepare architecture dependend LWJGL archive
+#
+prepare_lwjgl() {
+  echo "Prearing lwjgl for $1"
+  rm -Rf tmp
+  mkdir tmp
+  cd tmp
+  jar -xvf ../lwjgl/jar/lwjgl.jar
+  jar -xvf ../lwjgl/jar/lwjgl_util.jar
+  cp ../lwjgl/native/$1/* .
+  jar -cvf ../lwjgl-$1.jar .
+  cd ..
+}
+
+prepare_lwjgl linux
+prepare_lwjgl windows
+prepare_lwjgl macosx
+
+mvn org.apache.maven.plugins:maven-install-plugin:2.3.1:install-file -Dfile=lwjgl-linux.jar -DgroupId=ontologizer -DartifactId=lwjgl-linux-x86 -Dversion=2.8.4 -Dpackaging=jar -DlocalRepositoryPath=../local-maven-repo
+mvn org.apache.maven.plugins:maven-install-plugin:2.3.1:install-file -Dfile=lwjgl-windows.jar -DgroupId=ontologizer -DartifactId=lwjgl-win32 -Dversion=2.8.4 -Dpackaging=jar -DlocalRepositoryPath=../local-maven-repo
+mvn org.apache.maven.plugins:maven-install-plugin:2.3.1:install-file -Dfile=lwjgl-macosx.jar -DgroupId=ontologizer -DartifactId=lwjgl-macosx -Dversion=2.8.4 -Dpackaging=jar -DlocalRepositoryPath=../local-maven-repo
+
 popd
