@@ -3,7 +3,6 @@ package ontologizer.gui.swt.support;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.OutputStreamWriter;
 
 import org.eclipse.swt.layout.FillLayout;
