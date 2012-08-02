@@ -61,26 +61,14 @@ rm -Rf lwjgl
 mv lwjgl-2.8.4 lwjgl
 
 #
-# Prepare architecture dependend LWJGL archive
+# Prepare LWJGL archive
 #
-prepare_lwjgl() {
-  echo "Prearing lwjgl for $1"
-  rm -Rf tmp
-  mkdir tmp
-  cd tmp
-  jar -xvf ../lwjgl/jar/lwjgl.jar
-  jar -xvf ../lwjgl/jar/lwjgl_util.jar
-  cp ../lwjgl/native/$1/* .
-  jar -cvf ../lwjgl-$1.jar .
-  cd ..
-}
+mvn org.apache.maven.plugins:maven-install-plugin:2.3.1:install-file -Dfile=lwjgl/jar/lwjgl.jar -DgroupId=ontologizer -DartifactId=lwjgl -Dversion=2.8.4 -Dpackaging=jar -DlocalRepositoryPath=../local-maven-repo
+mvn org.apache.maven.plugins:maven-install-plugin:2.3.1:install-file -Dfile=lwjgl/jar/lwjgl_util.jar -DgroupId=ontologizer -DartifactId=lwjgl-util -Dversion=2.8.4 -Dpackaging=jar -DlocalRepositoryPath=../local-maven-repo
 
-prepare_lwjgl linux
-prepare_lwjgl windows
-prepare_lwjgl macosx
-
-mvn org.apache.maven.plugins:maven-install-plugin:2.3.1:install-file -Dfile=lwjgl-linux.jar -DgroupId=ontologizer -DartifactId=lwjgl-linux-x86 -Dversion=2.8.4 -Dpackaging=jar -DlocalRepositoryPath=../local-maven-repo
-mvn org.apache.maven.plugins:maven-install-plugin:2.3.1:install-file -Dfile=lwjgl-windows.jar -DgroupId=ontologizer -DartifactId=lwjgl-win32 -Dversion=2.8.4 -Dpackaging=jar -DlocalRepositoryPath=../local-maven-repo
-mvn org.apache.maven.plugins:maven-install-plugin:2.3.1:install-file -Dfile=lwjgl-macosx.jar -DgroupId=ontologizer -DartifactId=lwjgl-macosx -Dversion=2.8.4 -Dpackaging=jar -DlocalRepositoryPath=../local-maven-repo
+mkdir ../local-maven-repo/lwjgl-native
+cp -R lwjgl/native/linux/* ../local-maven-repo/lwjgl-native
+cp -R lwjgl/native/macosx/* ../local-maven-repo/lwjgl-native
+cp -R lwjgl/native/windows/* ../local-maven-repo/lwjgl-native
 
 popd
