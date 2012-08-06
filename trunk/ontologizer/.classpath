@@ -11,5 +11,11 @@
 	<classpathentry kind="lib" path="local-maven-repo/ontologizer/commons-cli/1.1/commons-cli-1.1.jar"/>
 	<classpathentry kind="lib" path="local-maven-repo/ontologizer/nattable-core/1.6.5/nattable-core-1.6.5.jar"/>
 	<classpathentry kind="lib" path="local-maven-repo/ontologizer/swtchart/0.7.0/swtchart-0.7.0.jar"/>
+	<classpathentry kind="lib" path="local-maven-repo/ontologizer/lwjgl/2.8.4/lwjgl-2.8.4.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="${project_loc}/local-maven-repo/lwjgl-native"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="local-maven-repo/ontologizer/lwjgl-util/2.8.4/lwjgl-util-2.8.4.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
