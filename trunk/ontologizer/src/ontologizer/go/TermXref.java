@@ -3,14 +3,31 @@ package ontologizer.go;
 public class TermXref {
 
 
-	private String database;
+	/**
+	 * The external database name, e.g. MeSH, ICD-10, UMLS
+	 */
+	private String database; 
+	/**
+	 * The ID in the external DB, D012587, C2077312, Q20.4
+	 */
 	private String xrefId;
+	/**
+	 * The name of the referenced entity e.g. "Asymmetric lower limb shortness" for UMLS - C1844734 
+	 */
+	private String xrefName;
 	
 	public TermXref(String database, String xrefId) {
 		
 		this.database 	= database;
 		this.xrefId		= xrefId;
 		
+	}
+	
+	public TermXref(String database, String xrefId, String xrefName) {
+		
+		this.database 	= database;
+		this.xrefId		= xrefId;
+		this.xrefName	= xrefName;
 	}
 	
 	@Override
@@ -42,17 +59,30 @@ public class TermXref {
 		return xrefId;
 	}
 
+	public String getXrefName() {
+		return xrefName;
+	}
+	
+	/**
+	 * Returns 'db' - 'db-ID' if no name was given <br>
+	 * Returns 'db' - 'db-ID' - 'db-name' if  name was given
+	 * @return
+	 */
 	@Override
 	public String toString() {
-		return database+" - "+xrefId;
+		StringBuffer returnString = new StringBuffer();
+		
+		returnString.append(database);
+		returnString.append(" - ");
+		returnString.append(xrefId);
+		
+		if (xrefName != null){
+			returnString.append(" - ");
+			returnString.append(xrefName);
+		}
+		
+		return returnString.toString();
 	}
 
-//	public static Database getDatabaseFromString(String dbName) {
-//		dbName = dbName.toUpperCase();
-//		for (Database db : Database.values()){
-//			if(db.toString().toUpperCase().equals(dbName))
-//				return db;
-//		}
-//		return null;
-//	}
 }
+
