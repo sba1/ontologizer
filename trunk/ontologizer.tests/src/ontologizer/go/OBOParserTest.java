@@ -186,7 +186,8 @@ public class OBOParserTest extends TestCase
 		ArrayList<Term> terms = new ArrayList<Term>(oboParser.getTermMap());
 		Assert.assertEquals(1, terms.size());
 		Assert.assertEquals("db",terms.get(0).getXrefs()[0].getDatabase());
-		Assert.assertEquals("ID \"WW\"",terms.get(0).getXrefs()[0].getXrefId());
+		Assert.assertEquals("ID",terms.get(0).getXrefs()[0].getXrefId());
+		Assert.assertEquals("WW",terms.get(0).getXrefs()[0].getXrefName());
 	}
 
 	public void testAltId() throws IOException, OBOParserException
