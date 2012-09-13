@@ -742,7 +742,27 @@ public class OBOParser
 					if (idStart == -1) return;
 					int idEnd = valueStart + valueLen;
 
-					TermXref xref = new TermXref(new String(buf,dbStart,dbEnd-dbStart), new String(buf,idStart,idEnd-idStart));
+					String xrefDb = new String(buf,dbStart,dbEnd-dbStart);
+					String xrefId = new String(buf,idStart,idEnd-idStart);
+
+					/*
+					 * xrefId may now have 2 different forms:
+					 *  - Q20.4   (from line: xref: ICD-10:Q20.4)
+					 *  - C0426891 "Broad thumb"  (from line xref: UMLS:C0426891 "Broad thumb")
+					 * In the latter case we use a constructor that also parses the name (here 'Broad thumb').
+					 */
+
+					TermXref xref = null;
+					if (xrefId.contains(" \"")){ // latter case
+						String[] splitIdName 	= xrefId.split(" \"");
+						String onlyXrefId 		= splitIdName[0];
+						String xrefName 			= splitIdName[1].replaceAll("\"", "");
+						xref = new TermXref(xrefDb, onlyXrefId, xrefName);
+					}
+					else{
+						xref = new TermXref(xrefDb,xrefId);
+					}
+
 					currentXrefs.add(xref);
 				}
 			}
