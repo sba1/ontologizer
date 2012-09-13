@@ -312,33 +312,33 @@ public class OBOParser
 			public OBOParserException exception;
 			
 			/* Stanza types */
-			private final byte [] TERM_KEYWORD = new ByteString("term").toString().getBytes();
-			private final byte [] TYPEDEF_KEYWORD = new ByteString("typedef").toString().getBytes();
+			private final byte [] TERM_KEYWORD = "term".getBytes();
+			private final byte [] TYPEDEF_KEYWORD = "typedef".getBytes();
 			
 			/* Supported header types */
-			private final byte [] FORMAT_VERSION_KEYWORD = new ByteString("format-version").toString().getBytes();
-			private final byte [] DATE_KEYWORD = new ByteString("date").toString().getBytes();
-			private final byte [] SUBSETDEF_KEYWORD = new ByteString("subsetdef").toString().getBytes();
+			private final byte [] FORMAT_VERSION_KEYWORD = "format-version".getBytes();
+			private final byte [] DATE_KEYWORD = "date".getBytes();
+			private final byte [] SUBSETDEF_KEYWORD = "subsetdef".getBytes();
 			
 			/* Supported term types */
-			private final byte [] ID_KEYWORD = new ByteString("id").toString().getBytes();
-			private final byte [] NAME_KEYWORD = new ByteString("name").toString().getBytes();
-			private final byte [] IS_A_KEYWORD = new ByteString("is_a").toString().getBytes();
-			private final byte [] RELATIONSHIP_KEYWORD = new ByteString("relationship").toString().getBytes();
-			private final byte [] SYNONYM_KEYWORD = new ByteString("synonym").toString().getBytes();
-			private final byte [] DEF_KEYWORD = new ByteString("def").toString().getBytes();
-			private final byte [] NAMESPACE_KEYWORD = new ByteString("namespace").toString().getBytes();
-			private final byte [] ALT_ID_KEYWORD = new ByteString("alt_id").toString().getBytes();
-			private final byte [] EQUIVALENT_TO_KEYWORD = new ByteString("equivalent_to").toString().getBytes();
-			private final byte [] IS_OBSOLETE_KEYWORD = new ByteString("is_obsolete").toString().getBytes();
-			private final byte [] XREF_KEYWORD = new ByteString("xref").toString().getBytes();
-			private final byte [] TRUE_KEYWORD = new ByteString("true").toString().getBytes();
+			private final byte [] ID_KEYWORD = "id".getBytes();
+			private final byte [] NAME_KEYWORD = "name".getBytes();
+			private final byte [] IS_A_KEYWORD = "is_a".getBytes();
+			private final byte [] RELATIONSHIP_KEYWORD = "relationship".getBytes();
+			private final byte [] SYNONYM_KEYWORD = "synonym".getBytes();
+			private final byte [] DEF_KEYWORD = "def".getBytes();
+			private final byte [] NAMESPACE_KEYWORD = "namespace".getBytes();
+			private final byte [] ALT_ID_KEYWORD = "alt_id".getBytes();
+			private final byte [] EQUIVALENT_TO_KEYWORD = "equivalent_to".getBytes();
+			private final byte [] IS_OBSOLETE_KEYWORD = "is_obsolete".getBytes();
+			private final byte [] XREF_KEYWORD = "xref".getBytes();
+			private final byte [] TRUE_KEYWORD = "true".getBytes();
 			
 			/* Supported relationship types */
-			private final byte [] PART_OF_KEYWORD = new ByteString("part_of").toString().getBytes();
-			private final byte [] REGULATES_KEYWORD = new ByteString("regulates").toString().getBytes();
-			private final byte [] NEGATIVELY_REGULATES_KEYWORD = new ByteString("negatively_regulates").toString().getBytes();
-			private final byte [] POSITIVELY_REGULATES_KEYWORD = new ByteString("positively_regulates").toString().getBytes();
+			private final byte [] PART_OF_KEYWORD = "part_of".getBytes();
+			private final byte [] REGULATES_KEYWORD = "regulates".getBytes();
+			private final byte [] NEGATIVELY_REGULATES_KEYWORD = "negatively_regulates".getBytes();
+			private final byte [] POSITIVELY_REGULATES_KEYWORD = "positively_regulates".getBytes();
 			
 			public OBOByteLineScanner(InputStream is)
 			{
