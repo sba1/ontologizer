@@ -561,7 +561,7 @@ public class OBOParser
 			}
 
 			/**
-			 * Finds teh first occurrence of c in buf starting from start but
+			 * Finds the first occurrence of c in buf starting from start but
 			 * not exceeding len.
 			 * 
 			 * @return -1 if not found.
@@ -606,7 +606,7 @@ public class OBOParser
 			}
 
 			/**
-			 * Finds teh first occurrence of c1, c2, or c3 in buf starting from start but
+			 * Finds the first occurrence of c1, c2, or c3 in buf starting from start but
 			 * not exceeding len.
 			 * 
 			 * @return -1 if not found.
@@ -735,35 +735,43 @@ public class OBOParser
 					currentAlternatives.add(readTermID(buf, valueStart, valueLen));
 				} else if (((options & PARSE_XREFS) !=0) && equalsIgnoreCase(buf, keyStart, keyLen, XREF_KEYWORD))
 				{
+					/* Parse xrefs, e.g.
+					 *  (1st form) ICD-10:Q20.4  or
+					 *  (2nd form) UMLS:C0426891 "Broad thumb"
+					 * 
+					 *  We refer to the part before the colon as db, the part after the colon as id,
+					 *  and the stuff between the quotation marks as name.
+					 *  
+					 *  Also see http://www.geneontology.org/GO.format.obo-1_2.shtml#S.2.2.3
+					 */
+
 					int dbStart = valueStart;
 					int dbEnd = findUnescaped(buf, valueStart, valueLen, ':');
 					if (dbEnd == -1) return;
-					int idStart = skipSpaces(buf, dbEnd + 1, valueStart + valueLen - dbEnd);
+					
+					int idStart = skipSpaces(buf, dbEnd + 1, valueStart + valueLen - dbEnd - 1);
 					if (idStart == -1) return;
 					int idEnd = valueStart + valueLen;
+					
+					/* We assume that the unescaped presence of " indicates a name, i.e., the 2nd form */ 
+					int nameStart = findUnescaped(buf, idStart + 1, valueStart + valueLen - idStart - 1, '"');
+					String xrefName;
+					if (nameStart != -1)
+					{
+						nameStart++; /* Skip " */
+						int nameEnd = findUnescaped(buf, nameStart, valueStart + valueLen - nameStart, '"');
 
+						/* So we have a name, thus the idEnd must decrease because it includes the whole line so far */
+						idEnd = nameStart - 2;
+						while (idEnd > idStart && buf[idEnd-1] == ' ') idEnd--;
+						
+						xrefName = new String(buf,nameStart,nameEnd-nameStart);
+					} else xrefName = null;
+						
 					String xrefDb = new String(buf,dbStart,dbEnd-dbStart);
 					String xrefId = new String(buf,idStart,idEnd-idStart);
-					
-					/*
-					 * xrefId may now have 2 different forms:
-					 *  - Q20.4   (from line: xref: ICD-10:Q20.4)
-					 *  - C0426891 "Broad thumb"  (from line xref: UMLS:C0426891 "Broad thumb")
-					 * In the latter case we use a constructor that also parses the name (here 'Broad thumb'). 
-					 */
-					
-					TermXref xref = null;
-					if (xrefId.contains(" \"")){ // latter case
-						String[] splitIdName 	= xrefId.split(" \"");
-						String onlyXrefId 		= splitIdName[0];
-						String xrefName 			= splitIdName[1].replaceAll("\"", "");
-						xref = new TermXref(xrefDb, onlyXrefId, xrefName);
-					}
-					else{
-						xref = new TermXref(xrefDb,xrefId);
-					}
 
-					currentXrefs.add(xref);
+					currentXrefs.add(new TermXref(xrefDb, xrefId, xrefName));
 				}
 			}
 
