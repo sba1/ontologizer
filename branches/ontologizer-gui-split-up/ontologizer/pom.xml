@@ -10,10 +10,6 @@
 		<relativePath>../ontologizer.parent</relativePath>
 	</parent>
 
-	<properties>
-		<swt.version>3.7.1</swt.version>
-	</properties>
-
 	<!-- Our local repository. We won't like to depend on external ones so - 
 		the software can be still compiled with Eclipse without a Maven - plugin -->
 	<repositories>
@@ -33,38 +29,8 @@
 
 		<dependency>
 			<groupId>ontologizer</groupId>
-			<artifactId>nattable-core</artifactId>
-			<version>1.6.5</version>
-		</dependency>
-
-		<dependency>
-			<groupId>ontologizer</groupId>
 			<artifactId>colt</artifactId>
 			<version>1.2.0</version>
-		</dependency>
-
-		<dependency>
-			<groupId>ontologizer</groupId>
-			<artifactId>swt-gtk-linux-x86_64</artifactId>
-			<version>${swt.version}</version>
-		</dependency>
-		
-		<dependency>
-		 	<groupId>ontologizer</groupId>
-		 	<artifactId>swtchart</artifactId>
-		 	<version>0.7.0</version>
-		</dependency>
-		
-		<dependency>
-			<groupId>ontologizer</groupId>
-			<artifactId>lwjgl</artifactId>
-			<version>2.8.4</version>
-		</dependency>
-
-		<dependency>
-			<groupId>ontologizer</groupId>
-			<artifactId>lwjgl-util</artifactId>
-			<version>2.8.4</version>
 		</dependency>
 	</dependencies>
 
@@ -95,9 +61,6 @@
 						<configuration>
 							<sources>
 								<source>src.grappa</source>
-								<source>piccolo2d.java/extras/src/main/java</source>
-								<source>piccolo2d.java/core/src/main/java</source>
-								<source>piccolo2d.java/swt/src/main/java</source>
 							</sources>
 						</configuration>
 					</execution>
@@ -121,28 +84,6 @@
 						</configuration>
 						<goals>
 							<goal>run</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<configuration>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
-					<archive>
-						<manifest>
-							<mainClass>ontologizer.gui.swt.Ontologizer</mainClass>
-						</manifest>
-					</archive>
-				</configuration>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
 						</goals>
 					</execution>
 				</executions>
