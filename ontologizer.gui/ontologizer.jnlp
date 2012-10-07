@@ -15,6 +15,7 @@
   <resources> 
     <j2se version="1.5+" max-heap-size="768m" java-vm-args="-XstartOnFirstThread"/>
     <jar href="ontologizer.jar"/> 
+    <jar href="ontologizer-gui.jar"/> 
     <jar href="local-maven-repo/ontologizer/nattable-core/1.6.5/nattable-core-1.6.5.jar"/>
     <jar href="local-maven-repo/ontologizer/swtchart/0.7.0/swtchart-0.7.0.jar"/>
   </resources> 
