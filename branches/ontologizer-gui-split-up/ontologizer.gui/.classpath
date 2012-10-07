@@ -6,16 +6,16 @@
 	<classpathentry kind="src" path="piccolo2d.java/swt/src/main/java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="var" path="SWT_LIB" sourcepath="/SWT_SRC"/>
-	<classpathentry kind="lib" path="local-maven-repo/ontologizer/colt/1.2.0/colt-1.2.0.jar"/>
-	<classpathentry kind="lib" path="local-maven-repo/ontologizer/commons-cli/1.1/commons-cli-1.1.jar"/>
-	<classpathentry kind="lib" path="local-maven-repo/ontologizer/nattable-core/1.6.5/nattable-core-1.6.5.jar"/>
-	<classpathentry kind="lib" path="local-maven-repo/ontologizer/swtchart/0.7.0/swtchart-0.7.0.jar"/>
-	<classpathentry kind="lib" path="local-maven-repo/ontologizer/lwjgl/2.8.4/lwjgl-2.8.4.jar">
+	<classpathentry kind="lib" path="../ontologizer/local-maven-repo/ontologizer/colt/1.2.0/colt-1.2.0.jar"/>
+	<classpathentry kind="lib" path="../ontologizer/local-maven-repo/ontologizer/commons-cli/1.1/commons-cli-1.1.jar"/>
+	<classpathentry kind="lib" path="../ontologizer/local-maven-repo/ontologizer/nattable-core/1.6.5/nattable-core-1.6.5.jar"/>
+	<classpathentry kind="lib" path="../ontologizer/local-maven-repo/ontologizer/swtchart/0.7.0/swtchart-0.7.0.jar"/>
+	<classpathentry kind="lib" path="../ontologizer/local-maven-repo/ontologizer/lwjgl/2.8.4/lwjgl-2.8.4.jar">
 		<attributes>
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="${project_loc}/local-maven-repo/lwjgl-native"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="local-maven-repo/ontologizer/lwjgl-util/2.8.4/lwjgl-util-2.8.4.jar"/>
+	<classpathentry kind="lib" path="../ontologizer/local-maven-repo/ontologizer/lwjgl-util/2.8.4/lwjgl-util-2.8.4.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ontologizer"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
