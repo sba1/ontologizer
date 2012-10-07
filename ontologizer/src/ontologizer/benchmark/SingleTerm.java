@@ -26,7 +26,6 @@ import ontologizer.go.Ontology;
 import ontologizer.go.Term;
 import ontologizer.go.TermID;
 import ontologizer.go.TermRelation;
-import ontologizer.gui.swt.result.EnrichedGOTermsResultLatexWriter;
 import ontologizer.set.PopulationSet;
 import ontologizer.set.StudySet;
 import ontologizer.statistics.Bonferroni;
@@ -592,7 +591,9 @@ public class SingleTerm
 							val = b2gprop.marg;
 						} else val = result.getGOTermProperties(id).p_adjusted;
 
-						valStr = EnrichedGOTermsResultLatexWriter.toLatex(val);
+						// TODO: Fixme
+						valStr = "";
+//						valStr = EnrichedGOTermsResultLatexWriter.toLatex(val);
 						if (!valStr.startsWith("<")) valStr = "=" + valStr;
 						valStr = "$p" + valStr + "$";
 					}  else valStr = "";

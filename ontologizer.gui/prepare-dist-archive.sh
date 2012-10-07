@@ -10,9 +10,9 @@ PASS=$2
 
 rm -Rf work
 mkdir -p work/ontologizer
-cp -R local-maven-repo work/ontologizer
+cp -R ../ontologizer/local-maven-repo work/ontologizer
 find work/ontologizer | grep .svn$ | xargs rm -Rf 
-cp target/ontologizer-0.0.1-SNAPSHOT.jar  work/ontologizer/ontologizer.jar
+cp target/ontologizer.gui-0.0.1-SNAPSHOT.jar  work/ontologizer/ontologizer.jar
 cp ontologizer.jnlp work/ontologizer
 find work/ontologizer | grep .jar$ | xargs -n 1 -I'{}' jarsigner -keystore $KEYSTORE -storepass $PASS '{}' myself
 
