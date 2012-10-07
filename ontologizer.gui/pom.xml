@@ -19,7 +19,7 @@
 	<repositories>
 		<repository>
 			<id>ontologizer-dependency-repo</id>
-			<url>file://${basedir}/local-maven-repo</url>
+			<url>file://${basedir}/../ontologizer/local-maven-repo</url>
 		</repository>
 	</repositories>
 
