@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>ontologizer</artifactId>
+	<artifactId>ontologizer.gui</artifactId>
 
 	<parent>
 		<groupId>ontologizer</groupId>
@@ -9,6 +9,10 @@
 		<version>0.0.1-SNAPSHOT</version>
 		<relativePath>../ontologizer.parent</relativePath>
 	</parent>
+
+	<properties>
+		<swt.version>3.7.1</swt.version>
+	</properties>
 
 	<!-- Our local repository. We won't like to depend on external ones so - 
 		the software can be still compiled with Eclipse without a Maven - plugin -->
@@ -29,8 +33,43 @@
 
 		<dependency>
 			<groupId>ontologizer</groupId>
+			<artifactId>nattable-core</artifactId>
+			<version>1.6.5</version>
+		</dependency>
+
+		<dependency>
+			<groupId>ontologizer</groupId>
 			<artifactId>colt</artifactId>
 			<version>1.2.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>ontologizer</groupId>
+			<artifactId>swt-gtk-linux-x86</artifactId>
+			<version>${swt.version}</version>
+		</dependency>
+		
+		<dependency>
+		 	<groupId>ontologizer</groupId>
+		 	<artifactId>swtchart</artifactId>
+		 	<version>0.7.0</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>ontologizer</groupId>
+			<artifactId>lwjgl</artifactId>
+			<version>2.8.4</version>
+		</dependency>
+
+		<dependency>
+			<groupId>ontologizer</groupId>
+			<artifactId>lwjgl-util</artifactId>
+			<version>2.8.4</version>
+		</dependency>
+		<dependency>
+			<groupId>ontologizer</groupId>
+			<artifactId>ontologizer</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 
@@ -60,7 +99,9 @@
 						</goals>
 						<configuration>
 							<sources>
-								<source>src.grappa</source>
+								<source>piccolo2d.java/extras/src/main/java</source>
+								<source>piccolo2d.java/core/src/main/java</source>
+								<source>piccolo2d.java/swt/src/main/java</source>
 							</sources>
 						</configuration>
 					</execution>
@@ -68,22 +109,22 @@
 			</plugin>
 
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<version>1.7</version>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+					<archive>
+						<manifest>
+							<mainClass>ontologizer.gui.swt.Ontologizer</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
 				<executions>
 					<execution>
-						<phase>generate-sources</phase>
-						<configuration>
-							<target>
-								<!--  Tell ant to use an external java compiler -->
-								<property name="build.compiler" value="extJavac"/>
-								<ant antfile="build.xml" target="version"></ant>
-								<ant antfile="build.xml" target="build-user-changelog"></ant>
-							</target>
-						</configuration>
+						<phase>package</phase>
 						<goals>
-							<goal>run</goal>
+							<goal>single</goal>
 						</goals>
 					</execution>
 				</executions>
