@@ -80,7 +80,7 @@ public class BuildChangeLog
 				out = new PrintStream(new FileOutputStream(args[1]));
 			}
 		}
-		System.err.println("Getting log of \"" + new File(path).getCanonicalPath() + "\"");
+		System.err.println("Getting log for \"" + new File(path).getCanonicalPath() + "\"");
 
 		/* Start svn log and read the output */
 		Process svnProcess = Runtime.getRuntime().exec(new String[]{"svn","log", path});
@@ -89,7 +89,8 @@ public class BuildChangeLog
 		String line;
 		while ((line = br.readLine())!=null)
 			str.append(line + "\n");
-		svnProcess.waitFor();
+		int rc = svnProcess.waitFor();
+		System.err.println("The svn command returned " + rc);
 
 		/* Process the output */
 		Change [] changes = process(str.toString());
