@@ -90,7 +90,10 @@ public class BuildChangeLog
 		while ((line = br.readLine())!=null)
 			str.append(line + "\n");
 		int rc = svnProcess.waitFor();
+		BufferedReader err = new BufferedReader(new InputStreamReader(svnProcess.getErrorStream()));
 		System.err.println("The svn command returned " + rc);
+		while ((line = err.readLine())!=null)
+			System.err.println(err);
 
 		/* Process the output */
 		Change [] changes = process(str.toString());
