@@ -1,0 +1,7 @@
+This package adheres to the simulation procedure described in the paper.
+While Benchmark.java actually contains the all the code that is necessary to
+run the simulation (note that this also requires the rest of the Ontologizer
+application), benchmark.R is a simple R script to produce the figures in
+the paper.
+
+Sebastian Bauer, November 2009
