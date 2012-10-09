@@ -44,6 +44,7 @@ public class BuildInfoData {
 		<!-- set global properties for this build -->
 		<property environment="env" />
 		<property name="src.dir" location="src" />
+		<property name="src.cmdline.dir" location="../ontologizer.cmdline/src/" />
 		<property name="src.grappa.dir" location="src.grappa" />
 		<property name="build.dir" location="build" />
 		<property name="build.classes" location="${build.dir}/classes" />
@@ -101,6 +102,7 @@ public class BuildInfoData {
 		<javac destdir="${build.classes}" debug="${debug}" verbose="yes">
 			<src path="${src.dir}" /> 
 			<src path="${src.grappa.dir}" />
+			<src path="${src.cmdline.dir}" />
 			<exclude name="**/ontologizer/tests/*.java" />
 			<exclude name="**/ontologizer/gui/**" />
 			<exclude name="**/ontologizer/calculation/svd/*.java" />
