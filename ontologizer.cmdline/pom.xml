@@ -36,16 +36,6 @@
 
 	<build>
 		<sourceDirectory>src</sourceDirectory>
-		<resources>
-		 <resource>
-		  <directory>src</directory>
-		  <includes>
-		   <include>**/*.html</include>
-		   <include>**/*.png</include>
-		   <include>ChangeLog</include>
-		  </includes>
-		 </resource>
-		</resources>
 
 		<plugins>
 			<plugin>
