@@ -1,0 +1,14 @@
+build
+dist
+logs
+nbproject
+bin
+.settings
+*.dot
+out.txt
+result-fp.txt
+result-time.txt
+test.tex
+work
+target
+
