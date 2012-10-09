@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>ontologizer</artifactId>
+	<artifactId>ontologizer.cmdline</artifactId>
 
 	<parent>
 		<groupId>ontologizer</groupId>
@@ -15,7 +15,7 @@
 	<repositories>
 		<repository>
 			<id>ontologizer-dependency-repo</id>
-			<url>file://${basedir}/local-maven-repo</url>
+			<url>file://${basedir}/../ontologizer/local-maven-repo</url>
 		</repository>
 	</repositories>
 
@@ -27,11 +27,11 @@
 			<version>1.1</version>
 		</dependency>
 
-		<dependency>
-			<groupId>ontologizer</groupId>
-			<artifactId>colt</artifactId>
-			<version>1.2.0</version>
-		</dependency>
+                <dependency>
+                        <groupId>ontologizer</groupId>
+                        <artifactId>ontologizer</artifactId>
+                        <version>0.0.1-SNAPSHOT</version>
+                </dependency>
 	</dependencies>
 
 	<build>
@@ -49,46 +49,27 @@
 
 		<plugins>
 			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+					<archive>
+						<manifest>
+							<mainClass>ontologizer.OntologizerCMD</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
 				<executions>
 					<execution>
-						<phase>generate-sources</phase>
-						<id>add-sources</id>
+						<phase>package</phase>
 						<goals>
-							<goal>add-source</goal>
-						</goals>
-						<configuration>
-							<sources>
-								<source>src.grappa</source>
-							</sources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<version>1.7</version>
-				<executions>
-					<execution>
-						<phase>generate-sources</phase>
-						<configuration>
-							<target>
-								<!--  Tell ant to use an external java compiler -->
-								<property name="build.compiler" value="extJavac"/>
-								<ant antfile="build.xml" target="version"></ant>
-								<ant antfile="build.xml" target="build-user-changelog"></ant>
-							</target>
-						</configuration>
-						<goals>
-							<goal>run</goal>
+							<goal>single</goal>
 						</goals>
 					</execution>
 				</executions>
 			</plugin>
-
+		
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
@@ -97,7 +78,6 @@
 					<skipTests>true</skipTests>
 				</configuration>
 			</plugin>
-
 		</plugins>
 
 
