@@ -22,6 +22,13 @@
      <artifactId>ontologizer</artifactId>
      <version>0.0.1-SNAPSHOT</version>
     </dependency>
+
+    <dependency>
+     <groupId>ontologizer</groupId>
+     <artifactId>ontologizer.benchmark</artifactId>
+     <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+
   </dependencies>
 
   <build>
