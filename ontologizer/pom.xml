@@ -10,16 +10,6 @@
 		<relativePath>../ontologizer.parent</relativePath>
 	</parent>
 
-	<!-- Our local repository. We won't like to depend on external ones so - 
-		the software can be still compiled with Eclipse without a Maven - plugin -->
-	<repositories>
-		<repository>
-			<id>ontologizer-dependency-repo</id>
-			<url>file://${basedir}/local-maven-repo</url>
-		</repository>
-	</repositories>
-
-
 	<dependencies>
 		<dependency>
 			<groupId>ontologizer</groupId>

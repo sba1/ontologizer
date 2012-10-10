@@ -5,6 +5,15 @@
   <version>0.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
+  <!-- Our local repository. We won't like to depend on external ones so - 
+       the software can be still compiled with Eclipse without a Maven - plugin -->
+  <repositories>
+   <repository>
+    <id>ontologizer-dependency-repo</id>
+    <url>file://${basedir}/../ontologizer/local-maven-repo</url>
+   </repository>
+  </repositories>
+
   <build>
    <plugins>
     <plugin>
