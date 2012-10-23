@@ -155,19 +155,28 @@ public class TermID
 		}
 
 		/* Ensure that there is a proper prefix */
-		if (colon < 1) throw new IllegalArgumentException("Failed to find a proper prefix of termid: \"" + new String(id,start,len) + "\"");
+		if (colon < 1)
+		{
+			throw new IllegalArgumentException("Failed to find a proper prefix of termid: \"" + new String(id,start,len) + "\"");
+		}
 
 		Prefix newPrefix = new Prefix(new ByteString(id,start,colon));
 		if (prefixPool != null) prefix = prefixPool.map(newPrefix);
 		else prefix = newPrefix;
 
+		int tid;
+
 		try
 		{
-			this.id = ByteString.parseFirstInt(id,colon,start+len-colon);
+			tid = ByteString.parseFirstInt(id,colon,start+len-colon);
 		} catch(NumberFormatException ex)
 		{
-			throw new IllegalArgumentException("Failed to parse the integer part of termid: \"" + new String(id,start,len) + "\"");
+			/* This is a hack to make it possible to accept non-number ids */
+			String strID = new String(id,colon+1,start+len-colon-1);
+			tid = makeIdFromString(strID);
+//			throw new IllegalArgumentException("Failed to parse the integer part of termid: \"" + new String(id,start,len) + "\"");
 		}
+		this.id = tid;
 	}
 
 	private int makeIdFromString(String parseIdFrom) {

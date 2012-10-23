@@ -286,4 +286,20 @@ public class OBOParserTest extends TestCase
 			Assert.assertEquals(1,ex.linenum);
 		}
 	}
+
+	public void testArbitraryID() throws IOException, OBOParserException
+	{
+		File tmp = File.createTempFile("onto", ".obo");
+		PrintWriter pw = new PrintWriter(tmp);
+		pw.append("[term]\n" +
+		          "name: test\n" +
+				  "id: prefix:test\n");
+		pw.close();
+
+		OBOParser oboParser = new OBOParser(tmp.getCanonicalPath(),0);
+		oboParser.doParse();
+		ArrayList<Term> terms = new ArrayList<Term>(oboParser.getTermMap());
+		Assert.assertEquals(1, terms.size());
+	}
+
 }
