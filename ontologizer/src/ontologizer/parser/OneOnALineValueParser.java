@@ -25,7 +25,7 @@ public class OneOnALineValueParser extends OneOnALineParser
 
 		String [] sfields = line.split("\\s+", 3);
 
-		if (sfields.length < 2) throw new IllegalArgumentException("Number of colums is smaller than two.");
+		if (sfields.length < 2) throw new IllegalArgumentException("Number of colums is smaller than two. Affected line contains \""+line+"\"");
 
 		for (int i = 0; i < sfields.length; i++)
 			if (sfields[i] == null) sfields[i] = "";
