@@ -33,7 +33,7 @@ class GeneIDs
  * 
  * @author Sebastian Bauer
  */
-abstract class Bayes2GOScore
+abstract public class Bayes2GOScore
 {
 	/** Source of randomness */
 	protected Random rnd;
