@@ -50,9 +50,10 @@ class B2GTestParameter
 }
 
 /**
- * This class implements an model-based analysis.
- * The description of this method can be found at XXXX.
+ * This class implements an model-based analysis. The description of the entire
+ * method can be found in "GOing Bayesian: model-based gene set analysis of genome-scale data"
  *
+ * @see http://nar.oxfordjournals.org/content/early/2010/02/19/nar.gkq045.short
  * @author Sebastian Bauer
  */
 public class Bayes2GOCalculation implements ICalculation
