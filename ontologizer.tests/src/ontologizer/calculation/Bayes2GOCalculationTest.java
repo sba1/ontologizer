@@ -25,20 +25,27 @@ import ontologizer.types.ByteString;
  */
 public class Bayes2GOCalculationTest extends TestCase
 {
-	public void testBayes2GOSimple()
+	private static class SingleCalculationSetting
 	{
-		InternalOntology internalOntology = new InternalOntology();
+		public PopulationSet pop;
+		public StudySet study;
+	}
 
-		final HashMap<TermID,Double> wantedActiveTerms = new HashMap<TermID,Double>(); /* Terms that are active */
-		wantedActiveTerms.put(new TermID("GO:0000010"),0.10);
-		wantedActiveTerms.put(new TermID("GO:0000004"),0.10);
+	/**
+	 * Sample from the entire population defined by the association container a study set.
+	 *
+	 * @param wantedActiveTerms
+	 * @param ontology
+	 * @param assoc
+	 * @return
+	 */
+	private SingleCalculationSetting sampleStudySet(final HashMap<TermID, Double> wantedActiveTerms, Ontology ontology, AssociationContainer assoc)
+	{
+		SingleCalculationSetting scs = new SingleCalculationSetting();
 
-		/* TODO: We definitively want to refactor the following code */
 		Random rnd = new Random(1);
-		AssociationContainer assoc = internalOntology.assoc;
-		Ontology ontology = internalOntology.graph;
-
 		PopulationSet allGenes = new PopulationSet("all");
+		scs.pop = allGenes;
 		for (ByteString gene : assoc.getAllAnnotatedGenes())
 			allGenes.addGene(gene, "");
 
@@ -57,10 +64,11 @@ public class Bayes2GOCalculationTest extends TestCase
 
 		/* Combine the study sets into one */
 		StudySet newStudyGenes = new StudySet("study");
+		scs.study = newStudyGenes;
+
 		for (TermID t : wantedActiveTerms.keySet())
 			newStudyGenes.addGenes(wantedActiveTerm2StudySet.get(t));
 		newStudyGenes.filterOutDuplicateGenes(assoc);
-
 
 		double alphaStudySet = 0.25;
 		int tp = newStudyGenes.getGeneCount();
@@ -90,6 +98,22 @@ public class Bayes2GOCalculationTest extends TestCase
 
 		newStudyGenes.addGenes(fp);
 		newStudyGenes.removeGenes(fn);
+		return scs;
+	}
+
+	public void testBayes2GOSimple()
+	{
+		InternalOntology internalOntology = new InternalOntology();
+
+		final HashMap<TermID,Double> wantedActiveTerms = new HashMap<TermID,Double>(); /* Terms that are active */
+		wantedActiveTerms.put(new TermID("GO:0000010"),0.10);
+		wantedActiveTerms.put(new TermID("GO:0000004"),0.10);
+
+		/* TODO: We definitively want to refactor the following code */
+		AssociationContainer assoc = internalOntology.assoc;
+		Ontology ontology = internalOntology.graph;
+
+		SingleCalculationSetting scs = sampleStudySet(wantedActiveTerms, ontology, assoc);
 
 		Bayes2GOCalculation calc = new Bayes2GOCalculation();
 		calc.setSeed(2);
@@ -98,6 +122,7 @@ public class Bayes2GOCalculationTest extends TestCase
 		calc.setBeta(B2GParam.Type.MCMC);
 		calc.setExpectedNumber(B2GParam.Type.MCMC);
 
-		calc.calculateStudySet(ontology, assoc, allGenes, newStudyGenes, new None());
+		calc.calculateStudySet(ontology, assoc, scs.pop, scs.study, new None());
 	}
+
 }
