@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import cern.jet.stat.Gamma;
+
 import ontologizer.enumeration.GOTermEnumerator;
 import ontologizer.go.TermID;
 import ontologizer.types.ByteString;
@@ -15,6 +17,8 @@ import ontologizer.types.ByteString;
  */
 public class FixedAlphaBetaScore extends Bayes2GOScore
 {
+	private boolean integrateParams = false;
+
 	private int proposalSwitch;
 	private TermID proposalT1;
 	private TermID proposalT2;
@@ -105,6 +109,11 @@ public class FixedAlphaBetaScore extends Bayes2GOScore
 		for (int i=1;i<20;i++)
 			BETA[i] = i * maxBeta / span;
 		
+	}
+	
+	public void setIntegrateParams(boolean integrateParams)
+	{
+		this.integrateParams = integrateParams;
 	}
 
 	public FixedAlphaBetaScore(Random rnd, List<TermID> termList, GOTermEnumerator populationEnumerator, Set<ByteString> observedActiveGenes)
@@ -251,23 +260,43 @@ public class FixedAlphaBetaScore extends Bayes2GOScore
 		return p;
 	}
 	
+	private double logBeta(double a, double b)
+	{
+		return Gamma.logGamma(a)+Gamma.logGamma(b) - Gamma.logGamma(a+b); 
+	}
+
 	@Override
 	public double getScore()
 	{
-		double alpha;
-		double beta;
-		double p;
+		double newScore2;
+
+		if (!integrateParams)
+		{
+			double alpha;
+			double beta;
+			double p;
+		
+			alpha = getAlpha();
+			beta = getBeta();
+			p = getP();
 	
-		alpha = getAlpha();
-		beta = getBeta();
-		p = getP();
-
-		double newScore2 = Math.log(alpha) * n10 + Math.log(1-alpha)*n00 + Math.log(1-beta)*n11 + Math.log(beta)*n01;
-
-		if (usePrior)
-			newScore2 += Math.log(p)*(termsArray.length - numInactiveTerms) + Math.log(1-p)*numInactiveTerms;
-
-//		newScore2 -= Math.log(alpha) * observedActiveGenes.size() + Math.log(1-beta)* (population.size() - observedActiveGenes.size());
+			newScore2 = Math.log(alpha) * n10 + Math.log(1-alpha)*n00 + Math.log(1-beta)*n11 + Math.log(beta)*n01;
+	
+			if (usePrior)
+				newScore2 += Math.log(p)*(termsArray.length - numInactiveTerms) + Math.log(1-p)*numInactiveTerms;
+		} else
+		{
+			/* Prior */
+			double alpha1 = 1;
+			double alpha2 = 1;
+			double beta1 = 1;
+			double beta2 = 1;
+			
+			double s1 = logBeta(alpha1 + n10, alpha2 + n00);
+			double s2 = logBeta(beta1 + n01, beta2 + n11);
+			newScore2 = s1 + s2;
+		}
+	
 		return newScore2;
 	}
 	
