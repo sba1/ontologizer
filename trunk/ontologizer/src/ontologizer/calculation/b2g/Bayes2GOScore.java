@@ -159,6 +159,13 @@ abstract public class Bayes2GOScore
 		p = (double)terms / termsArray.length;
 	}
 
+	/**
+	 * Returns the score of the setting if the given terms
+	 * are active and all others are inactive.
+	 *
+	 * @param activeTerms
+	 * @return
+	 */
 	public double score(Collection<TermID> activeTerms)
 	{
 		int [] oldTerms = new int[termsArray.length - numInactiveTerms];
