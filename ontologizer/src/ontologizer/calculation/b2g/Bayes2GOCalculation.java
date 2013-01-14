@@ -40,6 +40,8 @@ public class Bayes2GOCalculation implements ICalculation
 
 	private boolean usePrior = true;
 
+	private boolean integrateParams = false;
+
 	private DoubleParam alpha = new DoubleParam(B2GParam.Type.MCMC);
 	private DoubleParam beta = new DoubleParam(B2GParam.Type.MCMC);
 	private IntegerParam expectedNumberOfTerms = new IntegerParam(B2GParam.Type.MCMC);
@@ -164,6 +166,16 @@ public class Bayes2GOCalculation implements ICalculation
 	public void setExpectedNumber(B2GParam.Type type)
 	{
 		this.expectedNumberOfTerms.setType(type);
+	}
+
+	/**
+	 * Set whether the parameter should be integrated.
+	 *
+	 * @param integrateParams
+	 */
+	public void setIntegrateParams(boolean integrateParams)
+	{
+		this.integrateParams = integrateParams;
 	}
 
 	/**
@@ -354,6 +366,7 @@ public class Bayes2GOCalculation implements ICalculation
 		for (int i=0;i<maxIter;i++)
 		{
 			FixedAlphaBetaScore bayesScore = new FixedAlphaBetaScore(rnd, allTerms, populationEnumerator,  studyEnumerator.getGenes());
+			bayesScore.setIntegrateParams(integrateParams);
 
 			if (doEm)
 			{
