@@ -49,81 +49,83 @@ class B2GTestParameter
  */
 public class Bayes2GOCalculationTest extends TestCase
 {
-	private static class SingleCalculationSetting
+	/* FIXME: Move this out of this class! */
+	public static class SingleCalculationSetting
 	{
 		public PopulationSet pop;
 		public StudySet study;
-	}
 
-	/**
-	 * Sample from the entire population defined by the association container a study set.
-	 *
-	 * @param wantedActiveTerms
-	 * @param ontology
-	 * @param assoc
-	 * @return
-	 */
-	private SingleCalculationSetting sampleStudySet(final HashMap<TermID, Double> wantedActiveTerms, Ontology ontology, AssociationContainer assoc)
-	{
-		SingleCalculationSetting scs = new SingleCalculationSetting();
+		/**
+		 * Sample from the entire population defined by the association container a study set.
+		 *
+		 * @param wantedActiveTerms
+		 * @param ontology
+		 * @param assoc
+		 * @return
+		 */
 
-		Random rnd = new Random(1);
-		PopulationSet allGenes = new PopulationSet("all");
-		scs.pop = allGenes;
-		for (ByteString gene : assoc.getAllAnnotatedGenes())
-			allGenes.addGene(gene, "");
-
-		final GOTermEnumerator allEnumerator = allGenes.enumerateGOTerms(ontology,assoc);
-
-		/* Create for each wanted term an study set for its own */
-		HashMap<TermID,StudySet> wantedActiveTerm2StudySet = new HashMap<TermID,StudySet>();
-		for (TermID t : wantedActiveTerms.keySet())
+		public static SingleCalculationSetting create(Random rnd, final HashMap<TermID, Double> wantedActiveTerms, Ontology ontology, AssociationContainer assoc)
 		{
-			StudySet termStudySet = new StudySet("study");
-			for (ByteString g : allEnumerator.getAnnotatedGenes(t).totalAnnotated)
-				termStudySet.addGene(g, "");
-			termStudySet.filterOutDuplicateGenes(assoc);
-			wantedActiveTerm2StudySet.put(t, termStudySet);
-		}
+			SingleCalculationSetting scs = new SingleCalculationSetting();
 
-		/* Combine the study sets into one */
-		StudySet newStudyGenes = new StudySet("study");
-		scs.study = newStudyGenes;
+			PopulationSet allGenes = new PopulationSet("all");
+			scs.pop = allGenes;
+			for (ByteString gene : assoc.getAllAnnotatedGenes())
+				allGenes.addGene(gene, "");
 
-		for (TermID t : wantedActiveTerms.keySet())
-			newStudyGenes.addGenes(wantedActiveTerm2StudySet.get(t));
-		newStudyGenes.filterOutDuplicateGenes(assoc);
+			final GOTermEnumerator allEnumerator = allGenes.enumerateGOTerms(ontology,assoc);
 
-		double alphaStudySet = 0.25;
-		int tp = newStudyGenes.getGeneCount();
-		int tn = allGenes.getGeneCount();
-
-		/* Obfuscate the study set, i.e., create the observed state */
-
-		/* false -> true (alpha, false positive) */
-		HashSet<ByteString>  fp = new HashSet<ByteString>();
-		for (ByteString gene : allGenes)
-		{
-			if (newStudyGenes.contains(gene)) continue;
-			if (rnd.nextDouble() < alphaStudySet) fp.add(gene);
-		}
-
-		/* true -> false (beta, false negative) */
-		HashSet<ByteString>  fn = new HashSet<ByteString>();
-		for (TermID t : wantedActiveTerms.keySet())
-		{
-			double beta = wantedActiveTerms.get(t);
-			StudySet termStudySet = wantedActiveTerm2StudySet.get(t);
-			for (ByteString g : termStudySet)
+			/* Create for each wanted term an study set for its own */
+			HashMap<TermID,StudySet> wantedActiveTerm2StudySet = new HashMap<TermID,StudySet>();
+			for (TermID t : wantedActiveTerms.keySet())
 			{
-				if (rnd.nextDouble() < beta) fn.add(g);
+				StudySet termStudySet = new StudySet("study");
+				for (ByteString g : allEnumerator.getAnnotatedGenes(t).totalAnnotated)
+					termStudySet.addGene(g, "");
+				termStudySet.filterOutDuplicateGenes(assoc);
+				wantedActiveTerm2StudySet.put(t, termStudySet);
 			}
-		}
 
-		newStudyGenes.addGenes(fp);
-		newStudyGenes.removeGenes(fn);
-		return scs;
+			/* Combine the study sets into one */
+			StudySet newStudyGenes = new StudySet("study");
+			scs.study = newStudyGenes;
+
+			for (TermID t : wantedActiveTerms.keySet())
+				newStudyGenes.addGenes(wantedActiveTerm2StudySet.get(t));
+			newStudyGenes.filterOutDuplicateGenes(assoc);
+
+			double alphaStudySet = 0.25;
+			int tp = newStudyGenes.getGeneCount();
+			int tn = allGenes.getGeneCount();
+
+			/* Obfuscate the study set, i.e., create the observed state */
+
+			/* false -> true (alpha, false positive) */
+			HashSet<ByteString>  fp = new HashSet<ByteString>();
+			for (ByteString gene : allGenes)
+			{
+				if (newStudyGenes.contains(gene)) continue;
+				if (rnd.nextDouble() < alphaStudySet) fp.add(gene);
+			}
+
+			/* true -> false (beta, false negative) */
+			HashSet<ByteString>  fn = new HashSet<ByteString>();
+			for (TermID t : wantedActiveTerms.keySet())
+			{
+				double beta = wantedActiveTerms.get(t);
+				StudySet termStudySet = wantedActiveTerm2StudySet.get(t);
+				for (ByteString g : termStudySet)
+				{
+					if (rnd.nextDouble() < beta) fn.add(g);
+				}
+			}
+
+			newStudyGenes.addGenes(fp);
+			newStudyGenes.removeGenes(fn);
+			return scs;
+		}
 	}
+
 
 	public void testBayes2GOSimple()
 	{
@@ -136,7 +138,7 @@ public class Bayes2GOCalculationTest extends TestCase
 		AssociationContainer assoc = internalOntology.assoc;
 		Ontology ontology = internalOntology.graph;
 
-		SingleCalculationSetting scs = sampleStudySet(wantedActiveTerms, ontology, assoc);
+		SingleCalculationSetting scs = SingleCalculationSetting.create(new Random(1),wantedActiveTerms, ontology, assoc);
 
 		Bayes2GOCalculation calc = new Bayes2GOCalculation();
 		calc.setSeed(2);
@@ -159,16 +161,17 @@ public class Bayes2GOCalculationTest extends TestCase
 		AssociationContainer assoc = internalOntology.assoc;
 		Ontology ontology = internalOntology.graph;
 
-		SingleCalculationSetting scs = sampleStudySet(wantedActiveTerms, ontology, assoc);
+		SingleCalculationSetting scs = SingleCalculationSetting.create(new Random(1),wantedActiveTerms, ontology, assoc);
 
-//		Bayes2GOCalculation calc = new Bayes2GOCalculation();
-//		calc.setSeed(2);
-//		calc.setMcmcSteps(520000);
-//		calc.setAlpha(B2GParam.Type.MCMC);
-//		calc.setBeta(B2GParam.Type.MCMC);
-//		calc.setExpectedNumber(B2GParam.Type.MCMC);
-//
-//		calc.calculateStudySet(ontology, assoc, scs.pop, scs.study, new None());
+		Bayes2GOCalculation calc = new Bayes2GOCalculation();
+		calc.setSeed(2);
+		calc.setMcmcSteps(520000);
+		calc.setIntegrateParams(true);
+		calc.setAlpha(B2GParam.Type.FIXED);
+		calc.setBeta(B2GParam.Type.FIXED);
+		calc.setExpectedNumber(2);
+
+		calc.calculateStudySet(ontology, assoc, scs.pop, scs.study, new None());
 	}
 
 
