@@ -87,11 +87,26 @@ abstract public class Bayes2GOScore
 	protected boolean usePrior = true;
 	protected double p = Double.NaN;
 
+	/**
+	 * Constructs a class for calculating the Bayes2GO/MGSA score suitable for an MCMC algorithm.
+	 *
+	 * @param termList list of terms that can possibly be selected.
+	 * @param populationEnumerator terms to genes.
+	 * @param observedActiveGenes defines the set of genes that are observed as active.
+	 */
 	public Bayes2GOScore(List<TermID> termList, GOTermEnumerator populationEnumerator, Set<ByteString> observedActiveGenes)
 	{
 		this(null,termList, populationEnumerator, observedActiveGenes);
 	}
 
+	/**
+	 * Constructs a class for calculating the Bayes2GO score suitable for an MCMC algorithm.
+	 *
+	 * @param rnd Random source for proposing states.
+	 * @param termList list of terms that can possibly be selected.
+	 * @param populationEnumerator terms to genes.
+	 * @param observedActiveGenes defines the set of genes that are observed as active.
+	 */
 	public Bayes2GOScore(Random rnd, List<TermID> termList, GOTermEnumerator populationEnumerator, Set<ByteString> observedActiveGenes)
 	{
 		int i;
