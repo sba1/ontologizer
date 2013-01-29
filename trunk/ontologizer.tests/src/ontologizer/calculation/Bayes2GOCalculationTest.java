@@ -58,13 +58,14 @@ public class Bayes2GOCalculationTest extends TestCase
 		/**
 		 * Sample from the entire population defined by the association container a study set.
 		 *
+		 * @param rnd
 		 * @param wantedActiveTerms
+		 * @param alphaStudySet
 		 * @param ontology
 		 * @param assoc
 		 * @return
 		 */
-
-		public static SingleCalculationSetting create(Random rnd, final HashMap<TermID, Double> wantedActiveTerms, Ontology ontology, AssociationContainer assoc)
+		public static SingleCalculationSetting create(Random rnd, final HashMap<TermID, Double> wantedActiveTerms, double alphaStudySet, Ontology ontology, AssociationContainer assoc)
 		{
 			SingleCalculationSetting scs = new SingleCalculationSetting();
 
@@ -94,7 +95,6 @@ public class Bayes2GOCalculationTest extends TestCase
 				newStudyGenes.addGenes(wantedActiveTerm2StudySet.get(t));
 			newStudyGenes.filterOutDuplicateGenes(assoc);
 
-			double alphaStudySet = 0.25;
 			int tp = newStudyGenes.getGeneCount();
 			int tn = allGenes.getGeneCount();
 
@@ -138,7 +138,7 @@ public class Bayes2GOCalculationTest extends TestCase
 		AssociationContainer assoc = internalOntology.assoc;
 		Ontology ontology = internalOntology.graph;
 
-		SingleCalculationSetting scs = SingleCalculationSetting.create(new Random(1),wantedActiveTerms, ontology, assoc);
+		SingleCalculationSetting scs = SingleCalculationSetting.create(new Random(1), wantedActiveTerms, 0.25, ontology, assoc);
 
 		Bayes2GOCalculation calc = new Bayes2GOCalculation();
 		calc.setSeed(2);
@@ -161,7 +161,7 @@ public class Bayes2GOCalculationTest extends TestCase
 		AssociationContainer assoc = internalOntology.assoc;
 		Ontology ontology = internalOntology.graph;
 
-		SingleCalculationSetting scs = SingleCalculationSetting.create(new Random(1),wantedActiveTerms, ontology, assoc);
+		SingleCalculationSetting scs = SingleCalculationSetting.create(new Random(1), wantedActiveTerms, 0.25, ontology, assoc);
 
 		Bayes2GOCalculation calc = new Bayes2GOCalculation();
 		calc.setSeed(2);
