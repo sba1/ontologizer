@@ -64,4 +64,41 @@ public class FixedAlphaBetaScoreTest extends TestCase
 		}
 		Assert.assertEquals(expectedMax, foundMax);
 	}
+
+	public void testWithIntegratedOutParameter()
+	{
+		InternalOntology internalOntology = new InternalOntology();
+
+		final HashMap<TermID,Double> wantedActiveTerms = new HashMap<TermID,Double>(); /* Terms that are active */
+		wantedActiveTerms.put(new TermID("GO:0000010"),0.00);
+		wantedActiveTerms.put(new TermID("GO:0000004"),0.00);
+
+		AssociationContainer assoc = internalOntology.assoc;
+		Ontology ontology = internalOntology.graph;
+
+		SingleCalculationSetting sss = SingleCalculationSetting.create(new Random(1), wantedActiveTerms, 0.0, ontology, assoc);
+		GOTermEnumerator popEnumerator = sss.pop.enumerateGOTerms(ontology, assoc);
+		FixedAlphaBetaScore fabs = new FixedAlphaBetaScore(new Random(1), popEnumerator.getAllAnnotatedTermsAsList(), popEnumerator, sss.study.getAllGeneNames());
+		fabs.setIntegrateParams(true);
+
+		SlimDirectedGraphView<Term> slim = ontology.getSlimGraphView();
+
+		double expectedMax = fabs.score(asList("GO:0000010","GO:0000004"));
+		double foundMax = Double.NEGATIVE_INFINITY;
+		for (int i=0; i < slim.getNumberOfVertices(); i++)
+		{
+			for (int j=i; j < slim.getNumberOfVertices(); j++)
+			{
+				String [] tids = new String[i!=j?2:1];
+				tids[0] = slim.getVertex(i).getIDAsString();
+				if (i!=j)
+					tids[1] = slim.getVertex(j).getIDAsString();
+				double score = fabs.score(asList(tids));
+				if (score > foundMax) foundMax = score;
+			}
+		}
+		System.out.println("Max: " + foundMax);
+		Assert.assertEquals(expectedMax, foundMax);
+	}
+
 }
