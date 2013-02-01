@@ -260,9 +260,28 @@ public class FixedAlphaBetaScore extends Bayes2GOScore
 		return p;
 	}
 	
-	private double logBeta(double a, double b)
+	private final double [] lGamma = new double[20000];
+	
+	private double logGamma(int a)
 	{
-		return Gamma.logGamma(a)+Gamma.logGamma(b) - Gamma.logGamma(a+b); 
+		if (a == 1 || a == 2) return 0.0;
+		
+		if (a < lGamma.length)
+		{
+			double lg = lGamma[a];
+			if (lg == 0.0)
+			{
+				lg = Gamma.logGamma(a);
+				lGamma[a] = lg;
+			}
+			return lg;
+		}
+		return Gamma.logGamma(a);
+	}
+	
+	private double logBeta(int a, int b)
+	{
+		return logGamma(a) + logGamma(b) - logGamma(a+b); 
 	}
 
 	@Override
@@ -287,14 +306,22 @@ public class FixedAlphaBetaScore extends Bayes2GOScore
 		} else
 		{
 			/* Prior */
-			double alpha1 = 1;
-			double alpha2 = 1;
-			double beta1 = 1;
-			double beta2 = 1;
+			int alpha1 = 1; /* Psedocounts, false positive */
+			int alpha2 = 1; /* Psedocounts, true negative */
+			int beta1 = 1; /* Pseudocounts, false negative */
+			int beta2 = 1; /* Pseudocounts, true positives */
+			double pl = 0;
+			double pu = 0.5;
+			int p1 = 1; /* Pseudocounts, on */
+			int p2 = 1; /* Pseudocounts, off */
+			
+			int m1 = termsArray.length - numInactiveTerms;
+			int m0 = numInactiveTerms;
 			
 			double s1 = logBeta(alpha1 + n10, alpha2 + n00);
 			double s2 = logBeta(beta1 + n01, beta2 + n11);
-			newScore2 = s1 + s2;
+			double s3 = logBeta(p1 + m1, p2 + m0);
+			newScore2 = s1 + s2 + s3;
 		}
 	
 		return newScore2;
