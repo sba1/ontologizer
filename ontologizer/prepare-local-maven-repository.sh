@@ -71,4 +71,9 @@ cp -R lwjgl/native/linux/* ../local-maven-repo/lwjgl-native
 cp -R lwjgl/native/macosx/* ../local-maven-repo/lwjgl-native
 cp -R lwjgl/native/windows/* ../local-maven-repo/lwjgl-native
 
+# Install JCommander
+wget -N http://search.maven.org/remotecontent?filepath=com/beust/jcommander/1.30/jcommander-1.30.jar -O jcommander-1.30.jar 
+wget -N http://search.maven.org/remotecontent?filepath=com/beust/jcommander/1.30/jcommander-1.30-sources.jar -O jcommander-1.30-sources.jar 
+mvn org.apache.maven.plugins:maven-install-plugin:2.3.1:install-file -Dfile=jcommander-1.30.jar -Dsources=jcommander-1.30-sources.jar -DgroupId=com.beust -DartifactId=jcommander -Dversion=1.30 -Dpackaging=jar -DlocalRepositoryPath=../local-maven-repo
+
 popd
