@@ -14,6 +14,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import com.beust.jcommander.JCommander;
+
 import ontologizer.GlobalPreferences;
 import ontologizer.OntologizerThreadGroups;
 import ontologizer.association.AssociationContainer;
@@ -81,9 +83,9 @@ public class Benchmark
 	private static double [] ALPHAs = new double[]{0.1,0.4,0.7};
 	private static double [] BETAs = new double[]{0.25,0.4};
 	private static boolean ORIGINAL_SAMPLING = false;
-	private static int MIN_TERMS = 1;
-	private static int MAX_TERMS = 5;
-	private static int TERMS_PER_RUN = 300;
+	private static int MIN_TERMS = 1; /* will be overwritten */
+	private static int MAX_TERMS = 5; /* will be overwritten */
+	private static int TERMS_PER_RUN = 300; /* will be overwritten */
 
 	/**
 	 * Senseful terms are terms that have an annotation proportion between 0.1
@@ -116,6 +118,7 @@ public class Benchmark
 
 		public boolean em;
 		public boolean mcmc;
+		public boolean integrateParams;
 
 		public boolean useCorrectExpectedTerms;
 
@@ -229,6 +232,23 @@ public class Benchmark
 
 	public static void main(String[] args) throws Exception
 	{
+		/* Command line parsing */
+		BenchmarkCLIConfig cliConfig = new BenchmarkCLIConfig();
+		JCommander jc = new JCommander(cliConfig);
+		jc.parse(args);
+		
+		jc.setProgramName(Benchmark.class.getSimpleName());
+		if (cliConfig.help)
+		{
+			jc.usage();
+			System.exit(0);
+		}
+		
+		TERMS_PER_RUN = cliConfig.termCombinationsPerRun;
+		MIN_TERMS = cliConfig.minTerms;
+		MAX_TERMS = cliConfig.maxTerms;
+		
+		/* Start */
 		int numProcessors = Runtime.getRuntime().availableProcessors();
 
 		GlobalPreferences.setProxyPort(888);
@@ -498,6 +518,7 @@ public class Benchmark
 											b2g.setUsePrior(m.usePrior);
 											b2g.setTakePopulationAsReference(m.takePopulationAsReference);
 											b2g.useRandomStart(m.useRandomStart);
+											b2g.setIntegrateParams(m.integrateParams);
 											b2g.setMcmcSteps(1020000);
 											if (m.em)
 											{
