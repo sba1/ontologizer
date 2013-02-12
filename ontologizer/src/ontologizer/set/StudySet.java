@@ -407,11 +407,14 @@ public class StudySet implements Iterable<ByteString>
 	/**
 	 * Enumerate genes annotated for every term. Multiple
 	 * calls to this method are fast, if the gene set has not
-	 * been changed inbetween.
+	 * been changed in-between.
 	 *
-	 * @param goTerms
-     * @param associationContainer
-     * @param evidences
+	 * @param graph
+	 * @param associationContainer
+	 * @param evidences which type of annotation to respect
+	 * @param remover an instance to decide whether a given term
+	 *  is removed from the annotation set.
+	 * @return
 	 */
 	public synchronized GOTermEnumerator enumerateGOTerms(Ontology graph, AssociationContainer associationContainer, Set<ByteString> evidences, GOTermEnumerator.IRemover remover)
 	{
