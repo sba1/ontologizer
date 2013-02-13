@@ -4,8 +4,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-import cern.jet.stat.Gamma;
-
+import ontologizer.calculation.util.Gamma;
 import ontologizer.enumeration.GOTermEnumerator;
 import ontologizer.go.TermID;
 import ontologizer.types.ByteString;
@@ -271,12 +270,12 @@ public class FixedAlphaBetaScore extends Bayes2GOScore
 			double lg = lGamma[a];
 			if (lg == 0.0)
 			{
-				lg = Gamma.logGamma(a);
+				lg = Gamma.lgamma(a);
 				lGamma[a] = lg;
 			}
 			return lg;
 		}
-		return Gamma.logGamma(a);
+		return Gamma.lgamma(a);
 	}
 	
 	private double logBeta(int a, int b)
