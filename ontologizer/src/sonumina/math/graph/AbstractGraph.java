@@ -435,7 +435,24 @@ abstract public class AbstractGraph<VertexType>
 							attrs.append(provider.getDotGraphAttributes());
 						return attrs.toString();
 					}
+					
+					@Override
+					public String getDotNodeAttributes(VertexType vt)
+					{
+						return provider.getDotNodeAttributes(vt);
+					}
 
+					@Override
+					public String getDotEdgeAttributes(VertexType src, VertexType dest)
+					{
+						return provider.getDotEdgeAttributes(src, dest);
+					}
+					
+					@Override
+					public String getDotHeader()
+					{
+						return provider.getDotHeader();
+					}
 				};
 		writeDOT(fos,nodeSet,newProvider);
 	}
