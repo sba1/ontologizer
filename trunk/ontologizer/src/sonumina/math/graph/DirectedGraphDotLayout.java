@@ -63,8 +63,7 @@ public class DirectedGraphDotLayout<T> extends DirectedGraphLayout<T>
 						int y = (int)(center.y - miny - h/2);
 						
 						/* Retrieve back the slim graph index which was stored as a label */
-						int index = Integer.parseInt((String) node.getAttributeValue(Node.LABEL_ATTR));
-
+						int index = Integer.parseInt(e.getName());
 						positionCallback.set(slimGraph.getVertex(index), x, y);
 					}
 					break;
