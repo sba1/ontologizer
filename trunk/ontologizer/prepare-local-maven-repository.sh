@@ -35,11 +35,17 @@ for file in *.zip; do
 	install_swt $file
 done
 
-# Install apache commons cli
+# Install apache commons cli 1.1
 wget -N http://archive.apache.org/dist/commons/cli/binaries/commons-cli-1.1.zip
 rm -Rf commons-cli-1.1
 unzip commons-cli-1.1.zip
 mvn org.apache.maven.plugins:maven-install-plugin:2.3.1:install-file -Dfile=commons-cli-1.1/commons-cli-1.1.jar -DgroupId=ontologizer -DartifactId=commons-cli -Dversion=1.1 -Dpackaging=jar -DlocalRepositoryPath=../local-maven-repo
+
+# Install apache common cli 1.2
+wget -N http://apache.mirror.clusters.cc/commons/cli/binaries/commons-cli-1.2-bin.zip
+rm -Rf commons-cli-1.2
+unzip commons-cli-1.2-bin.zip
+mvn org.apache.maven.plugins:maven-install-plugin:2.3.1:install-file -Dfile=commons-cli-1.2/commons-cli-1.2.jar -Dsource=commons-cli-1.2/commons-cli-1.2-sources.jar -DgroupId=ontologizer -DartifactId=commons-cli -Dversion=1.2 -Dpackaging=jar -DlocalRepositoryPath=../local-maven-repo
 
 # Install Nat Table
 wget -N http://sourceforge.net/projects/nattable/files/NatTable/1.6.5/nattable-core-1.6.5.jar
