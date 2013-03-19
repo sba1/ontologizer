@@ -8,7 +8,9 @@ package ontologizer.gui.swt;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -17,6 +19,7 @@ import java.util.Set;
 import ontologizer.association.Association;
 import ontologizer.association.AssociationContainer;
 import ontologizer.association.Gene2Associations;
+import ontologizer.filter.GeneFilter;
 import ontologizer.go.Ontology;
 import ontologizer.go.Term;
 import ontologizer.go.TermID;
@@ -72,6 +75,7 @@ public class GeneEditor extends Composite
 
 	private Ontology graph;
 	private AssociationContainer assoc;
+	private GeneFilter gfilter;
 
 	private Shell tipShell;
 	private StyledText tipShellStyledText;
@@ -220,7 +224,7 @@ public class GeneEditor extends Composite
 				if (assoc != null)
 				{
 					String gene = getGeneName(event.lineText);
-					Gene2Associations gene2Associations = assoc.get(new ByteString(gene));
+					Gene2Associations gene2Associations = getG2A(new ByteString(gene));
 					if (gene2Associations != null)
 					{
 						event.styles = new StyleRange[1];
@@ -259,7 +263,7 @@ public class GeneEditor extends Composite
 						String line = text.getText(offset1,offset2).trim();
 						String geneName = getGeneName(line);
 
-						Gene2Associations gene2Associations = assoc.get(new ByteString(geneName));
+						Gene2Associations gene2Associations = getG2A(new ByteString(geneName));
 						if (gene2Associations != null)
 						{
 							Set<TermID> set = new HashSet<TermID>();
@@ -383,7 +387,7 @@ public class GeneEditor extends Composite
 						int offsetAtLocation = text.getOffsetAtLocation(new Point(e.x,e.y));
 						if ((offsetAtLocation - offset1) < geneName.length())
 						{
-							Gene2Associations gene2Associations = assoc.get(new ByteString(geneName));
+							Gene2Associations gene2Associations = getG2A(new ByteString(geneName));
 							if (gene2Associations != null)
 							{
 								StringBuilder str = new StringBuilder();
@@ -508,6 +512,24 @@ public class GeneEditor extends Composite
 	}
 	
 	/**
+	 * Returns the gene association associated with the given gene.
+	 * May employ the filter.
+	 * 
+	 * @param gene
+	 * @return
+	 */
+	private Gene2Associations getG2A(ByteString gene)
+	{
+		Gene2Associations gene2Associations = assoc.get(gene);
+		if (gene2Associations == null && gfilter != null)
+		{
+			gene = gfilter.mapGene(gene);
+			gene2Associations = assoc.get(gene);
+		}
+		return gene2Associations;
+	}
+	
+	/**
 	 * Returns the number of known entries.
 	 * 
 	 * @return
@@ -522,7 +544,7 @@ public class GeneEditor extends Composite
 			for (String l : getLines())
 			{
 				String gene = getGeneName(l);
-				Gene2Associations gene2Associations = assoc.get(new ByteString(gene));
+				Gene2Associations gene2Associations = getG2A(new ByteString(gene));
 				if (gene2Associations != null)
 					known++;
 			}
@@ -603,7 +625,13 @@ public class GeneEditor extends Composite
 		}
 	}
 	
-	public void setWorkSet(WorkSet ws)
+	/**
+	 * Sets the given option on which base the genes are highlighted.
+	 * 
+	 * @param ws
+	 * @param mappingFile
+	 */
+	public void setWorkSet(WorkSet ws, final String mappingFile)
 	{
 		if (displayedWorkSet != null)
 			WorkSetLoadThread.releaseDatafiles(displayedWorkSet);
@@ -611,6 +639,7 @@ public class GeneEditor extends Composite
 		displayedWorkSet = ws.clone();
 		graph = null;
 		assoc = null;
+		gfilter = null;
 		setAllButton.setEnabled(false);
 
 		WorkSetLoadThread.obtainDatafiles(ws, 
@@ -623,6 +652,14 @@ public class GeneEditor extends Composite
 							{
 								graph = WorkSetLoadThread.getGraph(displayedWorkSet.getOboPath());
 								assoc = WorkSetLoadThread.getAssociations(displayedWorkSet.getAssociationPath());
+								try {
+									if (mappingFile != null && mappingFile.length() != 0)
+										gfilter = new GeneFilter(new File(mappingFile));
+								} catch (FileNotFoundException e) {
+									e.printStackTrace();
+								} catch (IOException e) {
+									e.printStackTrace();
+								}
 								text.redraw();
 								setAllButton.setEnabled(true);
 								if (datasetsLoadedAction != null) datasetsLoadedAction.act();
@@ -630,6 +667,16 @@ public class GeneEditor extends Composite
 						});
 
 					}});
+	}
+	
+	/**
+	 * Sets the given option on which base the genes are highlighted.
+	 * 
+	 * @param ws
+	 */
+	public void setWorkSet(WorkSet ws)
+	{
+		setWorkSet(ws,null);
 	}
 	
 	/**

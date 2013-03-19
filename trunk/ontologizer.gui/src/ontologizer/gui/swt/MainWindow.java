@@ -741,7 +741,7 @@ public class MainWindow extends ApplicationWindow
 
 				setTextArea.setText(genes);
 				treeItemWhenWorkSetIsChanged = currentSelectedItem;
-				setTextArea.setWorkSet(settingsComposite.getSelectedWorkset());
+				setTextArea.setWorkSet(settingsComposite.getSelectedWorkset(),settingsComposite.getMappingFileString());
 				if (rightStackedLayout.topControl != rightComposite)
 				{
 					rightStackedLayout.topControl = rightComposite;
