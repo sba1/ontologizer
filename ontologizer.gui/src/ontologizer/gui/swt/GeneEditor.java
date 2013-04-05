@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import ontologizer.association.Association;
 import ontologizer.association.AssociationContainer;
@@ -71,6 +73,8 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class GeneEditor extends Composite
 {
+	private static Logger logger = Logger.getLogger(GeneFilter.class.getCanonicalName());
+
 	private static String currentImportStudyFileName;
 
 	private Ontology graph;
@@ -656,10 +660,13 @@ public class GeneEditor extends Composite
 									if (mappingFile != null && mappingFile.length() != 0)
 										gfilter = new GeneFilter(new File(mappingFile));
 								} catch (FileNotFoundException e) {
-									e.printStackTrace();
+									logger.log(Level.WARNING, "Couldn't load the mapping file", e);
 								} catch (IOException e) {
-									e.printStackTrace();
+									logger.log(Level.WARNING, "Couldn't load the mapping file", e);
 								}
+								if (gfilter == null) logger.info("Ontology and associations loaded");
+								else logger.info("Ontology, associations, and mapping loaded");
+	
 								text.redraw();
 								setAllButton.setEnabled(true);
 								if (datasetsLoadedAction != null) datasetsLoadedAction.act();
