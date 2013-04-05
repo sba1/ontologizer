@@ -156,11 +156,12 @@ public class OntologizerCore
 		/* Parse the gene_ontology.obo file to get information about all terms.
 		 * Transfer the information to a TermContainer object.
 		 */
-		System.out.println("Parse obo file");
+		System.err.println("Parse obo file \"" + args.goTermsOBOFile + "\"");
+
 		OBOParser oboParser = new OBOParser(args.goTermsOBOFile);
-		System.out.println(oboParser.doParse());
+		System.err.println(oboParser.doParse());
 		goTerms = new TermContainer(oboParser.getTermMap(), oboParser.getFormatVersion(), oboParser.getDate());
-		System.out.println("Building graph");
+		System.err.println("Building graph");
 		goGraph = new Ontology(goTerms);
 
 		/* create the study list. A directory or a single file might be given */
@@ -181,7 +182,7 @@ public class OntologizerCore
 		/* Apply the optional gene name mapping given by the supplied filter file */
 		if (args.filterFile != null)
 		{
-			System.err.println("Parsing filter");
+			System.err.println("Parsing filter \"" + args.filterFile + "\"");
 			GeneFilter filter = new GeneFilter(new File(args.filterFile));
 
 			System.err.println("Appling filter");
