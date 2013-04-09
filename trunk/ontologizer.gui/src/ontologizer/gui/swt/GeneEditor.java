@@ -645,7 +645,7 @@ public class GeneEditor extends Composite
 		assoc = null;
 		gfilter = null;
 		setAllButton.setEnabled(false);
-
+		
 		WorkSetLoadThread.obtainDatafiles(ws, 
 				new Runnable(){
 					public void run()
