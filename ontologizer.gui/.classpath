@@ -16,5 +16,6 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="../ontologizer/local-maven-repo/ontologizer/lwjgl-util/2.8.4/lwjgl-util-2.8.4.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ontologizer"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ontologizer.svd"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
