@@ -30,6 +30,7 @@
   
   <modules>
   	<module>../ontologizer</module>
+  	<module>../ontologizer.svd</module>
   	<module>../ontologizer.tests</module>
   	<module>../ontologizer.gui</module>
 	<module>../ontologizer.cmdline</module>
