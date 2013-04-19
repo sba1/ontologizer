@@ -3,8 +3,10 @@ package ontologizer.go;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintStream;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -15,6 +17,9 @@ import java.util.zip.GZIPInputStream;
 import ontologizer.association.AbstractByteLineScanner;
 import ontologizer.types.ByteString;
 import sonumina.collections.ReferencePool;
+import sonumina.math.graph.AbstractGraph.DotAttributesProvider;
+import sonumina.math.graph.DirectedGraph;
+import sonumina.math.graph.Edge;
 
 /*
  * I gratefully acknowledge the help of John Richter Day, who provided the
@@ -333,12 +338,199 @@ public class OBOParser
 			private final byte [] IS_OBSOLETE_KEYWORD = "is_obsolete".getBytes();
 			private final byte [] XREF_KEYWORD = "xref".getBytes();
 			private final byte [] TRUE_KEYWORD = "true".getBytes();
+
+			private final byte[][] termKeywords = 
+			{
+				ID_KEYWORD,
+				NAME_KEYWORD,
+				IS_A_KEYWORD,
+				RELATIONSHIP_KEYWORD,
+				SYNONYM_KEYWORD,
+				DEF_KEYWORD,
+				NAMESPACE_KEYWORD,
+				EQUIVALENT_TO_KEYWORD,
+				IS_OBSOLETE_KEYWORD,
+				XREF_KEYWORD
+			};
+
+			class StringEdge extends Edge<Integer>
+			{
+				private String l;
+
+				public StringEdge(Integer source, Integer dest, String l)
+				{
+					super(source, dest);
+					
+					this.l = l;
+				}
+				
+				public String getL() {
+					return l;
+				}
+			}
+
+			/**
+			 * Writes selection - action code to stdout.
+			 * 
+			 * @param current
+			 * @param tree
+			 * @param depth
+			 * @param pos
+			 * @param name
+			 */
+			private void writeCode(Integer current, DirectedGraph<Integer> tree, int depth, int pos, String name)
+			{
+				boolean first = true;
+				Iterator<Edge<Integer>> iter = tree.getOutEdges(current);
+				while (iter.hasNext())
+				{
+					StringEdge se = (StringEdge)iter.next();
+					for (int i=0;i<depth;i++)
+						System.out.print("\t");
+					
+					if (!first) System.out.print("else ");
+					
+					System.out.print("if (");
+					for (int i=0;i<se.l.length();i++)
+					{
+						System.out.print(String.format("toLower(buf[keyStart + %d]) == %d && ",pos+i,se.l.getBytes()[i]));
+						
+					}
+					System.out.println(String.format("true) /* %s */",se.l));
+
+					for (int i=0;i<depth;i++)
+						System.out.print("\t");
+					System.out.println("{");
+					writeCode(se.getDest(),tree,depth+1,pos + se.l.length(),name + se.l);
+					
+					for (int i=0;i<depth;i++)
+						System.out.print("\t");
+					System.out.println("}");
+					
+					first = false;
+				}
+				if (first)
+				{
+					/* We are at a leaf */
+					for (int i=0;i<depth;i++)
+						System.out.print("\t");
+					System.out.println(String.format("parse_%s(buf, valueStart, valueLen);",name));
+				}
+			}
+			
+
+			/**
+			 * Try to collapse the given tree at the given node.
+			 * 
+			 * @param current
+			 * @param tree
+			 */
+			private void collapse(Integer current, DirectedGraph<Integer> tree)
+			{
+				int currentOutDegree = tree.getOutDegree(current);
+				if (currentOutDegree > 1)
+				{
+					Iterator<Edge<Integer>> iter = tree.getOutEdges(current);
+					while (iter.hasNext())
+						collapse(iter.next().getDest(),tree);
+				} else if (currentOutDegree == 1)
+				{
+					StringEdge e = (StringEdge)tree.getOutEdges(current).next();
+					Integer next = e.getDest();
+					int nextOutDegree = tree.getOutDegree(next);
+					if (nextOutDegree == 1)
+					{
+						StringEdge ne = (StringEdge)tree.getOutEdges(next).next();
+						Integer nextnext = ne.getDest();
+						e.l += ne.l;
+						
+						/* Move all out edges of next next to next */
+						Iterator<Edge<Integer>> nextnextIter = tree.getOutEdges(nextnext);
+						while (nextnextIter.hasNext())
+						{
+							StringEdge se = (StringEdge)nextnextIter.next();
+							tree.addEdge(new StringEdge(next,se.getDest(),se.l));
+						}
+
+						/* Finally, remove next next */
+						tree.removeVertex(nextnext);
+						
+						collapse(current,tree);
+					} else
+					{
+						collapse(next,tree);
+					}
+				}
+			}
+
+			/**
+			 * Generate Java code for if clauses.
+			 */
+			private void generateKeywordIfClauses()
+			{
+				final DirectedGraph<Integer> tree = new DirectedGraph<Integer>();
+
+				Integer root = new Integer(0);
+				tree.addVertex(root);
+				
+				int k=1;
+				for (int i=0;i<termKeywords.length;i++)
+				{
+					byte [] keyword = termKeywords[i];
+					
+					Integer current = root;
+					
+					for (int j=0;j<keyword.length;j++)
+					{
+						byte c = keyword[j];
+						
+						Iterator<Edge<Integer>> iter = tree.getOutEdges(current);
+						Integer next = null;
+						while (iter.hasNext())
+						{
+							StringEdge se = (StringEdge)iter.next();
+							if (se.l.getBytes()[0] == c)
+							{
+								next = se.getDest();
+								break;
+							}
+						}
+						if (next == null)
+						{
+							next = new Integer(k++);
+							tree.addVertex(next);
+							StringEdge se = new StringEdge(current, next, ((char)c)+"");
+							tree.addEdge(se);
+						}
+						current = next;
+					}
+				}
+
+				/* Collapse */
+				collapse(root,tree);
+				
+				writeCode(root,tree,0,0,"");
+				
+				tree.writeDOT(new PrintStream(System.out), new DotAttributesProvider<Integer>()
+						{
+							@Override
+							public String getDotEdgeAttributes(Integer src, Integer dest) {
+								
+								return "label=\"" + ((StringEdge)tree.getEdge(src, dest)).getL() +  "\"";
+							}
+						});
+			
+				System.exit(-1);
+			}
+					
 			
 			/* Supported relationship types */
 			private final byte [] PART_OF_KEYWORD = "part_of".getBytes();
 			private final byte [] REGULATES_KEYWORD = "regulates".getBytes();
 			private final byte [] NEGATIVELY_REGULATES_KEYWORD = "negatively_regulates".getBytes();
 			private final byte [] POSITIVELY_REGULATES_KEYWORD = "positively_regulates".getBytes();
+			
+			
 			
 			public OBOByteLineScanner(InputStream is)
 			{
@@ -396,6 +588,12 @@ public class OBOParser
 				return new ByteString(line,start,start+len).toString();
 			}
 			
+			final private byte toLower(byte c)
+			{
+				if (c>=65 && c <=90) c += 32;
+				return c;
+			}
+
 			/**
 			 * Compares buf vs cmp.
 			 * @param buf
@@ -643,49 +841,49 @@ public class OBOParser
 				return -1;
 			}
 
-			/**
-			 * Parse key/value as term value.
-			 * 
-			 * @param buf
-			 * @param keyStart
-			 * @param keyLen
-			 * @param valueStart
-			 * @param valueLen
-			 */
-			private void readTermValue(byte[] buf, int keyStart, int keyLen, int valueStart, int valueLen)
+			
+			private void parse_id(byte[] buf, int valueStart, int valueLen)
 			{
-				if (equalsIgnoreCase(buf, keyStart, keyLen, ID_KEYWORD))
-				{
-					currentID = readTermID(buf, valueStart, valueLen);
-					if ((options & SETNAMEEQUALTOID) != 0)
-						currentName = currentID.toString(); 
-				} else if (equalsIgnoreCase(buf, keyStart, keyLen, NAME_KEYWORD))
-				{
-					currentName = new String(buf, valueStart, valueLen);
-				} else if (equalsIgnoreCase(buf, keyStart, keyLen, IS_A_KEYWORD))
-				{
-					currentParents.add(new ParentTermID(readTermID(buf, valueStart, valueLen),TermRelation.IS_A));
-				} else if (equalsIgnoreCase(buf, keyStart, keyLen, RELATIONSHIP_KEYWORD))
-				{
-					TermRelation type;
-					
-					int typeStart = valueStart;
-					int typeEnd = findUnescaped(buf, valueStart, valueLen, ' ');
-					if (typeEnd== -1) return;
-					
-					int idStart = skipSpaces(buf, typeEnd, valueStart + valueLen - typeEnd);
-					if (idStart == -1) return;
-					int idEnd = findUnescaped(buf, idStart, valueStart + valueLen - idStart, '[', ' ', '!');
-					if (idEnd == -1) idEnd = valueStart + valueLen;
-					
-					if (equalsIgnoreCase(buf,typeStart, typeEnd - typeStart,PART_OF_KEYWORD)) type = TermRelation.PART_OF_A;
-					else if (equalsIgnoreCase(buf,typeStart, typeEnd - typeStart,REGULATES_KEYWORD)) type = TermRelation.REGULATES;
-					else if (equalsIgnoreCase(buf,typeStart, typeEnd - typeStart,NEGATIVELY_REGULATES_KEYWORD)) type = TermRelation.POSITIVELY_REGULATES;
-					else if (equalsIgnoreCase(buf,typeStart, typeEnd - typeStart,POSITIVELY_REGULATES_KEYWORD)) type = TermRelation.NEGATIVELY_REGULATES;
-					else type = TermRelation.UNKOWN;
+				currentID = readTermID(buf, valueStart, valueLen);
+				if ((options & SETNAMEEQUALTOID) != 0)
+					currentName = currentID.toString(); 
+			}
 
-					currentParents.add(new ParentTermID(readTermID(buf,idStart,idEnd - idStart + 1),type));
-				} else if ((options & IGNORE_SYNONYMS) == 0 && equalsIgnoreCase(buf, keyStart, keyLen, SYNONYM_KEYWORD))
+			private void parse_name(byte[] buf, int valueStart, int valueLen)
+			{
+				currentName = new String(buf, valueStart, valueLen);
+			}
+
+			private void parse_is_a(byte[] buf, int valueStart, int valueLen)
+			{
+				currentParents.add(new ParentTermID(readTermID(buf, valueStart, valueLen),TermRelation.IS_A));
+			}
+			
+			private void parse_relationship(byte[] buf, int valueStart, int valueLen)
+			{
+				TermRelation type;
+				
+				int typeStart = valueStart;
+				int typeEnd = findUnescaped(buf, valueStart, valueLen, ' ');
+				if (typeEnd== -1) return;
+				
+				int idStart = skipSpaces(buf, typeEnd, valueStart + valueLen - typeEnd);
+				if (idStart == -1) return;
+				int idEnd = findUnescaped(buf, idStart, valueStart + valueLen - idStart, '[', ' ', '!');
+				if (idEnd == -1) idEnd = valueStart + valueLen;
+				
+				if (equalsIgnoreCase(buf,typeStart, typeEnd - typeStart,PART_OF_KEYWORD)) type = TermRelation.PART_OF_A;
+				else if (equalsIgnoreCase(buf,typeStart, typeEnd - typeStart,REGULATES_KEYWORD)) type = TermRelation.REGULATES;
+				else if (equalsIgnoreCase(buf,typeStart, typeEnd - typeStart,NEGATIVELY_REGULATES_KEYWORD)) type = TermRelation.POSITIVELY_REGULATES;
+				else if (equalsIgnoreCase(buf,typeStart, typeEnd - typeStart,POSITIVELY_REGULATES_KEYWORD)) type = TermRelation.NEGATIVELY_REGULATES;
+				else type = TermRelation.UNKOWN;
+
+				currentParents.add(new ParentTermID(readTermID(buf,idStart,idEnd - idStart + 1),type));
+			}
+
+			private void parse_synonym(byte[] buf, int valueStart, int valueLen)
+			{
+				if ((options & IGNORE_SYNONYMS) == 0)
 				{
 					int synonymStart = findUnescaped(buf, valueStart, valueLen, '\"');
 					if (synonymStart == -1) return;
@@ -694,7 +892,12 @@ public class OBOParser
 					if (synonymEnd == -1) return;
 
 					currentSynonyms.add(new String(buf,synonymStart,synonymEnd-synonymStart));
-				} else if ((options & PARSE_DEFINITIONS) != 0 && equalsIgnoreCase(buf, keyStart, keyLen, DEF_KEYWORD))
+				}
+			}
+			
+			private void parse_def(byte[] buf, int valueStart, int valueLen)
+			{
+				if ((options & PARSE_DEFINITIONS) != 0)
 				{
 					/* TODO: Refactor with the above */
 					int defStart = findUnescaped(buf, valueStart, valueLen, '\"');
@@ -713,27 +916,42 @@ public class OBOParser
 						temp[len++] = buf[i];
 					}
 					currentDefintion = new String(temp, 0, len);
-				} else if (equalsIgnoreCase(buf, keyStart, keyLen, NAMESPACE_KEYWORD))
+				}
+			}
+
+			private void parse_namespace(byte[] buf, int valueStart, int valueLen)
+			{
+				String newNamespace = new String(buf,valueStart, valueLen);
+				Namespace namespace = namespaces.get(newNamespace);
+				if (namespace == null)
 				{
-					String newNamespace = new String(buf,valueStart, valueLen);
-					Namespace namespace = namespaces.get(newNamespace);
-					if (namespace == null)
-					{
-						namespace = new Namespace(newNamespace);
-						namespaces.put(newNamespace,namespace);
-					}
+					namespace = new Namespace(newNamespace);
+					namespaces.put(newNamespace,namespace);
+				}
+				
+				currentNamespace = namespace;
+			}
+
+			private void parse_equivalent_to(byte[] buf, int valueStart, int valueLen)
+			{
+				currentEquivalents.add(readTermID(buf, valueStart, valueLen));
+			}
 					
-					currentNamespace = namespace;
-				} else if (equalsIgnoreCase(buf, keyStart, keyLen, EQUIVALENT_TO_KEYWORD))
-				{
-					currentEquivalents.add(readTermID(buf, valueStart, valueLen));
-				} else if (equalsIgnoreCase(buf, keyStart, keyLen, IS_OBSOLETE_KEYWORD))
-				{
-					currentObsolete = equalsIgnoreCase(buf, valueStart, valueLen, TRUE_KEYWORD);
-				} else if (equalsIgnoreCase(buf, keyStart, keyLen, ALT_ID_KEYWORD))
-				{
-					currentAlternatives.add(readTermID(buf, valueStart, valueLen));
-				} else if (((options & PARSE_XREFS) !=0) && equalsIgnoreCase(buf, keyStart, keyLen, XREF_KEYWORD))
+			private void parse_obsolete(byte[] buf, int valueStart, int valueLen)
+			{
+				currentObsolete = equalsIgnoreCase(buf, valueStart, valueLen, TRUE_KEYWORD);
+			}
+					
+					
+			private void parse_alt_id(byte[] buf, int valueStart, int valueLen)
+			{
+				currentAlternatives.add(readTermID(buf, valueStart, valueLen));
+			}
+					
+					
+			private void parse_xref(byte[] buf, int valueStart, int valueLen)
+			{
+				if ((options & PARSE_XREFS) !=0)
 				{
 					/* Parse xrefs, e.g.
 					 *  (1st form) ICD-10:Q20.4  or
@@ -772,6 +990,53 @@ public class OBOParser
 					String xrefId = new String(buf,idStart,idEnd-idStart);
 
 					currentXrefs.add(new TermXref(xrefDb, xrefId, xrefName));
+				}
+			}
+
+			/**
+			 * Parse key/value as term value.
+			 * 
+			 * @param buf
+			 * @param keyStart
+			 * @param keyLen
+			 * @param valueStart
+			 * @param valueLen
+			 */
+			private void readTermValue(byte[] buf, int keyStart, int keyLen, int valueStart, int valueLen)
+			{
+				if (equalsIgnoreCase(buf, keyStart, keyLen, ID_KEYWORD))
+				{
+					parse_id(buf, valueStart, valueLen);
+				} else if (equalsIgnoreCase(buf, keyStart, keyLen, NAME_KEYWORD))
+				{
+					parse_name(buf, valueStart, valueLen);
+				} else if (equalsIgnoreCase(buf, keyStart, keyLen, IS_A_KEYWORD))
+				{
+					parse_is_a(buf, valueStart, valueLen);
+				} else if (equalsIgnoreCase(buf, keyStart, keyLen, RELATIONSHIP_KEYWORD))
+				{
+					parse_relationship(buf, valueStart, valueLen);
+				} else if ((options & IGNORE_SYNONYMS) == 0 && equalsIgnoreCase(buf, keyStart, keyLen, SYNONYM_KEYWORD))
+				{
+					parse_synonym(buf, valueStart, valueLen);
+				} else if ((options & PARSE_DEFINITIONS) != 0 && equalsIgnoreCase(buf, keyStart, keyLen, DEF_KEYWORD))
+				{
+					parse_def(buf, valueStart, valueLen);
+				} else if (equalsIgnoreCase(buf, keyStart, keyLen, NAMESPACE_KEYWORD))
+				{
+					parse_namespace(buf, valueStart, valueLen);
+				} else if (equalsIgnoreCase(buf, keyStart, keyLen, EQUIVALENT_TO_KEYWORD))
+				{
+					parse_equivalent_to(buf, valueStart, valueLen);
+				} else if (equalsIgnoreCase(buf, keyStart, keyLen, IS_OBSOLETE_KEYWORD))
+				{
+					parse_obsolete(buf, valueStart, valueLen);
+				} else if (equalsIgnoreCase(buf, keyStart, keyLen, ALT_ID_KEYWORD))
+				{
+					parse_alt_id(buf, valueStart, valueLen);
+				} else if (((options & PARSE_XREFS) !=0) && equalsIgnoreCase(buf, keyStart, keyLen, XREF_KEYWORD))
+				{
+					parse_xref(buf, valueStart, valueLen);
 				}
 			}
 
