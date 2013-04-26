@@ -463,6 +463,56 @@ public class OBOParser
 				}
 			}
 
+
+			/**
+			 * Try to identify the neighbor of the current node.
+			 * 
+			 * @param tree
+			 * @param current
+			 * @param c
+			 * @return the neighbor or null if it is non-existent.
+			 */
+			private Integer followEdge(final DirectedGraph<Integer> tree, Integer current, byte c)
+			{
+				Integer next = null;
+				Iterator<Edge<Integer>> iter = tree.getOutEdges(current);
+				while (iter.hasNext())
+				{
+					StringEdge se = (StringEdge)iter.next();
+					if (se.l.getBytes()[0] == c)
+					{
+						next = se.getDest();
+						break;
+					}
+				}
+				return next;
+			}
+
+			private int currentVertexIndex = 1;
+
+			/**
+			 * Insert the a new edge to the given byte into the tree if it is
+			 * not already present.
+			 * 
+			 * @param tree
+			 * @param current
+			 * @param c
+			 * @return the node to which the edge points to.
+			 */
+			private Integer insertEdge(final DirectedGraph<Integer> tree, Integer current, byte c)
+			{
+				Integer next = followEdge(tree, current, c);
+				if (next == null)
+				{
+					next = new Integer(currentVertexIndex++);
+					tree.addVertex(next);
+					StringEdge se = new StringEdge(current, next, ((char)c)+"");
+					tree.addEdge(se);
+				}
+				return next;
+			}
+			
+
 			/**
 			 * Generate Java code for if clauses.
 			 */
@@ -473,36 +523,16 @@ public class OBOParser
 				Integer root = new Integer(0);
 				tree.addVertex(root);
 				
-				int k=1;
 				for (int i=0;i<termKeywords.length;i++)
 				{
 					byte [] keyword = termKeywords[i];
 					
 					Integer current = root;
-					
+
 					for (int j=0;j<keyword.length;j++)
 					{
 						byte c = keyword[j];
-						
-						Iterator<Edge<Integer>> iter = tree.getOutEdges(current);
-						Integer next = null;
-						while (iter.hasNext())
-						{
-							StringEdge se = (StringEdge)iter.next();
-							if (se.l.getBytes()[0] == c)
-							{
-								next = se.getDest();
-								break;
-							}
-						}
-						if (next == null)
-						{
-							next = new Integer(k++);
-							tree.addVertex(next);
-							StringEdge se = new StringEdge(current, next, ((char)c)+"");
-							tree.addEdge(se);
-						}
-						current = next;
+						current = insertEdge(tree, current, c);
 					}
 				}
 
@@ -522,8 +552,7 @@ public class OBOParser
 			
 				System.exit(-1);
 			}
-					
-			
+
 			/* Supported relationship types */
 			private final byte [] PART_OF_KEYWORD = "part_of".getBytes();
 			private final byte [] REGULATES_KEYWORD = "regulates".getBytes();
