@@ -385,18 +385,23 @@ public class OBOParser
 				while (iter.hasNext())
 				{
 					StringEdge se = (StringEdge)iter.next();
+					
 					for (int i=0;i<depth;i++)
 						System.out.print("\t");
 					
 					if (!first) System.out.print("else ");
 					
 					System.out.print("if (");
-					for (int i=0;i<se.l.length();i++)
+
+					if (depth != 0)
 					{
-						System.out.print(String.format("toLower(buf[keyStart + %d]) == %d && ",pos+i,se.l.getBytes()[i]));
-						
+						for (int i=0;i<se.l.length();i++)
+							System.out.print(String.format("toLower(buf[keyStart + %d]) == %d && ",pos+i,se.l.getBytes()[i]));
+						System.out.println(String.format("true) /* %s */",se.l));
+					} else
+					{
+						System.out.println(String.format("keyLen=%d)",se.l.getBytes()[0]));
 					}
-					System.out.println(String.format("true) /* %s */",se.l));
 
 					for (int i=0;i<depth;i++)
 						System.out.print("\t");
@@ -414,7 +419,7 @@ public class OBOParser
 					/* We are at a leaf */
 					for (int i=0;i<depth;i++)
 						System.out.print("\t");
-					System.out.println(String.format("parse_%s(buf, valueStart, valueLen);",name));
+					System.out.println(String.format("parse_%s(buf, valueStart, valueLen);",name.substring(1)));
 				}
 			}
 			
@@ -527,8 +532,9 @@ public class OBOParser
 				{
 					byte [] keyword = termKeywords[i];
 					
-					Integer current = root;
-
+					/* First level is the length of the keyword */
+					Integer current = insertEdge(tree, root, (byte)keyword.length);
+					
 					for (int j=0;j<keyword.length;j++)
 					{
 						byte c = keyword[j];
