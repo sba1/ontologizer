@@ -396,11 +396,11 @@ public class OBOParser
 					if (depth != 0)
 					{
 						for (int i=0;i<se.l.length();i++)
-							System.out.print(String.format("toLower(buf[keyStart + %d]) == %d && ",pos+i,se.l.getBytes()[i]));
+							System.out.print(String.format("toLower(buf[keyStart + %d]) == %d && ",pos+i-1,se.l.getBytes()[i]));
 						System.out.println(String.format("true) /* %s */",se.l));
 					} else
 					{
-						System.out.println(String.format("keyLen=%d)",se.l.getBytes()[0]));
+						System.out.println(String.format("keyLen==%d)",se.l.getBytes()[0]));
 					}
 
 					for (int i=0;i<depth;i++)
@@ -1074,7 +1074,6 @@ public class OBOParser
 					parse_xref(buf, valueStart, valueLen);
 				}
 			}
-
 		}
 
 		OBOByteLineScanner obls = new OBOByteLineScanner(is);
