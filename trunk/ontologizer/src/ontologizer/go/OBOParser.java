@@ -972,7 +972,7 @@ public class OBOParser
 				currentEquivalents.add(readTermID(buf, valueStart, valueLen));
 			}
 
-			private void parse_obsolete(byte[] buf, int valueStart, int valueLen)
+			private void parse_is_obsolete(byte[] buf, int valueStart, int valueLen)
 			{
 				currentObsolete = equalsIgnoreCase(buf, valueStart, valueLen, TRUE_KEYWORD);
 			}
@@ -1065,7 +1065,7 @@ public class OBOParser
 					parse_equivalent_to(buf, valueStart, valueLen);
 				} else if (equalsIgnoreCase(buf, keyStart, keyLen, IS_OBSOLETE_KEYWORD))
 				{
-					parse_obsolete(buf, valueStart, valueLen);
+					parse_is_obsolete(buf, valueStart, valueLen);
 				} else if (equalsIgnoreCase(buf, keyStart, keyLen, ALT_ID_KEYWORD))
 				{
 					parse_alt_id(buf, valueStart, valueLen);
