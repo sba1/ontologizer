@@ -61,7 +61,7 @@ public class OBOParserTest extends TestCase
 		oboParser.doParse();
 	}
 
-	public void testRelationship() throws IOException, OBOParserException
+	public void testPartOf() throws IOException, OBOParserException
 	{
 		File tmp = File.createTempFile("onto", ".obo");
 		PrintWriter pw = new PrintWriter(tmp);
@@ -81,6 +81,52 @@ public class OBOParserTest extends TestCase
 		for (Term t : terms)
 			name2Term.put(t.getIDAsString(), t);
 		Assert.assertEquals(TermRelation.PART_OF_A, name2Term.get("GO:0000002").getParents()[0].relation);
+		Assert.assertEquals("GO:0000001", name2Term.get("GO:0000002").getParents()[0].termid.toString());
+	}
+
+	public void testRegulates() throws IOException, OBOParserException
+	{
+		File tmp = File.createTempFile("onto", ".obo");
+		PrintWriter pw = new PrintWriter(tmp);
+		pw.append("[term]\n" +
+		          "name: test\n" +
+				  "id: GO:0000001\n\n" +
+		          "[term]\n" +
+				  "name: test2\n" +
+		          "id: GO:0000002\n\n" +
+		          "relationship: regulates GO:0000001 ! test\n");
+		pw.close();
+
+		OBOParser oboParser = new OBOParser(tmp.getCanonicalPath());
+		oboParser.doParse();
+		ArrayList<Term> terms = new ArrayList<Term>(oboParser.getTermMap());
+		HashMap<String,Term> name2Term = new HashMap<String,Term>();
+		for (Term t : terms)
+			name2Term.put(t.getIDAsString(), t);
+		Assert.assertEquals(TermRelation.REGULATES, name2Term.get("GO:0000002").getParents()[0].relation);
+		Assert.assertEquals("GO:0000001", name2Term.get("GO:0000002").getParents()[0].termid.toString());
+	}
+
+	public void testUnknownRelationship() throws IOException, OBOParserException
+	{
+		File tmp = File.createTempFile("onto", ".obo");
+		PrintWriter pw = new PrintWriter(tmp);
+		pw.append("[term]\n" +
+		          "name: test\n" +
+				  "id: GO:0000001\n\n" +
+		          "[term]\n" +
+				  "name: test2\n" +
+		          "id: GO:0000002\n\n" +
+		          "relationship: zzz GO:0000001 ! test\n");
+		pw.close();
+
+		OBOParser oboParser = new OBOParser(tmp.getCanonicalPath());
+		oboParser.doParse();
+		ArrayList<Term> terms = new ArrayList<Term>(oboParser.getTermMap());
+		HashMap<String,Term> name2Term = new HashMap<String,Term>();
+		for (Term t : terms)
+			name2Term.put(t.getIDAsString(), t);
+		Assert.assertEquals(TermRelation.UNKOWN, name2Term.get("GO:0000002").getParents()[0].relation);
 		Assert.assertEquals("GO:0000001", name2Term.get("GO:0000002").getParents()[0].termid.toString());
 	}
 
