@@ -27,7 +27,7 @@ import java.util.List;
  * tabulating the counts of functions found in a cluster
  * </P>
  * 
- * @author Peter Robinson, Sebastian Bauer
+ * @author Peter Robinson, Sebastian Bauer, Sebastian Kšhler
  */
 
 public class Term
@@ -205,6 +205,20 @@ public class Term
 	public String getIDAsString()
 	{
 		return id.toString();
+	}
+	
+	/**
+	 * Returns the Term ID as a string (faster than {@link #getIDAsString()}).
+	 * 
+	 * @return term:id
+	 */
+	public String getIDAsStringFaster()
+	{
+		StringBuffer buffer = new StringBuffer();
+		buffer.append(id.getPrefix());
+		buffer.append(":");
+		buffer.append(id.id);
+		return buffer.toString();
 	}
 	
 	/**
