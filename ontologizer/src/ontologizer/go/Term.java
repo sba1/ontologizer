@@ -198,23 +198,13 @@ public class Term
 	}
 
 	/**
-	 * Returns the GO ID as a string.
-	 *
-	 * @return go:accession
-	 */
-	public String getIDAsString()
-	{
-		return id.toString();
-	}
-
-	/**
-	 * Returns the Term ID as a string (faster than {@link #getIDAsString()}).
+	 * Returns the Term ID as a string (uses StringBuilder)
 	 *
 	 * @return term:id
 	 */
-	public String getIDAsStringFaster()
+	public String getIDAsString()
 	{
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append(id.getPrefix());
 		buffer.append(":");
 		if 		(id.id<10) 		buffer.append("000000");
