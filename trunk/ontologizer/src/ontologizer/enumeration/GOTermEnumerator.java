@@ -127,9 +127,9 @@ public class GOTermEnumerator implements Iterable<TermID>
 		/* At first add the direct counts and remember the terms */
 		for (Association association : geneAssociations)
 		{
-			TermID goTermID = association.getTermID();
+			TermID termID = association.getTermID();
 		
-			if (!graph.isRelevantTermID(goTermID))
+			if (!graph.isRelevantTermID(termID))
 				continue;
 			
 			if (evidences != null)
@@ -138,13 +138,13 @@ public class GOTermEnumerator implements Iterable<TermID>
 					continue;
 			}
 			
-			GOTermAnnotatedGenes termGenes = map.get(goTermID);
+			GOTermAnnotatedGenes termGenes = map.get(termID);
 			
 			/* Create an entry if it doesn't exist */
 			if (termGenes == null)
 			{
 				termGenes = new GOTermAnnotatedGenes();
-				map.put(goTermID,termGenes);
+				map.put(termID,termGenes);
 			}
 			
 			termGenes.directAnnotated.add(geneName);
