@@ -122,7 +122,7 @@ public class GOTermEnumerator implements Iterable<TermID>
 		 * completely.
 		 */
 		
-		HashSet<TermID> goTermSet = new HashSet<TermID>();
+		HashSet<TermID> termIDSet = new HashSet<TermID>();
 
 		/* At first add the direct counts and remember the terms */
 		for (Association association : geneAssociations)
@@ -150,7 +150,7 @@ public class GOTermEnumerator implements Iterable<TermID>
 			termGenes.directAnnotated.add(geneName);
 			
 			/* This term is annotated */
-			goTermSet.add(association.getTermID());
+			termIDSet.add(association.getTermID());
 		}
 
 		/* Then add the total counts */
@@ -199,7 +199,7 @@ public class GOTermEnumerator implements Iterable<TermID>
 		}
 
 		/* Walk from goTerm to source by using vistingGOVertex */
-		graph.walkToSource(goTermSet,vistingGOVertex);
+		graph.walkToSource(termIDSet,vistingGOVertex);
 	}
 
 	/**
