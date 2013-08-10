@@ -602,7 +602,9 @@ public class Ontology implements Iterable<Term>
 
 			if (isRootTerm(id)) t = rootTerm;
 			else t = termContainer.get(id);
-			assert (t != null);
+			if (t == null)
+				throw new IllegalArgumentException("\"" + id + "\" could not be mapped to a known term!");
+
 			termList.add(t);
 		}
 		return termList;
