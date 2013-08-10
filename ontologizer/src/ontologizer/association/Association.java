@@ -129,6 +129,14 @@ public class Association
 		initFromLine(this, line, null);
 	}
 
+	/**
+	 * Constructs a new association object.
+	 * 
+	 * @param db_object_symbol the name of the object
+	 * @param goIntID the of the term to which this object is annotated
+	 * 
+	 * @deprecated as it works only for Gene Ontology IDs.
+	 */
 	public Association(ByteString db_object_symbol, int goIntID)
 	{
 		DB_Object = synonym = new ByteString("");
@@ -136,18 +144,33 @@ public class Association
 		termID = new TermID(goIntID);
 	}
 
-	public Association(ByteString db_object_symbol, TermID goID)
+
+	/**
+	 * Constructs a new association object annotating
+	 * the given db_object_symbol to the given termID.
+	 * 
+	 * @param db_object_symbol
+	 * @param termID
+	 */
+	public Association(ByteString db_object_symbol, TermID termID)
 	{
 		DB_Object = synonym = new ByteString("");
 		DB_Object_Symbol = db_object_symbol;
-		this.termID = goID;
+		this.termID = termID;
 	}
 
-	public Association(ByteString db_object_symbol, String goTerm)
+	/**
+	 * Constructs a new association object annotating
+	 * the given db_object_symbol with the given term.
+	 *  
+	 * @param db_object_symbol
+	 * @param term as full term with prefix and number.
+	 */
+	public Association(ByteString db_object_symbol, String term)
 	{
 		DB_Object = synonym = new ByteString("");
 		DB_Object_Symbol = db_object_symbol;
-		termID = new TermID(goTerm);
+		termID = new TermID(term);
 	}
 
 	private Association() {};
