@@ -27,7 +27,7 @@ import java.util.List;
  * tabulating the counts of functions found in a cluster
  * </P>
  * 
- * @author Peter Robinson, Sebastian Bauer, Sebastian Kšhler
+ * @author Peter Robinson, Sebastian Bauer, Sebastian Koehler
  */
 
 public class Term
