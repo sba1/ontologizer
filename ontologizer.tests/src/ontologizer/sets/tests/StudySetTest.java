@@ -155,6 +155,28 @@ class InternalDatafiles extends Datafiles
 
 public class StudySetTest extends TestCase
 {
+	public void testEnumerateWithNonExistentTerms()
+	{
+		AssociationParserTest2 apt = new AssociationParserTest2();
+		apt.run();
+		Ontology o = new Ontology(apt.container);
+
+		AssociationContainer assoc = new AssociationContainer();
+		Association a = new Association(new ByteString("Test"), "TEST:0000000");
+		assoc.addAssociation(a);
+
+		StudySet study = new StudySet();
+		study.addGene(new ByteString("Test"), "");
+
+		try
+		{
+			study.enumerateGOTerms(o,  assoc);
+			Assert.assertTrue(true);
+		} catch (IllegalArgumentException iae)
+		{
+		}
+	}
+
 	public void testEnumerateOnInternal()
 	{
 		InternalDatafiles idf = new InternalDatafiles();
