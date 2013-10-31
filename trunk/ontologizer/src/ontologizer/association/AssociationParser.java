@@ -140,6 +140,7 @@ public class AssociationParser
 				is = new GZIPInputStream(fis);
 			} catch (IOException exp)
 			{
+				fis.close();
 				fis = new FileInputStream(filename);
 				is = fis;
 			}
