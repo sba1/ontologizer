@@ -234,7 +234,7 @@ public class AssociationParser
 	 * @throws IOException 
 	 */
 	@SuppressWarnings("unused")
-	private void importAssociationFile(BufferedInputStream is, FileInputStream fis, final HashSet<ByteString> names, final TermContainer terms, Collection<String> evidences, final IAssociationParserProgress progress) throws IOException
+	private void importAssociationFile(InputStream is, FileInputStream fis, final HashSet<ByteString> names, final TermContainer terms, Collection<String> evidences, final IAssociationParserProgress progress) throws IOException
 	{
 		final HashSet<ByteString> myEvidences; /* Evidences converted to ByteString */
 		if (evidences != null)
