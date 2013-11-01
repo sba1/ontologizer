@@ -102,5 +102,11 @@ public class AbstractByteLineScannerTest extends TestCase
 		TestByteLineScanner tbls = new TestByteLineScanner(bais);
 		tbls.scan();
 		assertEquals(12, tbls.available());
+
+		byte [] expected = "test2\n\test3\n".getBytes();
+		byte [] actual = tbls.availableBuffer();
+		assertEquals(12, expected.length);
+		for (int i=0; i<12; i++)
+			assertEquals(expected[i], actual[i]);
 	}
 }
