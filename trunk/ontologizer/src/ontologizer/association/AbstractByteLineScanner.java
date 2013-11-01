@@ -13,6 +13,7 @@ abstract public class AbstractByteLineScanner
 {
 	private InputStream is;
 	private final int BUF_SIZE = 65536;
+	private int available;
 
 	byte [] byteBuf = new byte[2*BUF_SIZE];
 
@@ -37,7 +38,10 @@ abstract public class AbstractByteLineScanner
 				if (byteBuf[pos] == '\n')
 				{
 					if (!newLine(byteBuf, line_start, pos - line_start))
+					{
+						available = read - pos  - 1;
 						break outer;
+					}
 					line_start = pos + 1;
 				}
 				pos++;
@@ -52,12 +56,22 @@ abstract public class AbstractByteLineScanner
 	}
 
 	/**
+	 * Returns the number of bytes that are still available in the buffer after
+	 * the reading has been aborted.
+	 *
+	 * @return
+	 */
+	public int available() {
+		return available;
+	}
+
+	/**
 	 * Called whenever a new line was encountered.
 	 *
 	 * @param buf
 	 * @param start
 	 * @param len
-	 * @return
+	 * @return false for aborting the reading
 	 */
 	abstract public boolean newLine(byte [] buf, int start, int len);
 }
