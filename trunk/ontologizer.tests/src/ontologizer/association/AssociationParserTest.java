@@ -31,7 +31,24 @@ public class AssociationParserTest extends TestCase
 		a = ap.getAssociations().get(49088);
 		Assert.assertEquals("S000004009",a.getDB_Object().toString());
 	}
-	
+
+	public void testSkipHeader() throws IOException, OBOParserException
+	{	
+		File tmp = File.createTempFile("test", ".gaf");
+		BufferedWriter bw = new BufferedWriter(new FileWriter(tmp));
+		bw.write("# Comment1\n");
+		bw.write("DB\tDBOBJID2\tSYMBOL\t\tGO:0005760\tPMID:00000\tEVIDENCE\t\tC\t\tgene\ttaxon:4932\t20121212\tSBA\n");
+		bw.flush();
+
+		OBOParser oboParser = new OBOParser(OBO_FILE);
+		oboParser.doParse();
+
+		AssociationParser ap = new AssociationParser(tmp.getAbsolutePath(), new TermContainer(oboParser.getTermMap(), "", ""));
+		AssociationContainer assoc = new AssociationContainer(ap.getAssociations(), ap.getSynonym2gene(), ap.getDbObject2gene());
+
+		Assert.assertEquals(1, assoc.getAllAnnotatedGenes().size());
+	}
+
 	public void testAmbiguousGAFCaseA() throws IOException, OBOParserException
 	{
 		
