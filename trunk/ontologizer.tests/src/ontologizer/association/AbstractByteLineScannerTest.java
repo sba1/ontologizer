@@ -81,4 +81,26 @@ public class AbstractByteLineScannerTest extends TestCase
 		tbls.scan();
 		assertEquals(2, tbls.lines);
 	}
+
+	public void testAvailable() throws IOException
+	{
+		ByteArrayInputStream bais = new ByteArrayInputStream("test\ntest2\n\test3\n".getBytes());
+		class TestByteLineScanner extends AbstractByteLineScanner
+		{
+			public TestByteLineScanner(InputStream is)
+			{
+				super(is);
+			}
+
+			@Override
+			public boolean newLine(byte[] buf, int start, int len)
+			{
+				return false;
+			}
+		}
+
+		TestByteLineScanner tbls = new TestByteLineScanner(bais);
+		tbls.scan();
+		assertEquals(12, tbls.available());
+	}
 }
