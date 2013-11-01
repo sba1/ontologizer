@@ -144,27 +144,41 @@ public class AssociationParser
 				fis = new FileInputStream(filename);
 				is = fis;
 			}
-			BufferedInputStream bis = new BufferedInputStream(is);
-			bis.mark(4096);
 
-			BufferedReader in = new BufferedReader(new InputStreamReader(bis));
-
-			/* Skip affy comments */
-			String line;
-			while ((line = in.readLine()) != null)
-				if (!line.startsWith("#")) break;
-
-			if (line != null)
-			{
-				bis.reset();
-
-				if (line.startsWith("\"Probe Set ID\",\"GeneChip Array\""))
+			final StringBuilder strBuilder = new StringBuilder();
+			PushbackInputStream pis = new PushbackInputStream(is, 65536 + 1024);
+			AbstractByteLineScanner abls = new AbstractByteLineScanner(pis) {
+				@Override
+				public boolean newLine(byte[] buf, int start, int len)
 				{
-					importAffyFile(new BufferedReader(new InputStreamReader(bis)),fis,names,terms,progress);
+					if (len > 0 && buf[start] != '#')
+					{
+						strBuilder.append(new String(buf, start, len));
+						return false;
+					}
+					return true;
+				}
+			};
+			abls.scan();
+
+			if (strBuilder.length() != 0)
+			{
+				String str = strBuilder.toString();
+				byte [] line = str.getBytes();
+
+				/* Create buffer with info that is still relevant and push it back to the stream */
+				byte [] buf = new byte[line.length + abls.available()];
+				System.arraycopy(line, 0, buf, 0, line.length);
+				System.arraycopy(abls.availableBuffer(), 0, buf, line.length, abls.available());
+				pis.unread(buf);
+
+				if (str.startsWith("\"Probe Set ID\",\"GeneChip Array\""))
+				{
+					importAffyFile(new BufferedReader(new InputStreamReader(pis)),fis,names,terms,progress);
 					fileType = Type.AFFYMETRIX;
 				} else
 				{
-					importAssociationFile(bis,fis,names,terms,evidences,progress);
+					importAssociationFile(pis,fis,names,terms,evidences,progress);
 					fileType = Type.GAF;
 				}
 			}
