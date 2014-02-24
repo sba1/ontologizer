@@ -3,10 +3,9 @@ package ontologizer.go;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
  * This class provides a representation of individual GOTerms <BR />
-
+ * 
  * Example: <BR />
  * [Term] <BR />
  * id: GO:0000018 <BR />
@@ -30,43 +29,47 @@ import java.util.List;
  * @author Peter Robinson, Sebastian Bauer, Sebastian Koehler
  */
 
-public class Term
-{
+public class Term {
 	/** The id ("accession number") of this GO term */
 	private TermID id;
 
 	/** The short human readable name of the id */
 	private String name;
 
-	/** The definition of this term. This might be null if this information is not available */
+	/**
+	 * The definition of this term. This might be null if this information is
+	 * not available
+	 */
 	private String definition;
-	
+
 	/** The parents of the this term */
-	private ParentTermID [] parents;
+	private ParentTermID[] parents;
 
 	/** The term's alternatives */
 	private ArrayList<TermID> alternatives;
-	
+
 	/** The term's alternatives */
-	private TermID [] equivalents;
-	
+	private TermID[] equivalents;
+
 	/** The synonyms of this term, as read from the obo file. */
 	private String[] synonyms;
-	
+
 	/** The intersections tags of this term, as read from the obo file. */
 	private String[] intersections;
 
 	/** The term's subsets */
-	private Subset [] subsets;
-	
+	private Subset[] subsets;
+
 	/** The term's xrefs */
-	private TermXref [] xrefs;
+	private TermXref[] xrefs;
 
 	/** The term's name space */
 	private Namespace namespace;
 
 	/** Whether term is declared as obsolete */
 	private boolean obsolete;
+
+	private double informationContent = -1;
 
 	/**
 	 * @param id
@@ -77,18 +80,16 @@ public class Term
 	 *            A character representing biological_process,
 	 *            cellular_component, or molecular_function or null.
 	 * @param parentList
-	 *            The parent terms of this term including the relation
-	 *            type. The supplied list can be reused after the object
-	 *            have been constructed.
+	 *            The parent terms of this term including the relation type. The
+	 *            supplied list can be reused after the object have been
+	 *            constructed.
 	 */
-	public Term(TermID id, String name, Namespace namespace, ArrayList<ParentTermID> parentList)
-	{
+	public Term(TermID id, String name, Namespace namespace, ArrayList<ParentTermID> parentList) {
 		parents = new ParentTermID[parentList.size()];
 		parentList.toArray(parents);
-		init(id,name,namespace,parents);
+		init(id, name, namespace, parents);
 	}
 
-	
 	/**
 	 * @param strId
 	 *            An identifier such as GO:0045174.
@@ -97,17 +98,17 @@ public class Term
 	 * @param namespace
 	 *            The name space attribute of the term or null.
 	 * @param parentList
-	 *            The parent terms of this term including the relation
-	 *            type. The supplied list can be reused after the object
-	 *            have been constructed.
-	 *            
-	 * @throws IllegalArgumentException if strId is malformatted.
+	 *            The parent terms of this term including the relation type. The
+	 *            supplied list can be reused after the object have been
+	 *            constructed.
+	 * 
+	 * @throws IllegalArgumentException
+	 *             if strId is malformatted.
 	 */
-	public Term(String strId, String name, Namespace namespace, ArrayList<ParentTermID> parentList)
-	{
+	public Term(String strId, String name, Namespace namespace, ArrayList<ParentTermID> parentList) {
 		parents = new ParentTermID[parentList.size()];
 		parentList.toArray(parents);
-		init(new TermID(strId),name,namespace,parents);
+		init(new TermID(strId), name, namespace, parents);
 	}
 
 	/**
@@ -118,14 +119,12 @@ public class Term
 	 * @param namespace
 	 *            The name space attribute of the term or null.
 	 * @param parents
-	 *            The parent terms of this term including the relation
-	 *            type.
+	 *            The parent terms of this term including the relation type.
 	 */
-	public Term(TermID id, String name, Namespace namespace, ParentTermID...parents)
-	{
-		init(id,name,namespace,parents);
+	public Term(TermID id, String name, Namespace namespace, ParentTermID... parents) {
+		init(id, name, namespace, parents);
 	}
-	
+
 	/**
 	 * Here, the namespace is set to UNKOWN.
 	 * 
@@ -134,14 +133,11 @@ public class Term
 	 * @param name
 	 *            A string such as glutathione dehydrogenase.
 	 * @param parents
-	 *            The parent terms of this term including the relation
-	 *            type.
+	 *            The parent terms of this term including the relation type.
 	 */
-	public Term(TermID id, String name, ParentTermID...parents)
-	{
-		init(id,name,null,parents);
+	public Term(TermID id, String name, ParentTermID... parents) {
+		init(id, name, null, parents);
 	}
-
 
 	/**
 	 * Here, the namespace is set to UNKOWN.
@@ -151,13 +147,12 @@ public class Term
 	 * @param name
 	 *            A string such as glutathione dehydrogenase.
 	 * @param parents
-	 *            The parent terms of this term including the relation
-	 *            type.
-	 * @throws IllegalArgumentException if strId is malformatted.
+	 *            The parent terms of this term including the relation type.
+	 * @throws IllegalArgumentException
+	 *             if strId is malformatted.
 	 */
-	public Term(String strId, String name, ParentTermID...parents)
-	{
-		init(new TermID(strId),name,null,parents);
+	public Term(String strId, String name, ParentTermID... parents) {
+		init(new TermID(strId), name, null, parents);
 	}
 
 	/**
@@ -168,13 +163,12 @@ public class Term
 	 * @param namespace
 	 *            The name space attribute of the term or null.
 	 * @param parents
-	 *            The parent terms of this term including the relation
-	 *            type.
-	 * @throws IllegalArgumentException if strId is malformatted.
+	 *            The parent terms of this term including the relation type.
+	 * @throws IllegalArgumentException
+	 *             if strId is malformatted.
 	 */
-	public Term(String strId, String name, Namespace namespace, ParentTermID...parents)
-	{
-		init(new TermID(strId),name,namespace,parents);
+	public Term(String strId, String name, Namespace namespace, ParentTermID... parents) {
+		init(new TermID(strId), name, namespace, parents);
 	}
 
 	/**
@@ -185,12 +179,11 @@ public class Term
 	 * @param namespace
 	 * @param parents
 	 */
-	private void init(TermID id, String name, Namespace namespace, ParentTermID [] parents)
-	{
+	private void init(TermID id, String name, Namespace namespace, ParentTermID[] parents) {
 		this.id = id;
 		this.name = name;
 		this.parents = parents;
-		
+
 		if (namespace == null)
 			namespace = Namespace.UNKOWN_NAMESPACE;
 		else
@@ -202,36 +195,39 @@ public class Term
 	 * 
 	 * @return term:id
 	 */
-	public String getIDAsString()
-	{
+	public String getIDAsString() {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append(id.getPrefix());
 		buffer.append(":");
-		if 		(id.id<10) 		buffer.append("000000");
-		else if (id.id<100) 	buffer.append("00000");
-		else if (id.id<1000) 	buffer.append("0000");
-		else if (id.id<10000) 	buffer.append("000");
-		else if (id.id<100000) 	buffer.append("00");
-		else if (id.id<1000000)	buffer.append("0");
+		if (id.id < 10)
+			buffer.append("000000");
+		else if (id.id < 100)
+			buffer.append("00000");
+		else if (id.id < 1000)
+			buffer.append("0000");
+		else if (id.id < 10000)
+			buffer.append("000");
+		else if (id.id < 100000)
+			buffer.append("00");
+		else if (id.id < 1000000)
+			buffer.append("0");
 		buffer.append(id.id);
 		return buffer.toString();
 	}
-	
+
 	/**
 	 * Returns the GO ID as TermID object.
-	 *  
+	 * 
 	 * @return the id
 	 */
-	public TermID getID()
-	{
+	public TermID getID() {
 		return id;
 	}
 
 	/**
 	 * @return go:name
 	 */
-	public String getName()
-	{
+	public String getName() {
 		return name;
 	}
 
@@ -240,9 +236,9 @@ public class Term
 	 * 
 	 * @return
 	 */
-	public Namespace getNamespace()
-	{
-		if (namespace == null) return Namespace.UNKOWN_NAMESPACE;
+	public Namespace getNamespace() {
+		if (namespace == null)
+			return Namespace.UNKOWN_NAMESPACE;
 		return namespace;
 	}
 
@@ -251,26 +247,28 @@ public class Term
 	 * 
 	 * @return
 	 */
-	public String getNamespaceAsString()
-	{
-		if (namespace == null) return Namespace.UNKOWN_NAMESPACE.getName();
+	public String getNamespaceAsString() {
+		if (namespace == null)
+			return Namespace.UNKOWN_NAMESPACE.getName();
 		return namespace.getName();
 	}
-	
+
 	/**
-	 * Returns the abbreviated string for the term's namespace
-	 * if possible.
+	 * Returns the abbreviated string for the term's namespace if possible.
 	 * 
 	 * @return
 	 */
-	public String getNamespaceAsAbbrevString()
-	{
-		if (namespace == null) return Namespace.UNKOWN_NAMESPACE.getName();
+	public String getNamespaceAsAbbrevString() {
+		if (namespace == null)
+			return Namespace.UNKOWN_NAMESPACE.getName();
 		String nameSpace = namespace.getName();
-		
-		if (nameSpace.equalsIgnoreCase("biological_process")) return "B";
-		if (nameSpace.equalsIgnoreCase("molecular_function")) return "M";
-		if (nameSpace.equalsIgnoreCase("cellular_component")) return "C";
+
+		if (nameSpace.equalsIgnoreCase("biological_process"))
+			return "B";
+		if (nameSpace.equalsIgnoreCase("molecular_function"))
+			return "M";
+		if (nameSpace.equalsIgnoreCase("cellular_component"))
+			return "C";
 		return nameSpace;
 	}
 
@@ -279,29 +277,24 @@ public class Term
 	 * 
 	 * @return
 	 */
-	public ParentTermID[] getParents()
-	{
+	public ParentTermID[] getParents() {
 		return parents;
 	}
 
 	@Override
-	public String toString()
-	{
-		return name+ " ("+id.toString() +")";
+	public String toString() {
+		return name + " (" + id.toString() + ")";
 	}
-	
+
 	@Override
-	public int hashCode()
-	{
+	public int hashCode() {
 		/* We take the hash code of the id */
 		return id.hashCode();
 	}
-	
+
 	@Override
-	public boolean equals(Object obj)
-	{
-		if (obj instanceof Term)
-		{
+	public boolean equals(Object obj) {
+		if (obj instanceof Term) {
 			Term goTerm = (Term) obj;
 			return goTerm.id.equals(id);
 		}
@@ -313,16 +306,14 @@ public class Term
 	 * 
 	 * @param currentObsolete
 	 */
-	protected void setObsolete(boolean currentObsolete)
-	{
+	protected void setObsolete(boolean currentObsolete) {
 		obsolete = currentObsolete;
 	}
-	
+
 	/**
 	 * @return whether term is declared as obsolete
 	 */
-	public boolean isObsolete()
-	{
+	public boolean isObsolete() {
 		return obsolete;
 	}
 
@@ -331,18 +322,17 @@ public class Term
 	 * 
 	 * @return the definition or null.
 	 */
-	public String getDefinition()
-	{
+	public String getDefinition() {
 		return definition;
 	}
 
 	/**
 	 * Sets the definition of this term.
 	 * 
-	 * @param definition defines the definition ;)
+	 * @param definition
+	 *            defines the definition ;)
 	 */
-	public void setDefinition(String definition)
-	{
+	public void setDefinition(String definition) {
 		this.definition = definition;
 	}
 
@@ -352,20 +342,17 @@ public class Term
 		for (TermID t : currentEquivalents)
 			equivalents[i++] = t;
 	}
-	
-	public TermID [] getEquivalents()
-	{
+
+	public TermID[] getEquivalents() {
 		return equivalents;
 	}
 
-	
 	/**
 	 * This sets the alternatives of the term.
 	 * 
 	 * @param altList
 	 */
-	public void setAlternatives(List<TermID> altList)
-	{
+	public void setAlternatives(List<TermID> altList) {
 		this.alternatives = new ArrayList<TermID>();
 		this.alternatives.addAll(altList);
 	}
@@ -375,72 +362,63 @@ public class Term
 	 * 
 	 * @return
 	 */
-	public ArrayList<TermID> getAlternatives()
-	{
+	public ArrayList<TermID> getAlternatives() {
 		return alternatives;
 	}
-
 
 	/**
 	 * Sets the subsets.
 	 * 
 	 * @param newSubsets
 	 */
-	public void setSubsets(ArrayList<Subset> newSubsets)
-	{
+	public void setSubsets(ArrayList<Subset> newSubsets) {
 		subsets = new Subset[newSubsets.size()];
 		newSubsets.toArray(subsets);
 	}
-	
+
 	/**
 	 * Returns the subsets.
 	 * 
 	 * @return
 	 */
-	public Subset[] getSubsets()
-	{
+	public Subset[] getSubsets() {
 		return subsets;
 	}
 
-
 	public void setSynonyms(ArrayList<String> currentSynonyms) {
 
-		if (currentSynonyms.size() > 0){
+		if (currentSynonyms.size() > 0) {
 			synonyms = new String[currentSynonyms.size()];
 			currentSynonyms.toArray(synonyms);
 		}
 	}
 
-
 	public String[] getSynonyms() {
 		return synonyms;
 	}
 
-
 	public void setXrefs(ArrayList<TermXref> currentXrefs) {
-		if (currentXrefs.size() > 0){
+		if (currentXrefs.size() > 0) {
 			xrefs = new TermXref[currentXrefs.size()];
 			currentXrefs.toArray(xrefs);
 		}
 	}
-	
+
 	public TermXref[] getXrefs() {
 		return xrefs;
 	}
 
-
 	public void setIntersections(ArrayList<String> currentIntersections) {
-		if (currentIntersections.size() > 0){
+		if (currentIntersections.size() > 0) {
 			intersections = new String[currentIntersections.size()];
 			currentIntersections.toArray(intersections);
 		}
-		
+
 	}
-	
+
 	public String[] getIntersections() {
 		return intersections;
 	}
-
 
 	public void addAlternativeId(TermID id2) {
 		if (this.alternatives == null)
@@ -448,6 +426,12 @@ public class Term
 		this.alternatives.add(id2);
 	}
 
+	public void setInformationContent(double informationContent) {
+		this.informationContent = informationContent;
+	}
+
+	public double getInformationContent() {
+		return informationContent;
+	}
 
 }
-
