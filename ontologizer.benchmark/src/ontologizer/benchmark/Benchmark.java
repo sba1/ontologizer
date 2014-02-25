@@ -251,8 +251,11 @@ public class Benchmark
 		/* Start */
 		int numProcessors = Runtime.getRuntime().availableProcessors();
 
-		GlobalPreferences.setProxyPort(888);
-		GlobalPreferences.setProxyHost("realproxy.charite.de");
+		if (cliConfig.proxy != null)
+		{
+			GlobalPreferences.setProxyPort(cliConfig.proxyPort);
+			GlobalPreferences.setProxyHost(cliConfig.proxy);
+		}
 
 		String oboPath = "http://www.geneontology.org/ontology/gene_ontology_edit.obo";
 		String assocPath = "http://cvsweb.geneontology.org/cgi-bin/cvsweb.cgi/go/gene-associations/gene_association.fb.gz?rev=HEAD";
