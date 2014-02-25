@@ -456,11 +456,9 @@ public class Benchmark
 			{
 				for (final Combination combi : combinationList)
 				{
-					current++;
-
 					es.execute(createSingleRunRunnable(rnd, assoc, graph, completePop,
 							completePopEnumerator, allGenesArray, out, outTime,
-							numberOfRuns, sampler, ALPHA, BETA, combi, current,
+							numberOfRuns, sampler, ALPHA, BETA, combi, ++current,
 							combi.termCombi));
 
 				}
