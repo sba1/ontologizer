@@ -260,10 +260,25 @@ public class Benchmark
 
 		String oboPath = cliConfig.obo;
 		String assocPath = cliConfig.assoc;
+		File outputDirectory = new File(cliConfig.outputDirectory==null?System.getProperty("user.dir"):cliConfig.outputDirectory);
+		if (outputDirectory.exists() && !outputDirectory.isDirectory())
+		{
+			System.err.println("The specified name does not refer to a directory");
+			System.exit(1);
+		}
+
+		if (!outputDirectory.exists())
+		{
+			if (!outputDirectory.mkdirs())
+			{
+				System.err.println("Failed to create the specifed output directory.");
+				System.exit(1);
+			}
+		}
 
 		/* Write out the seed so it can be recovered. All the randomness is based upon this seed */
 		long seed = System.nanoTime();
-		new PrintWriter(new File("seed")).println(seed);
+		new PrintWriter(new File(outputDirectory, "seed")).println(seed);
 
 		final Random rnd = new Random(seed);
 
@@ -324,7 +339,7 @@ public class Benchmark
 
 
 		/**********************************************************/
-		final PrintWriter out = new PrintWriter(new File("result-" + (ORIGINAL_SAMPLING?"tn":"fp") + ".txt"));
+		final PrintWriter out = new PrintWriter(new File(outputDirectory, "result-" + (ORIGINAL_SAMPLING?"tn":"fp") + ".txt"));
 
 		/* Prepare header */
 		out.print("term\t");
@@ -349,7 +364,7 @@ public class Benchmark
 		out.println("beta");
 
 		/**********************************************************/
-		final PrintWriter outTime = new PrintWriter(new File("result-time.txt"));
+		final PrintWriter outTime = new PrintWriter(new File(outputDirectory, "result-time.txt"));
 
 		/* Prepare header */
 		outTime.print("run");
