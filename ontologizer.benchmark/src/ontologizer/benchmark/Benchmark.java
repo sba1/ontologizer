@@ -494,8 +494,10 @@ public class Benchmark
 	 * @param outTime
 	 * @param numberOfRuns
 	 * @param sampler
-	 * @param alpha the alpha value (false positive rate) used for simulation.
-	 * @param beta the beta value (false negative rate) used for simulation.
+	 * @param alpha the alpha value (false positive rate) used for simulation. If smaller than 0
+	 *    then a valued study set is generated.
+	 * @param beta the beta value (false negative rate) used for simulation. If smaller than 0
+	 *    then a valued study set is generated.
 	 * @param combi
 	 * @param currentRun
 	 * @param termCombi
@@ -528,9 +530,19 @@ public class Benchmark
 							wantedActiveTerms.put(tid, null);
 					}
 
-					StudySet newStudySet = generateStudySet(studyRnd, assoc, graph,
-							completePopEnumerator, allGenesArray, sampler,
-							wantedActiveTerms,alpha,beta);
+					StudySet newStudySet;
+
+					if (alpha < 0 || beta < 0)
+					{
+						newStudySet = generateValuedStudySet(studyRnd, assoc,
+								graph, completePopEnumerator, allGenesArray,
+								wantedActiveTerms.keySet());
+					} else
+					{
+						newStudySet = generateStudySet(studyRnd, assoc, graph,
+								completePopEnumerator, allGenesArray, sampler,
+								wantedActiveTerms,alpha,beta);
+					}
 
 					if (newStudySet != null)
 					{
