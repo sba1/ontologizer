@@ -456,14 +456,12 @@ public class Benchmark
 			{
 				for (final Combination combi : combinationList)
 				{
-					Random studyRnd = new Random(rnd.nextLong());
-
 					current++;
 
 					es.execute(createSingleRunRunnable(rnd, assoc, graph, completePop,
 							completePopEnumerator, allGenesArray, out, outTime,
 							numberOfRuns, sampler, ALPHA, BETA, combi, current,
-							combi.termCombi, studyRnd));
+							combi.termCombi));
 
 				}
 			}
@@ -504,7 +502,7 @@ public class Benchmark
 	 * @param studyRnd
 	 * @return
 	 */
-	private static Runnable createSingleRunRunnable(final Random rnd,
+	private static Runnable createSingleRunRunnable(Random rnd,
 			final AssociationContainer assoc, final Ontology graph,
 			final PopulationSet completePop,
 			final GOTermEnumerator completePopEnumerator,
@@ -512,7 +510,10 @@ public class Benchmark
 			final PrintWriter outTime, final int numberOfRuns,
 			final StudySetSampler sampler, final double alpha,
 			final double beta, final Combination combi, final int currentRun,
-			final ArrayList<TermID> termCombi, final Random studyRnd) {
+			final ArrayList<TermID> termCombi)
+	{
+		final Random studyRnd = new Random(rnd.nextLong());
+
 		return new Runnable()
 		{
 			public void run()
