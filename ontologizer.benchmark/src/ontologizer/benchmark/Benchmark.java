@@ -257,8 +257,8 @@ public class Benchmark
 			GlobalPreferences.setProxyHost(cliConfig.proxy);
 		}
 
-		String oboPath = "http://www.geneontology.org/ontology/gene_ontology_edit.obo";
-		String assocPath = "http://cvsweb.geneontology.org/cgi-bin/cvsweb.cgi/go/gene-associations/gene_association.fb.gz?rev=HEAD";
+		String oboPath = cliConfig.obo;
+		String assocPath = cliConfig.assoc;
 
 		/* Write out the seed so it can be recovered. All the randomness is based upon this seed */
 		long seed = System.nanoTime();
