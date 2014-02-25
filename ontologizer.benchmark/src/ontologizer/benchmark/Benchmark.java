@@ -181,7 +181,7 @@ public class Benchmark
 //		m.testCorrection = new Bonferroni();
 //		calcMethods.add(m);
 		calcMethods.add(new Method("Parent-Child-Union","pcu"));
-		calcMethods.add(new Method("GenGO","gg"));
+//		calcMethods.add(new Method("GenGO","gg"));
 		calcMethods.add(new Method("Topology-Weighted","tweight"));
 
 		m = new Method("MGSA","b2g.em.pop");
