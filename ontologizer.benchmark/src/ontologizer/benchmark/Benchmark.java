@@ -102,6 +102,13 @@ public class Benchmark
 
 	private static AbstractTestCorrection testCorrection = new None();
 
+	static class Combination
+	{
+		ArrayList<TermID> termCombi;
+		boolean isSenseful;
+		boolean hasVaryingBeta;
+	}
+
 	static class Method 
 	{
 		public String method;
@@ -373,13 +380,6 @@ public class Benchmark
 		outTime.println();
 		
 		/* We start with the term combinations */
-		class Combination
-		{
-			ArrayList<TermID> termCombi;
-			boolean isSenseful;
-			boolean hasVaryingBeta;
-		}
-
 		KSubsetSampler<TermID> kSubsetSampler = new KSubsetSampler<TermID>(goodTerms,rnd);
 		ArrayList<Combination> combinationList = new ArrayList<Combination>();
 		for (int i=MIN_TERMS;i<=MAX_TERMS;i++)
