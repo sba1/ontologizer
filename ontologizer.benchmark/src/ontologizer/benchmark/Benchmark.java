@@ -864,7 +864,7 @@ public class Benchmark
 			AssociationContainer assoc, Ontology graph,
 			GOTermEnumerator completePopEnumerator,
 			ByteString[] allGenesArray,
-			HashSet<TermID> wantedActiveTerms)
+			Set<TermID> wantedActiveTerms)
 	{
 		/* Find out which genes are annotated to the term (genes are put into a study set) */
 		HashMap<TermID,StudySet> wantedActiveTerm2StudySet = new HashMap<TermID,StudySet>();
