@@ -593,7 +593,7 @@ public class Benchmark
 								Bayes2GOCalculation b2g = (Bayes2GOCalculation) calc;
 								calc = b2g = new Bayes2GOCalculation(b2g);
 
-								b2g.setSeed(rnd.nextLong());
+								b2g.setSeed(studyRnd.nextLong());
 								b2g.setUsePrior(m.usePrior);
 								b2g.setTakePopulationAsReference(m.takePopulationAsReference);
 								b2g.useRandomStart(m.useRandomStart);
