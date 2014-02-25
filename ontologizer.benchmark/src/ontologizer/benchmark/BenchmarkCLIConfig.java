@@ -40,4 +40,11 @@ public class BenchmarkCLIConfig
 
 	@Parameter(names={"-a", "--association"}, description="Name of the file containing associations from items to terms.", arity=1, required=true)
 	public String assoc;
+
+	@Parameter(names={"--proxy"}, description="Name of the proxy that shall be used for http connections.", arity=1)
+	public String proxy;
+
+	@Parameter(names={"--proxyPort"}, description="Port of the proxy that shall be used for http connections.", arity=1, validateWith=ProperPositiveInteger.class)
+	public int proxyPort;
+
 }
