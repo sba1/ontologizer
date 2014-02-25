@@ -5,17 +5,6 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 
 
-class ProperPositiveInteger implements IParameterValidator
-{
-	@Override
-	public void validate(String name, String value) throws ParameterException
-	{
-		int n = Integer.parseInt(value);
-		if (n < 1)
-			throw new ParameterException("Parameter " + name + " should be a proper positive integer(found " + value +")");
-	}
-}
-
 /**
  * The command line interface.
  *
@@ -23,6 +12,17 @@ class ProperPositiveInteger implements IParameterValidator
  */
 public class BenchmarkCLIConfig
 {
+	public static class ProperPositiveInteger implements IParameterValidator
+	{
+		@Override
+		public void validate(String name, String value) throws ParameterException
+		{
+			int n = Integer.parseInt(value);
+			if (n < 1)
+				throw new ParameterException("Parameter " + name + " should be a proper positive integer(found " + value +")");
+		}
+	}
+
 	@Parameter(names={"--term-combinations-per-run"}, description="How many term combinations per should be drawn per run", validateWith=ProperPositiveInteger.class)
 	public int termCombinationsPerRun = 300;
 
