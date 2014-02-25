@@ -627,8 +627,6 @@ public class Benchmark
 										b2g.setExpectedNumber(m.dt);
 									}
 								}
-//											System.out.println(p);
-//											result = b2g.calculateStudySet(graph, assoc, completePop, newStudySet, (double)termCombi.size() / completePopEnumerator.getTotalNumberOfAnnotatedTerms());
 							}
 
 							if (m.testCorrection != null) result = calc.calculateStudySet(graph, assoc, completePop, newStudySet, m.testCorrection);
