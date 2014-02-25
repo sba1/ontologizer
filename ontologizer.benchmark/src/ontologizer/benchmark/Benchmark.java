@@ -447,7 +447,7 @@ public class Benchmark
 
 		/* Generate study set and calculate */
 		int current = 0;
-		final int max = combinationList.size() * ALPHAs.length * BETAs.length;
+		final int numberOfRuns = combinationList.size() * ALPHAs.length * BETAs.length;
 		final StudySetSampler sampler = new StudySetSampler(completePop);
 
 		for (final double ALPHA : ALPHAs)
@@ -464,7 +464,7 @@ public class Benchmark
 
 					es.execute(createSingleRunRunnable(rnd, assoc, graph, completePop,
 							completePopEnumerator, allGenesArray, out, outTime,
-							max, sampler, ALPHA, BETA, combi, currentRun,
+							numberOfRuns, sampler, ALPHA, BETA, combi, currentRun,
 							termCombi, studyRnd));
 
 				}
