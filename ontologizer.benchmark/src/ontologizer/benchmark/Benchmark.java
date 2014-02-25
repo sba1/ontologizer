@@ -447,9 +447,10 @@ public class Benchmark
 		
 		/* Generate study set and calculate */
 		int current = 0;
-		final int numberOfRuns = combinationList.size() * ALPHAs.length * BETAs.length;
+		final int numberOfRuns = combinationList.size() * (ALPHAs.length * BETAs.length + 1);
 		final StudySetSampler sampler = new StudySetSampler(completePop);
 
+		/* The on/off simulation */
 		for (final double ALPHA : ALPHAs)
 		{
 			for (final double BETA : BETAs)
@@ -464,6 +465,17 @@ public class Benchmark
 				}
 			}
 		}
+
+		/* The valued simulation */
+		for (final Combination combi : combinationList)
+		{
+			es.execute(createSingleRunRunnable(rnd, assoc, graph, completePop,
+					completePopEnumerator, allGenesArray, out, outTime,
+					numberOfRuns, sampler, -1, -1, combi, ++current,
+					combi.termCombi));
+
+		}
+
 
 		es.shutdown();
 		while (!es.awaitTermination(60, TimeUnit.SECONDS));
