@@ -181,14 +181,14 @@ public class Benchmark
 //		m = new Method("Term-For-Term","tft.bf");
 //		m.testCorrection = new Bonferroni();
 //		calcMethods.add(m);
-		calcMethods.add(new Method("Parent-Child-Union","pcu"));
+//		calcMethods.add(new Method("Parent-Child-Union","pcu"));
 //		calcMethods.add(new Method("GenGO","gg"));
-		calcMethods.add(new Method("Topology-Weighted","tweight"));
+//		calcMethods.add(new Method("Topology-Weighted","tweight"));
 
-		m = new Method("MGSA","b2g.em.pop");
-		m.takePopulationAsReference = true;
-		m.em = true;
-		calcMethods.add(m);
+//		m = new Method("MGSA","b2g.em.pop");
+//		m.takePopulationAsReference = true;
+//		m.em = true;
+//		calcMethods.add(m);
 
 //		m = new Method("MGSA", "b2g.mcmc");
 //		m.mcmc = true;
