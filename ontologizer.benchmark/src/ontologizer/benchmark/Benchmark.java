@@ -456,16 +456,14 @@ public class Benchmark
 			{
 				for (final Combination combi : combinationList)
 				{
+					Random studyRnd = new Random(rnd.nextLong());
+
 					current++;
-		
-					final int currentRun = current;
-					final ArrayList<TermID> termCombi = combi.termCombi;
-					final Random studyRnd = new Random(rnd.nextLong());
 
 					es.execute(createSingleRunRunnable(rnd, assoc, graph, completePop,
 							completePopEnumerator, allGenesArray, out, outTime,
-							numberOfRuns, sampler, ALPHA, BETA, combi, currentRun,
-							termCombi, studyRnd));
+							numberOfRuns, sampler, ALPHA, BETA, combi, current,
+							combi.termCombi, studyRnd));
 
 				}
 			}
