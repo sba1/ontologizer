@@ -9,7 +9,7 @@ all:
 		--obo ../ontologizer.tests/data/gene_ontology.1_2.obo.gz \
 		--association ../ontologizer.tests/data/gene_association.sgd.gz \
 		--max-terms-per-combination 3 \
-		--term-combinations-per-run 50 \
+		--term-combinations-per-run 20 \
 		--output-dir /tmp/ontobench
 
 .PHONY: help
