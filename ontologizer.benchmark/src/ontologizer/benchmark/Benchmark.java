@@ -462,217 +462,14 @@ public class Benchmark
 					final ArrayList<TermID> termCombi = combi.termCombi;
 					final Random studyRnd = new Random(rnd.nextLong());
 
-					es.execute(new Runnable()
-					{
-						public void run()
-						{
-							try
-							{
-								System.out.println("***** " + currentRun + "/" + max + ": " + termCombi.size() + " terms" + " *****");
-
-								HashMap<TermID,Double> wantedActiveTerms = new HashMap<TermID,Double>();
-								for (TermID tid : termCombi)
-								{
-									if (combi.hasVaryingBeta)
-										wantedActiveTerms.put(tid, VARING_BETA[studyRnd.nextInt(VARING_BETA.length)]);
-									else
-										wantedActiveTerms.put(tid, null);
-								}
-
-								StudySet newStudySet = generateStudySet(studyRnd, assoc, graph,
-										completePopEnumerator, allGenesArray, sampler,
-										wantedActiveTerms,ALPHA,BETA);
-
-								if (newStudySet != null)
-								{
-									GOTermEnumerator studyEnumerator = newStudySet.enumerateGOTerms(graph, assoc);
-
-									long times[] = new long[calcMethods.size()];
-
-									/* Some buffer for the result */
-									StringBuilder builder = new StringBuilder(100000);
-									LinkedHashMap<TermID,Double []> terms2PVal = new LinkedHashMap<TermID,Double[]>();
-
-									/* Gather results */
-									for (int mPos = 0; mPos < calcMethods.size(); mPos++)
-									{
-										long start = System.currentTimeMillis();
-
-										Method m = calcMethods.get(mPos);
-										ICalculation calc = CalculationRegistry.getCalculationByName(m.method);
-
-										EnrichedGOTermsResult result;
-
-										if (calc instanceof ProbabilisticCalculation)
-										{
-											ProbabilisticCalculation prop = (ProbabilisticCalculation)calc;
-											calc = prop = new ProbabilisticCalculation(prop);
-
-											double realAlpha;
-											double realBeta;
-
-
-											if (newStudySet instanceof GeneratedStudySet)
-											{
-												GeneratedStudySet gs = (GeneratedStudySet) newStudySet;
-												realAlpha = gs.getAlpha();
-												realBeta = gs.getBeta();
-											} else
-											{
-												realAlpha = ALPHA;
-												realBeta = BETA;
-											}
-
-											prop.setDefaultP(1 - realBeta);
-											prop.setDefaultQ(realAlpha);
-										}
-
-										if (calc instanceof Bayes2GOCalculation)
-										{
-											/* Set some parameter */
-											Bayes2GOCalculation b2g = (Bayes2GOCalculation) calc;
-											calc = b2g = new Bayes2GOCalculation(b2g);
-
-											b2g.setSeed(rnd.nextLong());
-											b2g.setUsePrior(m.usePrior);
-											b2g.setTakePopulationAsReference(m.takePopulationAsReference);
-											b2g.useRandomStart(m.useRandomStart);
-											b2g.setIntegrateParams(m.integrateParams);
-											b2g.setMcmcSteps(1020000);
-											if (m.em)
-											{
-												b2g.setAlpha(B2GParam.Type.EM);
-												b2g.setBeta(B2GParam.Type.EM);
-												b2g.setExpectedNumber(B2GParam.Type.EM);
-											} else if (m.mcmc)
-											{
-												b2g.setAlpha(B2GParam.Type.MCMC);
-												b2g.setBeta(B2GParam.Type.MCMC);
-												if (m.useMaxBeta)
-													b2g.setBetaBounds(0,0.8);
-
-												if (m.useCorrectExpectedTerms)
-													b2g.setExpectedNumber(termCombi.size());
-												else
-													b2g.setExpectedNumber(B2GParam.Type.MCMC);
-											} else
-											{
-												if (m.dt == 0)
-												{
-													if (newStudySet instanceof GeneratedStudySet)
-													{
-														GeneratedStudySet gs = (GeneratedStudySet) newStudySet;
-														b2g.setAlpha(gs.getAlpha());
-														b2g.setBeta(gs.getBeta());
-													} else
-													{
-														b2g.setAlpha(ALPHA);
-														b2g.setBeta(BETA);
-													}
-													b2g.setExpectedNumber(termCombi.size());
-												} else
-												{
-													b2g.setAlpha(m.alpha);
-													b2g.setBeta(m.beta);
-													b2g.setExpectedNumber(m.dt);
-												}
-											}
-
-
-
-//											System.out.println(p);
-//											result = b2g.calculateStudySet(graph, assoc, completePop, newStudySet, (double)termCombi.size() / completePopEnumerator.getTotalNumberOfAnnotatedTerms());
-										}
-
-										if (m.testCorrection != null) result = calc.calculateStudySet(graph, assoc, completePop, newStudySet, m.testCorrection);
-										else result = calc.calculateStudySet(graph, assoc, completePop, newStudySet, testCorrection);
-
-										for (AbstractGOTermProperties p : result)
-										{
-											Double [] pVals = terms2PVal.get(p.goTerm.getID());
-											if (pVals == null)
-											{
-												pVals = new Double[calcMethods.size()];
-												for (int i=0;i<pVals.length;i++)
-													pVals[i] = 1.0;
-												terms2PVal.put(p.goTerm.getID(), pVals);
-											}
-											pVals[mPos] = p.p_adjusted;
-										}
-
-										long end = System.currentTimeMillis();
-										times[mPos] = end - start;
-									}
-
-									/* Write out the results */
-									for (Entry<TermID,Double[]> entry : terms2PVal.entrySet())
-									{
-										TermID tid = entry.getKey();
-
-										boolean termIsMoreGeneral = false;
-										boolean termIsMoreSpecific = false;
-										boolean label = termCombi.contains(tid);
-
-										for (TermID toLookForTerm : termCombi)
-										{
-											if (graph.existsPath(tid,toLookForTerm))
-											{
-												termIsMoreGeneral = true;
-												break;
-											}
-										}
-
-										for (TermID t : termCombi)
-										{
-											if (graph.existsPath(t,tid))
-											{
-												termIsMoreSpecific = true;
-												break;
-											}
-										}
-
-										Double [] pVals = terms2PVal.get(tid);
-
-										builder.append(tid.id + "\t");
-										builder.append((label?"1":"0") + "\t");
-										for (double p : pVals)
-											builder.append(p + "\t");
-										builder.append((termIsMoreGeneral?"1":"0") + "\t");
-										builder.append((termIsMoreSpecific?"1":"0") + "\t");
-										builder.append(completePopEnumerator.getAnnotatedGenes(tid).totalAnnotatedCount() + "\t");
-										builder.append(studyEnumerator.getAnnotatedGenes(tid).totalAnnotatedCount() + "\t");
-										builder.append(currentRun + "\t");
-										builder.append((combi.isSenseful?"1":"0") + "\t");
-										builder.append((combi.hasVaryingBeta?"1":"0") + "\t");
-										builder.append(ALPHA+ "\t");
-										builder.append(BETA);
-										builder.append('\n');
-									}
-
-									synchronized (out) {
-										out.print(builder);
-										out.flush();
-
-										/* Time */
-										outTime.print(currentRun);
-										for (int i=0;i<times.length;i++)
-											outTime.print("\t" + times[i]);
-										outTime.println();
-										outTime.flush();
-									}
-								}
-							}
-							catch (Exception e)
-							{
-								e.printStackTrace();
-							}
-						}
-					});
+					es.execute(createSingleRunRunnable(rnd, assoc, graph, completePop,
+							completePopEnumerator, allGenesArray, out, outTime,
+							max, sampler, ALPHA, BETA, combi, currentRun,
+							termCombi, studyRnd));
 
 				}
 			}
 		}
-
 
 		es.shutdown();
 		while (!es.awaitTermination(60, TimeUnit.SECONDS));
@@ -684,6 +481,240 @@ public class Benchmark
 		}
 
 		OntologizerThreadGroups.workerThreadGroup.interrupt();
+	}
+
+	/**
+	 * Create a single runnable for a single run with the given parameter.
+	 *
+	 * @param rnd
+	 * @param assoc
+	 * @param graph
+	 * @param completePop
+	 * @param completePopEnumerator
+	 * @param allGenesArray
+	 * @param out
+	 * @param outTime
+	 * @param max
+	 * @param sampler
+	 * @param ALPHA
+	 * @param BETA
+	 * @param combi
+	 * @param currentRun
+	 * @param termCombi
+	 * @param studyRnd
+	 * @return
+	 */
+	private static Runnable createSingleRunRunnable(final Random rnd,
+			final AssociationContainer assoc, final Ontology graph,
+			final PopulationSet completePop,
+			final GOTermEnumerator completePopEnumerator,
+			final ByteString[] allGenesArray, final PrintWriter out,
+			final PrintWriter outTime, final int max,
+			final StudySetSampler sampler, final double ALPHA,
+			final double BETA, final Combination combi, final int currentRun,
+			final ArrayList<TermID> termCombi, final Random studyRnd) {
+		return new Runnable()
+		{
+			public void run()
+			{
+				try
+				{
+					System.out.println("***** " + currentRun + "/" + max + ": " + termCombi.size() + " terms" + " *****");
+
+					HashMap<TermID,Double> wantedActiveTerms = new HashMap<TermID,Double>();
+					for (TermID tid : termCombi)
+					{
+						if (combi.hasVaryingBeta)
+							wantedActiveTerms.put(tid, VARING_BETA[studyRnd.nextInt(VARING_BETA.length)]);
+						else
+							wantedActiveTerms.put(tid, null);
+					}
+
+					StudySet newStudySet = generateStudySet(studyRnd, assoc, graph,
+							completePopEnumerator, allGenesArray, sampler,
+							wantedActiveTerms,ALPHA,BETA);
+
+					if (newStudySet != null)
+					{
+						GOTermEnumerator studyEnumerator = newStudySet.enumerateGOTerms(graph, assoc);
+
+						long times[] = new long[calcMethods.size()];
+
+						/* Some buffer for the result */
+						StringBuilder builder = new StringBuilder(100000);
+						LinkedHashMap<TermID,Double []> terms2PVal = new LinkedHashMap<TermID,Double[]>();
+
+						/* Gather results */
+						for (int mPos = 0; mPos < calcMethods.size(); mPos++)
+						{
+							long start = System.currentTimeMillis();
+
+							Method m = calcMethods.get(mPos);
+							ICalculation calc = CalculationRegistry.getCalculationByName(m.method);
+
+							EnrichedGOTermsResult result;
+
+							if (calc instanceof ProbabilisticCalculation)
+							{
+								ProbabilisticCalculation prop = (ProbabilisticCalculation)calc;
+								calc = prop = new ProbabilisticCalculation(prop);
+
+								double realAlpha;
+								double realBeta;
+
+								if (newStudySet instanceof GeneratedStudySet)
+								{
+									GeneratedStudySet gs = (GeneratedStudySet) newStudySet;
+									realAlpha = gs.getAlpha();
+									realBeta = gs.getBeta();
+								} else
+								{
+									realAlpha = ALPHA;
+									realBeta = BETA;
+								}
+
+								prop.setDefaultP(1 - realBeta);
+								prop.setDefaultQ(realAlpha);
+							}
+
+							if (calc instanceof Bayes2GOCalculation)
+							{
+								/* Set some parameter */
+								Bayes2GOCalculation b2g = (Bayes2GOCalculation) calc;
+								calc = b2g = new Bayes2GOCalculation(b2g);
+
+								b2g.setSeed(rnd.nextLong());
+								b2g.setUsePrior(m.usePrior);
+								b2g.setTakePopulationAsReference(m.takePopulationAsReference);
+								b2g.useRandomStart(m.useRandomStart);
+								b2g.setIntegrateParams(m.integrateParams);
+								b2g.setMcmcSteps(1020000);
+								if (m.em)
+								{
+									b2g.setAlpha(B2GParam.Type.EM);
+									b2g.setBeta(B2GParam.Type.EM);
+									b2g.setExpectedNumber(B2GParam.Type.EM);
+								} else if (m.mcmc)
+								{
+									b2g.setAlpha(B2GParam.Type.MCMC);
+									b2g.setBeta(B2GParam.Type.MCMC);
+									if (m.useMaxBeta)
+										b2g.setBetaBounds(0,0.8);
+
+									if (m.useCorrectExpectedTerms)
+										b2g.setExpectedNumber(termCombi.size());
+									else
+										b2g.setExpectedNumber(B2GParam.Type.MCMC);
+								} else
+								{
+									if (m.dt == 0)
+									{
+										if (newStudySet instanceof GeneratedStudySet)
+										{
+											GeneratedStudySet gs = (GeneratedStudySet) newStudySet;
+											b2g.setAlpha(gs.getAlpha());
+											b2g.setBeta(gs.getBeta());
+										} else
+										{
+											b2g.setAlpha(ALPHA);
+											b2g.setBeta(BETA);
+										}
+										b2g.setExpectedNumber(termCombi.size());
+									} else
+									{
+										b2g.setAlpha(m.alpha);
+										b2g.setBeta(m.beta);
+										b2g.setExpectedNumber(m.dt);
+									}
+								}
+//											System.out.println(p);
+//											result = b2g.calculateStudySet(graph, assoc, completePop, newStudySet, (double)termCombi.size() / completePopEnumerator.getTotalNumberOfAnnotatedTerms());
+							}
+
+							if (m.testCorrection != null) result = calc.calculateStudySet(graph, assoc, completePop, newStudySet, m.testCorrection);
+							else result = calc.calculateStudySet(graph, assoc, completePop, newStudySet, testCorrection);
+
+							for (AbstractGOTermProperties p : result)
+							{
+								Double [] pVals = terms2PVal.get(p.goTerm.getID());
+								if (pVals == null)
+								{
+									pVals = new Double[calcMethods.size()];
+									for (int i=0;i<pVals.length;i++)
+										pVals[i] = 1.0;
+									terms2PVal.put(p.goTerm.getID(), pVals);
+								}
+								pVals[mPos] = p.p_adjusted;
+							}
+
+							long end = System.currentTimeMillis();
+							times[mPos] = end - start;
+						}
+
+						/* Write out the results */
+						for (Entry<TermID,Double[]> entry : terms2PVal.entrySet())
+						{
+							TermID tid = entry.getKey();
+
+							boolean termIsMoreGeneral = false;
+							boolean termIsMoreSpecific = false;
+							boolean label = termCombi.contains(tid);
+
+							for (TermID toLookForTerm : termCombi)
+							{
+								if (graph.existsPath(tid,toLookForTerm))
+								{
+									termIsMoreGeneral = true;
+									break;
+								}
+							}
+
+							for (TermID t : termCombi)
+							{
+								if (graph.existsPath(t,tid))
+								{
+									termIsMoreSpecific = true;
+									break;
+								}
+							}
+
+							Double [] pVals = terms2PVal.get(tid);
+
+							builder.append(tid.id + "\t");
+							builder.append((label?"1":"0") + "\t");
+							for (double p : pVals)
+								builder.append(p + "\t");
+							builder.append((termIsMoreGeneral?"1":"0") + "\t");
+							builder.append((termIsMoreSpecific?"1":"0") + "\t");
+							builder.append(completePopEnumerator.getAnnotatedGenes(tid).totalAnnotatedCount() + "\t");
+							builder.append(studyEnumerator.getAnnotatedGenes(tid).totalAnnotatedCount() + "\t");
+							builder.append(currentRun + "\t");
+							builder.append((combi.isSenseful?"1":"0") + "\t");
+							builder.append((combi.hasVaryingBeta?"1":"0") + "\t");
+							builder.append(ALPHA+ "\t");
+							builder.append(BETA);
+							builder.append('\n');
+						}
+
+						synchronized (out) {
+							out.print(builder);
+							out.flush();
+
+							/* Time */
+							outTime.print(currentRun);
+							for (int i=0;i<times.length;i++)
+								outTime.print("\t" + times[i]);
+							outTime.println();
+							outTime.flush();
+						}
+					}
+				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
+				}
+			}
+		};
 	}
 
 	/**
