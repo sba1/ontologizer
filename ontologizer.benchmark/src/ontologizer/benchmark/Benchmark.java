@@ -496,8 +496,8 @@ public class Benchmark
 	 * @param outTime
 	 * @param numberOfRuns
 	 * @param sampler
-	 * @param alpha
-	 * @param beta
+	 * @param alpha the alpha value (false positive rate) used for simulation.
+	 * @param beta the beta value (false negative rate) used for simulation.
 	 * @param combi
 	 * @param currentRun
 	 * @param termCombi
