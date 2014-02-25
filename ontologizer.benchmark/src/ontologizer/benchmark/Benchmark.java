@@ -29,6 +29,7 @@ import ontologizer.calculation.b2g.Bayes2GOCalculation;
 import ontologizer.enumeration.GOTermEnumerator;
 import ontologizer.go.Ontology;
 import ontologizer.go.TermID;
+import ontologizer.parser.ValuedItemAttribute;
 import ontologizer.sampling.KSubsetSampler;
 import ontologizer.sampling.PercentageEnrichmentRule;
 import ontologizer.sampling.StudySetSampler;
@@ -799,5 +800,70 @@ public class Benchmark
 
 			return newStudySet;
 		}
+	}
+
+	/**
+	 * Generate a valued study set, that is, a study set for which all
+	 * genes are included but each gene has a also special value that
+	 * is used for rank (e.g., for significance).
+	 *
+	 * Genes that are not associated to one of the terms get an random
+	 * value between (0,0).
+	 *
+	 * @param rnd
+	 * @param assoc
+	 * @param graph
+	 * @param completePopEnumerator
+	 * @param allGenesArray
+	 * @param wantedActiveTerms
+	 * @return
+	 */
+	private static StudySet generateValuedStudySet(Random rnd,
+			AssociationContainer assoc, Ontology graph,
+			GOTermEnumerator completePopEnumerator,
+			ByteString[] allGenesArray,
+			HashSet<TermID> wantedActiveTerms)
+	{
+		/* Find out which genes are annotated to the term (genes are put into a study set) */
+		HashMap<TermID,StudySet> wantedActiveTerm2StudySet = new HashMap<TermID,StudySet>();
+		for (TermID t : wantedActiveTerms)
+		{
+			StudySet termStudySet = new StudySet("study");
+			for (ByteString g : completePopEnumerator.getAnnotatedGenes(t).totalAnnotated)
+				termStudySet.addGene(g, "");
+			termStudySet.filterOutDuplicateGenes(assoc);
+			wantedActiveTerm2StudySet.put(t, termStudySet);
+		}
+
+		/* Construct a study set containing all relevant genes */
+		GeneratedStudySet relevantStudySet = new GeneratedStudySet("study");
+		for (TermID t : wantedActiveTerms)
+			relevantStudySet.addGenes(wantedActiveTerm2StudySet.get(t));
+		relevantStudySet.filterOutDuplicateGenes(assoc);
+
+		/* Construct a study set containing all genes except the relevant ones */
+		PopulationSet populationSet = new PopulationSet();
+		for (ByteString g : allGenesArray)
+			populationSet.addGene(g,"");
+		populationSet.filterOutDuplicateGenes(assoc);
+		populationSet.removeGenes(relevantStudySet.getAllGeneNames());
+
+		/* Now finally generate the set */
+		GeneratedStudySet gs = new GeneratedStudySet("generated");
+		for (ByteString g : populationSet)
+		{
+			ValuedItemAttribute via = new ValuedItemAttribute();
+			via.description = "";
+			via.setValue(rnd.nextDouble());
+			gs.addGene(g, via);
+		}
+		for (ByteString r : relevantStudySet)
+		{
+			ValuedItemAttribute via = new ValuedItemAttribute();
+			via.description = "";
+			via.setValue(rnd.nextDouble() / 10); /* Skew relevant genes slighly, should use a better model */
+			gs.addGene(r, via);
+		}
+		return gs;
 	}
 }
