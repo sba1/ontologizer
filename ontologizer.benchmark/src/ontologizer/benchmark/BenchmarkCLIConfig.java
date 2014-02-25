@@ -34,4 +34,10 @@ public class BenchmarkCLIConfig
 	
 	@Parameter(names={"--help"},description="Shows this help.",help=true)
 	public boolean help;
+
+	@Parameter(names={"-o", "--obo"}, description="The obo file that shall be used for running the benchmark", arity=1, required=true)
+	public String obo;
+
+	@Parameter(names={"-a", "--association"}, description="Name of the file containing associations from items to terms.", arity=1, required=true)
+	public String assoc;
 }
