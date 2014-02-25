@@ -496,8 +496,8 @@ public class Benchmark
 	 * @param outTime
 	 * @param max
 	 * @param sampler
-	 * @param ALPHA
-	 * @param BETA
+	 * @param alpha
+	 * @param beta
 	 * @param combi
 	 * @param currentRun
 	 * @param termCombi
@@ -510,8 +510,8 @@ public class Benchmark
 			final GOTermEnumerator completePopEnumerator,
 			final ByteString[] allGenesArray, final PrintWriter out,
 			final PrintWriter outTime, final int max,
-			final StudySetSampler sampler, final double ALPHA,
-			final double BETA, final Combination combi, final int currentRun,
+			final StudySetSampler sampler, final double alpha,
+			final double beta, final Combination combi, final int currentRun,
 			final ArrayList<TermID> termCombi, final Random studyRnd) {
 		return new Runnable()
 		{
@@ -532,7 +532,7 @@ public class Benchmark
 
 					StudySet newStudySet = generateStudySet(studyRnd, assoc, graph,
 							completePopEnumerator, allGenesArray, sampler,
-							wantedActiveTerms,ALPHA,BETA);
+							wantedActiveTerms,alpha,beta);
 
 					if (newStudySet != null)
 					{
@@ -569,8 +569,8 @@ public class Benchmark
 									realBeta = gs.getBeta();
 								} else
 								{
-									realAlpha = ALPHA;
-									realBeta = BETA;
+									realAlpha = alpha;
+									realBeta = beta;
 								}
 
 								prop.setDefaultP(1 - realBeta);
@@ -616,8 +616,8 @@ public class Benchmark
 											b2g.setBeta(gs.getBeta());
 										} else
 										{
-											b2g.setAlpha(ALPHA);
-											b2g.setBeta(BETA);
+											b2g.setAlpha(alpha);
+											b2g.setBeta(beta);
 										}
 										b2g.setExpectedNumber(termCombi.size());
 									} else
@@ -689,8 +689,8 @@ public class Benchmark
 							builder.append(currentRun + "\t");
 							builder.append((combi.isSenseful?"1":"0") + "\t");
 							builder.append((combi.hasVaryingBeta?"1":"0") + "\t");
-							builder.append(ALPHA+ "\t");
-							builder.append(BETA);
+							builder.append(alpha+ "\t");
+							builder.append(beta);
 							builder.append('\n');
 						}
 
