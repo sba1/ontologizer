@@ -494,7 +494,7 @@ public class Benchmark
 	 * @param allGenesArray
 	 * @param out
 	 * @param outTime
-	 * @param max
+	 * @param numberOfRuns
 	 * @param sampler
 	 * @param alpha
 	 * @param beta
@@ -509,7 +509,7 @@ public class Benchmark
 			final PopulationSet completePop,
 			final GOTermEnumerator completePopEnumerator,
 			final ByteString[] allGenesArray, final PrintWriter out,
-			final PrintWriter outTime, final int max,
+			final PrintWriter outTime, final int numberOfRuns,
 			final StudySetSampler sampler, final double alpha,
 			final double beta, final Combination combi, final int currentRun,
 			final ArrayList<TermID> termCombi, final Random studyRnd) {
@@ -519,7 +519,7 @@ public class Benchmark
 			{
 				try
 				{
-					System.out.println("***** " + currentRun + "/" + max + ": " + termCombi.size() + " terms" + " *****");
+					System.out.println("***** " + currentRun + "/" + numberOfRuns + ": " + termCombi.size() + " terms" + " *****");
 
 					HashMap<TermID,Double> wantedActiveTerms = new HashMap<TermID,Double>();
 					for (TermID tid : termCombi)
