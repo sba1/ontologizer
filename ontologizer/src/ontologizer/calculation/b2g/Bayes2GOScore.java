@@ -64,6 +64,9 @@ abstract public class Bayes2GOScore
 	 */
 	protected int [] positionOfTermInPartition;
 
+	/** Array holding the observed values for each gene */
+	protected double [] observedValueOfGene;
+
 	/** Array indicating the genes that have been observed */
 	protected boolean [] observedGenes;
 
