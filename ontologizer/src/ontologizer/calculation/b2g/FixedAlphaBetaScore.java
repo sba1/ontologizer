@@ -43,9 +43,16 @@ public class FixedAlphaBetaScore extends Bayes2GOScore
 	protected double alpha = Double.NaN;
 	protected double beta = Double.NaN;
 
+	/** True negative count */
 	private int n00;
+
+	/** False negative count (O=0 | H=1) */
 	private int n01;
+
+	/** False positive count (O=1 | H=0) */
 	private int n10;
+
+	/** True positive count */
 	private int n11;
 
 	private long totalN00;
@@ -122,6 +129,7 @@ public class FixedAlphaBetaScore extends Bayes2GOScore
 		setMaxAlpha(1.);
 		setMaxBeta(1.);
 
+		/* At this state, all terms are inactive, hence all observed genes are false positive */
 		n10 = observedActiveGenes.size();
 		n00 = population.size() - n10;
 	}
@@ -131,10 +139,17 @@ public class FixedAlphaBetaScore extends Bayes2GOScore
 	{
 		if (observedGenes[gid])
 		{
+			/* If a hidden gene is activated that is also observed,
+			 * it is no longer a false positive, but a true positive.
+			 */
 			n11++;
 			n10--;
 		} else
 		{
+			/* If a hidden gene is activated that is not observed,
+			 * the observation is no longer a true negative, but a
+			 * a false negative.
+			 */
 			n01++;
 			n00--;
 		}
@@ -145,10 +160,18 @@ public class FixedAlphaBetaScore extends Bayes2GOScore
 	{
 		if (observedGenes[gid])
 		{
+			/* If a hidden gene is deactivated that is also observed as true
+			 * then the observation is no longer a true positive, but a false
+			 * positive.
+			 */
 			n11--;
 			n10++;
 		} else
 		{
+			/* If a hidden gene is deactivated that is also observed as false
+			 * then the observation is no longer a false negative but a true
+			 * negative.
+			 */
 			n01--;
 			n00++;
 		}
