@@ -350,6 +350,8 @@ public class Bayes2GOCalculation implements ICalculation
 
 		for (int i=0;i<maxIter;i++)
 		{
+			Bayes2GOScore bayes2GOScore;
+
 			FixedAlphaBetaScore fixedAlphaBetaScore = new FixedAlphaBetaScore(rnd, allTerms, populationEnumerator,  studyEnumerator.getGenes());
 			fixedAlphaBetaScore.setIntegrateParams(integrateParams);
 
@@ -371,7 +373,9 @@ public class Bayes2GOCalculation implements ICalculation
 			fixedAlphaBetaScore.setExpectedNumberOfTerms(expectedNumberOfTerms);
 			fixedAlphaBetaScore.setUsePrior(usePrior);
 
-			result.setScore(fixedAlphaBetaScore);
+			bayes2GOScore = fixedAlphaBetaScore;
+
+			result.setScore(bayes2GOScore);
 
 			int maxSteps = mcmcSteps;
 			int burnin = 20000;
@@ -381,7 +385,7 @@ public class Bayes2GOCalculation implements ICalculation
 			if (calculationProgress != null)
 				calculationProgress.init(maxSteps);
 
-			double score = fixedAlphaBetaScore.getScore();
+			double score = bayes2GOScore.getScore();
 
 			logger.info("Score of empty set: " + score);
 
@@ -392,16 +396,16 @@ public class Bayes2GOCalculation implements ICalculation
 				double pForStart = ((double)numberOfTerms) / allTerms.size();
 
 				for (int j=0;j<allTerms.size();j++)
-					if (rnd.nextDouble() < pForStart) fixedAlphaBetaScore.switchState(j);
+					if (rnd.nextDouble() < pForStart) bayes2GOScore.switchState(j);
 
-				logger.info("Starting with " + fixedAlphaBetaScore.getActiveTerms().size() + " terms (p=" + pForStart + ")");
+				logger.info("Starting with " + bayes2GOScore.getActiveTerms().size() + " terms (p=" + pForStart + ")");
 
-				score = fixedAlphaBetaScore.getScore();
+				score = bayes2GOScore.getScore();
 			}
 			logger.info("Score of initial set: " + score);
 
 			double maxScore = score;
-			ArrayList<TermID> maxScoredTerms = fixedAlphaBetaScore.getActiveTerms();
+			ArrayList<TermID> maxScoredTerms = bayes2GOScore.getActiveTerms();
 			double maxScoredAlpha = Double.NaN;
 			double maxScoredBeta = Double.NaN;
 			double maxScoredP = Double.NaN;
@@ -415,7 +419,7 @@ public class Bayes2GOCalculation implements ICalculation
 				if (score > maxScore)
 				{
 					maxScore = score;
-					maxScoredTerms = fixedAlphaBetaScore.getActiveTerms();
+					maxScoredTerms = bayes2GOScore.getActiveTerms();
 					maxScoredAlpha = fixedAlphaBetaScore.getAlpha();
 					maxScoredBeta = fixedAlphaBetaScore.getBeta();
 					maxScoredP = fixedAlphaBetaScore.getP();
@@ -435,22 +439,22 @@ public class Bayes2GOCalculation implements ICalculation
 						calculationProgress.update(t);
 				}
 
-				long oldPossibilities = fixedAlphaBetaScore.getNeighborhoodSize();
+				long oldPossibilities = bayes2GOScore.getNeighborhoodSize();
 				long r = rnd.nextLong();
-				fixedAlphaBetaScore.proposeNewState(r);
-				double newScore = fixedAlphaBetaScore.getScore();
-				long newPossibilities = fixedAlphaBetaScore.getNeighborhoodSize();
+				bayes2GOScore.proposeNewState(r);
+				double newScore = bayes2GOScore.getScore();
+				long newPossibilities = bayes2GOScore.getNeighborhoodSize();
 
 				double acceptProb = Math.exp(newScore - score)*(double)oldPossibilities/(double)newPossibilities; /* last quotient is the hasting ratio */
 
 				boolean DEBUG = false;
 
-				if (DEBUG) System.out.print(fixedAlphaBetaScore.getActiveTerms().size() + "  score=" + score + " newScore="+newScore + " maxScore=" + maxScore + " a=" + acceptProb);
+				if (DEBUG) System.out.print(bayes2GOScore.getActiveTerms().size() + "  score=" + score + " newScore="+newScore + " maxScore=" + maxScore + " a=" + acceptProb);
 
 				double u = rnd.nextDouble();
 				if (u >= acceptProb)
 				{
-					fixedAlphaBetaScore.undoProposal();
+					bayes2GOScore.undoProposal();
 					numRejects++;
 				} else
 				{
@@ -460,7 +464,7 @@ public class Bayes2GOCalculation implements ICalculation
 				if (DEBUG) System.out.println();
 
 				if (t>burnin)
-					fixedAlphaBetaScore.record();
+					bayes2GOScore.record();
 
 
 				if (statsFile != null)
@@ -506,10 +510,10 @@ public class Bayes2GOCalculation implements ICalculation
 					prop.goTerm = graph.getTerm(t);
 					prop.annotatedStudyGenes = studyEnumerator.getAnnotatedGenes(t).totalAnnotatedCount();
 					prop.annotatedPopulationGenes = populationEnumerator.getAnnotatedGenes(t).totalAnnotatedCount();
-					prop.marg = ((double)fixedAlphaBetaScore.termActivationCounts[fixedAlphaBetaScore.term2TermsIdx.get(t)] / fixedAlphaBetaScore.numRecords);
+					prop.marg = ((double)bayes2GOScore.termActivationCounts[bayes2GOScore.term2TermsIdx.get(t)] / bayes2GOScore.numRecords);
 
 					/* At the moment, we need these fields for technical reasons */
-					prop.p = 1 - ((double)fixedAlphaBetaScore.termActivationCounts[fixedAlphaBetaScore.term2TermsIdx.get(t)] / fixedAlphaBetaScore.numRecords);
+					prop.p = 1 - ((double)bayes2GOScore.termActivationCounts[bayes2GOScore.term2TermsIdx.get(t)] / bayes2GOScore.numRecords);
 					prop.p_adjusted = prop.p;
 					prop.p_min = 0.001;
 
