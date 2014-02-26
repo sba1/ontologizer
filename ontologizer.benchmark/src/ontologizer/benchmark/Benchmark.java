@@ -29,6 +29,7 @@ import ontologizer.calculation.b2g.Bayes2GOCalculation;
 import ontologizer.enumeration.GOTermEnumerator;
 import ontologizer.go.Ontology;
 import ontologizer.go.TermID;
+import ontologizer.parser.ItemAttribute;
 import ontologizer.parser.ValuedItemAttribute;
 import ontologizer.sampling.KSubsetSampler;
 import ontologizer.sampling.PercentageEnrichmentRule;
@@ -548,12 +549,25 @@ public class Benchmark
 					}
 
 					StudySet newStudySet;
+					StudySet newValuedStudySet = null;
 
 					if (alpha < 0 || beta < 0)
 					{
-						newStudySet = generateValuedStudySet(studyRnd, assoc,
+						newValuedStudySet = generateValuedStudySet(studyRnd, assoc,
 								graph, completePopEnumerator, allGenesArray,
 								wantedActiveTerms.keySet());
+
+						/* Construct a study set that can be given to methods that don't
+						 * support values.
+						 */
+						newStudySet = new StudySet();
+						for (ByteString g : newValuedStudySet)
+						{
+							ItemAttribute attr = newValuedStudySet.getItemAttribute(g);
+							if (attr instanceof ValuedItemAttribute)
+								if (((ValuedItemAttribute)attr).getValue() < 0.05)
+									newStudySet.addGene(g, attr.description);
+						}
 					} else
 					{
 						newStudySet = generateStudySet(studyRnd, assoc, graph,
