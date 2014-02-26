@@ -256,7 +256,7 @@ public class Bayes2GOCalculation implements ICalculation
 		System.out.println("Starting calculation: expectedNumberOfTerms=" + expectedNumberOfTerms + " alpha=" + alpha + " beta=" + beta + "  numberOfPop=" + populationEnumerator.getGenes().size() + " numberOfStudy=" + studyEnumerator.getGenes().size());
 
 		long start = System.currentTimeMillis();
-		calculateByMCMC(graph, result, populationEnumerator, studyEnumerator, populationSet, studySet);//, llr);
+		calculateByMCMC(graph, result, populationEnumerator, studyEnumerator, populationSet, studySet, valuedCalculation);//, llr);
 		long end = System.currentTimeMillis();
 		System.out.println((end - start) + "ms");
 		return result;
@@ -279,7 +279,8 @@ public class Bayes2GOCalculation implements ICalculation
 			GOTermEnumerator populationEnumerator,
 			GOTermEnumerator studyEnumerator,
 			PopulationSet populationSet,
-			StudySet studySet)
+			StudySet studySet,
+			boolean valuedCalculation)
 	{
 		List<TermID> allTerms;
 
