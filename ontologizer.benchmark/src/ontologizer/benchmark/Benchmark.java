@@ -670,8 +670,15 @@ public class Benchmark
 								}
 							}
 
-							if (m.testCorrection != null) result = calc.calculateStudySet(graph, assoc, completePop, newStudySet, m.testCorrection);
-							else result = calc.calculateStudySet(graph, assoc, completePop, newStudySet, testCorrection);
+							StudySet studySetForCalculation = newStudySet;
+							/* If the method shall deal with values, use the valued study set
+							 * if there is one.
+							 */
+							if (m.shallDealWithValues && newValuedStudySet != null)
+								studySetForCalculation = newValuedStudySet;
+
+							if (m.testCorrection != null) result = calc.calculateStudySet(graph, assoc, completePop, studySetForCalculation, m.testCorrection);
+							else result = calc.calculateStudySet(graph, assoc, completePop, studySetForCalculation, testCorrection);
 
 							for (AbstractGOTermProperties p : result)
 							{
