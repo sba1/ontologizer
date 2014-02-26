@@ -161,12 +161,12 @@ public class Benchmark
 		calcMethods = new ArrayList<Method>();
 
 		/* Bayes2GO Ideal, note that Bayes2GO was the working title */
-		calcMethods.add(new Method("MGSA","b2g.ideal"));
+//		calcMethods.add(new Method("MGSA","b2g.ideal"));
 
 		/* Bayes2GO Ideal, with pop as ref */
-		m = new Method("MGSA","b2g.ideal.pop");
-		m.takePopulationAsReference = true;
-		calcMethods.add(m);
+//		m = new Method("MGSA","b2g.ideal.pop");
+//		m.takePopulationAsReference = true;
+//		calcMethods.add(m);
 
 		/* Bayes2GO Ideal, with pop as ref, random start */
 //		m = new Method("MGSA","b2g.ideal.pop.random");
@@ -186,7 +186,7 @@ public class Benchmark
 //				}
 //			}
 //		}
-		calcMethods.add(new Method("Term-For-Term","tft"));
+//		calcMethods.add(new Method("Term-For-Term","tft"));
 //		m = new Method("Term-For-Term","tft.bf");
 //		m.testCorrection = new Bonferroni();
 //		calcMethods.add(m);
@@ -228,18 +228,19 @@ public class Benchmark
 //		m.takePopulationAsReference = true;
 //		calcMethods.add(m);
 
-		m = new Method("MGSA", "b2g.mcmc.pop.maxbeta");
-		m.takePopulationAsReference = true;
-		m.mcmc = true;
-		m.useMaxBeta = true;
-		calcMethods.add(m);
+//		m = new Method("MGSA", "b2g.mcmc.pop.maxbeta");
+//		m.takePopulationAsReference = true;
+//		m.mcmc = true;
+//		m.useMaxBeta = true;
+//		calcMethods.add(m);
 
-		m = new Method("MGSA","b2g.ideal.pop.nop");
-		m.usePrior = false;
-		m.takePopulationAsReference = true;
-		calcMethods.add(m);
+//		m = new Method("MGSA","b2g.ideal.pop.nop");
+//		m.usePrior = false;
+//		m.takePopulationAsReference = true;
+//		calcMethods.add(m);
 
-		m = new Method("MGSA","b2g.values");
+		m = new Method("MGSA","b2g.values.pop");
+		m.takePopulationAsReference = true;
 		m.mcmc = true;
 		m.shallDealWithValues = true;
 		calcMethods.add(m);
