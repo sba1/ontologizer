@@ -219,29 +219,6 @@ public class Bayes2GOCalculation implements ICalculation
 		this.updateReportTime = updateReportTime;
 	}
 	
-	/**
-	 * Returns whether the given study set has only valued item attributes.
-	 * 
-	 * @param studySet
-	 * @return
-	 */
-	private static boolean hasOnlyValuedItemAttributes(StudySet studySet)
-	{
-		boolean hasOnlyValuedItemAttributes = true;
-		
-		for (ByteString gene : studySet)
-		{
-			ItemAttribute item = studySet.getItemAttribute(gene);
-			if (!(item instanceof ValuedItemAttribute))
-			{
-				hasOnlyValuedItemAttributes = false;
-				break;
-			}
-		}
-		
-		return hasOnlyValuedItemAttributes;
-	}
-	
 	public EnrichedGOTermsResult calculateStudySet(Ontology graph,
 			AssociationContainer goAssociations, PopulationSet populationSet,
 			StudySet studySet)
@@ -251,8 +228,7 @@ public class Bayes2GOCalculation implements ICalculation
 		if (studySet.getGeneCount() == 0)
 			return new EnrichedGOTermsResult(graph,goAssociations,studySet,populationSet.getGeneCount());
 		
-		valuedCalculation = hasOnlyValuedItemAttributes(populationSet);
-		valuedCalculation = valuedCalculation & hasOnlyValuedItemAttributes(studySet);
+		valuedCalculation = populationSet.hasOnlyValuedItemAttributes() && studySet.hasOnlyValuedItemAttributes();
 
 		if (valuedCalculation)
 		{
