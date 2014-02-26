@@ -223,12 +223,11 @@ public class Bayes2GOCalculation implements ICalculation
 			AssociationContainer goAssociations, PopulationSet populationSet,
 			StudySet studySet)
 	{
-		boolean valuedCalculation;
-		
 		if (studySet.getGeneCount() == 0)
 			return new EnrichedGOTermsResult(graph,goAssociations,studySet,populationSet.getGeneCount());
-		
-		valuedCalculation = populationSet.hasOnlyValuedItemAttributes() && studySet.hasOnlyValuedItemAttributes();
+
+		/* For a valued calculation, ony the study set is interesting as it contains all genes */
+		boolean valuedCalculation = studySet.hasOnlyValuedItemAttributes();
 
 		if (valuedCalculation)
 		{
@@ -244,6 +243,15 @@ public class Bayes2GOCalculation implements ICalculation
 
 		GOTermEnumerator populationEnumerator = populationSet.enumerateGOTerms(graph, goAssociations);
 		GOTermEnumerator studyEnumerator = studySet.enumerateGOTerms(graph, goAssociations);
+
+		if (valuedCalculation)
+		{
+			if (!populationEnumerator.getGenes().containsAll(studyEnumerator.getGenes()) ||
+				!studyEnumerator.getGenes().containsAll(populationEnumerator.getGenes()))
+			{
+				throw new IllegalArgumentException("For a valued calculation, study set and population set must be identical");
+			}
+		}
 
 		System.out.println("Starting calculation: expectedNumberOfTerms=" + expectedNumberOfTerms + " alpha=" + alpha + " beta=" + beta + "  numberOfPop=" + populationEnumerator.getGenes().size() + " numberOfStudy=" + studyEnumerator.getGenes().size());
 
