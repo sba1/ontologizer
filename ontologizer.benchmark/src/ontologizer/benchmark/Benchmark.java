@@ -82,8 +82,8 @@ public class Benchmark
 {
 	private static int NOISE_PERCENTAGE = 10;
 	private static int TERM_PERCENTAGE = 75;
-	private static double [] ALPHAs = new double[]{0.1,0.4,0.7};
-	private static double [] BETAs = new double[]{0.25,0.4};
+	private static double [] ALPHAs = new double[]{};//{0.1,0.4,0.7};
+	private static double [] BETAs = new double[]{};//{0.25,0.4};
 	private static boolean ORIGINAL_SAMPLING = false;
 	private static int MIN_TERMS = 1; /* will be overwritten */
 	private static int MAX_TERMS = 5; /* will be overwritten */
