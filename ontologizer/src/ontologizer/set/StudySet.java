@@ -26,6 +26,7 @@ import ontologizer.go.Term;
 import ontologizer.go.TermID;
 import ontologizer.go.Ontology.IVisitingGOVertex;
 import ontologizer.parser.ItemAttribute;
+import ontologizer.parser.ValuedItemAttribute;
 import ontologizer.sampling.StudySetSampler;
 import ontologizer.types.ByteString;
 
@@ -797,5 +798,28 @@ public class StudySet implements Iterable<ByteString>
 	{
 		for (ByteString g : studySet)
 			addGene(g, studySet.getItemAttribute(g));
+	}
+
+	/**
+	 * Returns whether the given study set has only valued item attributes.
+	 *
+	 * @param studySet
+	 * @return
+	 */
+	public boolean hasOnlyValuedItemAttributes()
+	{
+		boolean hasOnlyValuedItemAttributes = true;
+
+		for (ByteString gene : this)
+		{
+			ItemAttribute item = getItemAttribute(gene);
+			if (!(item instanceof ValuedItemAttribute))
+			{
+				hasOnlyValuedItemAttributes = false;
+				break;
+			}
+		}
+
+		return hasOnlyValuedItemAttributes;
 	}
 }
