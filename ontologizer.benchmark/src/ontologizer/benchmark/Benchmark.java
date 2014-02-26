@@ -119,6 +119,7 @@ public class Benchmark
 		public boolean takePopulationAsReference;
 		public boolean useRandomStart;
 		public boolean useMaxBeta;
+		public boolean shallDealWithValues;
 		public AbstractTestCorrection testCorrection;
 		
 		/** Number of desired terms */
@@ -235,6 +236,11 @@ public class Benchmark
 		m = new Method("MGSA","b2g.ideal.pop.nop");
 		m.usePrior = false;
 		m.takePopulationAsReference = true;
+		calcMethods.add(m);
+
+		m = new Method("MGSA","b2g.values");
+		m.mcmc = true;
+		m.shallDealWithValues = true;
 		calcMethods.add(m);
 	}
 
