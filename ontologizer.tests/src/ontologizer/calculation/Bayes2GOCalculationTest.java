@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 import junit.framework.TestCase;
 import ontologizer.FileCache;
@@ -15,6 +16,7 @@ import ontologizer.association.AssociationContainer;
 import ontologizer.calculation.b2g.B2GParam;
 import ontologizer.calculation.b2g.Bayes2GOCalculation;
 import ontologizer.calculation.b2g.Bayes2GOEnrichedGOTermsResult;
+import ontologizer.calculation.b2g.ValuedGOScore;
 import ontologizer.dotwriter.AbstractDotAttributesProvider;
 import ontologizer.dotwriter.GODOTWriter;
 import ontologizer.enumeration.GOTermEnumerator;
@@ -25,6 +27,7 @@ import ontologizer.go.TermContainer;
 import ontologizer.go.TermID;
 import ontologizer.go.TermRelation;
 import ontologizer.internal.InternalOntology;
+import ontologizer.parser.ValuedItemAttribute;
 import ontologizer.set.PopulationSet;
 import ontologizer.set.StudySet;
 import ontologizer.statistics.Bonferroni;
@@ -174,6 +177,48 @@ public class Bayes2GOCalculationTest extends TestCase
 		calc.calculateStudySet(ontology, assoc, scs.pop, scs.study, new None());
 	}
 
+	public void testValuedGOScore()
+	{
+		String [] terms = {"GO:0000010", "GO:0000004"};
+		InternalOntology internalOntology = new InternalOntology();
+		Random rnd = new Random(1);
+
+		AssociationContainer assoc = internalOntology.assoc;
+		Ontology ontology = internalOntology.graph;
+
+		PopulationSet populationSet = new PopulationSet();
+		populationSet.addGenes(assoc.getAllAnnotatedGenes());
+		GOTermEnumerator populationEnumerator = populationSet.enumerateGOTerms(ontology, assoc);
+
+		StudySet valuedStudySet = new StudySet();
+		for (String t : terms)
+		{
+			for (ByteString g : populationEnumerator.getAnnotatedGenes(new TermID(t)).totalAnnotated)
+			{
+				ValuedItemAttribute via = new ValuedItemAttribute();
+				via.description = "";
+				via.setValue(rnd.nextDouble() * 0.1);
+				valuedStudySet.addGene(g, via);
+			}
+		}
+		Set<ByteString> tempGenes = valuedStudySet.getAllGeneNames();
+		for (ByteString g : populationSet)
+		{
+			if (!tempGenes.contains(g))
+			{
+				ValuedItemAttribute via = new ValuedItemAttribute();
+				via.description = "";
+				via.setValue(rnd.nextDouble());
+				valuedStudySet.addGene(g, via);
+			}
+		}
+
+		Bayes2GOCalculation calc = new Bayes2GOCalculation();
+		calc.setSeed(2);
+		calc.setMcmcSteps(520000);
+
+		calc.calculateStudySet(ontology, assoc, populationSet, valuedStudySet, new None());
+	}
 
 	public static Ontology graph;
 	public static AssociationContainer assoc;
