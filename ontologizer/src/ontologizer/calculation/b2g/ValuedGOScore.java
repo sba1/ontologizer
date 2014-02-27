@@ -5,46 +5,88 @@ import java.util.Random;
 
 import ontologizer.enumeration.GOTermEnumerator;
 import ontologizer.go.TermID;
+import ontologizer.parser.ValuedItemAttribute;
 import ontologizer.set.StudySet;
 
-public class ValuedGOScore extends Bayes2GOScore {
+public class ValuedGOScore extends Bayes2GOScore
+{
+	private int proposalSwitch;
+	private TermID proposalT1;
+	private TermID proposalT2;
+
+	private double [] observedValueOfGene;
 
 	public ValuedGOScore(Random rnd, List<TermID> termList,
 			GOTermEnumerator populationEnumerator,
 			StudySet valuedStudySet)
 	{
 		super(rnd, termList, populationEnumerator, valuedStudySet.getAllGeneNames());
+
+		observedValueOfGene = new double[genes.length];
+		for (int i=0; i < genes.length; i++)
+			observedValueOfGene[i] = ((ValuedItemAttribute)valuedStudySet.getItemAttribute(genes[i])).getValue();
 	}
+
+	double score;
 
 	@Override
 	public double getScore()
 	{
-		return 0;
+		return score;
 	}
 
 	@Override
 	public void proposeNewState(long rand)
 	{
+		long oldPossibilities = getNeighborhoodSize();
+
+		proposalSwitch = -1;
+		proposalT1 = null;
+		proposalT2 = null;
+
+		long choose = Math.abs(rand) % oldPossibilities;
+
+		if (choose < termsArray.length)
+		{
+			/* on/off */
+			proposalSwitch = (int)choose;
+			switchState(proposalSwitch);
+		}	else
+		{
+			long base = choose - termsArray.length;
+
+			int activeTermPos = (int)(base / numInactiveTerms);
+			int inactiveTermPos = (int)(base % numInactiveTerms);
+
+			proposalT1 = termsArray[termPartition[activeTermPos + numInactiveTerms]];
+			proposalT2 = termsArray[termPartition[inactiveTermPos]];
+
+			exchange(proposalT1, proposalT2);
+		}
 	}
 
 	@Override
 	public void hiddenGeneActivated(int gid)
 	{
+		score += 1 - observedValueOfGene[gid];
 	}
 
 	@Override
 	public void hiddenGeneDeactivated(int gid)
 	{
+		score -= 1 - observedValueOfGene[gid];
 	}
 
 	@Override
 	public void undoProposal()
 	{
+		if (proposalSwitch != -1)	switchState(proposalSwitch);
+		else exchange(proposalT2, proposalT1);
 	}
 
 	@Override
 	public long getNeighborhoodSize()
 	{
-		return 0;
+		return termsArray.length + (termsArray.length - numInactiveTerms) * numInactiveTerms;
 	}
 }
