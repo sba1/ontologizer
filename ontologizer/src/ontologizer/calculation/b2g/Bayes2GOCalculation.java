@@ -373,21 +373,7 @@ public class Bayes2GOCalculation implements ICalculation
 			fixedAlphaBetaScore.setExpectedNumberOfTerms(expectedNumberOfTerms);
 			fixedAlphaBetaScore.setUsePrior(usePrior);
 
-			bayes2GOScore = fixedAlphaBetaScore;
-
-			result.setScore(bayes2GOScore);
-	
-			int maxSteps = mcmcSteps;
-			int burnin = 20000;
-			int numAccepts = 0;
-			int numRejects = 0;
-	
-			if (calculationProgress != null)
-				calculationProgress.init(maxSteps);
-	
-			double score = bayes2GOScore.getScore();
-
-			logger.info("Score of empty set: " + score);
+			logger.info("Score of empty set: " + fixedAlphaBetaScore.getScore());
 
 			/* Provide a starting point */
 			if (randomStart)
@@ -396,13 +382,24 @@ public class Bayes2GOCalculation implements ICalculation
 				double pForStart = ((double)numberOfTerms) / allTerms.size();
 				
 				for (int j=0;j<allTerms.size();j++)
-					if (rnd.nextDouble() < pForStart) bayes2GOScore.switchState(j);
+					if (rnd.nextDouble() < pForStart) fixedAlphaBetaScore.switchState(j);
 				
-				logger.info("Starting with " + bayes2GOScore.getActiveTerms().size() + " terms (p=" + pForStart + ")");
-				
-				score = bayes2GOScore.getScore();
+				logger.info("Starting with " + fixedAlphaBetaScore.getActiveTerms().size() + " terms (p=" + pForStart + ")");
 			}
+
+			bayes2GOScore = fixedAlphaBetaScore;
+			result.setScore(bayes2GOScore);
+	
+			double score = bayes2GOScore.getScore();
 			logger.info("Score of initial set: " + score);
+
+			int maxSteps = mcmcSteps;
+			int burnin = 20000;
+			int numAccepts = 0;
+			int numRejects = 0;
+	
+			if (calculationProgress != null)
+				calculationProgress.init(maxSteps);
 
 			double maxScore = score;
 			ArrayList<TermID> maxScoredTerms = bayes2GOScore.getActiveTerms();
