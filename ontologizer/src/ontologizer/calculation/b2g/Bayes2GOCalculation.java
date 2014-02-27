@@ -352,42 +352,53 @@ public class Bayes2GOCalculation implements ICalculation
 		{
 			Bayes2GOScore bayes2GOScore;
 
-			FixedAlphaBetaScore fixedAlphaBetaScore = new FixedAlphaBetaScore(rnd, allTerms, populationEnumerator,  studyEnumerator.getGenes());
-			fixedAlphaBetaScore.setIntegrateParams(integrateParams);
-
-			if (doEm)
+			FixedAlphaBetaScore fixedAlphaBetaScore = null;
+			ValuedGOScore valuedScore = null;
+			
+			if (!valuedCalculation)
 			{
-				System.out.println("EM-Iter("+i+")" + alpha + "  " + beta + "  " + expectedNumberOfTerms);
+				fixedAlphaBetaScore = new FixedAlphaBetaScore(rnd, allTerms, populationEnumerator,  studyEnumerator.getGenes());
+				fixedAlphaBetaScore.setIntegrateParams(integrateParams);
+	
+				if (doEm)
+				{
+					System.out.println("EM-Iter("+i+")" + alpha + "  " + beta + "  " + expectedNumberOfTerms);
+				} else
+				{
+					System.out.println("MCMC only: " + alpha + "  " + beta + "  " + expectedNumberOfTerms);
+					
+				}
+	
+				fixedAlphaBetaScore.setAlpha(alpha);
+				if (this.alpha.hasMax())
+					fixedAlphaBetaScore.setMaxAlpha(this.alpha.getMax());
+				fixedAlphaBetaScore.setBeta(beta);
+				if (this.beta.hasMax())
+					fixedAlphaBetaScore.setMaxBeta(this.beta.getMax());
+				fixedAlphaBetaScore.setExpectedNumberOfTerms(expectedNumberOfTerms);
+				fixedAlphaBetaScore.setUsePrior(usePrior);
+	
+				logger.info("Score of empty set: " + fixedAlphaBetaScore.getScore());
+	
+				/* Provide a starting point */
+				if (randomStart)
+				{
+					int numberOfTerms = fixedAlphaBetaScore.EXPECTED_NUMBER_OF_TERMS[rnd.nextInt(fixedAlphaBetaScore.EXPECTED_NUMBER_OF_TERMS.length)];
+					double pForStart = ((double)numberOfTerms) / allTerms.size();
+					
+					for (int j=0;j<allTerms.size();j++)
+						if (rnd.nextDouble() < pForStart) fixedAlphaBetaScore.switchState(j);
+					
+					logger.info("Starting with " + fixedAlphaBetaScore.getActiveTerms().size() + " terms (p=" + pForStart + ")");
+				}
+	
+				bayes2GOScore = fixedAlphaBetaScore;
 			} else
 			{
-				System.out.println("MCMC only: " + alpha + "  " + beta + "  " + expectedNumberOfTerms);
-				
+				valuedScore = new ValuedGOScore(rnd,  allTerms,  populationEnumerator, studySet);
+				bayes2GOScore = valuedScore;
 			}
 
-			fixedAlphaBetaScore.setAlpha(alpha);
-			if (this.alpha.hasMax())
-				fixedAlphaBetaScore.setMaxAlpha(this.alpha.getMax());
-			fixedAlphaBetaScore.setBeta(beta);
-			if (this.beta.hasMax())
-				fixedAlphaBetaScore.setMaxBeta(this.beta.getMax());
-			fixedAlphaBetaScore.setExpectedNumberOfTerms(expectedNumberOfTerms);
-			fixedAlphaBetaScore.setUsePrior(usePrior);
-
-			logger.info("Score of empty set: " + fixedAlphaBetaScore.getScore());
-
-			/* Provide a starting point */
-			if (randomStart)
-			{
-				int numberOfTerms = fixedAlphaBetaScore.EXPECTED_NUMBER_OF_TERMS[rnd.nextInt(fixedAlphaBetaScore.EXPECTED_NUMBER_OF_TERMS.length)];
-				double pForStart = ((double)numberOfTerms) / allTerms.size();
-				
-				for (int j=0;j<allTerms.size();j++)
-					if (rnd.nextDouble() < pForStart) fixedAlphaBetaScore.switchState(j);
-				
-				logger.info("Starting with " + fixedAlphaBetaScore.getActiveTerms().size() + " terms (p=" + pForStart + ")");
-			}
-
-			bayes2GOScore = fixedAlphaBetaScore;
 			result.setScore(bayes2GOScore);
 	
 			double score = bayes2GOScore.getScore();
@@ -417,16 +428,19 @@ public class Bayes2GOCalculation implements ICalculation
 				{
 					maxScore = score;
 					maxScoredTerms = bayes2GOScore.getActiveTerms();
-					maxScoredAlpha = fixedAlphaBetaScore.getAlpha();
-					maxScoredBeta = fixedAlphaBetaScore.getBeta();
-					maxScoredP = fixedAlphaBetaScore.getP();
+					if (fixedAlphaBetaScore != null)
+					{
+						maxScoredAlpha = fixedAlphaBetaScore.getAlpha();
+						maxScoredBeta = fixedAlphaBetaScore.getBeta();
+						maxScoredP = fixedAlphaBetaScore.getP();
+					}
 					maxWhenSeen = t;
 				}
 	
 				long now = System.currentTimeMillis();
 				if (now - start > updateReportTime)
 				{
-					logger.info((t*100/maxSteps) + "% (score=" + score +" maxScore=" + maxScore + " #terms="+fixedAlphaBetaScore.getActiveTerms().size()+
+					logger.info((t*100/maxSteps) + "% (score=" + score +" maxScore=" + maxScore + " #terms="+bayes2GOScore.getActiveTerms().size()+
 										" accept/reject=" + String.format("%g",(double)numAccepts / (double)numRejects) +
 										" accept/steps=" + String.format("%g",(double)numAccepts / (double)t) +
 										" exp=" + expectedNumberOfTerms + " usePrior=" + usePrior + ")");
@@ -473,30 +487,33 @@ public class Bayes2GOCalculation implements ICalculation
 				}
 			}
 
-			if (doAlphaEm)
+			if (fixedAlphaBetaScore != null)
 			{
-				double newAlpha = (double)fixedAlphaBetaScore.getAvgN10()/(fixedAlphaBetaScore.getAvgN00() + fixedAlphaBetaScore.getAvgN10());
-				if (newAlpha < 0.0000001) newAlpha = 0.0000001;
-				if (newAlpha > 0.9999999) newAlpha = 0.9999999;
-				System.out.println("alpha=" + alpha + "  newAlpha=" + newAlpha);
-				alpha = newAlpha;
-			}
-			
-			if (doBetaEm)
-			{
-				double newBeta = (double)fixedAlphaBetaScore.getAvgN01()/(fixedAlphaBetaScore.getAvgN01() + fixedAlphaBetaScore.getAvgN11());
-				if (newBeta < 0.0000001) newBeta = 0.0000001; 
-				if (newBeta > 0.9999999) newBeta = 0.9999999;
-				System.out.println("beta=" + beta + "  newBeta=" + newBeta);
-				beta = newBeta;
-			}
-
-			if (doPEm)
-			{
-				double newExpectedNumberOfTerms = (double)fixedAlphaBetaScore.getAvgT();
-				if (newExpectedNumberOfTerms < 0.0000001) newExpectedNumberOfTerms = 0.0000001;
-				System.out.println("expectedNumberOfTerms=" + expectedNumberOfTerms + "  newExpectedNumberOfTerms=" + newExpectedNumberOfTerms);
-				expectedNumberOfTerms = newExpectedNumberOfTerms;
+				if (doAlphaEm)
+				{
+					double newAlpha = (double)fixedAlphaBetaScore.getAvgN10()/(fixedAlphaBetaScore.getAvgN00() + fixedAlphaBetaScore.getAvgN10());
+					if (newAlpha < 0.0000001) newAlpha = 0.0000001;
+					if (newAlpha > 0.9999999) newAlpha = 0.9999999;
+					System.out.println("alpha=" + alpha + "  newAlpha=" + newAlpha);
+					alpha = newAlpha;
+				}
+				
+				if (doBetaEm)
+				{
+					double newBeta = (double)fixedAlphaBetaScore.getAvgN01()/(fixedAlphaBetaScore.getAvgN01() + fixedAlphaBetaScore.getAvgN11());
+					if (newBeta < 0.0000001) newBeta = 0.0000001; 
+					if (newBeta > 0.9999999) newBeta = 0.9999999;
+					System.out.println("beta=" + beta + "  newBeta=" + newBeta);
+					beta = newBeta;
+				}
+	
+				if (doPEm)
+				{
+					double newExpectedNumberOfTerms = (double)fixedAlphaBetaScore.getAvgT();
+					if (newExpectedNumberOfTerms < 0.0000001) newExpectedNumberOfTerms = 0.0000001;
+					System.out.println("expectedNumberOfTerms=" + expectedNumberOfTerms + "  newExpectedNumberOfTerms=" + newExpectedNumberOfTerms);
+					expectedNumberOfTerms = newExpectedNumberOfTerms;
+				}
 			}
 
 			if (i==maxIter - 1)
@@ -527,23 +544,26 @@ public class Bayes2GOCalculation implements ICalculation
 				System.out.println(tid.toString() + "/" + graph.getTerm(tid).getName());
 			}
 	
-			if (Double.isNaN(alpha))
+			if (fixedAlphaBetaScore != null)
 			{
-				for (int j=0;j<fixedAlphaBetaScore.totalAlpha.length;j++)
-					System.out.println("alpha(" + fixedAlphaBetaScore.ALPHA[j] + ")=" + (double)fixedAlphaBetaScore.totalAlpha[j] / fixedAlphaBetaScore.numRecords);
-			}
-			
-			if (Double.isNaN(beta))
-			{
-				for (int j=0;j<fixedAlphaBetaScore.totalBeta.length;j++)
-					System.out.println("beta(" + fixedAlphaBetaScore.BETA[j] + ")=" + (double)fixedAlphaBetaScore.totalBeta[j] / fixedAlphaBetaScore.numRecords);
-			}
-
-			if (Double.isNaN(expectedNumberOfTerms))
-			{
-				for (int j=0;j<fixedAlphaBetaScore.totalExp.length;j++)
-					System.out.println("exp(" + fixedAlphaBetaScore.EXPECTED_NUMBER_OF_TERMS[j] + ")=" + (double)fixedAlphaBetaScore.totalExp[j] / fixedAlphaBetaScore.numRecords);
+				if (Double.isNaN(alpha))
+				{
+					for (int j=0;j<fixedAlphaBetaScore.totalAlpha.length;j++)
+						System.out.println("alpha(" + fixedAlphaBetaScore.ALPHA[j] + ")=" + (double)fixedAlphaBetaScore.totalAlpha[j] / fixedAlphaBetaScore.numRecords);
+				}
 				
+				if (Double.isNaN(beta))
+				{
+					for (int j=0;j<fixedAlphaBetaScore.totalBeta.length;j++)
+						System.out.println("beta(" + fixedAlphaBetaScore.BETA[j] + ")=" + (double)fixedAlphaBetaScore.totalBeta[j] / fixedAlphaBetaScore.numRecords);
+				}
+	
+				if (Double.isNaN(expectedNumberOfTerms))
+				{
+					for (int j=0;j<fixedAlphaBetaScore.totalExp.length;j++)
+						System.out.println("exp(" + fixedAlphaBetaScore.EXPECTED_NUMBER_OF_TERMS[j] + ")=" + (double)fixedAlphaBetaScore.totalExp[j] / fixedAlphaBetaScore.numRecords);
+					
+				}
 			}
 		}
 		
