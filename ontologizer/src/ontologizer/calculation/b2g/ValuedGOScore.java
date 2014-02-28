@@ -7,6 +7,7 @@ import ontologizer.enumeration.GOTermEnumerator;
 import ontologizer.go.TermID;
 import ontologizer.parser.ValuedItemAttribute;
 import ontologizer.set.StudySet;
+import ontologizer.types.ByteString;
 
 /**
  * This implements a score that takes values that are associated the genes into account.
@@ -22,17 +23,26 @@ public class ValuedGOScore extends Bayes2GOScore
 	private TermID proposalT1;
 	private TermID proposalT2;
 
-	private double [] observedValueOfGene;
-
 	public ValuedGOScore(Random rnd, List<TermID> termList,
 			GOTermEnumerator populationEnumerator,
-			StudySet valuedStudySet)
+			final StudySet valuedStudySet)
 	{
-		super(rnd, termList, populationEnumerator, valuedStudySet.getAllGeneNames());
-
-		observedValueOfGene = new double[genes.length];
-		for (int i=0; i < genes.length; i++)
-			observedValueOfGene[i] = ((ValuedItemAttribute)valuedStudySet.getItemAttribute(genes[i])).getValue();
+		super(rnd, termList, populationEnumerator, new Bayes2GOScore.IGeneValueProvider() {
+			@Override
+			public boolean smallerIsBetter() {
+				return true;
+			}
+			
+			@Override
+			public double getThreshold() {
+				return 0.1;
+			}
+			
+			@Override
+			public double getGeneValue(ByteString gene) {
+				return ((ValuedItemAttribute)valuedStudySet.getItemAttribute(gene)).getValue();
+			}
+		});
 	}
 
 	double score;
