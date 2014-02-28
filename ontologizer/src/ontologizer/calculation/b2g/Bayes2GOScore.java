@@ -124,40 +124,36 @@ abstract public class Bayes2GOScore
 
 	/**
 	 * Constructs a class for calculating the Bayes2GO/MGSA score suitable for an MCMC algorithm.
-	 * 
-	 * @param termList list of terms that can possibly be selected.
-	 * @param populationEnumerator terms to genes.
-	 * @param observedActiveGenes defines the set of genes that are observed as active.
+	 *
+	 * @param rnd
+	 * @param termList
+	 * @param populationEnumerator
+	 * @param geneValueProvider
 	 */
-	public Bayes2GOScore(List<TermID> termList, GOTermEnumerator populationEnumerator, Set<ByteString> observedActiveGenes)
-	{
-		this(null,termList, populationEnumerator, observedActiveGenes);
-	}
-
-	/**
-	 * Constructs a class for calculating the Bayes2GO score suitable for an MCMC algorithm.
-	 * 
-	 * @param rnd Random source for proposing states.
-	 * @param termList list of terms that can possibly be selected.
-	 * @param populationEnumerator terms to genes.
-	 * @param observedActiveGenes defines the set of genes that are observed as active. 
-	 */
-	public Bayes2GOScore(Random rnd, List<TermID> termList, GOTermEnumerator populationEnumerator, Set<ByteString> observedActiveGenes)
+	public Bayes2GOScore(Random rnd, List<TermID> termList, GOTermEnumerator populationEnumerator, IGeneValueProvider geneValueProvider)
 	{
 		int i;
 
 		this.rnd = rnd;
 
+		double threshold = geneValueProvider.getThreshold();
+		boolean smallerIsBetter = geneValueProvider.smallerIsBetter();
+
 		/* Initialize basics of genes */
 		population = populationEnumerator.getGenes();
 		genes = new ByteString[population.size()];
 		observedGenes = new boolean[genes.length];
+		observedValueOfGene = new double[genes.length];
 		i=0;
 		for (ByteString g : population)
 		{
 			gene2GenesIdx.put(g,i);
 			genes[i] = g;
-			observedGenes[i] = observedActiveGenes.contains(g);
+			observedValueOfGene[i] = geneValueProvider.getGeneValue(g);
+			if (smallerIsBetter)
+				observedGenes[i] = observedValueOfGene[i] <= threshold;
+			else
+				observedGenes[i] = observedValueOfGene[i] >= threshold;
 			i++;
 		}
 		activeHiddenGenes = new int[population.size()];
@@ -192,6 +188,49 @@ abstract public class Bayes2GOScore
 		}
 		
 		this.populationEnumerator = populationEnumerator;
+	}
+
+	/**
+	 * Constructs a class for calculating the Bayes2GO/MGSA score suitable for an MCMC algorithm.
+	 *
+	 * @param termList list of terms that can possibly be selected.
+	 * @param populationEnumerator terms to genes.
+	 * @param observedActiveGenes defines the set of genes that are observed as active.
+	 */
+	public Bayes2GOScore(List<TermID> termList, GOTermEnumerator populationEnumerator, Set<ByteString> observedActiveGenes)
+	{
+		this(null,termList, populationEnumerator, observedActiveGenes);
+	}
+
+	/**
+	 * Constructs a class for calculating the Bayes2GO score suitable for an MCMC algorithm.
+	 *
+	 * @param rnd Random source for proposing states.
+	 * @param termList list of terms that can possibly be selected.
+	 * @param populationEnumerator terms to genes.
+	 * @param observedActiveGenes defines the set of genes that are observed as active.
+	 */
+	public Bayes2GOScore(Random rnd, List<TermID> termList, GOTermEnumerator populationEnumerator, final Set<ByteString> observedActiveGenes)
+	{
+		/* Here a gene value provider is constructed that maps the boolean observed state back
+		 * to values some values. A gene, that is observed gets a -1, a gene that is not observed
+		 * gets a 1. Applied with a threshold of one, this gives back the same set of observed genes.
+		 */
+		this(rnd, termList, populationEnumerator, new IGeneValueProvider() {
+			@Override
+			public boolean smallerIsBetter() {
+				return true;
+			}
+			@Override
+			public double getThreshold() {
+				return 0;
+			}
+			@Override
+			public double getGeneValue(ByteString gene) {
+				if (observedActiveGenes.contains(gene)) return -1;
+				return 1;
+			}
+		});
 	}
 
 	public void setUsePrior(boolean usePrior)
