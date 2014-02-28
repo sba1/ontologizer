@@ -114,7 +114,7 @@ abstract public class Bayes2GOScore
 
 		/**
 		 * Returns whether genes whose associated values that are smaller than others are considered
-		 * as better candidates than teh larger ones. For instance, if the associated values are p
+		 * as better candidates than the larger ones. For instance, if the associated values are p
 		 * values, one would return true here.
 		 *
 		 * @return whether small numeric values are better than large ones.
