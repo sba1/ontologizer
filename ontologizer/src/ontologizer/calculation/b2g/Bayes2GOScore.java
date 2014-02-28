@@ -91,6 +91,38 @@ abstract public class Bayes2GOScore
 	protected double p = Double.NaN;
 
 	/**
+	 * This is a simple interface that provides values to the genes.
+	 */
+	public static interface IGeneValueProvider
+	{
+		/**
+		 * Return the value that is associated with the given gene.
+		 *
+		 * @param gene
+		 * @return
+		 */
+		double getGeneValue(ByteString gene);
+
+		/**
+		 * Returns the threshold that specifies when a gene is considered as observed or not.
+		 * For instance, if the associated values are p values, then one would return the desired
+		 * significance level.
+		 *
+		 * @return
+		 */
+		double getThreshold();
+
+		/**
+		 * Returns whether genes whose associated values that are smaller than others are considered
+		 * as better candidates than teh larger ones. For instance, if the associated values are p
+		 * values, one would return true here.
+		 *
+		 * @return whether small numeric values are better than large ones.
+		 */
+		boolean smallerIsBetter();
+	}
+
+	/**
 	 * Constructs a class for calculating the Bayes2GO/MGSA score suitable for an MCMC algorithm.
 	 * 
 	 * @param termList list of terms that can possibly be selected.
