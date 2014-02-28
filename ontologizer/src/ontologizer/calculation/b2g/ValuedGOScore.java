@@ -8,6 +8,14 @@ import ontologizer.go.TermID;
 import ontologizer.parser.ValuedItemAttribute;
 import ontologizer.set.StudySet;
 
+/**
+ * This implements a score that takes values that are associated the genes into account.
+ * In contrast to FixedAlphaBetaScore we don't rely on a threshold that accounts for
+ * the boolean labeling of genes. In order words, here we assume that the study set
+ * contains the full population.
+ *
+ * @author Sebastian Bauer
+ */
 public class ValuedGOScore extends Bayes2GOScore
 {
 	private int proposalSwitch;
