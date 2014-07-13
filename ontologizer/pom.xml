@@ -37,6 +37,7 @@
 						<configuration>
 							<sources>
 								<source>src.grappa</source>
+								<source>src.grappa.layout</source>
 							</sources>
 						</configuration>
 					</execution>
