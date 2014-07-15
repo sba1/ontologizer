@@ -11,5 +11,7 @@ public class OntologizerWeb implements EntryPoint {
 
   @Override
   public void onModuleLoad() {
+	  Label label = new Label("Ontologizer");
+	  RootPanel.get().add(label);
   }
 }
