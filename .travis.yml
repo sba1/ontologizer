@@ -1,0 +1,4 @@
+language: java
+
+before_script:
+    - cd ontologizer.parent
