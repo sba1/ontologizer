@@ -143,22 +143,39 @@
 
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
-				<configuration>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
-					<archive>
-						<manifest>
-							<mainClass>ontologizer.gui.swt.Ontologizer</mainClass>
-						</manifest>
-					</archive>
-				</configuration>
 				<executions>
 					<execution>
+						<id>default</id>
 						<phase>package</phase>
 						<goals>
 							<goal>single</goal>
 						</goals>
+						<configuration>
+							<descriptorRefs>
+								<descriptorRef>jar-with-dependencies</descriptorRef>
+							</descriptorRefs>
+							<archive>
+								<manifest>
+									<mainClass>ontologizer.gui.swt.Ontologizer</mainClass>
+								</manifest>
+							</archive>
+						</configuration>
+					</execution>
+					<execution>
+						<id>local</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<finalName>Ontologizer</finalName>
+							<descriptor>local-jar-with-dependencies-assembly.xml</descriptor>
+							<archive>
+								<manifest>
+									<mainClass>ontologizer.gui.swt.Ontologizer</mainClass>
+								</manifest>
+							</archive>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
