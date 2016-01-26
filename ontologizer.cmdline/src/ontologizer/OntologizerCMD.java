@@ -294,7 +294,7 @@ public class OntologizerCMD
 						{
 							try
 							{
-								dotRootID = new TermID(Integer.parseInt(dotOpts[1]));
+								dotRootID = new TermID(TermID.DEFAULT_PREFIX, Integer.parseInt(dotOpts[1]));
 							} catch(NumberFormatException ex2)
 							{
 								System.err.println("The 2nd argument given to the 'dot' option is no valid GO Term ID format (eighter the \"GO:\" string followed by seven digits or a plain integer)!");
