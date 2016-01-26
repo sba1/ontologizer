@@ -9,12 +9,13 @@ rm -Rf work
 mkdir -p work
 
 pushd work
-wget -N ftp://sunsite.informatik.rwth-aachen.de/pub/mirror/eclipse/R-3.7.1-201109091335/swt-3.7.1-cocoa-macosx-x86_64.zip
-wget -N ftp://sunsite.informatik.rwth-aachen.de/pub/mirror/eclipse/R-3.7.1-201109091335/swt-3.7.1-cocoa-macosx.zip
-wget -N ftp://sunsite.informatik.rwth-aachen.de/pub/mirror/eclipse/R-3.7.1-201109091335/swt-3.7.1-gtk-linux-x86.zip
-wget -N ftp://sunsite.informatik.rwth-aachen.de/pub/mirror/eclipse/R-3.7.1-201109091335/swt-3.7.1-gtk-linux-x86_64.zip
-wget -N ftp://sunsite.informatik.rwth-aachen.de/pub/mirror/eclipse/R-3.7.1-201109091335/swt-3.7.1-win32-win32-x86.zip
-wget -N ftp://sunsite.informatik.rwth-aachen.de/pub/mirror/eclipse/R-3.7.1-201109091335/swt-3.7.1-win32-win32-x86_64.zip
+MIRROR_BASE=ftp://ftp.halifax.rwth-aachen.de/eclipse/eclipse/downloads/drops4/R-4.5.1-201509040015
+
+wget -N $MIRROR_BASE/swt-4.5.1-cocoa-macosx-x86_64.zip
+wget -N $MIRROR_BASE/swt-4.5.1-gtk-linux-x86.zip
+wget -N $MIRROR_BASE/swt-4.5.1-gtk-linux-x86_64.zip
+wget -N $MIRROR_BASE/swt-4.5.1-win32-win32-x86.zip
+wget -N $MIRROR_BASE/swt-4.5.1-win32-win32-x86_64.zip
 
 #
 # Install the given SWT archive into the maven repository
