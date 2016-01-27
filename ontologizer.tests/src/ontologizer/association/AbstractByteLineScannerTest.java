@@ -11,6 +11,7 @@ import java.util.zip.GZIPInputStream;
 
 import junit.framework.Assert;
 import junit.framework.TestCase;
+import ontologizer.linescanner.AbstractByteLineScanner;
 
 public class AbstractByteLineScannerTest extends TestCase
 {

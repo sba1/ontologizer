@@ -13,7 +13,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 
-import ontologizer.association.AbstractByteLineScanner;
+import ontologizer.linescanner.AbstractByteLineScanner;
 import ontologizer.types.ByteString;
 import sonumina.collections.ReferencePool;
 import sonumina.math.graph.AbstractGraph.DotAttributesProvider;
