@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -621,12 +620,6 @@ public class OBOParser
 			private String getLineContens()
 			{
 				return new ByteString(line,start,start+len).toString();
-			}
-			
-			final private byte toLower(byte c)
-			{
-				if (c>=65 && c <=90) c += 32;
-				return c;
 			}
 
 			/**
