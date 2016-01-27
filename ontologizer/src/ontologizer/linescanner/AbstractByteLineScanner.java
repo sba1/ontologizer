@@ -1,4 +1,4 @@
-package ontologizer.association;
+package ontologizer.linescanner;
 
 import java.io.IOException;
 import java.io.InputStream;

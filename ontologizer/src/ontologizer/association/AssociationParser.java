@@ -10,6 +10,7 @@ import ontologizer.go.PrefixPool;
 import ontologizer.go.Term;
 import ontologizer.go.TermContainer;
 import ontologizer.go.TermID;
+import ontologizer.linescanner.AbstractByteLineScanner;
 import ontologizer.types.ByteString;
 
 /**
