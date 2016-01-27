@@ -27,14 +27,30 @@
     </plugin>
    </plugins>
   </build>
-  
+
   <modules>
   	<module>../ontologizer</module>
-  	<module>../ontologizer.svd</module>
-  	<module>../ontologizer.tests</module>
-  	<module>../ontologizer.gui</module>
-	<module>../ontologizer.cmdline</module>
-	<module>../ontologizer.benchmark</module>
   </modules>
-  
+
+  <profiles>
+    <profile>
+     <id>Desktop</id>
+     <activation>
+      <activeByDefault>true</activeByDefault>
+     </activation>
+     <modules>
+      <module>../ontologizer.svd</module>
+      <module>../ontologizer.tests</module>
+      <module>../ontologizer.gui</module>
+      <module>../ontologizer.cmdline</module>
+      <module>../ontologizer.benchmark</module>
+     </modules>
+    </profile>
+    <profile>
+     <id>Web</id>
+     <modules>
+      <module>../ontologizer.web</module>
+     </modules>
+    </profile>
+   </profiles>
 </project>
