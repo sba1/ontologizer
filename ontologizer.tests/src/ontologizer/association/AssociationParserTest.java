@@ -7,6 +7,7 @@ import java.io.IOException;
 
 import ontologizer.go.OBOParser;
 import ontologizer.go.OBOParserException;
+import ontologizer.go.OBOParserFileInput;
 import ontologizer.go.TermContainer;
 import junit.framework.Assert;
 import junit.framework.TestCase;
@@ -18,7 +19,7 @@ public class AssociationParserTest extends TestCase
 
 	public void testSimple() throws IOException, OBOParserException
 	{
-		OBOParser oboParser = new OBOParser(OBO_FILE);
+		OBOParser oboParser = new OBOParser(new OBOParserFileInput(OBO_FILE));
 		oboParser.doParse();
 		AssociationParser ap = new AssociationParser(ASSOCIATION_FILE, new TermContainer(oboParser.getTermMap(), "", ""));
 		assertEquals(ap.getFileType(),AssociationParser.Type.GAF);
@@ -40,7 +41,7 @@ public class AssociationParserTest extends TestCase
 		bw.write("DB\tDBOBJID2\tSYMBOL\t\tGO:0005760\tPMID:00000\tEVIDENCE\t\tC\t\tgene\ttaxon:4932\t20121212\tSBA\n");
 		bw.flush();
 
-		OBOParser oboParser = new OBOParser(OBO_FILE);
+		OBOParser oboParser = new OBOParser(new OBOParserFileInput(OBO_FILE));
 		oboParser.doParse();
 
 		AssociationParser ap = new AssociationParser(tmp.getAbsolutePath(), new TermContainer(oboParser.getTermMap(), "", ""));
@@ -58,7 +59,7 @@ public class AssociationParserTest extends TestCase
 		bw.write("DB\tDBOBJID2\tSYMBOL\t\tGO:0005760\tPMID:00000\tEVIDENCE\t\tC\t\tgene\ttaxon:4932\t20121212\tSBA\n");
 		bw.flush();
 
-		OBOParser oboParser = new OBOParser(OBO_FILE);
+		OBOParser oboParser = new OBOParser(new OBOParserFileInput(OBO_FILE));
 		oboParser.doParse();
 
 		AssociationParser ap = new AssociationParser(tmp.getAbsolutePath(), new TermContainer(oboParser.getTermMap(), "", ""));
@@ -79,7 +80,7 @@ public class AssociationParserTest extends TestCase
 		bw.write("S000004660\tGO:0006810,GO:0005471,GO:0016021,GO:0006783,GO:0005743,GO:0005743\n");
 		bw.flush();
 
-		OBOParser oboParser = new OBOParser(OBO_FILE);
+		OBOParser oboParser = new OBOParser(new OBOParserFileInput(OBO_FILE));
 		oboParser.doParse();
 
 		AssociationParser ap = new AssociationParser(tmp.getAbsolutePath(),new TermContainer(oboParser.getTermMap(), "", ""));

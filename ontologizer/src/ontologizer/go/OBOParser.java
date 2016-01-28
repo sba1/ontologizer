@@ -1,17 +1,14 @@
 package ontologizer.go;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
-import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.logging.Logger;
-import java.util.zip.GZIPInputStream;
 
 import ontologizer.linescanner.AbstractByteLineScanner;
 import ontologizer.types.ByteString;
@@ -96,8 +93,8 @@ public class OBOParser
 		}
 	}
 
-	/** Name and path of OBO file, e.g. gene_ontology.obo */
-	private String filename;
+	/** Input source of the OBO data, e.g., a source that delivers gene_ontology.obo */
+	IOBOParserInput input;
 
 	/** The current parse options */
 	private int options;
@@ -166,28 +163,29 @@ public class OBOParser
 	private ArrayList<TermXref> currentXrefs = new ArrayList<TermXref>();
 
 	/**
-	 * @param filename
-	 *            path and name of the gene_ontology.obo file
+	 * Construct an obo parser.
+	 *
+	 * @param input defines the input wrapping the stanza file
 	 */
-	public OBOParser(String filename)
+	public OBOParser(IOBOParserInput input)
 	{
-		this.filename = filename;
+		this(input, 0);
 	}
 
 	/**
+	 * Constructs an obo parser for a particular input.
+	 *
 	 * Options can be combined via logical or. Valid options are:
 	 * <ul>
-	 * <li>PARSE_DEFINITIONS - to gather the definition entry.
+	 * <li>PARSE_DEFINITIONS - to gather the textual definition entry.
 	 * </ul>
 	 *
-	 * @param filename
-	 *            defines the path and name of the gene_ontology.obo file
-	 * @param options
-	 *            defines some options.
+	 * @param input defines the input wrapping the stanza files
+	 * @param options defines some options.
 	 */
-	public OBOParser(String filename, int options)
+	public OBOParser(IOBOParserInput input, int options)
 	{
-		this.filename = filename;
+		this.input = input;
 		this.options = options;
 	}
 
@@ -282,22 +280,8 @@ public class OBOParser
 	{
 		long startMillis = System.currentTimeMillis();
 
-		FileInputStream fis = new FileInputStream(filename);
-		InputStream is;
-
-		try
-		{
-			is = new GZIPInputStream(fis);
-		} catch (IOException exp)
-		{
-			fis.close();
-			is = fis = new FileInputStream(filename);
-		}
-
-		final FileChannel fc = fis.getChannel();
-
 		if (progress != null)
-			progress.init((int)fc.size());
+			progress.init(input.getSize());
 
 		class OBOByteLineScanner extends AbstractByteLineScanner
 		{
@@ -578,14 +562,14 @@ public class OBOParser
 			{
 				if (progress != null)
 				{
-					try {
-						long newMillis = System.currentTimeMillis();
-						if (newMillis - millis > 250)
-						{
-							progress.update((int)fc.position(),currentTerm);
-							millis = newMillis;
-						}
-					} catch (IOException e) {
+					long newMillis = System.currentTimeMillis();
+					if (newMillis - millis > 250)
+					{
+						int pos = input.getPosition();
+						if (pos >= 0)
+							progress.update(pos, currentTerm);
+
+						millis = newMillis;
 					}
 				}
 			}
@@ -1069,15 +1053,15 @@ public class OBOParser
 			}
 		}
 
-		OBOByteLineScanner obls = new OBOByteLineScanner(is);
+		OBOByteLineScanner obls = new OBOByteLineScanner(input.inputStream());
 		obls.scan();
 		enterNewTerm(); /* Get very last stanza after loop! */
 		if (progress != null)
-			progress.update((int)fc.size(),obls.currentTerm);
+			progress.update(input.getSize(),obls.currentTerm);
 
 		if (obls.exception != null)
 			throw obls.exception;
-		fis.close();
+		input.close();
 
 		logger.info("Got " + terms.size() + " terms and " + numberOfRelations + " relations in " + (System.currentTimeMillis() - startMillis) + " ms");
 		return this.getParseDiagnostics();
@@ -1103,7 +1087,6 @@ public class OBOParser
 		StringBuilder diag = new StringBuilder();
 
 		diag.append("Details of parsed obo file:\n");
-		diag.append("  filename:\t\t" + this.filename + "\n");
 		diag.append("  date:\t\t\t" + this.date + "\n");
 		diag.append("  format:\t\t" + this.format_version + "\n");
 		diag.append("  term definitions:\t" + this.terms.size());

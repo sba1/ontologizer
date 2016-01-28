@@ -20,6 +20,7 @@ import ontologizer.enumeration.GOTermEnumerator.GOTermAnnotatedGenes;
 import ontologizer.go.Ontology;
 import ontologizer.go.OBOParser;
 import ontologizer.go.OBOParserException;
+import ontologizer.go.OBOParserFileInput;
 import ontologizer.go.Term;
 import ontologizer.go.TermContainer;
 import ontologizer.set.PopulationSet;
@@ -91,7 +92,7 @@ public class OverlapLister
 
 			/* loading GO graph */
 			System.err.println("Parse obo file");
-			OBOParser oboParser = new OBOParser(oboFileName);
+			OBOParser oboParser = new OBOParser(new OBOParserFileInput(oboFileName));
 			System.err.println(oboParser.doParse());
 			TermContainer goTerms = new TermContainer(oboParser.getTermMap(), oboParser.getFormatVersion(), oboParser.getDate());
 			System.err.println("Building graph");

@@ -20,7 +20,7 @@ public class OntologyTest extends TestCase
 
 		/* Parse file and create term container */
 		System.out.println("Parse OBO file");
-		OBOParser oboParser = new OBOParser(GOtermsOBOFile);
+		OBOParser oboParser = new OBOParser(new OBOParserFileInput(GOtermsOBOFile));
 		System.out.println(oboParser.doParse());
 		goTerms = new TermContainer(oboParser.getTermMap(), oboParser.getFormatVersion(), oboParser.getDate());
 

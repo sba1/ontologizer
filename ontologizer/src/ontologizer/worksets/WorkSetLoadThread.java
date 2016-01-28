@@ -22,6 +22,7 @@ import ontologizer.go.Ontology;
 import ontologizer.go.IOBOParserProgress;
 import ontologizer.go.OBOParser;
 import ontologizer.go.OBOParserException;
+import ontologizer.go.OBOParserFileInput;
 import ontologizer.go.TermContainer;
 import ontologizer.util.MemoryWarningSystem;
 
@@ -414,7 +415,7 @@ public class WorkSetLoadThread extends Thread
 		Ontology graph;
 		if (!graphMap.containsKey(oboName))
 		{
-			OBOParser oboParser = new OBOParser(oboName, OBOParser.IGNORE_SYNONYMS);
+			OBOParser oboParser = new OBOParser(new OBOParserFileInput(oboName), OBOParser.IGNORE_SYNONYMS);
 			workSetProgress.message("Parsing OBO file");
 			oboParser.doParse(new IOBOParserProgress()
 			{
