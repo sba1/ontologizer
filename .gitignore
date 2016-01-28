@@ -1,0 +1,10 @@
+# Eclipse project files
+.classpath
+.project
+.settings
+
+# Eclipse generated files
+*/bin
+
+# Maven target
+target
