@@ -23,7 +23,7 @@ public class OBOParserTest extends TestCase
 	{
 		/* Parse OBO file */
 		System.out.println("Parse OBO file");
-		OBOParser oboParser = new OBOParser(GOtermsOBOFile);
+		OBOParser oboParser = new OBOParser(new OBOParserFileInput(GOtermsOBOFile));
 		System.out.println(oboParser.doParse());
 		HashMap<String,Term> id2Term = new HashMap<String,Term>();
 
@@ -44,7 +44,7 @@ public class OBOParserTest extends TestCase
 	
 	public void testIgnoreSynonyms() throws IOException, OBOParserException
 	{
-		OBOParser oboParser = new OBOParser(GOtermsOBOFile,OBOParser.IGNORE_SYNONYMS);
+		OBOParser oboParser = new OBOParser(new OBOParserFileInput(GOtermsOBOFile),OBOParser.IGNORE_SYNONYMS);
 		oboParser.doParse();
 		for (Term t : oboParser.getTermMap())
 			Assert.assertTrue(t.getSynonyms() == null || t.getSynonyms().length == 0);
@@ -57,7 +57,7 @@ public class OBOParserTest extends TestCase
 		pw.append("[term]\nname: test\\\ntest\\\ntest\n");
 		pw.close();
 
-		OBOParser oboParser = new OBOParser(tmp.getCanonicalPath());
+		OBOParser oboParser = new OBOParser(new OBOParserFileInput(tmp.getCanonicalPath()));
 		oboParser.doParse();
 	}
 	
@@ -74,7 +74,7 @@ public class OBOParserTest extends TestCase
 		          "relationship: part_of GO:0000001 ! test\n");
 		pw.close();
 
-		OBOParser oboParser = new OBOParser(tmp.getCanonicalPath());
+		OBOParser oboParser = new OBOParser(new OBOParserFileInput(tmp.getCanonicalPath()));
 		oboParser.doParse();
 		ArrayList<Term> terms = new ArrayList<Term>(oboParser.getTermMap());
 		HashMap<String,Term> name2Term = new HashMap<String,Term>();
@@ -97,7 +97,7 @@ public class OBOParserTest extends TestCase
 		          "relationship: regulates GO:0000001 ! test\n");
 		pw.close();
 
-		OBOParser oboParser = new OBOParser(tmp.getCanonicalPath());
+		OBOParser oboParser = new OBOParser(new OBOParserFileInput(tmp.getCanonicalPath()));
 		oboParser.doParse();
 		ArrayList<Term> terms = new ArrayList<Term>(oboParser.getTermMap());
 		HashMap<String,Term> name2Term = new HashMap<String,Term>();
@@ -120,7 +120,7 @@ public class OBOParserTest extends TestCase
 		          "relationship: zzz GO:0000001 ! test\n");
 		pw.close();
 
-		OBOParser oboParser = new OBOParser(tmp.getCanonicalPath());
+		OBOParser oboParser = new OBOParser(new OBOParserFileInput(tmp.getCanonicalPath()));
 		oboParser.doParse();
 		ArrayList<Term> terms = new ArrayList<Term>(oboParser.getTermMap());
 		HashMap<String,Term> name2Term = new HashMap<String,Term>();
@@ -141,7 +141,7 @@ public class OBOParserTest extends TestCase
 				  "synonym: \"test3\" EXACT []\n");
 		pw.close();
 
-		OBOParser oboParser = new OBOParser(tmp.getCanonicalPath());
+		OBOParser oboParser = new OBOParser(new OBOParserFileInput(tmp.getCanonicalPath()));
 		oboParser.doParse();
 		ArrayList<Term> terms = new ArrayList<Term>(oboParser.getTermMap());
 		Assert.assertEquals(1, terms.size());
@@ -161,7 +161,7 @@ public class OBOParserTest extends TestCase
 		          "def: \"This is a so-called \\\"test\\\"\"\n");
 		pw.close();
 
-		OBOParser oboParser = new OBOParser(tmp.getCanonicalPath(),OBOParser.PARSE_DEFINITIONS);
+		OBOParser oboParser = new OBOParser(new OBOParserFileInput(tmp.getCanonicalPath()),OBOParser.PARSE_DEFINITIONS);
 		oboParser.doParse();
 		ArrayList<Term> terms = new ArrayList<Term>(oboParser.getTermMap());
 		Assert.assertEquals(1, terms.size());
@@ -183,7 +183,7 @@ public class OBOParserTest extends TestCase
 				  "equivalent_to: GO:0000003 ! comment\n");
 		pw.close();
 
-		OBOParser oboParser = new OBOParser(tmp.getCanonicalPath());
+		OBOParser oboParser = new OBOParser(new OBOParserFileInput(tmp.getCanonicalPath()));
 		oboParser.doParse();
 		
 		ArrayList<Term> terms = new ArrayList<Term>(oboParser.getTermMap());
@@ -210,7 +210,7 @@ public class OBOParserTest extends TestCase
 				  "is_obsolete: true");
 		pw.close();
 
-		OBOParser oboParser = new OBOParser(tmp.getCanonicalPath(),OBOParser.PARSE_XREFS);
+		OBOParser oboParser = new OBOParser(new OBOParserFileInput(tmp.getCanonicalPath()),OBOParser.PARSE_XREFS);
 		oboParser.doParse();
 		ArrayList<Term> terms = new ArrayList<Term>(oboParser.getTermMap());
 		Assert.assertTrue(terms.get(0).isObsolete());
@@ -227,7 +227,7 @@ public class OBOParserTest extends TestCase
 				  "xref: db:ID \"WW\"");
 		pw.close();
 
-		OBOParser oboParser = new OBOParser(tmp.getCanonicalPath(),OBOParser.PARSE_XREFS);
+		OBOParser oboParser = new OBOParser(new OBOParserFileInput(tmp.getCanonicalPath()),OBOParser.PARSE_XREFS);
 		oboParser.doParse();
 		ArrayList<Term> terms = new ArrayList<Term>(oboParser.getTermMap());
 		Assert.assertEquals(1, terms.size());
@@ -247,7 +247,7 @@ public class OBOParserTest extends TestCase
 				  "xref: db:ID  \"WW\"");
 		pw.close();
 
-		OBOParser oboParser = new OBOParser(tmp.getCanonicalPath(),OBOParser.PARSE_XREFS);
+		OBOParser oboParser = new OBOParser(new OBOParserFileInput(tmp.getCanonicalPath()),OBOParser.PARSE_XREFS);
 		oboParser.doParse();
 		ArrayList<Term> terms = new ArrayList<Term>(oboParser.getTermMap());
 		Assert.assertEquals(1, terms.size());
@@ -267,7 +267,7 @@ public class OBOParserTest extends TestCase
 				  "xref: db:ID");
 		pw.close();
 
-		OBOParser oboParser = new OBOParser(tmp.getCanonicalPath(),OBOParser.PARSE_XREFS);
+		OBOParser oboParser = new OBOParser(new OBOParserFileInput(tmp.getCanonicalPath()),OBOParser.PARSE_XREFS);
 		oboParser.doParse();
 		ArrayList<Term> terms = new ArrayList<Term>(oboParser.getTermMap());
 		Assert.assertEquals(1, terms.size());
@@ -286,7 +286,7 @@ public class OBOParserTest extends TestCase
 		          "alt_id: GO:0000003\n");
 		pw.close();
 		
-		OBOParser oboParser = new OBOParser(tmp.getCanonicalPath(),OBOParser.PARSE_DEFINITIONS);
+		OBOParser oboParser = new OBOParser(new OBOParserFileInput(tmp.getCanonicalPath()),OBOParser.PARSE_DEFINITIONS);
 		oboParser.doParse();
 		ArrayList<Term> terms = new ArrayList<Term>(oboParser.getTermMap());
 		Assert.assertEquals(1, terms.size());
@@ -300,8 +300,8 @@ public class OBOParserTest extends TestCase
 		pw.append("[term\nimport: sss\n");
 		pw.close();
 		
-		OBOParser oboParser = new OBOParser(tmp.getCanonicalPath());
 		
+		OBOParser oboParser = new OBOParser(new OBOParserFileInput(tmp.getCanonicalPath()));
 		try
 		{
 			oboParser.doParse();
@@ -320,8 +320,8 @@ public class OBOParserTest extends TestCase
 		pw.append("[term \nimport: sss\n");
 		pw.close();
 		
-		OBOParser oboParser = new OBOParser(tmp.getCanonicalPath());
 		
+		OBOParser oboParser = new OBOParser(new OBOParserFileInput(tmp.getCanonicalPath()));
 		try
 		{
 			oboParser.doParse();
@@ -342,7 +342,7 @@ public class OBOParserTest extends TestCase
 				  "id: prefix:test\n");
 		pw.close();
 		
-		OBOParser oboParser = new OBOParser(tmp.getCanonicalPath(),0);
+		OBOParser oboParser = new OBOParser(new OBOParserFileInput(tmp.getCanonicalPath()),0);
 		oboParser.doParse();
 		ArrayList<Term> terms = new ArrayList<Term>(oboParser.getTermMap());
 		Assert.assertEquals(1, terms.size());

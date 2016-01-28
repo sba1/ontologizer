@@ -23,6 +23,7 @@ import ontologizer.enumeration.GOTermEnumerator;
 import ontologizer.enumeration.GOTermEnumerator.GOTermAnnotatedGenes;
 import ontologizer.go.Ontology;
 import ontologizer.go.OBOParser;
+import ontologizer.go.OBOParserFileInput;
 import ontologizer.go.TermContainer;
 import ontologizer.go.TermID;
 import ontologizer.go.Namespace;
@@ -233,7 +234,7 @@ public class SetConstructor
 
 			// loading GO graph
 			System.out.println("Parse obo file");
-			OBOParser oboParser = new OBOParser(oboFileName);
+			OBOParser oboParser = new OBOParser(new OBOParserFileInput(oboFileName));
 			System.out.println(oboParser.doParse());
 
 			TermContainer goTerms = new TermContainer(oboParser.getTermMap(), oboParser.getFormatVersion(), oboParser.getDate());

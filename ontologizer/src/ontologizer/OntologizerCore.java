@@ -15,6 +15,7 @@ import ontologizer.filter.GeneFilter;
 import ontologizer.go.Ontology;
 import ontologizer.go.OBOParser;
 import ontologizer.go.OBOParserException;
+import ontologizer.go.OBOParserFileInput;
 import ontologizer.go.TermContainer;
 import ontologizer.set.PopulationSet;
 import ontologizer.set.StudySet;
@@ -158,7 +159,7 @@ public class OntologizerCore
 		 */
 		System.err.println("Parse obo file \"" + args.goTermsOBOFile + "\"");
 
-		OBOParser oboParser = new OBOParser(args.goTermsOBOFile);
+		OBOParser oboParser = new OBOParser(new OBOParserFileInput(args.goTermsOBOFile));
 		System.err.println(oboParser.doParse());
 		goTerms = new TermContainer(oboParser.getTermMap(), oboParser.getFormatVersion(), oboParser.getDate());
 		System.err.println("Building graph");

@@ -17,6 +17,7 @@ import ontologizer.calculation.ParentChildCalculation;
 import ontologizer.go.Ontology;
 import ontologizer.go.OBOParser;
 import ontologizer.go.OBOParserException;
+import ontologizer.go.OBOParserFileInput;
 import ontologizer.go.TermContainer;
 import ontologizer.set.PopulationSet;
 import ontologizer.set.StudySet;
@@ -48,7 +49,7 @@ public class SteffenExec
 			GOpath + "gene_ontology.obo";
 
 		System.out.println("Reading in OBO file" + obofilename);
-		OBOParser oboParser = new OBOParser(obofilename);
+		OBOParser oboParser = new OBOParser(new OBOParserFileInput(obofilename));
 		try
 		{
 			System.out.println(oboParser.doParse());

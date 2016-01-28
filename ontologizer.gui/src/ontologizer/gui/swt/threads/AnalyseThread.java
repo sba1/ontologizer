@@ -20,6 +20,7 @@ import ontologizer.filter.GeneFilter;
 import ontologizer.go.Ontology;
 import ontologizer.go.IOBOParserProgress;
 import ontologizer.go.OBOParser;
+import ontologizer.go.OBOParserFileInput;
 import ontologizer.go.TermContainer;
 import ontologizer.gui.swt.Ontologizer;
 import ontologizer.gui.swt.ResultWindow;
@@ -206,7 +207,7 @@ public class AnalyseThread extends AbstractOntologizerThread
 	
 	
 			/* OBO */
-			OBOParser oboParser = new OBOParser(definitionFile,OBOParser.PARSE_DEFINITIONS);
+			OBOParser oboParser = new OBOParser(new OBOParserFileInput(definitionFile),OBOParser.PARSE_DEFINITIONS);
 			String diag = oboParser.doParse(new IOBOParserProgress(){
 				public void init(final int max)
 				{
