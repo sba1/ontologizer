@@ -8,7 +8,7 @@ import java.util.zip.GZIPInputStream;
 
 public class OBOParserFileInput implements IOBOParserInput
 {
-	FileInputStream fis;
+	private FileInputStream fis;
 	private InputStream is;
 	private FileChannel fc;
 
