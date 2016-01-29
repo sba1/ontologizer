@@ -6,6 +6,11 @@ import java.io.InputStream;
 import java.nio.channels.FileChannel;
 import java.util.zip.GZIPInputStream;
 
+/**
+ * An OBOParserInput for a local file.
+ *
+ * @author Sebastian Bauer
+ */
 public class OBOParserFileInput implements IOBOParserInput
 {
 	private FileInputStream fis;
