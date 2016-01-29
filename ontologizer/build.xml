@@ -9,18 +9,12 @@
 	<!-- Target for building the version containing class. Requires svn command. -->
 	<target name="version">
 
-		<exec executable="svn" outputproperty="svn.info">
-			<arg value="info"/>
-			<arg path="${basedir}/src"/>
-		</exec>
-		<exec executable="grep" outputproperty="grep.out" inputstring="${svn.info}">
-			<arg value="^Revision:"/>
+		<exec executable="git" outputproperty="git.count">
+			<arg value="rev-list" />
+			<arg value="--count" />
+			<arg value="HEAD" />
 		</exec>
 
-		<exec executable="sed" outputproperty="svn.revision" inputstring="${grep.out}">
-			<arg value="s/Revision: //"/>
-		</exec>
-		
 		<tstamp>
 		    <format property="DATE" pattern="yyyyMMdd" locale="ENGLISH, GERMANY"/>
 		</tstamp>
@@ -29,7 +23,7 @@
 package ontologizer;
 
 public class BuildInfoData {
-	public static final String revisionNumber="${svn.revision}";
+	public static final String revisionNumber="${git.count}";
 	public static final String date ="${DATE}";
 }
 		</echo>
