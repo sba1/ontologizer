@@ -1,10 +1,13 @@
 package ontologizer.association;
 
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
+
 import ontologizer.go.TermID;
 import ontologizer.types.ByteString;
-import junit.framework.TestCase;
 
-public class AssociationTest extends TestCase
+public class AssociationTest
 {
 	private final String EXAMPLE =
 			"SGD\t"+
@@ -21,6 +24,7 @@ public class AssociationTest extends TestCase
 			"20100308\t"+
 			"SGD";
 
+	@Test
 	public void testLine()
 	{
 		Association a = Association.createFromGAFLine(EXAMPLE);
@@ -32,6 +36,7 @@ public class AssociationTest extends TestCase
 		assertEquals("AAC1", a.getObjectSymbol().toString());
 	}
 
+	@Test
 	public void testByteStringLine()
 	{
 		Association a = Association.createFromGAFLine(new ByteString(EXAMPLE));

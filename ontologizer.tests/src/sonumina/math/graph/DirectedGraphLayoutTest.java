@@ -1,11 +1,12 @@
 package sonumina.math.graph;
 
+import org.junit.Test;
+
 import sonumina.math.graph.DirectedGraphLayout.Dimension;
-import junit.framework.TestCase;
 
-public class DirectedGraphLayoutTest extends TestCase
+public class DirectedGraphLayoutTest
 {
-
+	@Test
 	public void testLayout()
 	{
 		final String [] names = new String[]{

@@ -1,9 +1,12 @@
 package ontologizer;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
-public class SmithWatermanTest extends TestCase
+import org.junit.Test;
+
+public class SmithWatermanTest
 {
+	@Test
 	public void test()
 	{
 		assertEquals(40, SmithWaterman.getScore("test", "test"));

@@ -1,14 +1,17 @@
 package att.grappa;
 
+import static org.junit.Assert.assertEquals;
+
 import java.awt.Color;
 import java.io.ByteArrayInputStream;
 import java.util.List;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public class TestGradient extends TestCase
+public class TestGradient
 {
 	@SuppressWarnings("unchecked")
+	@Test
 	public void testGradient() throws Exception
 	{
 		String gr = "digraph G { test [label=\"Test\",style=\"filled\",gradientangle=270,fillcolor=\"white:red\"]; }";

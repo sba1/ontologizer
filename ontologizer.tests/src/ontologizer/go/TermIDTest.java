@@ -1,10 +1,12 @@
 package ontologizer.go;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Test;
 
-public class TermIDTest extends TestCase
+
+public class TermIDTest
 {
+	@Test
 	public void test()
 	{
 		TermID gid = new TermID("GO:0120211");
@@ -25,6 +27,7 @@ public class TermIDTest extends TestCase
 		Assert.assertTrue(gid.equals(gid9));  // yes, uses explicit prefix construction
 	}
 
+	@Test
 	public void testByte()
 	{
 		byte [] t1 = "GO:0120211".getBytes();
@@ -36,6 +39,7 @@ public class TermIDTest extends TestCase
 		Assert.assertEquals("GO:0120211",gid2.toString());
 	}
 
+	@Test
 	public void testWithPrefix()
 	{
 		PrefixPool pool = new PrefixPool();

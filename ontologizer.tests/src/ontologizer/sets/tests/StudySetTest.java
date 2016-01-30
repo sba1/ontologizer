@@ -1,13 +1,19 @@
 package ontologizer.sets.tests;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.HashSet;
+
+import org.junit.Assert;
+import org.junit.Test;
 
 import ontologizer.association.Association;
 import ontologizer.association.AssociationContainer;
-import ontologizer.association.AssociationParserTest2;
+import ontologizer.association.AssociationParser;
 import ontologizer.association.Gene2Associations;
 import ontologizer.benchmark.Datafiles;
 import ontologizer.calculation.AbstractGOTermProperties;
@@ -17,9 +23,12 @@ import ontologizer.dotwriter.AbstractDotAttributesProvider;
 import ontologizer.dotwriter.GODOTWriter;
 import ontologizer.enumeration.GOTermEnumerator;
 import ontologizer.enumeration.GOTermEnumerator.GOTermAnnotatedGenes;
+import ontologizer.go.OBOParser;
+import ontologizer.go.OBOParserException;
+import ontologizer.go.OBOParserFileInput;
+import ontologizer.go.OBOParserTest;
 import ontologizer.go.Ontology;
 import ontologizer.go.ParentTermID;
-import ontologizer.go.ParsedContainerTest;
 import ontologizer.go.Term;
 import ontologizer.go.TermContainer;
 import ontologizer.go.TermID;
@@ -28,11 +37,9 @@ import ontologizer.set.PopulationSet;
 import ontologizer.set.StudySet;
 import ontologizer.statistics.None;
 import ontologizer.types.ByteString;
+import sonumina.math.graph.AbstractGraph.DotAttributesProvider;
 import sonumina.math.graph.DirectedGraph;
 import sonumina.math.graph.Edge;
-import sonumina.math.graph.AbstractGraph.DotAttributesProvider;
-import junit.framework.Assert;
-import junit.framework.TestCase;
 
 class InternalDatafiles extends Datafiles
 {
@@ -153,13 +160,18 @@ class InternalDatafiles extends Datafiles
 
 }
 
-public class StudySetTest extends TestCase
+public class StudySetTest
 {
-	public void testEnumerateWithNonExistentTerms()
+	private final static String GOAssociationFile = "data/gene_association.sgd.gz";
+
+	@Test
+	public void testEnumerateWithNonExistentTerms() throws IOException, OBOParserException
 	{
-		AssociationParserTest2 apt = new AssociationParserTest2();
-		apt.run();
-		Ontology o = new Ontology(apt.container);
+		// FIXME: Duplicated partly from AssociationParserTest2
+		OBOParser oboParser = new OBOParser(new OBOParserFileInput(OBOParserTest.GOtermsOBOFile));
+		oboParser.doParse();
+		TermContainer container = new TermContainer(oboParser.getTermMap(), oboParser.getFormatVersion(), oboParser.getDate());
+		Ontology o = new Ontology(container);
 
 		AssociationContainer assoc = new AssociationContainer();
 		Association a = new Association(new ByteString("Test"), "TEST:0000000");
@@ -177,6 +189,7 @@ public class StudySetTest extends TestCase
 		}
 	}
 
+	@Test
 	public void testEnumerateOnInternal()
 	{
 		InternalDatafiles idf = new InternalDatafiles();
@@ -247,22 +260,30 @@ public class StudySetTest extends TestCase
 //		assertEquals(7,number);
 	}
 
-	public void testEnumerateOnExternal()
+	@Test
+	public void testEnumerateOnExternal() throws IOException, OBOParserException
 	{
-		AssociationParserTest2 apt = new AssociationParserTest2();
-		apt.run();
+		// FIXME: Duplicated partly from AssociationParserTest2
+		OBOParser oboParser = new OBOParser(new OBOParserFileInput(OBOParserTest.GOtermsOBOFile));
+		oboParser.doParse();
+		TermContainer container = new TermContainer(oboParser.getTermMap(), oboParser.getFormatVersion(), oboParser.getDate());
+		Ontology o = new Ontology(container);
+		AssociationParser assocParser = new AssociationParser(GOAssociationFile, container, null);
+
+		AssociationContainer assocContainer = new AssociationContainer(assocParser.getAssociations(),
+				assocParser.getSynonym2gene(),
+				assocParser.getDbObject2gene());
 
 		StudySet s = new StudySet();
-		s.addGenes(apt.assocContainer.getAllAnnotatedGenes());
+		s.addGenes(assocContainer.getAllAnnotatedGenes());
 
-		Ontology o = new Ontology(apt.container);
 		TermID rootTerm = o.getRootTerm().getID();
 		Assert.assertEquals(rootTerm,new TermID("GO:0000000"));
 
-		GOTermEnumerator e = s.enumerateGOTerms(o,apt.assocContainer);
+		GOTermEnumerator e = s.enumerateGOTerms(o,assocContainer);
 		Assert.assertEquals(6721,e.getTotalNumberOfAnnotatedTerms());
-		Assert.assertEquals(apt.assocContainer.getAllAnnotatedGenes().size(),e.getGenes().size());
-		Assert.assertEquals(apt.assocContainer.getAllAnnotatedGenes().size(),e.getAnnotatedGenes(rootTerm).totalAnnotated.size());
+		Assert.assertEquals(assocContainer.getAllAnnotatedGenes().size(),e.getGenes().size());
+		Assert.assertEquals(assocContainer.getAllAnnotatedGenes().size(),e.getAnnotatedGenes(rootTerm).totalAnnotated.size());
 
 		/* The following has been generated! It is used as a "fingerprint" to track any possible changes */
 		Assert.assertEquals(2,e.getAnnotatedGenes(new TermID("GO:0070180")).totalAnnotatedCount());

@@ -1,10 +1,12 @@
 package ontologizer.go;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Test;
 
-public class PrefixPoolTest extends TestCase
+
+public class PrefixPoolTest
 {
+	@Test
 	public void testPrefix()
 	{
 		PrefixPool pp = new PrefixPool();

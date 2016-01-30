@@ -1,25 +1,25 @@
 package ontologizer.dotwriter;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
-import java.io.IOException;
 import java.util.HashSet;
+
+import org.junit.Test;
 
 import att.grappa.GraphEnumeration;
 import att.grappa.GrappaConstants;
 import att.grappa.Parser;
-
-import junit.framework.Assert;
-import junit.framework.TestCase;
-
 import ontologizer.go.Term;
 import ontologizer.go.TermID;
 import ontologizer.internal.InternalOntology;
 
-public class GODOTWriterTest extends TestCase
+public class GODOTWriterTest
 {
+	@Test
 	public void testWriteDOT() throws Exception
 	{
 		InternalOntology ontology = new InternalOntology();
@@ -67,7 +67,7 @@ public class GODOTWriterTest extends TestCase
 			e.nextElement();
 			numNodes++;
 		}
-		Assert.assertEquals(ontology.graph.getNumberOfTerms(),numNodes);
+		assertEquals(ontology.graph.getNumberOfTerms(),numNodes);
 
 	}
 }

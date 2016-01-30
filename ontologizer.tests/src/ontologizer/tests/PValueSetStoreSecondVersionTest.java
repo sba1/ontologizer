@@ -1,16 +1,17 @@
 package ontologizer.tests;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Test;
+
 import ontologizer.statistics.PValue;
 import ontologizer.statistics.PvalueSetStoreSecondVersion;
 
-public class PValueSetStoreSecondVersionTest extends TestCase
+public class PValueSetStoreSecondVersionTest
 {
-
 	/*
 	 * Test method for 'ontologizer.statistics.PvalueSetStoreSecondVersion.PvalueSetStoreSecondVersion(int, int)'
 	 */
+	@Test
 	public void testPvalueSetStore()
 	{
 		int nSets = 3;

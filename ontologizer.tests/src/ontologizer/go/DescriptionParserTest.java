@@ -1,10 +1,13 @@
 package ontologizer.go;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
 import java.util.ArrayList;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public class DescriptionParserTest extends TestCase
+public class DescriptionParserTest
 {
 	private final String testDescription = "`Distention` (PATO:0001602) of the `abdomen` (FMA:9577).";
 
@@ -21,6 +24,7 @@ public class DescriptionParserTest extends TestCase
 			null
 	};
 
+	@Test
 	public void test()
 	{
 		final ArrayList<String> refList = new ArrayList<String>();
@@ -42,6 +46,7 @@ public class DescriptionParserTest extends TestCase
 		assertEquals(4,refList.size());
 	}
 
+	@Test
 	public void test2()
 	{
 		final ArrayList<String> refList = new ArrayList<String>();

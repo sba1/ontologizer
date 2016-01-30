@@ -1,9 +1,10 @@
 package ontologizer.go;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
-public class ParsedContainerTest extends TestCase
+public class ParsedContainerTest
 {
 	// reusable fields for dependent tests
 	public TermContainer container;
@@ -15,8 +16,8 @@ public class ParsedContainerTest extends TestCase
 	private Term cellcomp = new Term("GO:0005575", "cellular_component");
 	private Term molfunc = new Term("GO:0003674", "molecular_function");
 
-	@Override
-	protected void setUp() throws Exception
+	@Before
+	public void setUp() throws Exception
 	{
 		oboParser = new OBOParser(new OBOParserFileInput(OBOParserTest.GOtermsOBOFile));
 		oboParser.doParse();
@@ -24,6 +25,7 @@ public class ParsedContainerTest extends TestCase
 	}
 
 
+	@Test
 	public void testBasicStructure()
 	{
 

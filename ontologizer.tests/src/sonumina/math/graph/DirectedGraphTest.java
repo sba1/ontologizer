@@ -14,13 +14,13 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
+import org.junit.Assert;
+import org.junit.Test;
+
 import sonumina.math.graph.AbstractGraph.DotAttributesProvider;
 import sonumina.math.graph.AbstractGraph.INeighbourGrabber;
 import sonumina.math.graph.AbstractGraph.IVisitor;
 import sonumina.math.graph.DirectedGraph.IDistanceVisitor;
-
-import junit.framework.Assert;
-import junit.framework.TestCase;
 
 class TestData
 {
@@ -37,8 +37,9 @@ class TestData
 	}
 };
 
-public class DirectedGraphTest extends TestCase
+public class DirectedGraphTest
 {
+	@Test
 	public void testVertexRemove()
 	{
 		DirectedGraph<TestData> graph = new DirectedGraph<TestData>();
@@ -61,6 +62,7 @@ public class DirectedGraphTest extends TestCase
 		graph.removeVertex(a);
 	}
 
+	@Test
 	public void testGraph()
 	{
 		final DirectedGraph<TestData> graph = new DirectedGraph<TestData>();
@@ -264,6 +266,7 @@ public class DirectedGraphTest extends TestCase
 		return childGrabber;
 	}
 
+	@Test
 	public void testShortLinksOnTree()
 	{
 		/*

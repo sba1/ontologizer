@@ -1,12 +1,13 @@
 package ontologizer.go;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
-public class TermContainerTest extends TestCase
+
+public class TermContainerTest
 {
 	private TermContainer container;
 	private Term root;
@@ -15,8 +16,8 @@ public class TermContainerTest extends TestCase
 	private Term molfunc;
 
 
-	@Override
-	protected void setUp() throws Exception
+	@Before
+	public void setUp() throws Exception
 	{
 		root = new Term("GO:0000000", "root", null);
 		ArrayList<ParentTermID> rootlist = new ArrayList<ParentTermID>();
@@ -34,6 +35,7 @@ public class TermContainerTest extends TestCase
 		container = new TermContainer(termsConstructed, "noformat", "nodate");
 	}
 
+	@Test
 	public void testBasicStructure()
 	{
 

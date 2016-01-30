@@ -6,6 +6,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
+import org.junit.Assert;
+import org.junit.Test;
+
 import ontologizer.association.AssociationContainer;
 import ontologizer.calculation.Bayes2GOCalculationTest.SingleCalculationSetting;
 import ontologizer.calculation.b2g.FixedAlphaBetaScore;
@@ -15,10 +18,8 @@ import ontologizer.go.Term;
 import ontologizer.go.TermID;
 import ontologizer.internal.InternalOntology;
 import sonumina.math.graph.SlimDirectedGraphView;
-import junit.framework.Assert;
-import junit.framework.TestCase;
 
-public class FixedAlphaBetaScoreTest extends TestCase
+public class FixedAlphaBetaScoreTest
 {
 	static Collection<TermID> asList(String...termIDs)
 	{
@@ -28,6 +29,7 @@ public class FixedAlphaBetaScoreTest extends TestCase
 		return list;
 	}
 
+	@Test
 	public void testWithFixedParameter()
 	{
 		InternalOntology internalOntology = new InternalOntology();
@@ -62,9 +64,10 @@ public class FixedAlphaBetaScoreTest extends TestCase
 				if (score > foundMax) foundMax = score;
 			}
 		}
-		Assert.assertEquals(expectedMax, foundMax);
+		Assert.assertEquals(expectedMax, foundMax, 1e-10);
 	}
 
+	@Test
 	public void testWithIntegratedOutParameter()
 	{
 		InternalOntology internalOntology = new InternalOntology();
@@ -98,7 +101,7 @@ public class FixedAlphaBetaScoreTest extends TestCase
 			}
 		}
 		System.out.println("Max: " + foundMax);
-		Assert.assertEquals(expectedMax, foundMax);
+		Assert.assertEquals(expectedMax, foundMax, 1e-10);
 	}
 
 }

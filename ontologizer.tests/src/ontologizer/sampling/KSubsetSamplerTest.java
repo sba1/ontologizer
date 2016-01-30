@@ -3,12 +3,12 @@ package ontologizer.sampling;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import junit.framework.TestCase;
-import junit.framework.Assert;
+import org.junit.Assert;
+import org.junit.Test;
 
-public class KSubsetSamplerTest extends TestCase
+public class KSubsetSamplerTest
 {
-
+	@Test
 	public void testKSubsetSampler() throws Exception
 	{
 		HashSet<String> objects = new HashSet<String>();

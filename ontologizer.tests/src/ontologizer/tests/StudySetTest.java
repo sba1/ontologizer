@@ -1,17 +1,17 @@
 package ontologizer.tests;
 
+import org.junit.Assert;
+import org.junit.Test;
+
 import ontologizer.set.StudySet;
 import ontologizer.types.ByteString;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
-
-public class StudySetTest extends TestCase
+public class StudySetTest
 {
-
 	/*
 	 * Test method for 'ontologizer.StudySet.generateRandomStudySet(int)'
 	 */
+	@Test
 	public void testGenerateRandomStudySetInt()
 	{
 		StudySet bigStudy = new StudySet("BigStudy");

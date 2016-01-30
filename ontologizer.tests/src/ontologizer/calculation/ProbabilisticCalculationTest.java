@@ -1,11 +1,11 @@
 package ontologizer.calculation;
 
-import java.util.ArrayList;
 import java.util.HashSet;
+
+import org.junit.Test;
 
 import ontologizer.association.Association;
 import ontologizer.association.AssociationContainer;
-import ontologizer.association.AssociationParser;
 import ontologizer.go.Ontology;
 import ontologizer.go.ParentTermID;
 import ontologizer.go.Term;
@@ -15,10 +15,10 @@ import ontologizer.set.PopulationSet;
 import ontologizer.set.StudySet;
 import ontologizer.statistics.None;
 import ontologizer.types.ByteString;
-import junit.framework.TestCase;
 
-public class ProbabilisticCalculationTest extends TestCase {
-
+public class ProbabilisticCalculationTest
+{
+	@Test
 	public void testCalculateStudySet()
 	{
 		/* Go Graph */

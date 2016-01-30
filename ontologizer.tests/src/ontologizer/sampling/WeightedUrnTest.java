@@ -2,12 +2,12 @@ package ontologizer.sampling;
 
 import java.util.HashSet;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Test;
 
-public class WeightedUrnTest extends TestCase
+public class WeightedUrnTest
 {
-
+	@Test
 	public void testWeightedUrn()
 	{
 		HashSet<String> enumeratorSet = new HashSet<String>();
@@ -38,6 +38,7 @@ public class WeightedUrnTest extends TestCase
 		}
 	}
 
+	@Test
 	public void testWeightedUrnMini()
 	{
 		HashSet<String> enumeratorSet = new HashSet<String>();

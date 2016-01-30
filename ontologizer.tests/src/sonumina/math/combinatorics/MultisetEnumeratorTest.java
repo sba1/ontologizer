@@ -1,9 +1,11 @@
 package sonumina.math.combinatorics;
 
-import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Test;
 
-public class MultisetEnumeratorTest extends TestCase
+public class MultisetEnumeratorTest
 {
+	@Test
 	public void testMultiset()
 	{
 		/** A common base class (just used to print out the stuff) */
@@ -21,7 +23,7 @@ public class MultisetEnumeratorTest extends TestCase
 			public void visit(int[] elementList, int[] multiplicitiesPerElement)
 			{
 				for (int i=0;i<elementList.length;i++)
-					assertEquals(asserted[stepCount][i],elementList[i]);
+					Assert.assertEquals(asserted[stepCount][i],elementList[i]);
 
 				stepCount++;
 

@@ -1,12 +1,15 @@
 package sonumina.math.changelog;
 
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
+
 import sonumina.util.changelog.BuildChangeLog;
 import sonumina.util.changelog.Change;
-import junit.framework.Assert;
-import junit.framework.TestCase;
 
-public class BuildChangeLogTest extends TestCase
+public class BuildChangeLogTest
 {
+	@Test
 	public void testBasicLog()
 	{
 		String string = "------------------------------------------------------------------------\n" +
@@ -26,12 +29,12 @@ public class BuildChangeLogTest extends TestCase
 						"$foruser$Test3\n"+
 						"------------------------------------------------------------------------\n";
 		Change [] result = BuildChangeLog.process(string);
-		Assert.assertEquals(3,result.length);
-		Assert.assertEquals("Test", result[0].logString);
-		Assert.assertEquals("sba", result[0].authorString);
-		Assert.assertEquals("Test2", result[1].logString);
-		Assert.assertEquals("sba", result[1].authorString);
-		Assert.assertEquals("Test3", result[2].logString);
-		Assert.assertEquals("sba", result[2].authorString);
+		assertEquals(3,result.length);
+		assertEquals("Test", result[0].logString);
+		assertEquals("sba", result[0].authorString);
+		assertEquals("Test2", result[1].logString);
+		assertEquals("sba", result[1].authorString);
+		assertEquals("Test3", result[2].logString);
+		assertEquals("sba", result[2].authorString);
 	}
 }

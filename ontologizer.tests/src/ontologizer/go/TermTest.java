@@ -2,11 +2,12 @@ package ontologizer.go;
 
 import java.util.ArrayList;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Test;
 
-public class TermTest extends TestCase
+public class TermTest
 {
+	@Test
 	public void test()
 	{
 		Namespace bNamespace = new Namespace("B");

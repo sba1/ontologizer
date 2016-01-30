@@ -1,11 +1,16 @@
 package ontologizer.types.tests;
 
-import ontologizer.types.ByteString;
-import junit.framework.Assert;
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-public class ByteStringTest extends TestCase
+import org.junit.Assert;
+import org.junit.Test;
+
+import ontologizer.types.ByteString;
+
+public class ByteStringTest
 {
+	@Test
 	public void testParseInteger()
 	{
 		assertEquals(1234, ByteString.parseFirstInt(new ByteString("1234")));
@@ -22,6 +27,7 @@ public class ByteStringTest extends TestCase
 		} catch (NumberFormatException ex) {}
 	}
 
+	@Test
 	public void testByteParseInteger()
 	{
 		byte [] buf = "xx1234xx".getBytes();
@@ -30,11 +36,13 @@ public class ByteStringTest extends TestCase
 		assertEquals(23, ByteString.parseFirstInt(buf, 3, 2));
 	}
 
+	@Test
 	public void testSubstring()
 	{
 		assertEquals("TEst",new ByteString("TestTEstTest").substring(4,8).toString());
 	}
 
+	@Test
 	public void testSplit()
 	{
 		ByteString [] split = new ByteString("str1|str2|str3").splitBySingleChar('|');

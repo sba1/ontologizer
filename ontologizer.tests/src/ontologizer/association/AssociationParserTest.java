@@ -1,22 +1,26 @@
 package ontologizer.association;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import org.junit.Assert;
+import org.junit.Test;
+
 import ontologizer.go.OBOParser;
 import ontologizer.go.OBOParserException;
 import ontologizer.go.OBOParserFileInput;
 import ontologizer.go.TermContainer;
-import junit.framework.Assert;
-import junit.framework.TestCase;
 
-public class AssociationParserTest extends TestCase
+public class AssociationParserTest
 {
 	private static final String OBO_FILE = "data/gene_ontology.1_2.obo.gz";
 	private static final String ASSOCIATION_FILE = "data/gene_association.sgd.gz";
 
+	@Test
 	public void testSimple() throws IOException, OBOParserException
 	{
 		OBOParser oboParser = new OBOParser(new OBOParserFileInput(OBO_FILE));
@@ -33,6 +37,7 @@ public class AssociationParserTest extends TestCase
 		Assert.assertEquals("S000004009",a.getDB_Object().toString());
 	}
 
+	@Test
 	public void testSkipHeader() throws IOException, OBOParserException
 	{
 		File tmp = File.createTempFile("test", ".gaf");
@@ -50,6 +55,7 @@ public class AssociationParserTest extends TestCase
 		Assert.assertEquals(1, assoc.getAllAnnotatedGenes().size());
 	}
 
+	@Test
 	public void testAmbiguousGAFCaseA() throws IOException, OBOParserException
 	{
 
@@ -70,6 +76,7 @@ public class AssociationParserTest extends TestCase
 		Assert.assertEquals("SYMBOL",assoc.getAllAnnotatedGenes().iterator().next().toString());
 	}
 
+	@Test
 	public void testIDS() throws IOException, OBOParserException
 	{
 		File tmp = File.createTempFile("test", ".ids");

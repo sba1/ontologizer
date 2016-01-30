@@ -8,7 +8,8 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
 import ontologizer.FileCache;
 import ontologizer.OntologizerThreadGroups;
 import ontologizer.association.Association;
@@ -16,7 +17,6 @@ import ontologizer.association.AssociationContainer;
 import ontologizer.calculation.b2g.B2GParam;
 import ontologizer.calculation.b2g.Bayes2GOCalculation;
 import ontologizer.calculation.b2g.Bayes2GOEnrichedGOTermsResult;
-import ontologizer.calculation.b2g.ValuedGOScore;
 import ontologizer.dotwriter.AbstractDotAttributesProvider;
 import ontologizer.dotwriter.GODOTWriter;
 import ontologizer.enumeration.GOTermEnumerator;
@@ -50,7 +50,7 @@ class B2GTestParameter
  * @author Sebastian Bauer
  *
  */
-public class Bayes2GOCalculationTest extends TestCase
+public class Bayes2GOCalculationTest
 {
 	/* FIXME: Move this out of this class! */
 	public static class SingleCalculationSetting
@@ -130,6 +130,7 @@ public class Bayes2GOCalculationTest extends TestCase
 	}
 
 
+	@Test
 	public void testBayes2GOSimple()
 	{
 		InternalOntology internalOntology = new InternalOntology();
@@ -153,6 +154,7 @@ public class Bayes2GOCalculationTest extends TestCase
 		calc.calculateStudySet(ontology, assoc, scs.pop, scs.study, new None());
 	}
 
+	@Test
 	public void testBayes2GOParameterIntegratedOut()
 	{
 		InternalOntology internalOntology = new InternalOntology();
@@ -177,6 +179,7 @@ public class Bayes2GOCalculationTest extends TestCase
 		calc.calculateStudySet(ontology, assoc, scs.pop, scs.study, new None());
 	}
 
+	@Test
 	public void testValuedGOScore()
 	{
 		String [] terms = {"GO:0000010", "GO:0000004"};

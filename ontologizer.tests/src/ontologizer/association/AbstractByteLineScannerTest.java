@@ -1,5 +1,8 @@
 package ontologizer.association;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
@@ -9,12 +12,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.zip.GZIPInputStream;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Test;
+
 import ontologizer.linescanner.AbstractByteLineScanner;
 
-public class AbstractByteLineScannerTest extends TestCase
+public class AbstractByteLineScannerTest
 {
+	@Test
 	public void testBigFile() throws FileNotFoundException, IOException
 	{
 		InputStream	is = new GZIPInputStream(new FileInputStream("data/gene_ontology.1_2.obo.gz"));
@@ -58,6 +63,7 @@ public class AbstractByteLineScannerTest extends TestCase
 		br.close();
 	}
 
+	@Test
 	public void testMissingNewLineAtLineEnd() throws IOException
 	{
 		ByteArrayInputStream bais = new ByteArrayInputStream("test\ntest2".getBytes());
@@ -83,6 +89,7 @@ public class AbstractByteLineScannerTest extends TestCase
 		assertEquals(2, tbls.lines);
 	}
 
+	@Test
 	public void testAvailable() throws IOException
 	{
 		ByteArrayInputStream bais = new ByteArrayInputStream("test\ntest2\n\test3\n".getBytes());

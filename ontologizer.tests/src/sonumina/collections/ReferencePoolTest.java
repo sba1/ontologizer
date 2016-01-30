@@ -1,16 +1,19 @@
 package sonumina.collections;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
 
-public class ReferencePoolTest extends TestCase
+import org.junit.Test;
+
+public class ReferencePoolTest
 {
+	@Test
 	public void testWithInteger()
 	{
 		ReferencePool<Integer> integerPool = new ReferencePool<Integer>();
 		Integer ref = integerPool.map(new Integer(10));
 		Integer n = new Integer(10);
-		Assert.assertNotSame(ref, n);
-		Assert.assertSame(ref, integerPool.map(n));
+		assertNotSame(ref, n);
+		assertSame(ref, integerPool.map(n));
 	}
 }

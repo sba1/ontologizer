@@ -1,28 +1,39 @@
 package ontologizer.sampling;
-
 import java.util.Set;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+
 import ontologizer.association.AssociationContainer;
-import ontologizer.association.AssociationParserTest2;
+import ontologizer.association.AssociationParser;
+import ontologizer.go.OBOParser;
+import ontologizer.go.OBOParserFileInput;
+import ontologizer.go.OBOParserTest;
+import ontologizer.go.TermContainer;
 import ontologizer.set.StudySet;
 import ontologizer.set.StudySetFactory;
 import ontologizer.types.ByteString;
 
-public class StudySetSamplerTest extends TestCase
+public class StudySetSamplerTest
 {
 	private StudySet baseStudySet;
 	private StudySetSampler studySetSampler;
 	private int baseStudySetsize;
 
-	@Override
-	protected void setUp() throws Exception
+	private final static String GOAssociationFile = "data/gene_association.sgd.gz";
+
+	@Before
+	public void setUp() throws Exception
 	{
-		AssociationParserTest2 assocPT = new AssociationParserTest2();
-		assocPT.run();
-		// container = assocPT.container;
-		AssociationContainer assocContainer = assocPT.assocContainer;
+		/* FIXME: Duplicated from AssociationParserTest2 */
+		OBOParser oboParser = new OBOParser(new OBOParserFileInput(OBOParserTest.GOtermsOBOFile));
+		oboParser.doParse();
+		TermContainer container = new TermContainer(oboParser.getTermMap(), oboParser.getFormatVersion(), oboParser.getDate());
+		AssociationParser assocParser = new AssociationParser(GOAssociationFile, container, null);
+		AssociationContainer assocContainer = new AssociationContainer(assocParser.getAssociations(),
+				assocParser.getSynonym2gene(),
+				assocParser.getDbObject2gene());
 
 		Set<ByteString> allAnnotatedGenes = assocContainer.getAllAnnotatedGenes();
 
@@ -37,6 +48,7 @@ public class StudySetSamplerTest extends TestCase
 		studySetSampler = new StudySetSampler(baseStudySet);
 	}
 
+	@Test
 	public void testBasicSampling()
 	{
 		StudySet sample;

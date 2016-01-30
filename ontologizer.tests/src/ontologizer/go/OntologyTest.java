@@ -1,20 +1,20 @@
 package ontologizer.go;
-
 import java.util.Set;
+
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 import ontologizer.go.Ontology.IVisitingGOVertex;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
-
-public class OntologyTest extends TestCase
+public class OntologyTest
 {
 	private TermContainer goTerms;
 
 	private Ontology graph;
 
-	@Override
-	protected void setUp() throws Exception
+	@Before
+	public void setUp() throws Exception
 	{
 		String GOtermsOBOFile = "data/gene_ontology.1_2.obo.gz";
 
@@ -29,6 +29,7 @@ public class OntologyTest extends TestCase
 		graph = new Ontology(goTerms);
 	}
 
+	@Test
 	public void testRoot()
 	{
 		Set<String> terms;
@@ -42,6 +43,7 @@ public class OntologyTest extends TestCase
 		Assert.assertTrue("Root has no ancestors", terms.size() == 0);
 	}
 
+	@Test
 	public void testExistsPath()
 	{
 		Assert.assertTrue(graph.existsPath(new TermID("GO:0009987"),
@@ -60,6 +62,7 @@ public class OntologyTest extends TestCase
 				new TermID("GO:0006139")));
 	}
 
+	@Test
 	public void testWalkToRoot()
 	{
 		/**
