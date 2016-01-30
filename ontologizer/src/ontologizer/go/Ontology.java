@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import sonumina.math.graph.DirectedGraph;
@@ -53,7 +54,7 @@ class OntologyEdge extends Edge<Term>
  */
 public class Ontology implements Iterable<Term>
 {
-	private static Logger logger = Logger.getLogger(Ontology.class.getCanonicalName());
+	private static Logger logger = Logger.getLogger(Ontology.class.getName());
 
 	/** This is used to identify Gene Ontology until a better way is found */
 	private static HashSet<String> goLevel1TermNames = new HashSet<String>(Arrays.asList("molecular_function","biological_process", "cellular_component"));
@@ -108,13 +109,13 @@ public class Ontology implements Iterable<Term>
 				/* Ignore loops */
 				if (term.getID().equals(parent.termid))
 				{
-					logger.info("Detected self-loop in the definition of the ontology (term "+ term.getIDAsString()+"). This link has been ignored.");
+					logger.log(Level.INFO,"Detected self-loop in the definition of the ontology (term "+ term.getIDAsString()+"). This link has been ignored.");
 					continue;
 				}
 				if (newTermContainer.get(parent.termid) == null)
 				{
 					/* FIXME: We may want to add a new vertex to graph here instead */
-					logger.info("Could not add a link from term " + term.toString() + " to " + parent.termid.toString() +" as the latter's definition is missing.");
+					logger.log(Level.INFO,"Could not add a link from term " + term.toString() + " to " + parent.termid.toString() +" as the latter's definition is missing.");
 					++skippedEdges;
 					continue;
 				}
@@ -123,7 +124,7 @@ public class Ontology implements Iterable<Term>
 		}
 
 		if (skippedEdges > 0)
-			logger.info("A total of " + skippedEdges + " edges were skipped.");
+			logger.log(Level.INFO,"A total of " + skippedEdges + " edges were skipped.");
 		assignLevel1TermsAndFixRoot();
 	}
 
@@ -252,7 +253,7 @@ public class Ontology implements Iterable<Term>
 
 			rootTerm = new Term(level1terms.get(0).getID().getPrefix().toString()+":0000000", rootName);
 
-			logger.info("Ontology contains multiple level-one terms: " + level1StringBuilder.toString() + ". Adding artificial root term \"" + rootTerm.getID().toString() + "\".");
+			logger.log(Level.INFO,"Ontology contains multiple level-one terms: " + level1StringBuilder.toString() + ". Adding artificial root term \"" + rootTerm.getID().toString() + "\".");
 
 			rootTerm.setSubsets(new ArrayList<Subset>(availableSubsets));
 			graph.addVertex(rootTerm);
@@ -266,7 +267,7 @@ public class Ontology implements Iterable<Term>
 			if (level1terms.size() == 1)
 			{
 				rootTerm = level1terms.get(0);
-				logger.info("Ontology contains a single level-one term ("+ rootTerm.toString() + "");
+				logger.log(Level.INFO,"Ontology contains a single level-one term ("+ rootTerm.toString() + "");
 			}
 		}
 	}

@@ -204,11 +204,21 @@ public class TermID
 	 */
 	public String toString()
 	{
+		String idString = Integer.toString(id);
+		StringBuffer buf = new StringBuffer(16);
+		buf.append(prefix.toString());
+		buf.append(":");
+		for (int i=0;i<7-idString.length();i++)
+			buf.append('0');
+		buf.append(idString);
+		return buf.toString();
 		/*
 		 * Luckily java has support for sprintf() functions as known from ANSI-C
-		 * since 1.5
+		 * since 1.5.
+		 *
+		 * Disabled as TeaVM's class lib doesn't support it for now.
 		 */
-		return String.format("%s:%07d", prefix.toString(), id);
+		/*return String.format("%s:%07d", prefix.toString(), id);*/
 	}
 
 	@Override

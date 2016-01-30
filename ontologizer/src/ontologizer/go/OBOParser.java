@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import ontologizer.linescanner.AbstractByteLineScanner;
@@ -35,7 +36,7 @@ import sonumina.math.graph.Edge;
  */
 public class OBOParser
 {
-	private static Logger logger = Logger.getLogger(OBOParser.class.getCanonicalName());
+	private static Logger logger = Logger.getLogger(OBOParser.class.getName());
 
 	private enum Stanza
 	{
@@ -1063,7 +1064,8 @@ public class OBOParser
 			throw obls.exception;
 		input.close();
 
-		logger.info("Got " + terms.size() + " terms and " + numberOfRelations + " relations in " + (System.currentTimeMillis() - startMillis) + " ms");
+		long durationMillis = System.currentTimeMillis() - startMillis;
+		logger.log(Level.INFO, "Got " + terms.size() + " terms and " + numberOfRelations + " relations in " + durationMillis + " ms");
 		return this.getParseDiagnostics();
 	}
 
