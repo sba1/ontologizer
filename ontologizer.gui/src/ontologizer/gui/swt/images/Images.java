@@ -6,7 +6,6 @@
  */
 package ontologizer.gui.swt.images;
 
-import java.io.File;
 import java.io.InputStream;
 import java.util.LinkedList;
 

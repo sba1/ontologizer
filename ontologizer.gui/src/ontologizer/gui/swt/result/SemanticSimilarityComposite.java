@@ -17,7 +17,6 @@ import ontologizer.association.Gene2Associations;
 import ontologizer.calculation.SemanticResult;
 import ontologizer.go.Ontology;
 import ontologizer.go.TermID;
-import ontologizer.gui.swt.support.GraphCanvas;
 import ontologizer.gui.swt.support.IGraphCanvas;
 import ontologizer.gui.swt.support.IMinimizedAdapter;
 import ontologizer.types.ByteString;

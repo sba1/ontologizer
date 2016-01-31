@@ -5,7 +5,6 @@ import java.util.logging.Logger;
 import org.eclipse.swt.widgets.Display;
 
 import ontologizer.association.AssociationContainer;
-import ontologizer.association.AssociationParser;
 import ontologizer.calculation.SemanticCalculation;
 import ontologizer.calculation.SemanticResult;
 import ontologizer.go.Ontology;
