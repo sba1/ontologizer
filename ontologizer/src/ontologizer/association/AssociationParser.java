@@ -248,7 +248,6 @@ public class AssociationParser
 	 * @param evidences specifies which annotations to take.
 	 * @throws IOException
 	 */
-	@SuppressWarnings("unused")
 	private void importAssociationFile(InputStream is, FileInputStream fis, final HashSet<ByteString> names, final TermContainer terms, Collection<String> evidences, final IAssociationParserProgress progress) throws IOException
 	{
 		final HashSet<ByteString> myEvidences; /* Evidences converted to ByteString */
@@ -523,37 +522,6 @@ public class AssociationParser
 			logger.warning("The symbols of a total of " + symbolWarnings + " entries mapped ambiguously");
 		if (dbObjectWarnings >= 1000)
 			logger.warning("The objects of a  total of " + dbObjectWarnings + " entries mapped ambiguously");
-
-		/*
-		 * Code is disabled for now. The problem with approach above is that if
-		 * a synonym of a gene is entered that also stand for a object symbol
-		 * then both genes are not filtered.
-		 */
-		if (false && names != null) {
-			for (ByteString name : names) {
-				ByteString objectSymbol = synonym2gene.get(name);
-
-				if (objectSymbol != null && !objectSymbol.equals(name)
-						&& !names.contains(objectSymbol)) {
-					/*
-					 * Now check whether there is any object symbol with the
-					 * same name. If so, we remove the evidence of that gene.
-					 */
-					if (gene2Associations.containsKey(name)) {
-						/*
-						 * Here, we know that we have names referring to
-						 * different objects. As we give precedence over object
-						 * symbols, we remove the evidence for the other one.
-						 */
-						System.out.println("nn " + name);
-						ArrayList<Association> gassociations = gene2Associations
-								.get(name);
-						for (Association a : gassociations)
-							associations.remove(a);
-					}
-				}
-			}
-		}
 	}
 
 	/**
