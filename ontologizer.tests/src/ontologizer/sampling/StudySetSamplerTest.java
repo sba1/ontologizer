@@ -30,7 +30,7 @@ public class StudySetSamplerTest
 		OBOParser oboParser = new OBOParser(new OBOParserFileInput(OBOParserTest.GOtermsOBOFile));
 		oboParser.doParse();
 		TermContainer container = new TermContainer(oboParser.getTermMap(), oboParser.getFormatVersion(), oboParser.getDate());
-		AssociationParser assocParser = new AssociationParser(GOAssociationFile, container, null);
+		AssociationParser assocParser = new AssociationParser(new OBOParserFileInput(GOAssociationFile), container, null);
 		AssociationContainer assocContainer = new AssociationContainer(assocParser.getAssociations(),
 				assocParser.getSynonym2gene(),
 				assocParser.getDbObject2gene());

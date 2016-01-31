@@ -25,7 +25,7 @@ public class AssociationParserTest
 	{
 		OBOParser oboParser = new OBOParser(new OBOParserFileInput(OBO_FILE));
 		oboParser.doParse();
-		AssociationParser ap = new AssociationParser(ASSOCIATION_FILE, new TermContainer(oboParser.getTermMap(), "", ""));
+		AssociationParser ap = new AssociationParser(new OBOParserFileInput(ASSOCIATION_FILE), new TermContainer(oboParser.getTermMap(), "", ""));
 		assertEquals(ap.getFileType(),AssociationParser.Type.GAF);
 		assertEquals(87599, ap.getAssociations().size());
 
@@ -49,7 +49,7 @@ public class AssociationParserTest
 		OBOParser oboParser = new OBOParser(new OBOParserFileInput(OBO_FILE));
 		oboParser.doParse();
 
-		AssociationParser ap = new AssociationParser(tmp.getAbsolutePath(), new TermContainer(oboParser.getTermMap(), "", ""));
+		AssociationParser ap = new AssociationParser(new OBOParserFileInput(tmp.getAbsolutePath()), new TermContainer(oboParser.getTermMap(), "", ""));
 		AssociationContainer assoc = new AssociationContainer(ap.getAssociations(), ap.getSynonym2gene(), ap.getDbObject2gene());
 
 		Assert.assertEquals(1, assoc.getAllAnnotatedGenes().size());
@@ -68,7 +68,7 @@ public class AssociationParserTest
 		OBOParser oboParser = new OBOParser(new OBOParserFileInput(OBO_FILE));
 		oboParser.doParse();
 
-		AssociationParser ap = new AssociationParser(tmp.getAbsolutePath(), new TermContainer(oboParser.getTermMap(), "", ""));
+		AssociationParser ap = new AssociationParser(new OBOParserFileInput(tmp.getAbsolutePath()), new TermContainer(oboParser.getTermMap(), "", ""));
 		AssociationContainer assoc = new AssociationContainer(ap.getAssociations(), ap.getSynonym2gene(), ap.getDbObject2gene());
 
 		/* We expect only one annotated object as DBOBJID1 is the same as DBOBJID2 due to the same symbol */
@@ -90,7 +90,7 @@ public class AssociationParserTest
 		OBOParser oboParser = new OBOParser(new OBOParserFileInput(OBO_FILE));
 		oboParser.doParse();
 
-		AssociationParser ap = new AssociationParser(tmp.getAbsolutePath(),new TermContainer(oboParser.getTermMap(), "", ""));
+		AssociationParser ap = new AssociationParser(new OBOParserFileInput(tmp.getAbsolutePath()),new TermContainer(oboParser.getTermMap(), "", ""));
 		Assert.assertEquals(21,ap.getAssociations().size());
 	}
 }

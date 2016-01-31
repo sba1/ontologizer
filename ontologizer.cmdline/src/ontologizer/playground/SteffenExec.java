@@ -71,7 +71,7 @@ public class SteffenExec
 		 */
 		AssociationParser ap =
 			new AssociationParser(
-					associationFile,
+					new OBOParserFileInput(associationFile),
 					goTermCont,
 					null
 			);

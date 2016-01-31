@@ -267,7 +267,7 @@ public class AnalyseThread extends AbstractOntologizerThread
 			 * products. Results are placed in association parser.
 			 */
 			display.asyncExec(new ResultAppendLogRunnable("Parse associations"));
-			AssociationParser ap = new AssociationParser(associationsFile, goTerms, populationSet.getAllGeneNames(), checkedEvidences, new IAssociationParserProgress()
+			AssociationParser ap = new AssociationParser(new OBOParserFileInput(associationsFile), goTerms, populationSet.getAllGeneNames(), checkedEvidences, new IAssociationParserProgress()
 			{
 				public void init(final int max)
 				{

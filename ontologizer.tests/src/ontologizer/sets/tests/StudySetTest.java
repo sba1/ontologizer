@@ -268,7 +268,7 @@ public class StudySetTest
 		oboParser.doParse();
 		TermContainer container = new TermContainer(oboParser.getTermMap(), oboParser.getFormatVersion(), oboParser.getDate());
 		Ontology o = new Ontology(container);
-		AssociationParser assocParser = new AssociationParser(GOAssociationFile, container, null);
+		AssociationParser assocParser = new AssociationParser(new OBOParserFileInput(GOAssociationFile), container, null);
 
 		AssociationContainer assocContainer = new AssociationContainer(assocParser.getAssociations(),
 				assocParser.getSynonym2gene(),

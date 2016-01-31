@@ -204,7 +204,7 @@ public class OntologizerCore
 		/* Parse the GO association file containing GO annotations for genes or gene
 		 * products. Results are placed in associationparser.
 		 */
-		AssociationParser ap = new AssociationParser(args.associationFile,goTerms,populationSet.getAllGeneNames(),
+		AssociationParser ap = new AssociationParser(new OBOParserFileInput(args.associationFile),goTerms,populationSet.getAllGeneNames(),
 				new IAssociationParserProgress() {
 					private int max;
 					private long startTime;

@@ -108,7 +108,7 @@ public class GeneLister
 			Ontology graph = new Ontology(goTerms);
 
 			/* association */
-			AssociationParser assocParser = new AssociationParser(assocFileName,goTerms,null);
+			AssociationParser assocParser = new AssociationParser(new OBOParserFileInput(assocFileName),goTerms,null);
 			AssociationContainer assocs = new AssociationContainer(
 					assocParser.getAssociations(),
 					assocParser.getSynonym2gene(),

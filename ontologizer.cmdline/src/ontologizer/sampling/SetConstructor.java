@@ -242,7 +242,7 @@ public class SetConstructor
 			Ontology graph = new Ontology(goTerms);
 
 			// loading associations
-			AssociationParser assocParser = new AssociationParser(assocFileName, goTerms, null);
+			AssociationParser assocParser = new AssociationParser(new OBOParserFileInput(assocFileName), goTerms, null);
 			AssociationContainer assocs = new AssociationContainer(assocParser.getAssociations(), assocParser.getSynonym2gene(), assocParser.getDbObject2gene());
 
 			// making outDir if necessary

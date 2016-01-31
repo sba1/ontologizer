@@ -37,7 +37,7 @@ public class AssociationParserTest2
 		oboParser.doParse();
 		container = new TermContainer(oboParser.getTermMap(), oboParser.getFormatVersion(), oboParser.getDate());
 
-		assocParser = new AssociationParser(GOAssociationFile, container, null);
+		assocParser = new AssociationParser(new OBOParserFileInput(GOAssociationFile), container, null);
 
 		assocContainer = new AssociationContainer(assocParser.getAssociations(),
 				assocParser.getSynonym2gene(),
