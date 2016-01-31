@@ -6,7 +6,6 @@ import ontologizer.gui.swt.support.GraphCanvas;
 import ontologizer.gui.swt.support.IGraphCanvas;
 import ontologizer.gui.swt.support.IMinimizedAdapter;
 import ontologizer.gui.swt.support.IRestoredAdapter;
-import ontologizer.gui.swt.support.PGraphCanvas;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
