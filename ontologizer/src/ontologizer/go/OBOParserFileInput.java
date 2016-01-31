@@ -13,12 +13,14 @@ import java.util.zip.GZIPInputStream;
  */
 public class OBOParserFileInput implements IParserInput
 {
+	private String filename;
 	private FileInputStream fis;
 	private InputStream is;
 	private FileChannel fc;
 
 	public OBOParserFileInput(String filename) throws IOException
 	{
+		this.filename = filename;
 		fis = new FileInputStream(filename);
 
 		try
@@ -72,5 +74,11 @@ public class OBOParserFileInput implements IParserInput
 		{
 		}
 		return -1;
+	}
+
+	@Override
+	public String getFilename()
+	{
+		return filename;
 	}
 }

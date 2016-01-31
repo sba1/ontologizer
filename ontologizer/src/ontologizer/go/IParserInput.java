@@ -29,4 +29,9 @@ public interface IParserInput
 	 * @return the current position of the input.
 	 */
 	public int getPosition();
+
+	/**
+	 * @return the filename associated to the input or null if no filename is associated.
+	 */
+	public String getFilename();
 }
