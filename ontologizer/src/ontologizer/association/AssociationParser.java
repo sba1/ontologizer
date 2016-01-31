@@ -732,7 +732,7 @@ public class AssociationParser
 												try
 												{
 													int goId = Integer.parseInt(number);
-													TermID id = new TermID(goId);
+													TermID id = new TermID(TermID.DEFAULT_PREFIX,goId);
 
 													if (terms.get(id) != null)
 														termList.add(id);
