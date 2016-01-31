@@ -4,8 +4,12 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.util.zip.GZIPOutputStream;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -43,6 +47,24 @@ public class AssociationParserTest
 		File tmp = File.createTempFile("test", ".gaf");
 		BufferedWriter bw = new BufferedWriter(new FileWriter(tmp));
 		bw.write("# Comment1\n");
+		bw.write("DB\tDBOBJID2\tSYMBOL\t\tGO:0005760\tPMID:00000\tEVIDENCE\t\tC\t\tgene\ttaxon:4932\t20121212\tSBA\n");
+		bw.flush();
+		bw.close();
+
+		OBOParser oboParser = new OBOParser(new OBOParserFileInput(OBO_FILE));
+		oboParser.doParse();
+
+		AssociationParser ap = new AssociationParser(new OBOParserFileInput(tmp.getAbsolutePath()), new TermContainer(oboParser.getTermMap(), "", ""));
+		AssociationContainer assoc = new AssociationContainer(ap.getAssociations(), ap.getSynonym2gene(), ap.getDbObject2gene());
+
+		Assert.assertEquals(1, assoc.getAllAnnotatedGenes().size());
+	}
+
+	@Test
+	public void testReadFromCompressedFile() throws IOException, OBOParserException
+	{
+		File tmp = File.createTempFile("test", ".gaf.gz");
+		Writer bw = new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(tmp)));
 		bw.write("DB\tDBOBJID2\tSYMBOL\t\tGO:0005760\tPMID:00000\tEVIDENCE\t\tC\t\tgene\ttaxon:4932\t20121212\tSBA\n");
 		bw.flush();
 		bw.close();
