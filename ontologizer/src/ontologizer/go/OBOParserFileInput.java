@@ -11,7 +11,7 @@ import java.util.zip.GZIPInputStream;
  *
  * @author Sebastian Bauer
  */
-public class OBOParserFileInput implements IOBOParserInput
+public class OBOParserFileInput implements IParserInput
 {
 	private FileInputStream fis;
 	private InputStream is;

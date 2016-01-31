@@ -3,11 +3,11 @@ package ontologizer.go;
 import java.io.InputStream;
 
 /**
- * An interface wrapping the input for a obo parser.
+ * An interface wrapping the input for miscellaneous parsers.
  *
- * @author Sebastiab Bauer
+ * @author Sebastian Bauer
  */
-public interface IOBOParserInput
+public interface IParserInput
 {
 	/**
 	 * @return the wrapped input stream

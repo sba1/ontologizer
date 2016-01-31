@@ -95,7 +95,7 @@ public class OBOParser
 	}
 
 	/** Input source of the OBO data, e.g., a source that delivers gene_ontology.obo */
-	IOBOParserInput input;
+	IParserInput input;
 
 	/** The current parse options */
 	private int options;
@@ -168,7 +168,7 @@ public class OBOParser
 	 *
 	 * @param input defines the input wrapping the stanza file
 	 */
-	public OBOParser(IOBOParserInput input)
+	public OBOParser(IParserInput input)
 	{
 		this(input, 0);
 	}
@@ -184,7 +184,7 @@ public class OBOParser
 	 * @param input defines the input wrapping the stanza files
 	 * @param options defines some options.
 	 */
-	public OBOParser(IOBOParserInput input, int options)
+	public OBOParser(IParserInput input, int options)
 	{
 		this.input = input;
 		this.options = options;
