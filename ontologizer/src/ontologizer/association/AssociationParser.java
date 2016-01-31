@@ -241,6 +241,28 @@ public class AssociationParser
 	}
 
 	/**
+	 * Get from a collection of strings a ByteString set.
+	 *
+	 * @param strings
+	 * @return
+	 */
+	private static Set<ByteString> getByteStringSetFromStringCollection(Collection<String> strings)
+	{
+		Set<ByteString> byteStrings; /* Evidences converted to ByteString */
+
+		if (strings != null)
+		{
+			byteStrings = new HashSet<ByteString>();
+			for (String e : strings)
+				byteStrings.add(new ByteString(e));
+		} else
+		{
+			byteStrings = null;
+		}
+		return byteStrings;
+	}
+
+	/**
 	 * Do the actual parsing work.
 	 *
 	 * @param names
@@ -248,25 +270,8 @@ public class AssociationParser
 	 * @param evidences specifies which annotations to take.
 	 * @throws IOException
 	 */
-	private void importAssociationFile(InputStream is, FileInputStream fis, final HashSet<ByteString> names, final TermContainer terms, Collection<String> evidences, final IAssociationParserProgress progress) throws IOException
+	private void importAssociationFile(InputStream is, FileInputStream fis, final HashSet<ByteString> names, final TermContainer terms, Collection<String> evidences, IAssociationParserProgress progress) throws IOException
 	{
-		final HashSet<ByteString> myEvidences; /* Evidences converted to ByteString */
-		if (evidences != null)
-		{
-			myEvidences = new HashSet<ByteString>();
-			for (String e : evidences)
-				myEvidences.add(new ByteString(e));
-		} else
-			myEvidences = null;
-
-		final HashSet<TermID> usedGoTerms = new HashSet<TermID>();
-
-		/* Items as identified by the object symbol to the list of associations */
-		final HashMap<ByteString, ArrayList<Association>> gene2Associations = new HashMap<ByteString, ArrayList<Association>>();
-
-		final HashMap<ByteString,ByteString> dbObject2ObjectSymbol = new HashMap<ByteString,ByteString>();
-		final HashMap<ByteString,ByteString> objectSymbol2dbObject = new HashMap<ByteString,ByteString>();
-
 		final FileChannel fc = fis.getChannel();
 
 		if (progress != null)
@@ -274,21 +279,33 @@ public class AssociationParser
 
 		class GAFByteLineScanner extends AbstractByteLineScanner
 		{
-			int lineno = 0;
-			long millis = 0;
-			int good = 0;
-			int bad = 0;
-			int skipped = 0;
-			int nots = 0;
-			int evidenceMismatch = 0;
-			int kept = 0;
-			int obsolete = 0;
+			private IAssociationParserProgress progress;
+			private Set<ByteString> evidences;
 
-			HashMap<TermID, Term> altTermID2Term = null;
+			private int lineno = 0;
+			private long millis = 0;
+			private int good = 0;
+			private int bad = 0;
+			private int skipped = 0;
+			private int nots = 0;
+			private int evidenceMismatch = 0;
+			private int kept = 0;
+			private int obsolete = 0;
 
-			public GAFByteLineScanner(InputStream is)
+			/** Items as identified by the object symbol to the list of associations */
+			private HashMap<ByteString, ArrayList<Association>> gene2Associations = new HashMap<ByteString, ArrayList<Association>>();
+
+			private HashMap<ByteString,ByteString> dbObject2ObjectSymbol = new HashMap<ByteString,ByteString>();
+			private HashMap<ByteString,ByteString> objectSymbol2dbObject = new HashMap<ByteString,ByteString>();
+			private HashMap<TermID, Term> altTermID2Term = null;
+			private HashSet<TermID> usedGoTerms = new HashSet<TermID>();
+
+			public GAFByteLineScanner(InputStream is, IAssociationParserProgress progress, Set<ByteString> evidences)
 			{
 				super(is);
+
+				this.progress = progress;
+				this.evidences = evidences;
 			}
 
 			@Override
@@ -330,13 +347,13 @@ public class AssociationParser
 						return true;
 					}
 
-					if (myEvidences != null)
+					if (evidences != null)
 					{
 						/*
 						 * Skip if evidence of the annotation was not supplied as
 						 * argument
 						 */
-						if (!myEvidences.contains(assoc.getEvidence()))
+						if (!evidences.contains(assoc.getEvidence()))
 						{
 							skipped++;
 							evidenceMismatch++;
@@ -495,9 +512,17 @@ public class AssociationParser
 
 				return true;
 			}
+
+			/**
+			 * @return the number of terms used by the import.
+			 */
+			public int getNumberOfUsedTerms()
+			{
+				return usedGoTerms.size();
+			}
 		};
 
-		GAFByteLineScanner ls = new GAFByteLineScanner(is);
+		GAFByteLineScanner ls = new GAFByteLineScanner(is, progress, getByteStringSetFromStringCollection(evidences));
 		ls.scan();
 
 		if (progress != null)
@@ -514,7 +539,7 @@ public class AssociationParser
 				+ ls.obsolete + " referred to obsolete terms and "
 				+ ls.evidenceMismatch + " didn't"
 				+ " match the requested evidence codes");
-		logger.info("A total of " + usedGoTerms.size()
+		logger.info("A total of " + ls.getNumberOfUsedTerms()
 				+ " terms are directly associated to " + dbObjectID2gene.size()
 				+ " items.");
 
