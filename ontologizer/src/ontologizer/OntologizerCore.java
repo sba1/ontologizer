@@ -77,7 +77,7 @@ public class OntologizerCore
 		 */
 		public int sizeTolerance;
 
-		/** Minium number of association to be displayed */
+		/** Minimum number of association to be displayed */
 		public int minAssociationCount;
 
 		/** Specifies the population file containing the whole gene population, might be null */
@@ -90,16 +90,16 @@ public class OntologizerCore
 		public String filterFile;
 	};
 
-	/** Contains all avaiable GOTerms */
+	/** Contains all available GOTerms */
 	private TermContainer goTerms;
 
-	/** The graph to the gene ontolgy */
+	/** The graph to the gene ontology */
 	private Ontology goGraph;
 
 	/** List of all studies being analyzed */
 	private StudySetList studySetList;
 
-	/** Results of the analized studies */
+	/** Results of the analyzed studies */
 	private StudySetResultList studySetResultList;
 
 	/** Collection of all valid annotations for current dataset */
@@ -112,7 +112,7 @@ public class OntologizerCore
 	private AbstractTestCorrection testCorrection;
 
 	/** The population object. If this is set we do the hypergeometric
-	 * analysis basded on the scheme in GeneMerge. */
+	 * analysis based on the scheme in GeneMerge. */
 	private PopulationSet populationSet;
 
 	/**
