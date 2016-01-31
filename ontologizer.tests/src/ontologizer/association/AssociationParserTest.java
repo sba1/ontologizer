@@ -45,6 +45,7 @@ public class AssociationParserTest
 		bw.write("# Comment1\n");
 		bw.write("DB\tDBOBJID2\tSYMBOL\t\tGO:0005760\tPMID:00000\tEVIDENCE\t\tC\t\tgene\ttaxon:4932\t20121212\tSBA\n");
 		bw.flush();
+		bw.close();
 
 		OBOParser oboParser = new OBOParser(new OBOParserFileInput(OBO_FILE));
 		oboParser.doParse();
@@ -64,6 +65,7 @@ public class AssociationParserTest
 		bw.write("DB\tDBOBJID1\tSYMBOL\t\tGO:0005763\tPMID:00000\tEVIDENCE\t\tC\tSYNONYM1|SYNONYM2\tgene\ttaxon:4932\t20121212\tSBA\n");
 		bw.write("DB\tDBOBJID2\tSYMBOL\t\tGO:0005760\tPMID:00000\tEVIDENCE\t\tC\t\tgene\ttaxon:4932\t20121212\tSBA\n");
 		bw.flush();
+		bw.close();
 
 		OBOParser oboParser = new OBOParser(new OBOParserFileInput(OBO_FILE));
 		oboParser.doParse();
@@ -86,6 +88,7 @@ public class AssociationParserTest
 		bw.write("S000004660\tGO:0005739,GO:0006810,GO:0005743,GO:0016020,GO:0055085,GO:0005488\n");
 		bw.write("S000004660\tGO:0006810,GO:0005471,GO:0016021,GO:0006783,GO:0005743,GO:0005743\n");
 		bw.flush();
+		bw.close();
 
 		OBOParser oboParser = new OBOParser(new OBOParserFileInput(OBO_FILE));
 		oboParser.doParse();
