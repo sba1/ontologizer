@@ -159,14 +159,6 @@
 			<scope>provided</scope>
 		</dependency>
 
-		<!-- Servlet 3.1 specification -->
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<version>3.1.0</version>
-			<scope>provided</scope>
-		</dependency>
-
         <!--  Bootstrap. Not really needed as a Java dependency, still listed here for completeness -->
 		<dependency>
 		    <groupId>org.webjars</groupId>
