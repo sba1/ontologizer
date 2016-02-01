@@ -18,6 +18,9 @@ abstract public class AbstractByteLineScanner
 
 	byte [] byteBuf = new byte[2*BUF_SIZE];
 
+	private byte [] pushedBytes;
+	private int pushedCurrent = -1;
+
 	public AbstractByteLineScanner(InputStream is)
 	{
 		this.is = is;
@@ -68,6 +71,13 @@ abstract public class AbstractByteLineScanner
 	 */
 	private int read(byte b[], int off, int len) throws IOException
 	{
+		if (pushedBytes != null && pushedCurrent < pushedBytes.length)
+		{
+			int l = Math.min(len, pushedBytes.length - pushedCurrent);
+			System.arraycopy(pushedBytes, pushedCurrent, b, off, l);
+			pushedCurrent += l;
+			return l;
+		}
 		return is.read(b, off, len);
 	}
 
@@ -91,6 +101,19 @@ abstract public class AbstractByteLineScanner
 		byte [] b = new byte[available];
 		System.arraycopy(byteBuf, availableStart, b, 0, available);
 		return b;
+	}
+
+	/**
+	 * Push the given bytes such that they are read first before the
+	 * bytes at the input stream.
+	 *
+	 * @param bytes
+	 */
+	public void push(byte[] bytes) {
+		if (pushedBytes != null)
+			throw new IllegalArgumentException("push() may be called only once!");
+		pushedBytes = bytes.clone();
+		pushedCurrent = 0;
 	}
 
 	/**
