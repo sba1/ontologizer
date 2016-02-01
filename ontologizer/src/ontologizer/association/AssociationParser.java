@@ -1,7 +1,6 @@
 package ontologizer.association;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PushbackInputStream;
@@ -12,6 +11,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import ontologizer.go.IParserInput;
@@ -218,8 +218,6 @@ public class AssociationParser
 					}
 				}
 			}
-		} catch (FileNotFoundException e)
-		{
 		} catch (IOException e)
 		{
 		}
@@ -269,16 +267,16 @@ public class AssociationParser
 		if (progress != null)
 			progress.update(input.getSize());
 
-		logger.info(ls.good + " associations parsed, " + ls.kept
+		logger.log(Level.INFO, ls.good + " associations parsed, " + ls.kept
 				+ " of which were kept while " + ls.bad
 				+ " malformed lines had to be ignored.");
-		logger.info("A further " + ls.skipped
+		logger.log(Level.INFO, "A further " + ls.skipped
 				+ " associations were skipped due to various reasons whereas "
 				+ ls.nots + " of those where explicitly qualified with NOT, " +
 				+ ls.obsolete + " referred to obsolete terms and "
 				+ ls.evidenceMismatch + " didn't"
 				+ " match the requested evidence codes");
-		logger.info("A total of " + ls.getNumberOfUsedTerms()
+		logger.log(Level.INFO, "A total of " + ls.getNumberOfUsedTerms()
 				+ " terms are directly associated to " + dbObjectID2gene.size()
 				+ " items.");
 
