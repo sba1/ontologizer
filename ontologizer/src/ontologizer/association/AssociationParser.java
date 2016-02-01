@@ -1,10 +1,18 @@
 package ontologizer.association;
 
-import java.io.*;
-import java.nio.channels.FileChannel;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PushbackInputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
-import java.util.zip.GZIPInputStream;
 
 import ontologizer.go.IParserInput;
 import ontologizer.go.TermContainer;
@@ -127,28 +135,16 @@ public class AssociationParser
 			fileType = Type.IDS;
 		} else
 		{
-			/* We support compressed association files */
-			FileInputStream fis = new FileInputStream(input.getFilename());
-			InputStream is;
-			try
-			{
-				is = new GZIPInputStream(fis);
-			} catch (IOException exp)
-			{
-				fis.close();
-				fis = new FileInputStream(input.getFilename());
-				is = fis;
-			}
-
-			final StringBuilder strBuilder = new StringBuilder();
-			PushbackInputStream pis = new PushbackInputStream(is, 65536 + 1024);
-			AbstractByteLineScanner abls = new AbstractByteLineScanner(pis) {
+			final List<byte[]> lines = new ArrayList<byte[]>();
+			AbstractByteLineScanner abls = new AbstractByteLineScanner(input.inputStream()) {
 				@Override
 				public boolean newLine(byte[] buf, int start, int len)
 				{
 					if (len > 0 && buf[start] != '#')
 					{
-						strBuilder.append(new String(buf, start, len));
+						byte [] b = new byte[len];
+						System.arraycopy(buf, start, b, 0, len);
+						lines.add(b);
 						return false;
 					}
 					return true;
@@ -156,26 +152,19 @@ public class AssociationParser
 			};
 			abls.scan();
 
-			if (strBuilder.length() != 0)
+			if (lines.size() == 0)
+				return;
+
+			byte [] head = lines.get(0);
+
+			if (new String(head).startsWith("\"Probe Set ID\",\"GeneChip Array\""))
 			{
-				String str = strBuilder.toString();
-				byte [] line = str.getBytes();
-
-				/* Create buffer with info that is still relevant and push it back to the stream */
-				byte [] buf = new byte[line.length + abls.available()];
-				System.arraycopy(line, 0, buf, 0, line.length);
-				System.arraycopy(abls.availableBuffer(), 0, buf, line.length, abls.available());
-				pis.unread(buf);
-
-				if (str.startsWith("\"Probe Set ID\",\"GeneChip Array\""))
-				{
-					importAffyFile(new BufferedReader(new InputStreamReader(pis)),fis,names,terms,progress);
-					fileType = Type.AFFYMETRIX;
-				} else
-				{
-					importAssociationFile(input,pis,fis,names,terms,evidences,progress);
-					fileType = Type.GAF;
-				}
+				importAffyFile(input,head,names,terms,progress);
+				fileType = Type.AFFYMETRIX;
+			} else
+			{
+				importAssociationFile(input,head,names,terms,evidences,progress);
+				fileType = Type.GAF;
 			}
 		}
 	}
@@ -260,27 +249,24 @@ public class AssociationParser
 	/**
 	 * Import GAF.
 	 *
-	 * @param input
-	 * @param is
-	 * @param fis
-	 * @param names
-	 * @param terms
+	 * @param input the wrapped input.
+	 * @param head the header of the file. Basically, the beginning of the text until the current position of the input.
+	 * @param names names of items that are interesting or null if annotations of them should be considered
+	 * @param terms all known terms
 	 * @param evidences specifies which annotations to take.
 	 * @param progress used for monitoring progress.
 	 * @throws IOException
 	 */
-	private void importAssociationFile(IParserInput input, InputStream is, FileInputStream fis, HashSet<ByteString> names, TermContainer terms, Collection<String> evidences, IAssociationParserProgress progress) throws IOException
+	private void importAssociationFile(IParserInput input, byte [] head, HashSet<ByteString> names, TermContainer terms, Collection<String> evidences, IAssociationParserProgress progress) throws IOException
 	{
 		if (progress != null)
 			progress.init(input.getSize());
 
-		GAFByteLineScanner ls = new GAFByteLineScanner(input, is, names, terms,getByteStringSetFromStringCollection(evidences), progress);
+		GAFByteLineScanner ls = new GAFByteLineScanner(input, head, names, terms,getByteStringSetFromStringCollection(evidences), progress);
 		ls.scan();
 
 		if (progress != null)
 			progress.update(input.getSize());
-
-		is.close();
 
 		logger.info(ls.good + " associations parsed, " + ls.kept
 				+ " of which were kept while " + ls.bad
@@ -314,7 +300,7 @@ public class AssociationParser
 	 * @param progress
 	 * @throws IOException
 	 */
-	private void importAffyFile(BufferedReader in, FileInputStream fis, HashSet<ByteString> names, TermContainer terms, IAssociationParserProgress progress) throws IOException
+	private void importAffyFile(IParserInput input, byte [] head, HashSet<ByteString> names, TermContainer terms, IAssociationParserProgress progress) throws IOException
 	{
 		/* This represents the affymetrix annotation format as of
 		 * May 15th, 2006. The code uses the following to check that the
@@ -370,15 +356,18 @@ public class AssociationParser
 			"Annotation Notes",
 		};
 
-		FileChannel fc = fis.getChannel();
-
 		if (progress != null)
-			progress.init((int)fc.size());
+			progress.init(input.getSize());
 
 		int skipped = 0;
 		long millis = 0;
 
 		String line;
+
+		PushbackInputStream pis = new PushbackInputStream(input.inputStream());
+		pis.unread(head);
+
+		BufferedReader in = new BufferedReader(new InputStreamReader(pis));
 
 		/* Skip comments */
 		do
@@ -420,7 +409,7 @@ public class AssociationParser
 					long newMillis = System.currentTimeMillis();
 					if (newMillis - millis > 250)
 					{
-						progress.update((int)fc.position());
+						progress.update(input.getPosition());
 						millis = newMillis;
 					}
 				}

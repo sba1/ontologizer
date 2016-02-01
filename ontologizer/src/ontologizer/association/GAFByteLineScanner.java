@@ -1,6 +1,5 @@
 package ontologizer.association;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -71,9 +70,11 @@ class GAFByteLineScanner extends AbstractByteLineScanner
 	private HashMap<TermID, Term> altTermID2Term = null;
 	private HashSet<TermID> usedGoTerms = new HashSet<TermID>();
 
-	public GAFByteLineScanner(IParserInput input, InputStream is, Set<ByteString> names, TermContainer terms, Set<ByteString> evidences, IAssociationParserProgress progress)
+	public GAFByteLineScanner(IParserInput input, byte [] head, Set<ByteString> names, TermContainer terms, Set<ByteString> evidences, IAssociationParserProgress progress)
 	{
-		super(is);
+		super(input.inputStream());
+
+		push(head);
 
 		this.input = input;
 		this.names = names;
