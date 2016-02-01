@@ -7,8 +7,6 @@ import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
 
 import ontologizer.go.IParserInput;
-import ontologizer.go.PrefixPool;
-import ontologizer.go.Term;
 import ontologizer.go.TermContainer;
 import ontologizer.go.TermID;
 import ontologizer.linescanner.AbstractByteLineScanner;
@@ -28,7 +26,7 @@ import ontologizer.types.ByteString;
 
 public class AssociationParser
 {
-	private static Logger logger = Logger.getLogger(AssociationParser.class.getCanonicalName());
+	private static Logger logger = Logger.getLogger(AssociationParser.class.getName());
 
 	enum Type
 	{
@@ -46,9 +44,6 @@ public class AssociationParser
 
 	/** key: dbObjectID, value: main gene name (dbObject_Symbol) */
 	private HashMap<ByteString, ByteString> dbObjectID2gene;
-
-	/** Our prefix pool */
-	private PrefixPool prefixPool = new PrefixPool();
 
 	/** The file type of the association file which was parsed */
 	private Type fileType = Type.UNKNOWN;
@@ -178,7 +173,7 @@ public class AssociationParser
 					fileType = Type.AFFYMETRIX;
 				} else
 				{
-					importAssociationFile(pis,fis,names,terms,evidences,progress);
+					importAssociationFile(input,pis,fis,names,terms,evidences,progress);
 					fileType = Type.GAF;
 				}
 			}
@@ -263,270 +258,27 @@ public class AssociationParser
 	}
 
 	/**
-	 * Do the actual parsing work.
+	 * Import GAF.
 	 *
+	 * @param input
+	 * @param is
+	 * @param fis
 	 * @param names
 	 * @param terms
 	 * @param evidences specifies which annotations to take.
+	 * @param progress used for monitoring progress.
 	 * @throws IOException
 	 */
-	private void importAssociationFile(InputStream is, FileInputStream fis, final HashSet<ByteString> names, final TermContainer terms, Collection<String> evidences, IAssociationParserProgress progress) throws IOException
+	private void importAssociationFile(IParserInput input, InputStream is, FileInputStream fis, HashSet<ByteString> names, TermContainer terms, Collection<String> evidences, IAssociationParserProgress progress) throws IOException
 	{
-		final FileChannel fc = fis.getChannel();
-
 		if (progress != null)
-			progress.init((int) fc.size());
+			progress.init(input.getSize());
 
-		class GAFByteLineScanner extends AbstractByteLineScanner
-		{
-			private IAssociationParserProgress progress;
-			private Set<ByteString> evidences;
-
-			private int lineno = 0;
-			private long millis = 0;
-			private int good = 0;
-			private int bad = 0;
-			private int skipped = 0;
-			private int nots = 0;
-			private int evidenceMismatch = 0;
-			private int kept = 0;
-			private int obsolete = 0;
-
-			/** Items as identified by the object symbol to the list of associations */
-			private HashMap<ByteString, ArrayList<Association>> gene2Associations = new HashMap<ByteString, ArrayList<Association>>();
-
-			private HashMap<ByteString,ByteString> dbObject2ObjectSymbol = new HashMap<ByteString,ByteString>();
-			private HashMap<ByteString,ByteString> objectSymbol2dbObject = new HashMap<ByteString,ByteString>();
-			private HashMap<TermID, Term> altTermID2Term = null;
-			private HashSet<TermID> usedGoTerms = new HashSet<TermID>();
-
-			public GAFByteLineScanner(InputStream is, IAssociationParserProgress progress, Set<ByteString> evidences)
-			{
-				super(is);
-
-				this.progress = progress;
-				this.evidences = evidences;
-			}
-
-			@Override
-			public boolean newLine(byte[] buf, int start, int len)
-			{
-				/* Progress stuff */
-				if (progress != null)
-				{
-					long newMillis = System.currentTimeMillis();
-					if (newMillis - millis > 250)
-					{
-						try {
-							progress.update((int) fc.position());
-						} catch (IOException e) { }
-						millis = newMillis;
-					}
-				}
-
-				lineno++;
-
-				/* Ignore comments */
-				if (len < 1 || buf[start]=='!')
-					return true;
-
-				Association assoc = Association.createFromGAFLine(buf,start,len,prefixPool);
-
-				try
-				{
-					TermID currentTermID = assoc.getTermID();
-
-					Term currentTerm;
-
-					good++;
-
-					if (assoc.hasNotQualifier())
-					{
-						skipped++;
-						nots++;
-						return true;
-					}
-
-					if (evidences != null)
-					{
-						/*
-						 * Skip if evidence of the annotation was not supplied as
-						 * argument
-						 */
-						if (!evidences.contains(assoc.getEvidence()))
-						{
-							skipped++;
-							evidenceMismatch++;
-							return true;
-						}
-					}
-
-					currentTerm = terms.get(currentTermID);
-					if (currentTerm == null)
-					{
-						if (altTermID2Term == null)
-						{
-							/* Create the alternative ID to Term map */
-							altTermID2Term = new HashMap<TermID, Term>();
-
-							for (Term t : terms)
-								for (TermID altID : t.getAlternatives())
-									altTermID2Term.put(altID, t);
-						}
-
-						/* Try to find the term among the alternative terms before giving up. */
-						currentTerm = altTermID2Term.get(currentTermID);
-						if (currentTerm == null)
-						{
-							System.err.println("Skipping association of item \"" + assoc.getObjectSymbol() + "\" to " + currentTermID + " because the term was not found!");
-							System.err.println("(Are the obo file and the association " + "file both up-to-date?)");
-							skipped++;
-							return true;
-						} else
-						{
-							/* Okay, found, so set the new attributes */
-							currentTermID = currentTerm.getID();
-							assoc.setTermID(currentTermID);
-						}
-					} else
-					{
-						/* Reset the term id so a unique id is used */
-						currentTermID = currentTerm.getID();
-						assoc.setTermID(currentTermID);
-					}
-
-					usedGoTerms.add(currentTermID);
-
-					if (currentTerm.isObsolete())
-					{
-						System.err.println("Skipping association of item \"" + assoc.getObjectSymbol() + "\" to " + currentTermID + " because term is obsolete!");
-						System.err.println("(Are the obo file and the association file in sync?)");
-						skipped++;
-						obsolete++;
-						return true;
-					}
-
-					ByteString[] synonyms;
-
-					/* populate synonym string field */
-					if (assoc.getSynonym() != null && assoc.getSynonym().length() > 2)
-					{
-						/* Note that there can be multiple synonyms, separated by a pipe */
-						synonyms = assoc.getSynonym().splitBySingleChar('|');
-					} else
-						synonyms = null;
-
-					if (names != null)
-					{
-						/* We are only interested in associations to given genes */
-						boolean keep = false;
-
-						/* Check if synoyms are contained */
-						if (synonyms != null)
-						{
-							for (int i = 0; i < synonyms.length; i++)
-							{
-								if (names.contains(synonyms[i]))
-								{
-									keep = true;
-									break;
-								}
-							}
-						}
-
-						if (keep || names.contains(assoc.getObjectSymbol()) || names.contains(assoc.getDB_Object()))
-						{
-							kept++;
-						} else
-						{
-							skipped++;
-							return true;
-						}
-					} else
-					{
-						kept++;
-					}
-
-					if (synonyms != null)
-					{
-						for (int i = 0; i < synonyms.length; i++)
-							synonym2gene.put(synonyms[i], assoc.getObjectSymbol());
-					}
-
-					{
-						/* Check if db object id and object symbol are really bijective */
-						ByteString dbObject = objectSymbol2dbObject.get(assoc.getObjectSymbol());
-						if (dbObject == null) objectSymbol2dbObject.put(assoc.getObjectSymbol(),assoc.getDB_Object());
-						else
-						{
-							if (!dbObject.equals(assoc.getDB_Object()))
-							{
-								symbolWarnings++;
-								if (symbolWarnings < 1000)
-								{
-									logger.warning("Line " + lineno + ": Expected that symbol \"" + assoc.getObjectSymbol() + "\" maps to \"" + dbObject + "\" but it maps to \"" + assoc.getDB_Object() + "\"");
-								}
-							}
-
-						}
-
-						ByteString objectSymbol = dbObject2ObjectSymbol.get(assoc.getDB_Object());
-						if (objectSymbol == null) dbObject2ObjectSymbol.put(assoc.getDB_Object(),assoc.getObjectSymbol());
-						else
-						{
-							if (!objectSymbol.equals(assoc.getObjectSymbol()))
-							{
-								dbObjectWarnings++;
-								if (dbObjectWarnings < 1000)
-								{
-									logger.warning("Line " + lineno + ": Expected that dbObject \"" + assoc.getDB_Object() + "\" maps to symbol \"" + objectSymbol + "\" but it maps to \"" + assoc.getObjectSymbol() + "\"");
-								}
-							}
-
-						}
-
-					}
-
-					/* Add the Association to ArrayList */
-					associations.add(assoc);
-
-					ArrayList<Association> gassociations = gene2Associations.get(assoc.getObjectSymbol());
-					if (gassociations == null)
-					{
-						gassociations = new ArrayList<Association>();
-						gene2Associations.put(assoc.getObjectSymbol(),gassociations);
-					}
-					gassociations.add(assoc);
-
-					/* dbObject2Gene has a mapping from dbObjects to gene names */
-					dbObjectID2gene.put(assoc.getDB_Object(), assoc.getObjectSymbol());
-				} catch (Exception ex) {
-					bad++;
-					System.err.println("Nonfatal error: "
-							+ "malformed line in association file \n"
-							+ /* associationFile + */"\nCould not parse line "
-							+ lineno + "\n" + ex.getMessage() + "\n\"" + buf
-							+ "\"\n");
-				}
-
-
-				return true;
-			}
-
-			/**
-			 * @return the number of terms used by the import.
-			 */
-			public int getNumberOfUsedTerms()
-			{
-				return usedGoTerms.size();
-			}
-		};
-
-		GAFByteLineScanner ls = new GAFByteLineScanner(is, progress, getByteStringSetFromStringCollection(evidences));
+		GAFByteLineScanner ls = new GAFByteLineScanner(input, is, names, terms,getByteStringSetFromStringCollection(evidences), progress);
 		ls.scan();
 
 		if (progress != null)
-			progress.update((int) fc.size());
+			progress.update(input.getSize());
 
 		is.close();
 
@@ -542,6 +294,11 @@ public class AssociationParser
 		logger.info("A total of " + ls.getNumberOfUsedTerms()
 				+ " terms are directly associated to " + dbObjectID2gene.size()
 				+ " items.");
+
+		associations = ls.getAssociations();
+		synonym2gene = ls.getSynonym2Gene();
+		dbObjectID2gene = ls.getDbObjectID2Gene();
+
 
 		if (symbolWarnings >= 1000)
 			logger.warning("The symbols of a total of " + symbolWarnings + " entries mapped ambiguously");
