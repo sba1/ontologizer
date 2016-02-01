@@ -135,6 +135,7 @@ public class AssociationParser
 			fileType = Type.IDS;
 		} else
 		{
+			/* First, skip headers */
 			final List<byte[]> lines = new ArrayList<byte[]>();
 			AbstractByteLineScanner abls = new AbstractByteLineScanner(input.inputStream()) {
 				@Override
