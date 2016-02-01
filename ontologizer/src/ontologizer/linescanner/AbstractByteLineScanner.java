@@ -29,7 +29,7 @@ abstract public class AbstractByteLineScanner
 		int read_offset = 0;
 
 		outer:
-		while ((read = is.read(byteBuf, read_offset, BUF_SIZE) + read_offset) > read_offset)
+		while ((read = read(byteBuf, read_offset, BUF_SIZE) + read_offset) > read_offset)
 		{
 			int line_start = 0;
 			int pos = 0;
@@ -55,6 +55,20 @@ abstract public class AbstractByteLineScanner
 		}
 		if (read_offset != 0)
 			newLine(byteBuf, 0, read_offset);
+	}
+
+	/**
+	 * Read next len bytes and copy them starting at off.
+	 *
+	 * @param b the destination buffer
+	 * @param off the first offset within b that is written to
+	 * @param len number of bytes to be read
+	 * @return number of bytes that have been read
+	 * @throws IOException
+	 */
+	private int read(byte b[], int off, int len) throws IOException
+	{
+		return is.read(b, off, len);
 	}
 
 	/**
