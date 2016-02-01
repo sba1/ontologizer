@@ -87,6 +87,9 @@
 						<resource>
 							<directory>${project.build.directory}/dependency/META-INF/resources/webjars</directory>
 						</resource>
+						<resource>
+							<directory>${project.build.directory}/../../ontologizer.tests/data</directory>
+						</resource>
 					</webResources>
 				</configuration>
 			</plugin>
