@@ -1,14 +1,17 @@
 package ontologizer;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.zip.GZIPInputStream;
+import java.util.Arrays;
+import java.util.Comparator;
 
+import org.teavm.jso.JSBody;
+import org.teavm.jso.JSIndexer;
+import org.teavm.jso.JSObject;
 import org.teavm.jso.JSProperty;
 import org.teavm.jso.ajax.XMLHttpRequest;
 import org.teavm.jso.browser.Window;
 import org.teavm.jso.dom.html.HTMLBodyElement;
+import org.teavm.jso.dom.html.HTMLButtonElement;
 import org.teavm.jso.dom.html.HTMLDocument;
 import org.teavm.jso.dom.html.HTMLElement;
 import org.teavm.jso.dom.html.HTMLHeadElement;
@@ -17,11 +20,85 @@ import org.teavm.jso.typedarrays.Uint8Array;
 
 import ontologizer.association.AssociationContainer;
 import ontologizer.association.AssociationParser;
-import ontologizer.go.IParserInput;
+import ontologizer.calculation.AbstractGOTermProperties;
+import ontologizer.calculation.EnrichedGOTermsResult;
+import ontologizer.calculation.TermForTermCalculation;
 import ontologizer.go.OBOParser;
 import ontologizer.go.OBOParserException;
 import ontologizer.go.Ontology;
 import ontologizer.go.TermContainer;
+import ontologizer.set.PopulationSet;
+import ontologizer.set.StudySet;
+import ontologizer.statistics.Bonferroni;
+import ontologizer.types.ByteString;
+
+abstract class Column implements JSObject
+{
+	@JSProperty
+	public native void setField(String field);
+
+	@JSProperty
+	public native void setTitle(String field);
+
+	@JSBody(script="return {field: id, title: title}", params = {"id", "title"})
+	public static native JSObject createColumn(String id, String title);
+}
+
+abstract class Row implements JSObject
+{
+	public Row setColumn(String col, String value)
+	{
+		setProperty(col, value);
+		return this;
+	}
+
+	@JSIndexer
+	private native void setProperty(String prop, String value);
+
+	@JSBody(script="return {}", params = {})
+	public static native Row createRow();
+}
+
+abstract class HTMLBootstrapTableElement implements HTMLElement
+{
+	@JSProperty
+	public abstract String getSummary();
+
+	public void bootstrapTable(Column...col)
+	{
+		bootstrapTable_(this, col);
+	}
+
+	public void showLoading()
+	{
+		showLoading_(this);
+	}
+
+	public void hideLoading()
+	{
+		hideLoading_(this);
+	}
+
+	public void removeAll()
+	{
+		removeAll_(this);
+	}
+
+	@JSBody(script="$(this).bootstrapTable('append', data)", params="data")
+	public native void append(JSObject data);
+
+	@JSBody(script="$(obj).bootstrapTable({	columns: col})", params = { "obj", "col"})
+	private static native void bootstrapTable_(HTMLBootstrapTableElement obj, Column... col);
+
+	@JSBody(script="$(obj).bootstrapTable('showLoading')", params = { "obj" })
+	private static native void showLoading_(HTMLBootstrapTableElement obj);
+
+	@JSBody(script="$(obj).bootstrapTable('hideLoading')", params = { "obj" })
+	private static native void hideLoading_(HTMLBootstrapTableElement obj);
+
+	@JSBody(script="$(obj).bootstrapTable('removeAll')", params = { "obj" })
+	private static native void removeAll_(HTMLBootstrapTableElement obj);
+}
 
 /**
  * Main class of the Ontologizer Web client.
@@ -30,9 +107,15 @@ import ontologizer.go.TermContainer;
  */
 public class OntologizerClient
 {
+	private static final String COL_ID = "id";
+	private static final String COL_NAME = "name";
+	private static final String COL_PVAL = "pval";
+
 	private static HTMLDocument document = Window.current().getDocument();
 
 	private static Text studySetText;
+	private static HTMLButtonElement allGenesButton;
+	private static HTMLBootstrapTableElement resultsTable;
 
 	private static Ontology ontology;
 	private static AssociationContainer annotation;
@@ -43,6 +126,12 @@ public class OntologizerClient
 		studySetText.setNodeValue(lines.length + " items");
 	}
 
+	/**
+	 * Return the result of an http request as a byte array.
+	 *
+	 * @param oboRequest
+	 * @return the byte array of the result
+	 */
 	private static byte [] getByteResult(final XMLHttpRequest oboRequest)
 	{
 		Uint8Array array = Uint8Array.create(oboRequest.getResponse().cast());
@@ -71,62 +160,68 @@ public class OntologizerClient
 
 		studySetText = document.createTextNode("");
 		body.appendChild(studySetText);
-
-		final class ByteArrayParserInput implements IParserInput
+		HTMLElement input = document.createElement("form").cast();
+		body.appendChild(input);
+		allGenesButton = document.createElement("button").withText("All Genes").cast();
+		allGenesButton.setType("button");
+		allGenesButton.listenClick(ev ->
 		{
-			private int size;
-			private ByteArrayInputStream bais;
-			private InputStream is;
+			if (annotation == null) return;
 
-			public ByteArrayParserInput(byte [] buf)
+			StringBuilder allGenes = new StringBuilder();
+			for (ByteString gene : annotation.getAllAnnotatedGenes())
 			{
-				size = buf.length;
-				bais = new ByteArrayInputStream(buf);
+				allGenes.append(gene.toString());
+				allGenes.append("\n");
+			}
+			studySet.setInnerHTML(allGenes.toString());
+		});
+		input.appendChild(allGenesButton);
+		HTMLButtonElement ontologizeButton = document.createElement("button").withText("Ontologize").cast();
+		ontologizeButton.setType("button");
+		ontologizeButton.listenClick(ev ->
+		{
+			if (annotation == null) return;
 
-				if (buf.length >= 2 && buf[0] == (byte)0x1f && buf[1] == (byte)0x8b)
-				{
-					try
-					{
-						is = new GZIPInputStream(bais);
-					} catch (IOException e)
-					{
-						is = bais;
-					}
-				} else
-				{
-					is = bais;
-				}
+			TermForTermCalculation calculation = new TermForTermCalculation();
+			PopulationSet population = new PopulationSet();
+			population.addGenes(annotation.getAllAnnotatedGenes());
+			StudySet study = new StudySet();
+			for (String s : studySet.getValue().split("\n"))
+				study.addGene(new ByteString(s), "");
+			EnrichedGOTermsResult result = calculation.calculateStudySet(ontology, annotation, population, study, new Bonferroni());
+			System.out.println(result.getSize() + " terms");
+
+			int i = 0;
+			AbstractGOTermProperties [] results = new AbstractGOTermProperties[result.getSize()];
+			for (AbstractGOTermProperties p : result)
+				results[i++] = p;
+			Arrays.sort(results, Comparator.comparingDouble(p -> p.p));
+
+			if (resultsTable == null)
+			{
+				Column idColumn = Column.createColumn(COL_ID, "GO ID").cast();
+				Column nameColumn = Column.createColumn(COL_NAME, "Name").cast();
+				Column pvalColumn = Column.createColumn(COL_PVAL, "P value").cast();
+
+				resultsTable = document.createElement("table").cast();
+				resultsTable.bootstrapTable(idColumn,nameColumn,pvalColumn);
+				resultsTable.hideLoading();
+				body.appendChild(resultsTable);
 			}
 
-			@Override
-			public InputStream inputStream()
+			i = 0;
+			for (AbstractGOTermProperties p : results)
 			{
-				return is;
-			}
+				if (i++ > 30) break;
 
-			@Override
-			public void close()
-			{
+				resultsTable.append(Row.createRow().
+						setColumn(COL_ID, p.goTerm.getIDAsString()).
+						setColumn(COL_NAME, p.goTerm.getName()).
+						setColumn(COL_PVAL, p.p_adjusted + ""));
 			}
-
-			@Override
-			public int getSize()
-			{
-				return size;
-			}
-
-			@Override
-			public int getPosition()
-			{
-				return size - bais.available();
-			}
-
-			@Override
-			public String getFilename()
-			{
-				return "";
-			}
-		}
+		});
+		input.appendChild(ontologizeButton);
 
 		/* Load obo file */
 		final XMLHttpRequest oboRequest = XMLHttpRequest.create();
