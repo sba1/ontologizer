@@ -37,17 +37,6 @@ public class OntologizerClient
 	private static Ontology ontology;
 	private static AssociationContainer annotation;
 
-	/**
-	 * Simple TextArea type.
-	 *
-	 * @author Sebastian Bauer
-	 */
-	public interface HTMLTextAreaElement extends HTMLElement
-	{
-	    @JSProperty
-	    String getValue();
-	}
-
 	public static void studySetChanged(String studySet)
 	{
 		String [] lines = studySet.split("\n");
