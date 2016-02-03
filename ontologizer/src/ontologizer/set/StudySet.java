@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import ontologizer.association.Association;
@@ -42,7 +43,7 @@ import ontologizer.types.ByteString;
  */
 public class StudySet implements Iterable<ByteString>
 {
-	private static Logger logger = Logger.getLogger(StudySet.class.getCanonicalName());
+	private static Logger logger = Logger.getLogger(StudySet.class.getName());
 
 	/**
 	 * HashMap containing the names of genes (or gene products) of the study
@@ -323,7 +324,7 @@ public class StudySet implements Iterable<ByteString>
 
 		if (uniqueGenes.size() != gene2Attribute.size())
 		{
-			logger.info((gene2Attribute.size() - uniqueGenes.size()) + " duplicate gene entries have been filtered out");
+			logger.log(Level.INFO, (gene2Attribute.size() - uniqueGenes.size()) + " duplicate gene entries have been filtered out");
 			gene2Attribute = uniqueGenes;
 		}
 
@@ -362,7 +363,7 @@ public class StudySet implements Iterable<ByteString>
 		for (ByteString geneName : unannotatedGeneNames)
 			gene2Attribute.remove(geneName);
 
-		logger.info(unannotatedGeneNames.size() + " genes of " + getName() + " without any association have been filtered out. Now there are " + gene2Attribute.size() + " genes, of which " +
+		logger.log(Level.INFO, unannotatedGeneNames.size() + " genes of " + getName() + " without any association have been filtered out. Now there are " + gene2Attribute.size() + " genes, of which " +
 				   numObjectSymbol + " can be resolved using Object Symbols, " + numObjectID + " using Object IDs, and " + numSynonyms + " using Synonyms.");
 
 		/* Reset counter and enumerator */

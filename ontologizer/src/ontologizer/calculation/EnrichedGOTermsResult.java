@@ -32,7 +32,7 @@ import ontologizer.util.Util;
  */
 public class EnrichedGOTermsResult extends AbstractGOTermsResult
 {
-	private static Logger logger = Logger.getLogger(EnrichedGOTermsResult.class.getCanonicalName());
+	private static Logger logger = Logger.getLogger(EnrichedGOTermsResult.class.getName());
 
 	private int populationGeneCount;
 	private int studyGeneCount;
@@ -107,7 +107,7 @@ public class EnrichedGOTermsResult extends AbstractGOTermsResult
 
 		try
 		{
-			logger.info("Writing to \"" + file.getCanonicalPath() + "\".");
+			logger.log(Level.INFO, "Writing to \"" + file.getCanonicalPath() + "\".");
 
 			PrintWriter out = new PrintWriter(file);
 
@@ -132,7 +132,7 @@ public class EnrichedGOTermsResult extends AbstractGOTermsResult
 			out.flush();
 			out.close();
 
-			logger.info("\"" + file.getCanonicalPath() + "\"" + " successfully written.");
+			logger.log(Level.INFO, "\"" + file.getCanonicalPath() + "\"" + " successfully written.");
 		} catch (IOException e)
 		{
 			logger.log(Level.SEVERE, "Exception occured when writing the table.", e);
