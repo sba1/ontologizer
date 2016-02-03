@@ -38,27 +38,10 @@
 
 				<executions>
 					<execution>
-						<id>unpack-dependencies</id>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>unpack-dependencies</goal>
-						</goals>
-
-						<configuration>
-							<artifactItems>
-								<artifactItem>
-								    <groupId>org.webjars</groupId>
-								    <artifactId>bootstrap</artifactId>
-								    <version>3.3.6</version>
-								</artifactItem>
-							</artifactItems>
-						</configuration>
-					</execution>
-
-					<execution>
 						<id>unpack</id>
 						<phase>prepare-package</phase>
 						<goals>
+							<goal>unpack-dependencies</goal>
 							<goal>unpack</goal>
 						</goals>
 
