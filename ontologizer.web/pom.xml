@@ -52,6 +52,12 @@
 								    <artifactId>bootstrap</artifactId>
 								    <version>3.3.6</version>
 								</artifactItem>
+
+								<artifactItem>
+									<groupId>org.webjars.bower</groupId>
+									<artifactId>bootstrap-table</artifactId>
+									<version>1.9.1</version>
+								</artifactItem>
 							</artifactItems>
 						</configuration>
 					</execution>
@@ -151,6 +157,13 @@
 		    <artifactId>bootstrap</artifactId>
 		    <version>3.3.6</version>
 		</dependency>
+
+		<dependency>
+			<groupId>org.webjars.bower</groupId>
+			<artifactId>bootstrap-table</artifactId>
+			<version>1.9.1</version>
+		</dependency>
+
 	</dependencies>
 
 </project>
