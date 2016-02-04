@@ -3,7 +3,6 @@ package sonumina.util.changelog;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
@@ -16,8 +15,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * This implementation turns an svn log into an text document. It calls
- * "svn log" on the current directory..
+ * This implementation turns a git log into an text document for user
+ * consumption. It calls "git log" on the current directory.
  *
  * @author Sebastian Bauer
  */
@@ -26,40 +25,41 @@ public class BuildChangeLog
 	public static Change [] process(String string)
 	{
 		ArrayList<Change> list = new ArrayList<Change>(100);
-		String [] commits = string.split("-+\n");
+		String [] commits = string.split("\f");
 
-		Pattern pat = Pattern.compile("r(\\d+)\\s+\\|\\s+(\\w+)\\s+\\|\\s+(.+?)\\s+\\|.*?\\$foruser\\$(.*)",Pattern.DOTALL);
+		Pattern pat = Pattern.compile(".*?\\$foruser\\$(.*)",Pattern.DOTALL);
 
-		DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+		DateFormat df = new SimpleDateFormat("EEE MMM d HH:mm:ss yyyy Z");
 
-		for (int i = 1;i<commits.length;i++)
+		for (String c : commits)
 		{
-			Matcher mat = pat.matcher(commits[i]);
-			while (mat.find())
+			String [] cols = c.split("\t");
+			String hash = cols[0];
+			String author = cols[1];
+			String date = cols[2];
+			String logs = cols[3];
+
+			try
 			{
-				String revisionString = mat.group(1);
-				String authorString = mat.group(2);
-				String dateString = mat.group(3);
-				String logString = mat.group(4);
-				Date date;
+				Date parsedDate = df.parse(date);
 
-				try
-				{
-					date = df.parse(dateString);
+				Matcher mat = pat.matcher(logs);
+				if (!mat.find()) continue;
 
-					Change c = new Change();
-					c.authorString = authorString.trim();
-					c.date = date;
-					c.dateString = dateString.trim();
-					c.logString = logString.trim();
-					c.revisionString = revisionString.trim();
+				Change ch = new Change();
+				ch.authorString = author.trim();
+				ch.logString = mat.group(1).trim();
+				ch.revisionString = hash.trim();
+				ch.dateString = date;
+				ch.date = parsedDate;
 
-					list.add(c);
-				} catch (ParseException e) {
-				}
-
+				list.add(ch);
+			} catch (ParseException e)
+			{
+				e.printStackTrace();
 			}
 		}
+
 		Change [] c = new Change[list.size()];
 		list.toArray(c);
 		return c;
@@ -80,18 +80,22 @@ public class BuildChangeLog
 				out = new PrintStream(new FileOutputStream(args[1]));
 			}
 		}
-		System.err.println("Getting log for \"" + new File(path).getCanonicalPath() + "\"");
+		path = new File(path).getCanonicalPath();
+		System.err.println("Getting log for \"" + path + "\"");
 
-		/* Start svn log and read the output */
-		Process svnProcess = Runtime.getRuntime().exec(new String[]{"svn","log", path});
-		BufferedReader br = new BufferedReader(new InputStreamReader(svnProcess.getInputStream()));
+		/* Start git log and read the output */
+		Process gitProcess = Runtime.getRuntime().exec(new String[]{"git", "log", "--pretty=format:\"%h%x09%an%x09%ad%x09%s\""}, null, new File(path));
+		BufferedReader br = new BufferedReader(new InputStreamReader(gitProcess.getInputStream()));
 		StringBuilder str = new StringBuilder();
 		String line;
 		while ((line = br.readLine())!=null)
+		{
+			System.out.println(line);
 			str.append(line + "\n");
-		int rc = svnProcess.waitFor();
-		BufferedReader err = new BufferedReader(new InputStreamReader(svnProcess.getErrorStream()));
-		System.err.println("The svn command returned " + rc);
+		}
+		int rc = gitProcess.waitFor();
+		BufferedReader err = new BufferedReader(new InputStreamReader(gitProcess.getErrorStream()));
+		System.err.println("The git command returned " + rc);
 		while ((line = err.readLine())!=null)
 			System.err.println(line);
 
