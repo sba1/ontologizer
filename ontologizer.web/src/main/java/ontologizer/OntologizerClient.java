@@ -16,7 +16,6 @@ import org.teavm.jso.dom.html.HTMLDocument;
 import org.teavm.jso.dom.html.HTMLElement;
 import org.teavm.jso.dom.html.HTMLHeadElement;
 import org.teavm.jso.dom.xml.Text;
-import org.teavm.jso.typedarrays.Uint8Array;
 
 import ontologizer.association.AssociationContainer;
 import ontologizer.association.AssociationParser;
@@ -100,6 +99,29 @@ abstract class HTMLBootstrapTableElement implements HTMLElement
 	private static native void removeAll_(HTMLBootstrapTableElement obj);
 }
 
+abstract class ArrayBufferHttpRequest extends XMLHttpRequest
+{
+	/**
+	 * Return the response as a byte array.
+	 *
+	 * @return the byte array of the result
+	 */
+	public byte [] getResponseBytes()
+	{
+		return getResponseBytes_(this);
+	}
+
+	@JSBody(script="return new Int8Array(request.response)", params={"request"})
+	private static native byte [] getResponseBytes_(ArrayBufferHttpRequest request);
+
+	public static ArrayBufferHttpRequest create()
+	{
+		XMLHttpRequest req = XMLHttpRequest.create();
+		req.setResponseType("arraybuffer");
+		return req.cast();
+	}
+}
+
 /**
  * Main class of the Ontologizer Web client.
  *
@@ -129,19 +151,11 @@ public class OntologizerClient
 	/**
 	 * Return the result of an http request as a byte array.
 	 *
-	 * @param oboRequest
+	 * @param request
 	 * @return the byte array of the result
 	 */
-	private static byte [] getByteResult(final XMLHttpRequest oboRequest)
-	{
-		Uint8Array array = Uint8Array.create(oboRequest.getResponse().cast());
-		byte [] buf = new byte[array.getByteLength()];
-		for (int i=0; i < buf.length; i++)
-		{
-			buf[i] = (byte)array.get(i);
-		}
-		return buf;
-	}
+	@JSBody(script="return new Int8Array(request.response)", params={"request"})
+	private static native byte [] getByteResult(final XMLHttpRequest request);
 
 	public static void main(String[] args) throws IOException, OBOParserException
 	{
@@ -224,14 +238,11 @@ public class OntologizerClient
 		input.appendChild(ontologizeButton);
 
 		/* Load obo file */
-		final XMLHttpRequest oboRequest = XMLHttpRequest.create();
+		final ArrayBufferHttpRequest oboRequest = ArrayBufferHttpRequest.create();
 		oboRequest.open("GET", "gene_ontology.1_2.obo.gz");
-		oboRequest.setResponseType("arraybuffer");
 		oboRequest.onComplete(() ->
 		{
-			byte[] oboBuf = getByteResult(oboRequest);
-
-			OBOParser oboParser = new OBOParser(new ByteArrayParserInput(oboBuf));
+			OBOParser oboParser = new OBOParser(new ByteArrayParserInput(oboRequest.getResponseBytes()));
 			try
 			{
 				oboParser.doParse();
@@ -240,9 +251,8 @@ public class OntologizerClient
 				System.out.println(ontology.getNumberOfTerms() + " terms");
 
 				/* Load associations */
-				final XMLHttpRequest assocRequest = XMLHttpRequest.create();
+				final ArrayBufferHttpRequest assocRequest = ArrayBufferHttpRequest.create();
 				assocRequest.open("GET", "gene_association.sgd.gz");
-				assocRequest.setResponseType("arraybuffer");
 				assocRequest.onComplete(() ->
 				{
 					byte[] assocBuf = getByteResult(assocRequest);
