@@ -13,7 +13,7 @@ import java.util.logging.Logger;
  *
  * @author Sebastian Bauer
  */
-public class EnrichtedGOTermWriter
+public class EnrichedGOTermsTableWriter
 {
 	private static Logger logger = Logger.getLogger(EnrichedGOTermsResult.class.getName());
 
