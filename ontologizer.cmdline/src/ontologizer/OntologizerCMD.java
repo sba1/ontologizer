@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import ontologizer.calculation.CalculationRegistry;
 import ontologizer.calculation.EnrichedGOTermsResult;
+import ontologizer.calculation.EnrichtedGOTermWriter;
 import ontologizer.go.OBOParserException;
 import ontologizer.go.TermID;
 import ontologizer.statistics.IResampling;
@@ -323,7 +324,7 @@ public class OntologizerCMD
 				{
 					String tableName = "table-" + outBasename + ".txt";
 					File outFile = new File(outputDirectoryName,tableName);
-					studySetResult.writeTable(outFile);
+					EnrichtedGOTermWriter.writeTable(outFile, studySetResult);
 				}
 
 				if (createDOTFile)

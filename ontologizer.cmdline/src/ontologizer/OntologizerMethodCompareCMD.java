@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import ontologizer.calculation.EnrichedGOTermsResult;
+import ontologizer.calculation.EnrichtedGOTermWriter;
 import ontologizer.go.Ontology;
 import ontologizer.go.OBOParser;
 import ontologizer.go.OBOParserException;
@@ -159,7 +160,7 @@ public class OntologizerMethodCompareCMD
 						+ "-" + arguments.correctionName;
 						String tableName = "table-" + outBasename + ".txt";
 						File outFile = new File(tableName);
-						studySetResult.writeTable(outFile);
+						EnrichtedGOTermWriter.writeTable(outFile, studySetResult);
 
 					}
 				}

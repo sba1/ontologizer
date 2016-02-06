@@ -97,49 +97,6 @@ public class EnrichedGOTermsResult extends AbstractGOTermsResult
 	}
 
 	/**
-	 *
-	 * @param file
-	 */
-	public void writeTable(File file)
-	{
-		if (list.isEmpty())
-			return;
-
-		try
-		{
-			logger.log(Level.INFO, "Writing to \"" + file.getCanonicalPath() + "\".");
-
-			PrintWriter out = new PrintWriter(file);
-
-			/* Write out the table header */
-			AbstractGOTermProperties first = list.get(0);
-
-			out.write(first.propHeaderToString());
-
-			/* Place the result into an own list, so we can sort the results */
-			ArrayList<AbstractGOTermProperties> propsList = new ArrayList<AbstractGOTermProperties>();
-			for (AbstractGOTermProperties props : this)
-				propsList.add(props);
-			Collections.sort(propsList);
-
-			/* Write out table contents */
-			for (AbstractGOTermProperties props : propsList)
-			{
-				out.println(props.propLineToString(populationGeneCount,
-						studyGeneCount));
-			}
-
-			out.flush();
-			out.close();
-
-			logger.log(Level.INFO, "\"" + file.getCanonicalPath() + "\"" + " successfully written.");
-		} catch (IOException e)
-		{
-			logger.log(Level.SEVERE, "Exception occured when writing the table.", e);
-		}
-	}
-
-	/**
 	 * Returns the set of terms for which the all-subset minimal p-value is
 	 * below the given cutoff. Those are the "good" terms.
 	 *

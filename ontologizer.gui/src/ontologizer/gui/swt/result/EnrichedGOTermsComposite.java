@@ -22,6 +22,7 @@ import ontologizer.GlobalPreferences;
 import ontologizer.association.Gene2Associations;
 import ontologizer.calculation.AbstractGOTermProperties;
 import ontologizer.calculation.EnrichedGOTermsResult;
+import ontologizer.calculation.EnrichtedGOTermWriter;
 import ontologizer.calculation.b2g.Bayes2GOEnrichedGOTermsResult;
 import ontologizer.calculation.b2g.Bayes2GOGOTermProperties;
 import ontologizer.calculation.b2g.FixedAlphaBetaScore;
@@ -1371,8 +1372,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 	 */
 	public void tableSave(String path)
 	{
-		File tableFile = new File(path);
-		result.writeTable(tableFile);
+		EnrichtedGOTermWriter.writeTable(new File(path), result);
 	}
 
 	/**
