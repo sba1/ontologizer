@@ -71,7 +71,6 @@ public class OntologizerMethodCompareCMD
 	 * @see myCommandLine
 	 * @see OntologizerCore
 	 */
-	@SuppressWarnings("static-access")
 	public static void main(String[] args)
 	{
 		OntologizerCore.Arguments arguments = new OntologizerCore.Arguments();
