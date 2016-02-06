@@ -922,14 +922,6 @@ public class Ontology implements Iterable<Term>
 			}
 		});
 
-		/* The unoptimized algorithm */
-		if (false)
-		{
-			Set<TermID> p2 = getTermsOfInducedGraph(null,t2);
-			p1.retainAll(p2);
-			return p1;
-		}
-
 		return sharedParents;
 	}
 

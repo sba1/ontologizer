@@ -1,4 +1,7 @@
 package ontologizer.go;
+
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 import org.junit.Assert;
@@ -109,5 +112,51 @@ public class OntologyTest
 
 		graph.walkToSource(new TermID("GO:0006281"), vistingGOVertex);
 		Assert.assertEquals(19,vistingGOVertex.getCount());
+	}
+
+	/**
+	 * Return a termid collection from strings.
+	 *
+	 * @param ids
+	 * @return
+	 */
+	private static Collection<TermID> newTermIDCollection(String...ids)
+	{
+		HashSet<TermID> hs = new HashSet<TermID>();
+		for (String id : ids)
+			hs.add(new TermID(id));
+		return hs;
+	}
+
+	@Test
+	public void testGetSharedParentsSimple()
+	{
+		Term t = graph.getTerm("GO:0008152");
+		Collection<TermID> parents = graph.getSharedParents(t.getID(), t.getID());
+		Assert.assertEquals(3,  parents.size());
+		Assert.assertTrue(parents.containsAll(newTermIDCollection("GO:0008152", "GO:0008150", "GO:0000000")));
+	}
+
+	@Test
+	public void testGetSharedParents()
+	{
+		Term t1 = graph.getTerm("GO:0008152");
+		Term t2 = graph.getTerm("GO:0008150");
+		Collection<TermID> parents = graph.getSharedParents(t1.getID(), t2.getID());
+		Assert.assertEquals(2,  parents.size());
+		Assert.assertTrue(parents.containsAll(newTermIDCollection("GO:0008150", "GO:0000000")));
+	}
+
+	@Test
+	public void testGetSharedParentsTwoLeaves()
+	{
+		Term t1 = graph.getTerm("GO:0034641");
+		Term t2 = graph.getTerm("GO:0019326");
+		Collection<TermID> actual = graph.getSharedParents(t1.getID(), t2.getID());
+
+		Collection<TermID> expected = graph.getTermsOfInducedGraph(null, t1.getID());
+		expected.retainAll(graph.getTermsOfInducedGraph(null, t2.getID()));
+		Assert.assertEquals(expected.size(),  actual.size());
+		Assert.assertTrue(actual.containsAll(expected));
 	}
 }
