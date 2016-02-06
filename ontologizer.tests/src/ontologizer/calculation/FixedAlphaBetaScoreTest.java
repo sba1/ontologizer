@@ -10,7 +10,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import ontologizer.association.AssociationContainer;
-import ontologizer.calculation.Bayes2GOCalculationTest.SingleCalculationSetting;
 import ontologizer.calculation.b2g.FixedAlphaBetaScore;
 import ontologizer.enumeration.GOTermEnumerator;
 import ontologizer.go.Ontology;
