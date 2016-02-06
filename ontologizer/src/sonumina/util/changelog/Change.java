@@ -9,6 +9,7 @@ import java.util.Date;
  */
 public class Change
 {
+	public int revision;
 	public String revisionString;
 	public String authorString;
 	public Date date;

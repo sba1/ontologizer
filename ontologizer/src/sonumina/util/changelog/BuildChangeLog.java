@@ -24,20 +24,25 @@ public class BuildChangeLog
 {
 	public static Change [] process(String string)
 	{
+		int revision = 0;
 		ArrayList<Change> list = new ArrayList<Change>(100);
 		String [] commits = string.split("\f");
 
-		Pattern pat = Pattern.compile(".*?\\$foruser\\$(.*)",Pattern.DOTALL);
+		Pattern pat = Pattern.compile(".*\\$foruser\\$(.*)",Pattern.DOTALL|Pattern.MULTILINE);
 
 		DateFormat df = new SimpleDateFormat("EEE MMM d HH:mm:ss yyyy Z");
 
 		for (String c : commits)
 		{
-			String [] cols = c.split("\t");
-			String hash = cols[0];
+			String [] cols = c.trim().split("\t");
+			if (cols.length < 4) continue;
 			String author = cols[1];
 			String date = cols[2];
 			String logs = cols[3];
+
+			revision++;
+
+			logs = logs.split("git-svn-id:")[0];
 
 			try
 			{
@@ -47,9 +52,9 @@ public class BuildChangeLog
 				if (!mat.find()) continue;
 
 				Change ch = new Change();
+				ch.revision = revision;
 				ch.authorString = author.trim();
 				ch.logString = mat.group(1).trim();
-				ch.revisionString = hash.trim();
 				ch.dateString = date;
 				ch.date = parsedDate;
 
@@ -60,8 +65,15 @@ public class BuildChangeLog
 			}
 		}
 
+		int totalRevisions = revision;
+
 		Change [] c = new Change[list.size()];
 		list.toArray(c);
+		for (int i=0; i < c.length; i++)
+		{
+			c[i].revision = totalRevisions - c[i].revision;
+			c[i].revisionString = Integer.toString(c[i].revision);
+		}
 		return c;
 	}
 
@@ -84,15 +96,13 @@ public class BuildChangeLog
 		System.err.println("Getting log for \"" + path + "\"");
 
 		/* Start git log and read the output */
-		Process gitProcess = Runtime.getRuntime().exec(new String[]{"git", "log", "--pretty=format:\"%h%x09%an%x09%ad%x09%s\""}, null, new File(path));
+		Process gitProcess = Runtime.getRuntime().exec(new String[]{"git", "log", "--pretty=format:%h%x09%an%x09%ad%x09%B%x0c"}, null, new File(path));
 		BufferedReader br = new BufferedReader(new InputStreamReader(gitProcess.getInputStream()));
 		StringBuilder str = new StringBuilder();
 		String line;
 		while ((line = br.readLine())!=null)
-		{
-			System.out.println(line);
 			str.append(line + "\n");
-		}
+
 		int rc = gitProcess.waitFor();
 		BufferedReader err = new BufferedReader(new InputStreamReader(gitProcess.getErrorStream()));
 		System.err.println("The git command returned " + rc);
