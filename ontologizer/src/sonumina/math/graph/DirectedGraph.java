@@ -976,8 +976,6 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 
 		/* Here we also want to ensure that no redunancies are included */
 
-		int removed = 0;
-
 		do
 		{
 			reducedInIteration = false;
@@ -989,7 +987,6 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 
 			/* Now add edges to the reduced graph structure, i.e., leave out
 			 * edges that are redundant */
-			int i = 0;
 			for (VertexType v : verticesToBeIncluded)
 			{
 				Set<VertexType> vUpperVertices = transitiveClosure.getVerticesOfUpperInducedGraph(null,v);
@@ -998,7 +995,6 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 				while (parentIterator.hasNext())
 					parents.add(parentIterator.next());
 
-				i++;
 				/* Construct the upper graph by using only the parents. Always
 				 * leave out a single parent. If that edge is redundant, the number
 				 * of nodes in this newly created graph differs only by one.
@@ -1022,7 +1018,6 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 					} else
 					{
 						reducedInIteration = true;
-						removed++;
 					}
 				}
 			}
