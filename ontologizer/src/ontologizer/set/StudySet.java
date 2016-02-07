@@ -595,6 +595,7 @@ public class StudySet implements Iterable<ByteString>
 				out.write("}");
 			}
 			out.flush();
+			out.close();
 		} catch (IOException e)
 		{
 			e.printStackTrace();
@@ -672,6 +673,7 @@ public class StudySet implements Iterable<ByteString>
 				out.write('\n');
 			}
 			out.flush();
+			out.close();
 		} catch (IOException e)
 		{
 			e.printStackTrace();
