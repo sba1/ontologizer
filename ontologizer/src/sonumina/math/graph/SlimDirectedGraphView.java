@@ -13,8 +13,7 @@ import sonumina.math.graph.AbstractGraph.IVisitor;
  * Instances of this class represent a slim view of a graph. Most attributes can be
  * accessed directly.
  *
- * @author Sebastian Bauer
- * @author sebastiankohler
+ * @author Sebastian Bauer, Sebastian Koehler
  */
 public class SlimDirectedGraphView<VertexType>
 {
@@ -39,107 +38,22 @@ public class SlimDirectedGraphView<VertexType>
 	public int [][] vertexDescendants;
 
 	/**
-	 * Constructs a slim view from a given directed graph.
-	 *
-	 * @param graph
+	 * Default constructor.
 	 */
-	@SuppressWarnings("unchecked")
-	public SlimDirectedGraphView(DirectedGraph<VertexType> graph)
+	public SlimDirectedGraphView()
 	{
-		int i;
-
-		/* Vertices */
-		vertices = new Object[graph.getNumberOfVertices()];
-		vertex2Index = new HashMap<VertexType, Integer>();
-		i = 0;
-		for (VertexType t : graph)
-		{
-			vertices[i] = t;
-			vertex2Index.put(t, i);
-			i++;
-		}
-
-		/* Term parents stuff */
-		vertexParents = new int[vertices.length][];
-		for (i=0;i<vertices.length;i++)
-		{
-			VertexType v 					= (VertexType)vertices[i];
-			Iterator<VertexType> parentIter = graph.getParentNodes(v);
-			vertexParents[i] 				= createIndicesFromIter(parentIter);
-		}
-
-		/* Term ancestor stuff */
-		vertexAncestors = new int[vertices.length][];
-		for (i=0;i<vertices.length;i++)
-		{
-			VertexType v = (VertexType)vertices[i];
-			final List<VertexType> ancestors = new ArrayList<VertexType>(20);
-			graph.bfs(v, true, new IVisitor<VertexType>() {
-				public boolean visited(VertexType vertex)
-				{
-					ancestors.add(vertex);
-					return true;
-				};
-			});
-			vertexAncestors[i] = createIndicesFromIter(ancestors.iterator());
-
-			/* Sort them, as we require this for binary search in isAncestor() */
-			Arrays.sort(vertexAncestors[i]);
-		}
-
-		/* Term children stuff */
-		vertexChildren = new int[vertices.length][];
-		for (i=0;i<vertices.length;i++)
-		{
-			VertexType v = (VertexType)vertices[i];
-
-			Iterator<VertexType> childrenIter 	= graph.getChildNodes(v);
-			vertexChildren[i] 					= createIndicesFromIter(childrenIter);
-		}
-
-		/* Term descendants stuff */
-		vertexDescendants = new int[vertices.length][];
-		for (i=0;i<vertices.length;i++)
-		{
-			VertexType v = (VertexType)vertices[i];
-			final List<VertexType> descendants = new ArrayList<VertexType>(20);
-			graph.bfs(v, false, new IVisitor<VertexType>() {
-				public boolean visited(VertexType vertex)
-				{
-					descendants.add(vertex);
-					return true;
-				};
-			});
-			vertexDescendants[i] = createIndicesFromIter(descendants.iterator());
-
-			/* Sort them, as we require this for binary search in isDescendant() */
-			Arrays.sort(vertexDescendants[i]);
-		}
 	}
 
 	/**
-	 * Creates an index array from the given vertex iterator.
+	 * Constructs a slim view from a given directed graph.
 	 *
-	 * @param iterator
-	 * @return
+	 * @param graph
+	 * @deprecated use the create() method.
 	 */
-	private int[] createIndicesFromIter(Iterator<VertexType> iterator)
+	@Deprecated
+	public SlimDirectedGraphView(DirectedGraph<VertexType> graph)
 	{
-		ArrayList<Integer> indicesList = new ArrayList<Integer>(10);
-
-		while (iterator.hasNext())
-		{
-			VertexType p = iterator.next();
-			Integer idx = vertex2Index.get(p);
-			if (idx != null)
-				indicesList.add(idx);
-		}
-
-		int [] indicesArray = new int[indicesList.size()];
-		for (int i=0;i<indicesList.size();i++)
-			indicesArray[i] = indicesList.get(i);
-
-		return indicesArray;
+		init(this, graph);
 	}
 
 	/**
@@ -365,4 +279,122 @@ public class SlimDirectedGraphView<VertexType>
 		return childrenObjects;
 	}
 
+	/**
+	 * Initialize the slim graph view from a directed graph.
+	 *
+	 * @param slim
+	 * @param graph
+	 */
+	@SuppressWarnings("unchecked")
+	public static <V> void init(SlimDirectedGraphView<V> slim, DirectedGraph<V> graph)
+	{
+		int i;
+
+		/* Vertices */
+		slim.vertices = new Object[graph.getNumberOfVertices()];
+		slim.vertex2Index = new HashMap<V, Integer>();
+		i = 0;
+
+		for (V t : graph)
+		{
+			slim.vertices[i] = t;
+			slim.vertex2Index.put(t, i);
+			i++;
+		}
+
+		/* Term parents stuff */
+		slim.vertexParents = new int[slim.vertices.length][];
+		for (i=0;i<slim.vertices.length;i++)
+		{
+			V v 					= (V)slim.vertices[i];
+			Iterator<V> parentIter = graph.getParentNodes(v);
+			slim.vertexParents[i] 				= createIndicesFromIter(slim.vertex2Index,parentIter);
+		}
+
+		/* Term ancestor stuff */
+		slim.vertexAncestors = new int[slim.vertices.length][];
+		for (i=0;i<slim.vertices.length;i++)
+		{
+			V v = (V)slim.vertices[i];
+			final List<V> ancestors = new ArrayList<V>(20);
+			graph.bfs(v, true, new IVisitor<V>() {
+				public boolean visited(V vertex)
+				{
+					ancestors.add(vertex);
+					return true;
+				};
+			});
+			slim.vertexAncestors[i] = createIndicesFromIter(slim.vertex2Index,ancestors.iterator());
+
+			/* Sort them, as we require this for binary search in isAncestor() */
+			Arrays.sort(slim.vertexAncestors[i]);
+		}
+
+		/* Term children stuff */
+		slim.vertexChildren = new int[slim.vertices.length][];
+		for (i=0;i<slim.vertices.length;i++)
+		{
+			V v = (V)slim.vertices[i];
+
+			Iterator<V> childrenIter 	= graph.getChildNodes(v);
+			slim.vertexChildren[i] 		= createIndicesFromIter(slim.vertex2Index,childrenIter);
+		}
+
+		/* Term descendants stuff */
+		slim.vertexDescendants = new int[slim.vertices.length][];
+		for (i=0;i<slim.vertices.length;i++)
+		{
+			V v = (V)slim.vertices[i];
+			final List<V> descendants = new ArrayList<V>(20);
+			graph.bfs(v, false, new IVisitor<V>() {
+				public boolean visited(V vertex)
+				{
+					descendants.add(vertex);
+					return true;
+				};
+			});
+			slim.vertexDescendants[i] = createIndicesFromIter(slim.vertex2Index, descendants.iterator());
+
+			/* Sort them, as we require this for binary search in isDescendant() */
+			Arrays.sort(slim.vertexDescendants[i]);
+		}
+	}
+
+	/**
+	 * Creates an index array from the given vertex iterator.
+	 *
+	 * @param iterator
+	 * @return
+	 */
+	private static <V> int[] createIndicesFromIter(HashMap<V,Integer> vertex2Index, Iterator<V> iterator)
+	{
+		ArrayList<Integer> indicesList = new ArrayList<Integer>(10);
+
+		while (iterator.hasNext())
+		{
+			V p = iterator.next();
+			Integer idx = vertex2Index.get(p);
+			if (idx != null)
+				indicesList.add(idx);
+		}
+
+		int [] indicesArray = new int[indicesList.size()];
+		for (int i=0;i<indicesList.size();i++)
+			indicesArray[i] = indicesList.get(i);
+
+		return indicesArray;
+	}
+
+	/**
+	 * Create the slim view from the given directed graph.
+	 *
+	 * @param graph
+	 * @return
+	 */
+	public static <V> SlimDirectedGraphView<V> create(DirectedGraph<V> graph)
+	{
+		SlimDirectedGraphView<V> g = new SlimDirectedGraphView<V>();
+		init(g, graph);
+		return g;
+	}
 }
