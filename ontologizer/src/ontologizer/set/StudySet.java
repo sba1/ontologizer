@@ -69,42 +69,6 @@ public class StudySet implements Iterable<ByteString>
 	private int randomID = 0;
 
 	/**
-	 * Constructs a study set with genes listed in the specified
-	 * file.
-	 *
-	 * @param file
-	 *  specifies the file (a simple list of strings or FASTA format)
-	 *  where the names are extracted from.
-	 */
-//	public StudySet(File file) throws FileNotFoundException, IOException
-//	{
-//		/* We use the fileName as the name of the study set with path components
-//		 * removed */
-//		name = file.getName();
-//
-//		// Removing suffix from filename
-//		Pattern suffixPat = Pattern.compile("\\.[a-zA-Z0-9]+$");
-//		Matcher m = suffixPat.matcher(name);
-//		name = m.replaceAll("");
-//
-//		AbstractItemParser parser = ParserFactory.getNewInstance(file);
-//		logger.info("Processing studyset " + file.toString());
-//		parseAndRetrieveGenesAndAttributes(parser);
-//	}
-
-	/**
-	 * Retrieves the genes and its attributes from the parser.
-	 *
-	 * @param parser
-	 * @throws IOException
-	 */
-//	private void parseAndRetrieveGenesAndAttributes(AbstractItemParser parser) throws IOException
-//	{
-//		parser.parse();
-//		gene2Attribute = parser.getItem2Attributes();
-//	}
-
-	/**
 	 * Construct an empty study set with the given name.
 	 *
 	 * @param name specifies the name of the studyset
@@ -755,14 +719,6 @@ public class StudySet implements Iterable<ByteString>
 					if (attr != null)
 						attr = attr.merge(entry.getValue());
 					else attr = entry.getValue();
-
-//					String val = newGeneNames.get(newName);
-//					if (val == null) val = "";
-//					else val += ",";
-//
-//					val += "mapped_from=" + entry.getKey();
-//					if (entry.getValue() != null && entry.getValue().trim().length()>0)
-//						val += ",comment="+entry.getValue();
 
 					newGene2Attributes.put(newName,attr);
 					mappedGenes++;
