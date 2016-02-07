@@ -61,7 +61,7 @@ public class DirectedGraphLayout<T>
 		this.graph = graph;
 		this.dimensionCallback = dimensionCallback;
 		this.positionCallback = positionCallback;
-		this.slimGraph = new SlimDirectedGraphView<T>(graph);
+		this.slimGraph = SlimDirectedGraphView.create(graph);
 
 		attrs = new Attr[graph.getNumberOfVertices()];
 		for (int i=0;i<graph.getNumberOfVertices();i++)

@@ -204,7 +204,7 @@ public class Ontology implements Iterable<Term>
 	 */
 	public SlimDirectedGraphView<Term> getSlimGraphView()
 	{
-		return new SlimDirectedGraphView<Term>(graph);
+		return SlimDirectedGraphView.create(graph);
 	}
 
 	/**
