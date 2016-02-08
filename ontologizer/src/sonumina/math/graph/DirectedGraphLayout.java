@@ -195,8 +195,6 @@ public class DirectedGraphLayout<T>
 
 			LinkedList<T> savedNodes = new LinkedList<T>();
 
-			boolean improved = false;
-
 			/* First pass, we try to improve the configuration */
 
 			while (queueIter.hasNext())
@@ -245,9 +243,6 @@ public class DirectedGraphLayout<T>
 						{
 							queueIter.remove();
 							savedNodes.addLast(n);
-						} else
-						{
-							improved = true;
 						}
 					}
 				}

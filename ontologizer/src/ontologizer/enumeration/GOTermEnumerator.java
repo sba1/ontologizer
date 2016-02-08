@@ -16,7 +16,6 @@ import ontologizer.go.Ontology;
 import ontologizer.go.Term;
 import ontologizer.go.TermID;
 import ontologizer.go.Ontology.IVisitingGOVertex;
-import ontologizer.go.TermRelation;
 import ontologizer.types.ByteString;
 
 /**
@@ -190,13 +189,6 @@ public class GOTermEnumerator implements Iterable<TermID>
 
 		/* Create the visting */
 		VisitingGOVertex vistingGOVertex = new VisitingGOVertex(geneName);
-
-		if (false)
-		{
-			HashSet<TermRelation> termRelations = new HashSet<TermRelation>();
-			termRelations.add(TermRelation.IS_A);
-			termRelations.add(TermRelation.PART_OF_A);
-		}
 
 		/* Walk from goTerm to source by using vistingGOVertex */
 		graph.walkToSource(termIDSet,vistingGOVertex);
