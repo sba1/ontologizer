@@ -486,44 +486,24 @@ public class Ontology implements Iterable<Term>
 		 * direction. Basically a breadth-depth search is done.
 		 */
 
-		/* TODO: Make this a method of DirectedGraph (already implemented there) */
-		Term source = termContainer.get(sourceID);
+		final boolean [] pathExists = new boolean[1];
+		final Term source = termContainer.get(sourceID);
 		Term dest = termContainer.get(destID);
 
-		HashSet<Term> visited = new HashSet<Term>();
-
-		LinkedList<Term> queue = new LinkedList<Term>();
-		queue.offer(dest);
-		visited.add(dest);
-
-		while (!queue.isEmpty())
+		graph.bfs(dest, true, new IVisitor<Term>()
 		{
-			/* Remove head of the queue */
-			Term head = queue.poll();
-
-			/*
-			 * Add not yet visited neighbours of old head to the queue and mark
-			 * them as visited. If such a node is the source, return true
-			 * (because than there exists a directed path between source and
-			 * destination)
-			 */
-			Iterator<Edge<Term>> edgeIter = graph.getInEdges(head);
-			while (edgeIter.hasNext())
+			@Override
+			public boolean visited(Term vertex)
 			{
-				Edge<Term> edge = edgeIter.next();
-				Term ancestor = edge.getSource();
-
-				if (ancestor == source)
+				if (!vertex.equals(source))
 					return true;
 
-				if (!visited.contains(ancestor))
-				{
-					visited.add(ancestor);
-					queue.offer(ancestor);
-				}
+				pathExists[0] = true;
+				return false;
 			}
-		}
-		return false;
+		});
+
+		return pathExists[0];
 	}
 
 	/**
