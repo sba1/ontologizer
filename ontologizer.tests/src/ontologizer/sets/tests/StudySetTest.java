@@ -80,7 +80,7 @@ class InternalDatafiles extends Datafiles
 		terms.add(c15);
 		TermContainer termContainer = new TermContainer(terms,"","");
 
-		graph = new Ontology(termContainer);
+		graph = Ontology.create(termContainer);
 
 		HashSet<TermID> tids = new HashSet<TermID>();
 		for (Term term : terms)
@@ -171,7 +171,7 @@ public class StudySetTest
 		OBOParser oboParser = new OBOParser(new OBOParserFileInput(OBOParserTest.GOtermsOBOFile));
 		oboParser.doParse();
 		TermContainer container = new TermContainer(oboParser.getTermMap(), oboParser.getFormatVersion(), oboParser.getDate());
-		Ontology o = new Ontology(container);
+		Ontology o = Ontology.create(container);
 
 		AssociationContainer assoc = new AssociationContainer();
 		Association a = new Association(new ByteString("Test"), "TEST:0000000");
@@ -267,7 +267,7 @@ public class StudySetTest
 		OBOParser oboParser = new OBOParser(new OBOParserFileInput(OBOParserTest.GOtermsOBOFile));
 		oboParser.doParse();
 		TermContainer container = new TermContainer(oboParser.getTermMap(), oboParser.getFormatVersion(), oboParser.getDate());
-		Ontology o = new Ontology(container);
+		Ontology o = Ontology.create(container);
 		AssociationParser assocParser = new AssociationParser(new OBOParserFileInput(GOAssociationFile), container, null);
 
 		AssociationContainer assocContainer = new AssociationContainer(assocParser.getAssociations(),

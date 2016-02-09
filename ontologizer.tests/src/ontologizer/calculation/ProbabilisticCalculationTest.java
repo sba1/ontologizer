@@ -32,7 +32,7 @@ public class ProbabilisticCalculationTest
 		terms.add(c3);
 		terms.add(c4);
 		TermContainer termContainer = new TermContainer(terms,"","");
-		Ontology graph = new Ontology(termContainer);
+		Ontology graph = Ontology.create(termContainer);
 
 		/* Population */
 		PopulationSet pop = new PopulationSet("population");

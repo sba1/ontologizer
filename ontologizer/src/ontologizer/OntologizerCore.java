@@ -163,7 +163,7 @@ public class OntologizerCore
 		System.err.println(oboParser.doParse());
 		goTerms = new TermContainer(oboParser.getTermMap(), oboParser.getFormatVersion(), oboParser.getDate());
 		System.err.println("Building graph");
-		goGraph = new Ontology(goTerms);
+		goGraph = Ontology.create(goTerms);
 
 		/* create the study list. A directory or a single file might be given */
 		File studyFile = new File(args.studySet);

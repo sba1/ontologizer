@@ -48,7 +48,7 @@ public class InternalOntology
 		terms.add(c10);
 		terms.add(c11);
 		TermContainer termContainer = new TermContainer(terms,"","");
-		graph = new Ontology(termContainer);
+		graph = Ontology.create(termContainer);
 
 		HashSet<TermID> tids = new HashSet<TermID>();
 		for (Term term : terms)

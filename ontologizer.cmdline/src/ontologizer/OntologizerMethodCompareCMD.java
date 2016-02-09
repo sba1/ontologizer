@@ -174,7 +174,7 @@ public class OntologizerMethodCompareCMD
 			System.out.println(oboParser.doParse());
 			TermContainer goTerms = new TermContainer(oboParser.getTermMap(), oboParser.getFormatVersion(), oboParser.getDate());
 			System.out.println("Building graph");
-			Ontology graph = new Ontology(goTerms);
+			Ontology graph = Ontology.create(goTerms);
 
 			DOTDumper dotDumper = new DOTDumper(graph);
 			double alpha = 0.05;

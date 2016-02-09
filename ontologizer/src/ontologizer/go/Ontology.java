@@ -84,49 +84,15 @@ public class Ontology implements Iterable<Term>
 	 * Construct the GO Graph from the given container.
 	 *
 	 * @param termContainer
+	 * @deprecated use Ontology.create() instead
 	 */
+	@Deprecated
 	public Ontology(TermContainer newTermContainer)
 	{
-		this.termContainer = newTermContainer;
-
-		graph = new DirectedGraph<Term>();
-
-		/* At first add all goterms to the graph */
-		for (Term term : newTermContainer)
-			graph.addVertex(term);
-
-		int skippedEdges = 0;
-
-		/* Now add the edges, i.e. link the terms */
-		for (Term term : newTermContainer)
-		{
-			if (term.getSubsets() != null)
-				for (Subset s : term.getSubsets())
-					availableSubsets.add(s);
-
-			for (ParentTermID parent : term.getParents())
-			{
-				/* Ignore loops */
-				if (term.getID().equals(parent.termid))
-				{
-					logger.log(Level.INFO,"Detected self-loop in the definition of the ontology (term "+ term.getIDAsString()+"). This link has been ignored.");
-					continue;
-				}
-				if (newTermContainer.get(parent.termid) == null)
-				{
-					/* FIXME: We may want to add a new vertex to graph here instead */
-					logger.log(Level.INFO,"Could not add a link from term " + term.toString() + " to " + parent.termid.toString() +" as the latter's definition is missing.");
-					++skippedEdges;
-					continue;
-				}
-				graph.addEdge(new OntologyEdge(newTermContainer.get(parent.termid), term, parent.relation));
-			}
-		}
-
-		if (skippedEdges > 0)
-			logger.log(Level.INFO,"A total of " + skippedEdges + " edges were skipped.");
-		assignLevel1TermsAndFixRoot();
+		init(this, newTermContainer);
 	}
+
+	private Ontology() { }
 
 	/**
 	 * Returns the induced subgraph which contains the terms with the given ids.
@@ -271,8 +237,6 @@ public class Ontology implements Iterable<Term>
 			}
 		}
 	}
-
-	private Ontology() { }
 
 	/**
 	 * Determines whether the given id is the id of the (possible artifactial)
@@ -1278,4 +1242,65 @@ public class Ontology implements Iterable<Term>
 
 	}
 
+	/**
+	 * Init the ontology from a term container.
+	 *
+	 * @param o the ontology to be initialized
+	 * @param tc the term container from which to init the ontology.
+	 */
+	private static void init(Ontology o, TermContainer tc)
+	{
+		o.termContainer = tc;
+		o.graph = new DirectedGraph<Term>();
+
+		/* At first add all goterms to the graph */
+		for (Term term : tc)
+			o.graph.addVertex(term);
+
+		int skippedEdges = 0;
+
+		/* Now add the edges, i.e. link the terms */
+		for (Term term : tc)
+		{
+			if (term.getSubsets() != null)
+				for (Subset s : term.getSubsets())
+					o.availableSubsets.add(s);
+
+			for (ParentTermID parent : term.getParents())
+			{
+				/* Ignore loops */
+				if (term.getID().equals(parent.termid))
+				{
+					logger.log(Level.INFO,"Detected self-loop in the definition of the ontology (term "+ term.getIDAsString()+"). This link has been ignored.");
+					continue;
+				}
+				if (tc.get(parent.termid) == null)
+				{
+					/* FIXME: We may want to add a new vertex to graph here instead */
+					logger.log(Level.INFO,"Could not add a link from term " + term.toString() + " to " + parent.termid.toString() +" as the latter's definition is missing.");
+					++skippedEdges;
+					continue;
+				}
+				o.graph.addEdge(new OntologyEdge(tc.get(parent.termid), term, parent.relation));
+			}
+		}
+
+		if (skippedEdges > 0)
+			logger.log(Level.INFO,"A total of " + skippedEdges + " edges were skipped.");
+		o.assignLevel1TermsAndFixRoot();
+
+	}
+
+	/**
+	 * Create a ontology from a term container.
+	 *
+	 * @param tc
+	 * @return
+	 */
+	public static Ontology create(TermContainer tc)
+	{
+		Ontology o = new Ontology();
+		init(o, tc);
+		return o;
+	}
 }

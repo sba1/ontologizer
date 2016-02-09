@@ -105,7 +105,7 @@ public class GeneLister
 			System.err.println(oboParser.doParse());
 			TermContainer goTerms = new TermContainer(oboParser.getTermMap(), oboParser.getFormatVersion(), oboParser.getDate());
 			System.err.println("Building graph");
-			Ontology graph = new Ontology(goTerms);
+			Ontology graph = Ontology.create(goTerms);
 
 			/* association */
 			AssociationParser assocParser = new AssociationParser(new OBOParserFileInput(assocFileName),goTerms,null);

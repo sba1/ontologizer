@@ -944,7 +944,7 @@ public class SemanticCalculation
 		terms.add(c10);
 		terms.add(c11);
 		TermContainer termContainer = new TermContainer(terms,"","");
-		Ontology graph = new Ontology(termContainer);
+		Ontology graph = Ontology.create(termContainer);
 
 		HashSet<TermID> tids = new HashSet<TermID>();
 		for (Term term : terms)

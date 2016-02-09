@@ -59,7 +59,7 @@ public class SteffenExec
 		 * building GO graph from terms
 		 */
 		System.out.println("Building graph");
-		Ontology goGraph = new Ontology(goTermCont);
+		Ontology goGraph = Ontology.create(goTermCont);
 
 		/*
 		 * Getting annotations

@@ -433,7 +433,7 @@ public class WorkSetLoadThread extends Thread
 			});
 			TermContainer goTerms = new TermContainer(oboParser.getTermMap(), oboParser.getFormatVersion(), oboParser.getDate());
 			workSetProgress.message("Building GO graph");
-			graph = new Ontology(goTerms);
+			graph = Ontology.create(goTerms);
 			graphMap.put(oboName,graph);
 		} else
 		{

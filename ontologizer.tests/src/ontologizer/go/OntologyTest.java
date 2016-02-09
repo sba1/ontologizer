@@ -29,7 +29,7 @@ public class OntologyTest
 
 		/* Build graph */
 		System.out.println("Build graph");
-		graph = new Ontology(goTerms);
+		graph = Ontology.create(goTerms);
 	}
 
 	@Test

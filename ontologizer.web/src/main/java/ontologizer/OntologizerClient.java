@@ -247,7 +247,7 @@ public class OntologizerClient
 			{
 				oboParser.doParse();
 				final TermContainer goTerms = new TermContainer(oboParser.getTermMap(), oboParser.getFormatVersion(), oboParser.getDate());
-				ontology = new Ontology(goTerms);
+				ontology = Ontology.create(goTerms);
 				System.out.println(ontology.getNumberOfTerms() + " terms");
 
 				/* Load associations */
