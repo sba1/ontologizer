@@ -16,8 +16,8 @@ import java.util.*;
 
 public class TermContainer implements Iterable<Term>
 {
-	/** The set of GO terms */
-	private HashMap<TermID, Term> termMap;
+	/** The term map */
+	private TermMap termMap;
 
 	/** To allow easy iteration over all GO terms */
 	private LinkedList<Term> termList;
@@ -34,13 +34,11 @@ public class TermContainer implements Iterable<Term>
 		date = datum;
 
 		/* Build our data structures linked list */
-		termMap = new HashMap<TermID, Term>();
 		termList = new LinkedList<Term>();
 		for (Term entry : terms)
-		{
-			termMap.put(entry.getID(), entry);
 			termList.add(entry);
-		}
+
+		termMap = TermMap.create(terms);
 	}
 
 	/**
@@ -48,7 +46,7 @@ public class TermContainer implements Iterable<Term>
 	 */
 	public int termCount()
 	{
-		return termMap.size();
+		return termList.size();
 	}
 
 	public String getFormatVersion()
