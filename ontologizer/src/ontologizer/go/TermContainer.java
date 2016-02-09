@@ -14,11 +14,8 @@ import java.util.*;
  * @author Peter N. Robinson, Sebastian Bauer, Steffen Grossmann
  */
 
-public class TermContainer implements Iterable<Term>
+public class TermContainer extends TermMap implements Iterable<Term>
 {
-	/** The term map */
-	private TermMap termMap;
-
 	/** To allow easy iteration over all GO terms */
 	private LinkedList<Term> termList;
 
@@ -30,6 +27,8 @@ public class TermContainer implements Iterable<Term>
 
 	public TermContainer(Set<Term> terms, String format, String datum)
 	{
+		super(terms);
+
 		formatVersion = format;
 		date = datum;
 
@@ -37,8 +36,6 @@ public class TermContainer implements Iterable<Term>
 		termList = new LinkedList<Term>();
 		for (Term entry : terms)
 			termList.add(entry);
-
-		termMap = TermMap.create(terms);
 	}
 
 	/**
@@ -83,15 +80,10 @@ public class TermContainer implements Iterable<Term>
 			return got.getName();
 	}
 
-	public Term get(TermID id)
-	{
-		return termMap.get(id);
-	}
-
 	public Term get(String id)
 	{
 		TermID tempID = new TermID(id);
-		return termMap.get(tempID);
+		return get(tempID);
 	}
 
 	/** The following is intended for debugging purposes. */

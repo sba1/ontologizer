@@ -13,6 +13,31 @@ public class TermMap
 	/** The set of GO terms */
 	private Map<TermID, Term> map = new HashMap<TermID, Term>();
 
+	private TermMap()
+	{
+	}
+
+	/**
+	 * Initialize the map with the given terms. Required for subclasses.
+	 *
+	 * @param terms
+	 */
+	protected TermMap(Iterable<Term> terms)
+	{
+		init(terms);
+	}
+
+	/**
+	 * Initialize the map with the given terms.
+	 *
+	 * @param terms
+	 */
+	private void init(Iterable<Term> terms)
+	{
+		for (Term t : terms)
+			map.put(t.getID(), t);
+	}
+
 	/**
 	 * Return the full term reference to the given term id.
 	 *
@@ -33,8 +58,7 @@ public class TermMap
 	public static TermMap create(Iterable<Term> terms)
 	{
 		TermMap map = new TermMap();
-		for (Term t : terms)
-			map.map.put(t.getID(), t);
+		map.init(terms);
 		return map;
 	}
 }
