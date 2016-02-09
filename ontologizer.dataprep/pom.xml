@@ -9,7 +9,7 @@
     <relativePath>../ontologizer.parent</relativePath>
   </parent>
 
-  <artifactId>ontologiter.dataprep</artifactId>
+  <artifactId>ontologizer.dataprep</artifactId>
   <name>ontologizer.dataprep</name>
 
   <properties>
