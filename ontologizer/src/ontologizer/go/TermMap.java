@@ -1,6 +1,7 @@
 package ontologizer.go;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -8,7 +9,7 @@ import java.util.Map;
  *
  * @author Sebastian Bauer
  */
-public class TermMap
+public class TermMap implements Iterable<Term>
 {
 	/** The set of GO terms */
 	private Map<TermID, Term> map = new HashMap<TermID, Term>();
@@ -60,5 +61,11 @@ public class TermMap
 		TermMap map = new TermMap();
 		map.init(terms);
 		return map;
+	}
+
+	@Override
+	public Iterator<Term> iterator()
+	{
+		return map.values().iterator();
 	}
 }
