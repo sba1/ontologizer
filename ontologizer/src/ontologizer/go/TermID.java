@@ -26,11 +26,11 @@ public class TermID
 	/** Its integer part */
 	public final int id;
 
-	/**
-	 * bugfix...
-	 */
+	/** Map arbitrary ids to integer ids. Used for ontologies like Uberpheno */
 	private static final HashMap<String, Integer> string2id = new HashMap<String, Integer>();
-	private static int index = Integer.MAX_VALUE;
+
+	/** The id to be used for the next string id. This is decreasing. */
+	private static int nextId = Integer.MAX_VALUE;
 
 	/**
 	 * Constructs the TermID from a plain integer value. The prefix defaults
@@ -103,9 +103,8 @@ public class TermID
 			parsedId = Integer.parseInt(parseIdFrom);
 		} catch(NumberFormatException ex)
 		{
-			// this is a fix to keep this running for uberpheno
+			/* This was no integer id, so we create an own integer id */
 			parsedId = makeIdFromString(parseIdFrom);
-//			throw new IllegalArgumentException("Failed to parse the integer part of termid: \"" + stringID + "\"");
 		}
 		id = parsedId;
 	}
@@ -171,22 +170,27 @@ public class TermID
 			tid = ByteString.parseFirstInt(id,colon,start+len-colon);
 		} catch(NumberFormatException ex)
 		{
-			/* This is a hack to make it possible to accept non-number ids */
+			/* This was no integer id, so we create an own integer id */
 			String strID = new String(id,colon+1,start+len-colon-1);
 			tid = makeIdFromString(strID);
-//			throw new IllegalArgumentException("Failed to parse the integer part of termid: \"" + new String(id,start,len) + "\"");
 		}
 		this.id = tid;
 	}
 
-	private int makeIdFromString(String parseIdFrom) {
-		if ( string2id.containsKey(parseIdFrom))
-			return string2id.get(parseIdFrom);
+	/**
+	 * Make an unique integer id from an arbitray string.
+	 *
+	 * @param id
+	 * @return the id referencing the the id.
+	 */
+	private int makeIdFromString(String id)
+	{
+		if (string2id.containsKey(id))
+			return string2id.get(id);
 
-		--index;
-		string2id.put(parseIdFrom, index);
-		return index;
-
+		nextId--;
+		string2id.put(id, nextId);
+		return nextId;
 	}
 
 	/**
