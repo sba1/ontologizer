@@ -639,8 +639,22 @@ public class Ontology implements Iterable<Term>
 	 * the graph object may contain a subset.
 	 *
 	 * @return
+	 * @deprecated Use getTermMap
 	 */
-	public TermContainer getTermContainer()
+	@Deprecated
+	public TermMap getTermContainer()
+	{
+		return termContainer;
+	}
+
+	/**
+	 * Return the term map attached to this ontology graph.
+	 * Note that the term container usually contains all terms while
+	 * the graph object may contain a subset.
+	 *
+	 * @return the term map
+	 */
+	public TermMap getTermMap()
 	{
 		return termContainer;
 	}
