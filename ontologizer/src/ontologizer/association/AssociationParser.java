@@ -17,6 +17,7 @@ import java.util.logging.Logger;
 import ontologizer.go.IParserInput;
 import ontologizer.go.TermContainer;
 import ontologizer.go.TermID;
+import ontologizer.go.TermMap;
 import ontologizer.linescanner.AbstractByteLineScanner;
 import ontologizer.types.ByteString;
 
@@ -73,7 +74,7 @@ public class AssociationParser
 	 * @param terms
 	 * @throws IOException
 	 */
-	public AssociationParser(IParserInput input, TermContainer terms) throws IOException
+	public AssociationParser(IParserInput input, TermMap terms) throws IOException
 	{
 		this(input,terms,null);
 	}
@@ -88,7 +89,7 @@ public class AssociationParser
 	 * @param names
 	 * @throws IOException
 	 */
-	public AssociationParser(IParserInput input, TermContainer terms, HashSet<ByteString> names) throws IOException
+	public AssociationParser(IParserInput input, TermMap terms, HashSet<ByteString> names) throws IOException
 	{
 		this(input,terms,names,null);
 	}
@@ -104,7 +105,7 @@ public class AssociationParser
 	 * @param progress
 	 * @throws IOException
 	 */
-	public AssociationParser(IParserInput input, TermContainer terms, HashSet<ByteString> names, IAssociationParserProgress progress) throws IOException
+	public AssociationParser(IParserInput input, TermMap terms, HashSet<ByteString> names, IAssociationParserProgress progress) throws IOException
 	{
 		this(input,terms,names,null,progress);
 	}
@@ -123,7 +124,7 @@ public class AssociationParser
 	 * @param progress
 	 * @throws IOException
 	 */
-	public AssociationParser(IParserInput input, TermContainer terms, HashSet<ByteString> names, Collection<String> evidences, IAssociationParserProgress progress) throws IOException
+	public AssociationParser(IParserInput input, TermMap terms, HashSet<ByteString> names, Collection<String> evidences, IAssociationParserProgress progress) throws IOException
 	{
 		associations = new ArrayList<Association>();
 		synonym2gene = new HashMap<ByteString, ByteString>();
@@ -176,7 +177,7 @@ public class AssociationParser
 	 * @param input
 	 * @param
 	 */
-	private void importIDSAssociation(IParserInput input, TermContainer terms, IAssociationParserProgress progress)
+	private void importIDSAssociation(IParserInput input, TermMap terms, IAssociationParserProgress progress)
 	{
 		try
 		{
@@ -256,7 +257,7 @@ public class AssociationParser
 	 * @param progress used for monitoring progress.
 	 * @throws IOException
 	 */
-	private void importAssociationFile(IParserInput input, byte [] head, HashSet<ByteString> names, TermContainer terms, Collection<String> evidences, IAssociationParserProgress progress) throws IOException
+	private void importAssociationFile(IParserInput input, byte [] head, HashSet<ByteString> names, TermMap terms, Collection<String> evidences, IAssociationParserProgress progress) throws IOException
 	{
 		if (progress != null)
 			progress.init(input.getSize());
@@ -299,7 +300,7 @@ public class AssociationParser
 	 * @param progress
 	 * @throws IOException
 	 */
-	private void importAffyFile(IParserInput input, byte [] head, HashSet<ByteString> names, TermContainer terms, IAssociationParserProgress progress) throws IOException
+	private void importAffyFile(IParserInput input, byte [] head, HashSet<ByteString> names, TermMap terms, IAssociationParserProgress progress) throws IOException
 	{
 		/* This represents the affymetrix annotation format as of
 		 * May 15th, 2006. The code uses the following to check that the

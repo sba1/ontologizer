@@ -9,8 +9,8 @@ import java.util.logging.Logger;
 import ontologizer.go.IParserInput;
 import ontologizer.go.PrefixPool;
 import ontologizer.go.Term;
-import ontologizer.go.TermContainer;
 import ontologizer.go.TermID;
+import ontologizer.go.TermMap;
 import ontologizer.linescanner.AbstractByteLineScanner;
 import ontologizer.types.ByteString;
 
@@ -30,7 +30,7 @@ class GAFByteLineScanner extends AbstractByteLineScanner
 	private Set<ByteString> names;
 
 	/** All known terms */
-	private TermContainer terms;
+	private TermMap terms;
 
 	/** Set of evidences that shall be considered or null if all should be considered */
 	private Set<ByteString> evidences;
@@ -70,7 +70,7 @@ class GAFByteLineScanner extends AbstractByteLineScanner
 	private HashMap<TermID, Term> altTermID2Term = null;
 	private HashSet<TermID> usedGoTerms = new HashSet<TermID>();
 
-	public GAFByteLineScanner(IParserInput input, byte [] head, Set<ByteString> names, TermContainer terms, Set<ByteString> evidences, IAssociationParserProgress progress)
+	public GAFByteLineScanner(IParserInput input, byte [] head, Set<ByteString> names, TermMap terms, Set<ByteString> evidences, IAssociationParserProgress progress)
 	{
 		super(input.inputStream());
 
