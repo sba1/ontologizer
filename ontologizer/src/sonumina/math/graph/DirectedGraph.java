@@ -1072,26 +1072,22 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 	 * @param vertex1
 	 * @param eqVertices
 	 */
-	public void mergeVertices(VertexType vertex1, HashSet<VertexType> eqVertices) {
-
-
-		for (VertexType vertex2 : eqVertices){
-
-			if ( ! vertices.containsKey(vertex2)){
+	public void mergeVertices(VertexType vertex1, Iterable<VertexType> eqVertices)
+	{
+		for (VertexType vertex2 : eqVertices)
+		{
+			if (!vertices.containsKey(vertex2))
 				return;
-			}
 
 			VertexAttributes<VertexType> vertexTwoAttributes = vertices.get(vertex2);
-			for (Edge<VertexType> e : vertexTwoAttributes.inEdges){
+			for (Edge<VertexType> e : vertexTwoAttributes.inEdges)
 				e.setDest(vertex1);
-			}
-			for (Edge<VertexType> e : vertexTwoAttributes.outEdges){
+
+			for (Edge<VertexType> e : vertexTwoAttributes.outEdges)
 				e.setSource(vertex1);
-			}
 
 			vertices.remove(vertex2);
 		}
-
 	}
 
 	public boolean containsVertex(VertexType vertex){
