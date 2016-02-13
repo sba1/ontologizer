@@ -423,38 +423,7 @@ abstract public class AbstractGraph<VertexType>
 	 */
 	public void writeDOT(OutputStream fos, Iterable<VertexType> nodeSet, final DotAttributesProvider<VertexType> provider, final double nodeSep, final double rankSep)
 	{
-		DotAttributesProvider<VertexType> newProvider = new DotAttributesProvider<VertexType>()
-				{
-					@Override
-					public String getDotGraphAttributes()
-					{
-						StringBuilder attrs = new StringBuilder();
-						attrs.append(String.format(Locale.US, "nodesep=%f; ranksep=%f;", nodeSep, rankSep));
-
-						if (provider.getDotGraphAttributes() != null)
-							attrs.append(provider.getDotGraphAttributes());
-						return attrs.toString();
-					}
-
-					@Override
-					public String getDotNodeAttributes(VertexType vt)
-					{
-						return provider.getDotNodeAttributes(vt);
-					}
-
-					@Override
-					public String getDotEdgeAttributes(VertexType src, VertexType dest)
-					{
-						return provider.getDotEdgeAttributes(src, dest);
-					}
-
-					@Override
-					public String getDotHeader()
-					{
-						return provider.getDotHeader();
-					}
-				};
-		writeDOT(fos,nodeSet,newProvider);
+		AbstractGraph.writeDOT(this, fos, nodeSet, provider, nodeSep, rankSep);
 	}
 
 	/**
@@ -465,6 +434,54 @@ abstract public class AbstractGraph<VertexType>
 	 * @param provider. Provides the attributes.
 	 */
 	public void writeDOT(OutputStream fos, Iterable<VertexType> nodeSet, DotAttributesProvider<VertexType> provider)
+	{
+		AbstractGraph.writeDOT(this,  fos, nodeSet, provider);
+	}
+
+	public static <V> void writeDOT(AbstractGraph<V> g, OutputStream fos, Iterable<V> nodeSet, final DotAttributesProvider<V> provider, final double nodeSep, final double rankSep)
+	{
+		DotAttributesProvider<V> newProvider = new DotAttributesProvider<V>()
+		{
+			@Override
+			public String getDotGraphAttributes()
+			{
+				StringBuilder attrs = new StringBuilder();
+				attrs.append(String.format(Locale.US, "nodesep=%f; ranksep=%f;", nodeSep, rankSep));
+
+				if (provider.getDotGraphAttributes() != null)
+					attrs.append(provider.getDotGraphAttributes());
+				return attrs.toString();
+			}
+
+			@Override
+			public String getDotNodeAttributes(V vt)
+			{
+				return provider.getDotNodeAttributes(vt);
+			}
+
+			@Override
+			public String getDotEdgeAttributes(V src, V dest)
+			{
+				return provider.getDotEdgeAttributes(src, dest);
+			}
+
+			@Override
+			public String getDotHeader()
+			{
+				return provider.getDotHeader();
+			}
+		};
+		AbstractGraph.writeDOT(g,fos,nodeSet,newProvider);
+	}
+
+	/**
+	 * Writes out the graph as a dot file.
+	 *
+	 * @param fos. For the output.
+	 * @param nodeSet. Defines the subset of nodes to be written out.
+	 * @param provider. Provides the attributes.
+	 */
+	public static <V> void writeDOT(AbstractGraph<V> g, OutputStream fos, Iterable<V> nodeSet, DotAttributesProvider<V> provider)
 	{
 		PrintWriter out = new PrintWriter(fos);
 		String graphHeader = provider.getDotHeader();
@@ -484,9 +501,9 @@ abstract public class AbstractGraph<VertexType>
 		}
 
 		/* Write out all nodes, call the given interface. Along the way, remember the indices. */
-		HashMap<VertexType,Integer> v2idx = new HashMap<VertexType,Integer>();
+		HashMap<V,Integer> v2idx = new HashMap<V,Integer>();
 		int i = 0;
-		for (VertexType v : nodeSet)
+		for (V v : nodeSet)
 		{
 			String attributes = provider.getDotNodeAttributes(v);
 
@@ -499,12 +516,12 @@ abstract public class AbstractGraph<VertexType>
 		}
 
 		/* Now write out the edges. Write out only the edges which are linking nodes within the node set. */
-		for (VertexType s : nodeSet)
+		for (V s : nodeSet)
 		{
-			Iterator<VertexType> ancest = getChildNodes(s);
+			Iterator<V> ancest = g.getChildNodes(s);
 			while (ancest.hasNext())
 			{
-				VertexType d = ancest.next();
+				V d = ancest.next();
 
 				if (v2idx.containsKey(d))
 				{
@@ -523,4 +540,5 @@ abstract public class AbstractGraph<VertexType>
 		out.flush();
 		out.close();
 	}
+
 }
