@@ -13,6 +13,7 @@ import ontologizer.go.Term;
 import ontologizer.go.TermID;
 import ontologizer.go.TermRelation;
 import sonumina.math.graph.AbstractGraph.DotAttributesProvider;
+import sonumina.math.graph.DOTWriter;
 
 public class GODOTWriter
 {
@@ -93,7 +94,7 @@ public class GODOTWriter
 		/* We now have a list of nodes which can be placed into the output */
 		try
 		{
-			graph.getGraph().writeDOT(new FileOutputStream(file), nodeSet, new DotAttributesProvider<Term>()
+			DOTWriter.write(graph.getGraph(),new FileOutputStream(file), nodeSet, new DotAttributesProvider<Term>()
 					{
 						/* Note that the default direction is assumed to be the opposite direction */
 						private String direction = reverseDirection?"":"dir=\"back\"";
