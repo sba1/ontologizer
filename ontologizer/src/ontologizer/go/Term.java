@@ -69,6 +69,7 @@ public class Term {
 	/** Whether term is declared as obsolete */
 	private boolean obsolete;
 
+	/** The information content associated to the term. TODO: Extract this */
 	private double informationContent = -1;
 
 	/**
