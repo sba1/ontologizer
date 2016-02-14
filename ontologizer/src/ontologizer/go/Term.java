@@ -183,7 +183,7 @@ public class Term {
 	{
 		ParentTermID [] parentArray = new ParentTermID[parents.size()];
 		parents.toArray(parentArray);
-		init(id, name, namespace, parents);
+		init(id, name, namespace, parentArray);
 	}
 
 	/**
