@@ -192,28 +192,13 @@ public class Term {
 	}
 
 	/**
-	 * Returns the Term ID as a string (uses StringBuilder)
+	 * Returns the id of the term as a string.
 	 *
-	 * @return term:id
+	 * @return the term id as string.
 	 */
-	public String getIDAsString() {
-		StringBuilder buffer = new StringBuilder();
-		buffer.append(id.getPrefix());
-		buffer.append(":");
-		if (id.id < 10)
-			buffer.append("000000");
-		else if (id.id < 100)
-			buffer.append("00000");
-		else if (id.id < 1000)
-			buffer.append("0000");
-		else if (id.id < 10000)
-			buffer.append("000");
-		else if (id.id < 100000)
-			buffer.append("00");
-		else if (id.id < 1000000)
-			buffer.append("0");
-		buffer.append(id.id);
-		return buffer.toString();
+	public String getIDAsString()
+	{
+		return id.toString();
 	}
 
 	/**
