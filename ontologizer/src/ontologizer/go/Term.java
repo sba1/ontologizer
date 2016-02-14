@@ -1,6 +1,7 @@
 package ontologizer.go;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -80,14 +81,13 @@ public class Term {
 	 * @param namespace
 	 *            A character representing biological_process,
 	 *            cellular_component, or molecular_function or null.
-	 * @param parentList
+	 * @param parents
 	 *            The parent terms of this term including the relation type. The
 	 *            supplied list can be reused after the object have been
 	 *            constructed.
 	 */
-	public Term(TermID id, String name, Namespace namespace, ArrayList<ParentTermID> parentList) {
-		parents = new ParentTermID[parentList.size()];
-		parentList.toArray(parents);
+	public Term(TermID id, String name, Namespace namespace, Collection<ParentTermID> parents)
+	{
 		init(id, name, namespace, parents);
 	}
 
@@ -106,9 +106,8 @@ public class Term {
 	 * @throws IllegalArgumentException
 	 *             if strId is malformatted.
 	 */
-	public Term(String strId, String name, Namespace namespace, ArrayList<ParentTermID> parentList) {
-		parents = new ParentTermID[parentList.size()];
-		parentList.toArray(parents);
+	public Term(String strId, String name, Namespace namespace, Collection<ParentTermID> parents)
+	{
 		init(new TermID(strId), name, namespace, parents);
 	}
 
@@ -170,6 +169,21 @@ public class Term {
 	 */
 	public Term(String strId, String name, Namespace namespace, ParentTermID... parents) {
 		init(new TermID(strId), name, namespace, parents);
+	}
+
+	/**
+	 * Constructor helper.
+	 *
+	 * @param id
+	 * @param name
+	 * @param namespace
+	 * @param parents
+	 */
+	private void init(TermID id, String name, Namespace namespace, Collection<ParentTermID> parents)
+	{
+		ParentTermID [] parentArray = new ParentTermID[parents.size()];
+		parents.toArray(parentArray);
+		init(id, name, namespace, parents);
 	}
 
 	/**
