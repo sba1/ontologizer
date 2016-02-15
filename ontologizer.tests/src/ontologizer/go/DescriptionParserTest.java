@@ -51,8 +51,6 @@ public class DescriptionParserTest
 	{
 		final ArrayList<String> refList = new ArrayList<String>();
 		DescriptionParser.parse("Single Line", new DescriptionParser.IDescriptionPartCallback() {
-			int i;
-
 			public boolean part(String txt, String ref)
 			{
 				refList.add(ref);
@@ -60,7 +58,6 @@ public class DescriptionParserTest
 				assertEquals("Single Line", txt);
 				assertNull(ref);
 
-				i++;
 				return true;
 			}
 		});
