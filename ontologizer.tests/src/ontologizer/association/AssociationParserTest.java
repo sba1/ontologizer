@@ -12,7 +12,9 @@ import java.io.Writer;
 import java.util.zip.GZIPOutputStream;
 
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 import ontologizer.go.OBOParser;
 import ontologizer.go.OBOParserException;
@@ -23,6 +25,9 @@ public class AssociationParserTest
 {
 	private static final String OBO_FILE = "data/gene_ontology.1_2.obo.gz";
 	private static final String ASSOCIATION_FILE = "data/gene_association.sgd.gz";
+
+	@Rule
+	public TemporaryFolder tmpFolder = new TemporaryFolder();
 
 	@Test
 	public void testSimple() throws IOException, OBOParserException
@@ -44,7 +49,7 @@ public class AssociationParserTest
 	@Test
 	public void testSkipHeader() throws IOException, OBOParserException
 	{
-		File tmp = File.createTempFile("test", ".gaf");
+		File tmp = tmpFolder.newFile("testSkipHeaeder.gaf");
 		BufferedWriter bw = new BufferedWriter(new FileWriter(tmp));
 		bw.write("# Comment1\n");
 		bw.write("DB\tDBOBJID2\tSYMBOL\t\tGO:0005760\tPMID:00000\tEVIDENCE\t\tC\t\tgene\ttaxon:4932\t20121212\tSBA\n");
@@ -63,7 +68,7 @@ public class AssociationParserTest
 	@Test
 	public void testReadFromCompressedFile() throws IOException, OBOParserException
 	{
-		File tmp = File.createTempFile("test", ".gaf.gz");
+		File tmp = tmpFolder.newFile("testReadFromCompressedFile.gaf.gz");
 		Writer bw = new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(tmp)));
 		bw.write("DB\tDBOBJID2\tSYMBOL\t\tGO:0005760\tPMID:00000\tEVIDENCE\t\tC\t\tgene\ttaxon:4932\t20121212\tSBA\n");
 		bw.flush();
@@ -81,8 +86,7 @@ public class AssociationParserTest
 	@Test
 	public void testAmbiguousGAFCaseA() throws IOException, OBOParserException
 	{
-
-		File tmp = File.createTempFile("test", ".gaf");
+		File tmp = tmpFolder.newFile("testAmbiguousGAFCaseA.gaf");
 		BufferedWriter bw = new BufferedWriter(new FileWriter(tmp));
 		bw.write("DB\tDBOBJID1\tSYMBOL\t\tGO:0005763\tPMID:00000\tEVIDENCE\t\tC\tSYNONYM1|SYNONYM2\tgene\ttaxon:4932\t20121212\tSBA\n");
 		bw.write("DB\tDBOBJID2\tSYMBOL\t\tGO:0005760\tPMID:00000\tEVIDENCE\t\tC\t\tgene\ttaxon:4932\t20121212\tSBA\n");
@@ -103,7 +107,7 @@ public class AssociationParserTest
 	@Test
 	public void testIDS() throws IOException, OBOParserException
 	{
-		File tmp = File.createTempFile("test", ".ids");
+		File tmp = tmpFolder.newFile("testIDS.ids");
 		BufferedWriter bw = new BufferedWriter(new FileWriter(tmp));
 
 		bw.write("S000007287\tGO:0005763,GO:0032543,GO:0042255,GO:0003735,GO:0032543,GO:0005762,GO:0003735,GO:0003735,GO:0042255\n");
