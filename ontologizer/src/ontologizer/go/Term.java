@@ -75,6 +75,13 @@ public class Term implements ITerm
 	private double informationContent = -1;
 
 	/**
+	 * Default constructor. For builder only.
+	 */
+	private Term()
+	{
+	}
+
+	/**
 	 * @param id
 	 *            A term id.
 	 * @param name
@@ -435,4 +442,49 @@ public class Term implements ITerm
 		return informationContent;
 	}
 
+	/* Simple builder interface */
+
+	public static interface Optional
+	{
+		Term build();
+	}
+
+	public static interface RequiresTermID
+	{
+		Optional id(String termID);
+
+		Optional termid(TermID termID);
+	}
+
+	public static class	TermBuilder implements RequiresTermID, Optional
+	{
+		private Term term = new Term();
+
+		@Override
+		public Optional id(String termID)
+		{
+			term.id = new TermID(termID);
+			return this;
+		}
+
+		@Override
+		public Optional termid(TermID termID)
+		{
+			term.id = termID;
+			return this;
+		}
+
+		@Override
+		public Term build()
+		{
+			return term;
+		}
+	}
+
+	public static RequiresTermID name(String name)
+	{
+		TermBuilder builder = new TermBuilder();
+		builder.term.name = name;
+		return builder;
+	}
 }

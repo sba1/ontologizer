@@ -57,4 +57,12 @@ public class TermTest
 		Assert.assertTrue(cellcomp.getNamespace().equals(cNamespace));
 		Assert.assertTrue(molfunc.getNamespace().equals(fNamespace));
 	}
+
+	@Test
+	public void testSimpleBuilder()
+	{
+		ITerm t = Term.name("root").id("GO:0000000").build();
+		Assert.assertEquals("root", t.getName());
+		Assert.assertEquals(new TermID("GO:0000000").toString(), t.getID().toString());
+	}
 }
