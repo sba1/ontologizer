@@ -30,7 +30,8 @@ import java.util.List;
  * @author Peter Robinson, Sebastian Bauer, Sebastian Koehler
  */
 
-public class Term {
+public class Term implements ITerm
+{
 	/** The id ("accession number") of this GO term */
 	private TermID id;
 
