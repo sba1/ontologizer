@@ -451,7 +451,7 @@ public class Term implements ITerm
 		Term build();
 	}
 
-	public static interface RequriesName
+	public static interface RequiresName
 	{
 		RequiresTermID name(String name);
 	}
@@ -465,7 +465,7 @@ public class Term implements ITerm
 		Optional id(TermID termID);
 	}
 
-	public static class	TermBuilder implements RequriesName, RequiresTermID, Optional
+	public static class TermBuilder implements RequiresName, RequiresTermID, Optional
 	{
 		private Term term = new Term();
 		private PrefixPool prefixPool;
@@ -505,7 +505,7 @@ public class Term implements ITerm
 		}
 	}
 
-	public static RequriesName prefixPool(PrefixPool prefixPool)
+	public static RequiresName prefixPool(PrefixPool prefixPool)
 	{
 		TermBuilder builder = new TermBuilder();
 		builder.prefixPool = prefixPool;
