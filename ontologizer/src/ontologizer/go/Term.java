@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import ontologizer.types.ByteString;
+
 /**
  * This class provides a representation of individual GOTerms <BR />
  *
@@ -449,28 +451,50 @@ public class Term implements ITerm
 		Term build();
 	}
 
+	public static interface RequriesName
+	{
+		RequiresTermID name(String name);
+	}
+
 	public static interface RequiresTermID
 	{
 		Optional id(String termID);
 
-		Optional termid(TermID termID);
+		Optional id(ByteString termID);
+
+		Optional id(TermID termID);
 	}
 
-	public static class	TermBuilder implements RequiresTermID, Optional
+	public static class	TermBuilder implements RequriesName, RequiresTermID, Optional
 	{
 		private Term term = new Term();
+		private PrefixPool prefixPool;
 
 		@Override
-		public Optional id(String termID)
+		public RequiresTermID name(String name)
 		{
-			term.id = new TermID(termID);
+			term.name = name;
 			return this;
 		}
 
 		@Override
-		public Optional termid(TermID termID)
+		public Optional id(String termID)
+		{
+			term.id = new TermID(termID, prefixPool);
+			return this;
+		}
+
+		@Override
+		public Optional id(TermID termID)
 		{
 			term.id = termID;
+			return this;
+		}
+
+		@Override
+		public Optional id(ByteString termID)
+		{
+			term.id = new TermID(termID, prefixPool);
 			return this;
 		}
 
@@ -479,6 +503,13 @@ public class Term implements ITerm
 		{
 			return term;
 		}
+	}
+
+	public static RequriesName prefixPool(PrefixPool prefixPool)
+	{
+		TermBuilder builder = new TermBuilder();
+		builder.prefixPool = prefixPool;
+		return builder;
 	}
 
 	public static RequiresTermID name(String name)
