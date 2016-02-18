@@ -448,6 +448,10 @@ public class Term implements ITerm
 
 	public static interface Optional
 	{
+		Optional definition(String description);
+
+		Optional parents(ParentTermID... parents);
+
 		Term build();
 	}
 
@@ -495,6 +499,20 @@ public class Term implements ITerm
 		public Optional id(ByteString termID)
 		{
 			term.id = new TermID(termID, prefixPool);
+			return this;
+		}
+
+		@Override
+		public Optional definition(String definition)
+		{
+			term.definition = definition;
+			return this;
+		}
+
+		@Override
+		public Optional parents(ParentTermID... parents)
+		{
+			term.parents = parents;
 			return this;
 		}
 
