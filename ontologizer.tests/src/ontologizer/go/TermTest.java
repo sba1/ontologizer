@@ -65,4 +65,14 @@ public class TermTest
 		Assert.assertEquals("root", t.getName());
 		Assert.assertEquals(new TermID("GO:0000000").toString(), t.getID().toString());
 	}
+
+	@Test
+	public void testSimpleBuilderWithPrefixPool()
+	{
+		PrefixPool pool = new PrefixPool();
+		ITerm t = Term.prefixPool(pool).name("root").id("GO:0000000").build();
+		Assert.assertEquals("root", t.getName());
+		Assert.assertEquals(new TermID("GO:0000000").toString(), t.getID().toString());
+		Assert.assertTrue(pool.map(new Prefix(("GO"))) == t.getID().getPrefix());
+	}
 }
