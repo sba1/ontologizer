@@ -52,6 +52,16 @@ public class Namespace
 		return name;
 	}
 
+	/**
+	 * Return the abbreviated name of the namespace.
+	 *
+	 * @return the abbreviated name of the namespace
+	 */
+	public String getAbbreviatedName()
+	{
+		return Character.toUpperCase(name.charAt(0)) + "";
+	}
+
 	@Override
 	public boolean equals(Object obj)
 	{

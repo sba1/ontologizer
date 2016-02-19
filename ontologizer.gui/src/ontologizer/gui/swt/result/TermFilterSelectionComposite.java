@@ -90,7 +90,7 @@ public class TermFilterSelectionComposite extends Composite
 				int tableIndex = subtermFilterSuggestionTable.indexOf(item);
 
 				item.setText(0,suggestionList.get(tableIndex).getIDAsString());
-				item.setText(1,suggestionList.get(tableIndex).getNamespaceAsString());
+				item.setText(1,suggestionList.get(tableIndex).getNamespace().getAbbreviatedName());
 				item.setText(2,suggestionList.get(tableIndex).getName());
 			}});
 

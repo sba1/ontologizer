@@ -38,20 +38,6 @@ public interface ITerm
 	public Namespace getNamespace();
 
 	/**
-	 * Gets a full string representation of the term's namespace
-	 *
-	 * @return
-	 */
-	public String getNamespaceAsString();
-
-	/**
-	 * Returns the abbreviated string for the term's namespace if possible.
-	 *
-	 * @return
-	 */
-	public String getNamespaceAsAbbrevString();
-
-	/**
 	 * Returns the parent term ids and their relation.
 	 *
 	 * @return the parental terms and there relation.

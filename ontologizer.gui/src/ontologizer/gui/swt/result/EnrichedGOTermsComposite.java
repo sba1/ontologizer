@@ -873,7 +873,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 					AbstractGOTermProperties prop = props[index];
 					item.setText(GOID, prop.goTerm.getIDAsString());
 					item.setText(NAME, prop.goTerm.getName());
-					item.setText(NAMESPACE,prop.goTerm.getNamespaceAsAbbrevString());
+					item.setText(NAMESPACE,prop.goTerm.getNamespace().getAbbreviatedName());
 					if (useMarginal)
 					{
 						if (prop instanceof Bayes2GOGOTermProperties) {

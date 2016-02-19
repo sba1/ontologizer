@@ -246,40 +246,11 @@ public class Term implements ITerm
 	 *
 	 * @return
 	 */
-	public Namespace getNamespace() {
+	public Namespace getNamespace()
+	{
 		if (namespace == null)
 			return Namespace.UNKOWN_NAMESPACE;
 		return namespace;
-	}
-
-	/**
-	 * gets a single letter String representation of the term's namespace
-	 *
-	 * @return
-	 */
-	public String getNamespaceAsString() {
-		if (namespace == null)
-			return Namespace.UNKOWN_NAMESPACE.getName();
-		return namespace.getName();
-	}
-
-	/**
-	 * Returns the abbreviated string for the term's namespace if possible.
-	 *
-	 * @return
-	 */
-	public String getNamespaceAsAbbrevString() {
-		if (namespace == null)
-			return Namespace.UNKOWN_NAMESPACE.getName();
-		String nameSpace = namespace.getName();
-
-		if (nameSpace.equalsIgnoreCase("biological_process"))
-			return "B";
-		if (nameSpace.equalsIgnoreCase("molecular_function"))
-			return "M";
-		if (nameSpace.equalsIgnoreCase("cellular_component"))
-			return "C";
-		return nameSpace;
 	}
 
 	/**
