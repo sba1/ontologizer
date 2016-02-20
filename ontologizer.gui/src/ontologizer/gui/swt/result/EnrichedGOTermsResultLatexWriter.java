@@ -1,38 +1,17 @@
 package ontologizer.gui.swt.result;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map.Entry;
 
 import ontologizer.calculation.AbstractGOTermProperties;
 import ontologizer.calculation.EnrichedGOTermsResult;
 import ontologizer.calculation.b2g.Bayes2GOEnrichedGOTermsResult;
 import ontologizer.calculation.b2g.Bayes2GOGOTermProperties;
 import ontologizer.go.TermID;
-import ontologizer.gui.swt.support.GraphPaint;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.graphics.ImageLoader;
-import org.eclipse.swt.graphics.Transform;
-import org.eclipse.swt.widgets.Display;
-
-import att.grappa.Element;
-import att.grappa.Graph;
-import att.grappa.GraphEnumeration;
-import att.grappa.GrappaConstants;
-import att.grappa.GrappaPoint;
-import att.grappa.Node;
-import att.grappa.Parser;
-import att.grappa.Subgraph;
 
 public class EnrichedGOTermsResultLatexWriter
 {

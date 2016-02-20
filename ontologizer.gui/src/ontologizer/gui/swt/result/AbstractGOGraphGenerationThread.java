@@ -5,7 +5,6 @@ import java.util.HashSet;
 
 import org.eclipse.swt.widgets.Display;
 
-import ontologizer.dotwriter.AbstractDotAttributesProvider;
 import ontologizer.dotwriter.GODOTWriter;
 import ontologizer.dotwriter.IDotAttributesProvider;
 import ontologizer.go.Ontology;

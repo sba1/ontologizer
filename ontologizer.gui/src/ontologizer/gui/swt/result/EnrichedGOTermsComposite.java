@@ -18,25 +18,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import ontologizer.GlobalPreferences;
-import ontologizer.association.Gene2Associations;
-import ontologizer.calculation.AbstractGOTermProperties;
-import ontologizer.calculation.EnrichedGOTermsResult;
-import ontologizer.calculation.EnrichedGOTermsTableWriter;
-import ontologizer.calculation.b2g.Bayes2GOEnrichedGOTermsResult;
-import ontologizer.calculation.b2g.Bayes2GOGOTermProperties;
-import ontologizer.calculation.b2g.FixedAlphaBetaScore;
-import ontologizer.enumeration.GOTermEnumerator;
-import ontologizer.enumeration.GOTermEnumerator.GOTermAnnotatedGenes;
-import ontologizer.go.Namespace;
-import ontologizer.go.Term;
-import ontologizer.go.TermID;
-import ontologizer.gui.swt.Ontologizer;
-import ontologizer.gui.swt.support.GraphCanvas;
-import ontologizer.gui.swt.support.IGraphGenerationFinished;
-import ontologizer.gui.swt.support.SWTUtil;
-import ontologizer.types.ByteString;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.browser.Browser;
@@ -75,8 +56,26 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.swtchart.Chart;
 import org.swtchart.ILineSeries;
-import org.swtchart.ISeries;
 import org.swtchart.ISeries.SeriesType;
+
+import ontologizer.GlobalPreferences;
+import ontologizer.association.Gene2Associations;
+import ontologizer.calculation.AbstractGOTermProperties;
+import ontologizer.calculation.EnrichedGOTermsResult;
+import ontologizer.calculation.EnrichedGOTermsTableWriter;
+import ontologizer.calculation.b2g.Bayes2GOEnrichedGOTermsResult;
+import ontologizer.calculation.b2g.Bayes2GOGOTermProperties;
+import ontologizer.calculation.b2g.FixedAlphaBetaScore;
+import ontologizer.enumeration.GOTermEnumerator;
+import ontologizer.enumeration.GOTermEnumerator.GOTermAnnotatedGenes;
+import ontologizer.go.Namespace;
+import ontologizer.go.Term;
+import ontologizer.go.TermID;
+import ontologizer.gui.swt.Ontologizer;
+import ontologizer.gui.swt.support.GraphCanvas;
+import ontologizer.gui.swt.support.IGraphGenerationFinished;
+import ontologizer.gui.swt.support.SWTUtil;
+import ontologizer.types.ByteString;
 
 /**
  *
