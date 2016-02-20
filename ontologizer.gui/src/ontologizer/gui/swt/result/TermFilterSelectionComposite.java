@@ -109,7 +109,6 @@ public class TermFilterSelectionComposite extends Composite
 		subtermFilterText.addKeyListener(new KeyAdapter(){
 			public void keyPressed(KeyEvent e)
 			{
-				int i;
 				int idx;
 
 				switch (e.keyCode)
