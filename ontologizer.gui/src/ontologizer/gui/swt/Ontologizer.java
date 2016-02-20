@@ -11,7 +11,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Date;
@@ -24,12 +23,20 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 
-import ontologizer.BuildInfo;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.DeviceData;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Shell;
+
 import ontologizer.FileCache;
+import ontologizer.FileCache.FileCacheUpdateCallback;
 import ontologizer.GlobalPreferences;
 import ontologizer.OntologizerCore;
 import ontologizer.OntologizerThreadGroups;
-import ontologizer.FileCache.FileCacheUpdateCallback;
 import ontologizer.calculation.CalculationRegistry;
 import ontologizer.calculation.ICalculation;
 import ontologizer.gui.swt.MainWindow.Set;
@@ -44,17 +51,6 @@ import ontologizer.set.StudySetList;
 import ontologizer.statistics.TestCorrectionRegistry;
 import ontologizer.worksets.WorkSet;
 import ontologizer.worksets.WorkSetList;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.DeviceData;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.Shell;
-
 import tools.Sleak;
 
 /**
