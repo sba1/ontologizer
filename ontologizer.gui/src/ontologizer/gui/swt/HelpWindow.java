@@ -242,11 +242,13 @@ public class HelpWindow extends ApplicationWindow
 					browser.setUrl(urls[index]);
 				} else
 				{
+					BufferedReader fr = null;
+
 					/* Load the file manually and display the html stripped contents
 					 * well, not a real HTML parser at all, but it fulfills the needs */
 					try
 					{
-						BufferedReader fr = new BufferedReader(new FileReader(filenames[index]));
+						fr = new BufferedReader(new FileReader(filenames[index]));
 						String line;
 						StringBuilder buffer = new StringBuilder();
 
@@ -274,6 +276,18 @@ public class HelpWindow extends ApplicationWindow
 					}
 					catch (FileNotFoundException e1) { }
 					catch (IOException e2) { }
+					finally
+					{
+						if (fr != null)
+						{
+							try
+							{
+								fr.close();
+							} catch (IOException e1)
+							{
+							}
+						}
+					}
 				}
 			}
 		});
