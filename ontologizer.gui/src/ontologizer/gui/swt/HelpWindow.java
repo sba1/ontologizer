@@ -18,9 +18,6 @@ import java.util.Comparator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import ontologizer.gui.swt.support.SWTUtil;
-import ontologizer.util.BareBonesBrowserLaunch;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.browser.Browser;
@@ -41,6 +38,9 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+
+import ontologizer.gui.swt.support.SWTUtil;
+import ontologizer.util.BareBonesBrowserLaunch;
 
 /**
  * This class represents the help window of

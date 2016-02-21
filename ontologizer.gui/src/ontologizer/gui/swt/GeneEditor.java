@@ -18,17 +18,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import ontologizer.association.Association;
-import ontologizer.association.AssociationContainer;
-import ontologizer.association.Gene2Associations;
-import ontologizer.filter.GeneFilter;
-import ontologizer.go.Ontology;
-import ontologizer.go.Term;
-import ontologizer.go.TermID;
-import ontologizer.types.ByteString;
-import ontologizer.worksets.WorkSet;
-import ontologizer.worksets.WorkSetLoadThread;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.Bullet;
 import org.eclipse.swt.custom.LineStyleEvent;
@@ -60,11 +49,21 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
+
+import ontologizer.association.Association;
+import ontologizer.association.AssociationContainer;
+import ontologizer.association.Gene2Associations;
+import ontologizer.filter.GeneFilter;
+import ontologizer.go.Ontology;
+import ontologizer.go.Term;
+import ontologizer.go.TermID;
+import ontologizer.types.ByteString;
+import ontologizer.worksets.WorkSet;
+import ontologizer.worksets.WorkSetLoadThread;
 
 /**
  * Class used for editing genes.
