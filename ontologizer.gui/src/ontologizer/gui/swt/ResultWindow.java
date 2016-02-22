@@ -222,22 +222,6 @@ public class ResultWindow extends ApplicationWindow
 		return null;
 	}
 
-	/**
-	 * Returns the currently selected result component if it is an enrichment result.
-	 *
-	 * @return
-	 */
-	private EnrichedGOTermsComposite getSelectedResultCompositeIfEnriched()
-	{
-		AbstractResultComposite comp = getSelectedResultComposite();
-		if (comp == null) return null;
-
-		if (comp instanceof EnrichedGOTermsComposite)
-			return (EnrichedGOTermsComposite)comp;
-
-		return null;
-	}
-
 	private void updateWindowTitle()
 	{
 		AbstractResultComposite comp = getSelectedResultComposite();
