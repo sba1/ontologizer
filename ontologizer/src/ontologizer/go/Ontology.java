@@ -1219,7 +1219,7 @@ public class Ontology implements Iterable<Term>
 	 */
 	public void mergeTerms(Term t1, Iterable<Term> eqTerms)
 	{
-		HashSet<TermID> t1ExistingAlternatives = new HashSet<TermID>(t1.getAlternatives());
+		HashSet<TermID> t1ExistingAlternatives = new HashSet<TermID>(Arrays.asList(t1.getAlternatives()));
 		for (Term t : eqTerms)
 		{
 			TermID tId = t.getID();

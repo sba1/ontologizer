@@ -308,7 +308,7 @@ public class OBOParserTest
 		oboParser.doParse();
 		ArrayList<Term> terms = new ArrayList<Term>(oboParser.getTermMap());
 		assertEquals(1, terms.size());
-		assertEquals("GO:0000003", terms.get(0).getAlternatives().get(0).toString());
+		assertEquals("GO:0000003", terms.get(0).getAlternatives()[0].toString());
 	}
 
 	@Test

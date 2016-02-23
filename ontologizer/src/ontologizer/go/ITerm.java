@@ -67,7 +67,7 @@ public interface ITerm
 	 *
 	 * @return the alternatives.
 	 */
-	public ArrayList<TermID> getAlternatives();
+	public TermID[] getAlternatives();
 
 	/**
 	 * Returns the subsets.

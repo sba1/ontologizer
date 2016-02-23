@@ -333,7 +333,8 @@ public class Term implements ITerm
 	 *
 	 * @param altList
 	 */
-	public void setAlternatives(List<TermID> altList) {
+	public void setAlternatives(List<TermID> altList)
+	{
 		this.alternatives = new ArrayList<TermID>();
 		this.alternatives.addAll(altList);
 	}
@@ -343,8 +344,10 @@ public class Term implements ITerm
 	 *
 	 * @return
 	 */
-	public ArrayList<TermID> getAlternatives() {
-		return alternatives;
+	public TermID[] getAlternatives()
+	{
+		TermID [] alts = new TermID[alternatives.size()];
+		return alternatives.toArray(alts);
 	}
 
 	/**
