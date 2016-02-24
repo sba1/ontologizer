@@ -8,13 +8,6 @@ package ontologizer.go;
 public interface ITerm
 {
 	/**
-	 * Returns the id of the term as a string.
-	 *
-	 * @return the term id as string.
-	 */
-	public String getIDAsString();
-
-	/**
 	 * Returns the id as vanilla TermID object.
 	 *
 	 * @return the id
