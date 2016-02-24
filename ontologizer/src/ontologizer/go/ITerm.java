@@ -1,7 +1,5 @@
 package ontologizer.go;
 
-import java.util.ArrayList;
-
 /**
  * The read-only interface for terms.
  *
