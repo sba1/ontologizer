@@ -75,4 +75,25 @@ public class TermTest
 		Assert.assertEquals(new TermID("GO:0000000").toString(), t.getID().toString());
 		Assert.assertTrue(pool.map(new Prefix(("GO"))) == t.getID().getPrefix());
 	}
+
+	@Test
+	public void testSimpleBuilderNotObsoleteDefault()
+	{
+		ITerm obsoleteTerm = Term.name("root").id("GO:0000000").build();
+		Assert.assertEquals(false, obsoleteTerm.isObsolete());
+	}
+
+	@Test
+	public void testSimpleBuilderNotObsolete()
+	{
+		ITerm obsoleteTerm = Term.name("root").id("GO:0000000").obsolete(false).build();
+		Assert.assertEquals(false, obsoleteTerm.isObsolete());
+	}
+
+	@Test
+	public void testSimpleBuilderObsolte()
+	{
+		ITerm obsoleteTerm = Term.name("root").id("GO:0000000").obsolete(true).build();
+		Assert.assertEquals(true, obsoleteTerm.isObsolete());
+	}
 }

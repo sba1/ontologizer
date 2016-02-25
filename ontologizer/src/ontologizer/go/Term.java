@@ -426,6 +426,8 @@ public class Term implements ITerm
 
 		Optional parents(ParentTermID... parents);
 
+		Optional obsolete(boolean obsolete);
+
 		Term build();
 	}
 
@@ -487,6 +489,13 @@ public class Term implements ITerm
 		public Optional parents(ParentTermID... parents)
 		{
 			term.parents = parents;
+			return this;
+		}
+
+		@Override
+		public Optional obsolete(boolean obsolete)
+		{
+			term.obsolete = obsolete;
 			return this;
 		}
 
