@@ -1,0 +1,19 @@
+# This is a simple theme for Hugo based on PureCSS
+# for the Ontologizer
+#
+# A very similar theme is can be found at
+# http://themes.gohugo.io/blackburn/
+#
+
+name = "Simple"
+license = "MIT"
+licenselink = ""
+description = ""
+homepage = ""
+tags = ["", ""]
+features = ["", ""]
+min_version = 0.15
+
+[author]
+  name = "Sebastian Bauer"
+  homepage = "http://www.sebastianbauer.info/"

@@ -1,0 +1,9 @@
+theme = "simple"
+#baseurl = "http://replace-this-with-your-hugo-site.com/"
+languageCode = "en-us"
+title = "Ontologizer"
+relativeURLs = true
+canonicalURLs = true
+
+[params]
+  subtitle = "Analyze and Visualize High-Throughput Biological Data Using Gene Ontology"

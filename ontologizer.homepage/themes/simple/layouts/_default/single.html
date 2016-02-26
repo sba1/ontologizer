@@ -1,0 +1,15 @@
+{{ partial "header.html" . }}
+
+<div id="main">
+
+    <div class="header">
+        <h1>{{ .Title }}</h1>
+        {{ if isset .Params "subtitle"}} <h2>{{ .Params.subtitle }}</h2> {{ end }}
+    </div>
+
+    <div class="content">
+        {{ .Content }}
+    </div>
+</div>
+
+{{ partial "footer.html" . }}
