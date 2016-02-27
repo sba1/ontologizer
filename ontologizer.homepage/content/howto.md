@@ -77,7 +77,7 @@ NCBI's Gene Expression Omnibus (GEO) database is a repository of thousands of mi
  
 The following code demonstrates how to use R/Bioconductor to download and analyze datasets from the NCBI GEO database and to create study and population sets from them.
 
-{{< highlight R "linenos=inline,hl_lines=2 3" >}}
+{{< highlight R >}}
 # A script for fetching data and creating study/population datasets
 # for the Ontologizer
 
