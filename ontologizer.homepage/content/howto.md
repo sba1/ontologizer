@@ -64,8 +64,10 @@ R is an extremely powerful open-source language for statistical computing and gr
 Our script makes use of two Bioconductor packages to perform the analysis. The package GEOquery automatically retrieves microarray from the GEO website, and the package limma performs a number of statistical analyses including the identification of differentially expressed genes. Depending on your setup, you may need to install these packages. There are several ways of doing this, but the easiest is probably
 
 
-    source("http://www.bioconductor.org/biocLite.R")
-    biocLite("GEOquery")
+{{< highlight R >}}
+source("http://www.bioconductor.org/biocLite.R")
+biocLite("GEOquery")
+{{< / highlight >}}
 
 *GEO*
 
