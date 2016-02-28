@@ -168,8 +168,32 @@
 				</configuration>
 			</plugin>
 
+		    <plugin>
+		        <groupId>org.icestuff</groupId>
+		        <artifactId>getdown-maven-plugin</artifactId>
+		        <version>0.0.1-SNAPSHOT</version>
+		        <executions>
+		            <execution>
+		                <phase>package</phase>
+		                <goals>
+		                    <goal>updates</goal>
+		                </goals>
+		                <configuration>
+		                    <!-- This is the minimum required configuration, see below for more -->
+		                    <appbase>http://sonumina.de/ontologizer</appbase>
+		                    <mainClass>ontologizer.gui.swt.Ontologizer</mainClass>
+		                    <verbose>true</verbose>
+		                    <allowOffline>true</allowOffline>
+		                    <libPath>.</libPath>
+		                    <outputJarVersions>true</outputJarVersions>
+		                    <ui>
+								<name>Ontologizer</name>
+		                    </ui>
+		                </configuration>
+		            </execution>
+		        </executions>
+		    </plugin>
 		</plugins>
-
 
 		<pluginManagement>
 			<plugins>
@@ -207,5 +231,17 @@
 			</plugins>
 		</pluginManagement>
 	</build>
+
+
+    <pluginRepositories>
+        <pluginRepository>
+            <id>getdown-maven-plugin-mvn-repo</id>
+            <url>https://raw.github.com/rockfireredmoon/getdown-maven-plugin/mvn-repo/</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
 
 </project>
