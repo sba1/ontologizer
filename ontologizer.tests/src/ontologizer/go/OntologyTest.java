@@ -159,4 +159,21 @@ public class OntologyTest
 		Assert.assertEquals(expected.size(),  actual.size());
 		Assert.assertTrue(actual.containsAll(expected));
 	}
+
+	@Test
+	public void testRelevantSubontology()
+	{
+		graph.setRelevantSubontology("biological_process");
+
+		Ontology biologicalProcess = graph.getOntlogyOfRelevantTerms();
+		Assert.assertEquals(21763, biologicalProcess.getNumberOfTerms());
+		Assert.assertEquals("biological_process", biologicalProcess.getRootTerm().getName());
+
+		Namespace n = biologicalProcess.getRootTerm().getNamespace();
+		String nn = n.getName();
+		Assert.assertEquals("biological_process", nn);
+
+		for (Term t : biologicalProcess)
+			Assert.assertEquals(nn, t.getNamespace().getName());
+	}
 }
