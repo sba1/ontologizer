@@ -321,6 +321,7 @@ public class OBOParser
 			private final byte [] EQUIVALENT_TO_KEYWORD = "equivalent_to".getBytes();
 			private final byte [] IS_OBSOLETE_KEYWORD = "is_obsolete".getBytes();
 			private final byte [] XREF_KEYWORD = "xref".getBytes();
+			private final byte [] SUBSET_KEYWORD = "subset".getBytes();
 			private final byte [] TRUE_KEYWORD = "true".getBytes();
 
 			private final byte[][] termKeywords =
@@ -334,7 +335,8 @@ public class OBOParser
 				NAMESPACE_KEYWORD,
 				EQUIVALENT_TO_KEYWORD,
 				IS_OBSOLETE_KEYWORD,
-				XREF_KEYWORD
+				XREF_KEYWORD,
+				SUBSET_KEYWORD
 			};
 
 			class StringEdge extends Edge<Integer>
@@ -1006,6 +1008,14 @@ public class OBOParser
 				}
 			}
 
+			private void parse_subset(byte[] buf, int valueStart, int valueLen)
+			{
+				/* TODO: Avoid string creation */
+				Subset subset = subsets.get(new String(buf, valueStart, valueLen));
+				if (subset != null)
+					currentSubsets.add(subset);
+			}
+
 			/**
 			 * Parse key/value as term value.
 			 *
@@ -1050,6 +1060,9 @@ public class OBOParser
 				} else if (((options & PARSE_XREFS) !=0) && equalsIgnoreCase(buf, keyStart, keyLen, XREF_KEYWORD))
 				{
 					parse_xref(buf, valueStart, valueLen);
+				} else if (equalsIgnoreCase(buf, keyStart, keyLen, SUBSET_KEYWORD))
+				{
+					parse_subset(buf, valueStart, valueLen);
 				}
 			}
 		}

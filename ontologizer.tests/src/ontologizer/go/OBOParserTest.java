@@ -294,6 +294,29 @@ public class OBOParserTest
 	}
 
 	@Test
+	public void testSubset() throws IOException, OBOParserException
+	{
+		File tmp = File.createTempFile("onto", ".obo");
+		PrintWriter pw = new PrintWriter(tmp);
+		pw.append("subsetdef: subset \"Subset\"\n" +
+		          "[term]\n" +
+				  "name: test\n" +
+		          "id: GO:0000001\n" +
+				  "subset: subset\n" +
+		          "[term]\n" +
+				  "name: test2\n" +
+		          "id: GO:0000002\n");
+		pw.close();
+
+		OBOParser oboParser = new OBOParser(new OBOParserFileInput(tmp.getCanonicalPath()),OBOParser.PARSE_DEFINITIONS);
+		oboParser.doParse();
+		ArrayList<Term> terms = new ArrayList<Term>(oboParser.getTermMap());
+		assertEquals(2, terms.size());
+		assertEquals(1, terms.get(0).getSubsets().length);
+		assertEquals(0, terms.get(1).getSubsets().length);
+	}
+
+	@Test
 	public void testAltId() throws IOException, OBOParserException
 	{
 		File tmp = File.createTempFile("onto", ".obo");
