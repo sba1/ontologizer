@@ -1,5 +1,6 @@
 package ontologizer.go;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -175,5 +176,27 @@ public class OntologyTest
 
 		for (Term t : biologicalProcess)
 			Assert.assertEquals(nn, t.getNamespace().getName());
+	}
+
+	@Test
+	public void testSubsetOntology()
+	{
+		Set<String> expectedSubsets = new HashSet<String>(
+			Arrays.asList(
+				"goslim_aspergillus",
+				"goslim_candida",
+				"goslim_generic",
+				"goslim_pir",
+				"goslim_plant",
+				"goslim_pombe",
+				"goslim_yeast",
+				"gosubset_prok",
+				"high_level_annotation_qc",
+				"mf_needs_review"
+				));
+		HashSet<String> actualSubsets = new HashSet<String>();
+		for (Subset s : graph.getAvailableSubsets())
+			actualSubsets.add(s.getName());
+		Assert.assertEquals(expectedSubsets, actualSubsets);
 	}
 }
