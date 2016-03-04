@@ -178,6 +178,22 @@ public class OntologyTest
 			Assert.assertEquals(nn, t.getNamespace().getName());
 	}
 
+	private static Set<String> subsetNames(Collection<Subset> subsets)
+	{
+		HashSet<String> names = new HashSet<String>();
+		for (Subset s : subsets)
+			names.add(s.getName());
+		return names;
+	}
+
+	private static Set<String> subsetNames(Subset [] subsets)
+	{
+		HashSet<String> names = new HashSet<String>();
+		for (Subset s : subsets)
+			names.add(s.getName());
+		return names;
+	}
+
 	@Test
 	public void testSubsetOntology()
 	{
@@ -194,9 +210,17 @@ public class OntologyTest
 				"high_level_annotation_qc",
 				"mf_needs_review"
 				));
-		HashSet<String> actualSubsets = new HashSet<String>();
-		for (Subset s : graph.getAvailableSubsets())
-			actualSubsets.add(s.getName());
-		Assert.assertEquals(expectedSubsets, actualSubsets);
+		Assert.assertEquals(expectedSubsets, subsetNames(graph.getAvailableSubsets()));
+
+		graph.setRelevantSubset("goslim_generic");
+		Ontology goslim = graph.getOntlogyOfRelevantTerms();
+
+		int expectedGoSlimTerms = 0;
+		for (Term t : graph)
+		{
+			if (subsetNames(t.getSubsets()).contains("goslim_generic"))
+				expectedGoSlimTerms++;
+		}
+		Assert.assertEquals(expectedGoSlimTerms, goslim.getNumberOfTerms());
 	}
 }
