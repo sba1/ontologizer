@@ -244,4 +244,24 @@ public class OntologyTest
 		GOLevels allLevels = graph.getGOLevels(Ontology.termIDSet(graph.getGraph().getVertices()));
 		assertEquals(20, allLevels.getMaxLevel());
 	}
+
+	@Test
+	public void testGOLevelInternalOntology()
+	{
+		Ontology o = new InternalOntology().graph;
+		GOLevels levels = o.getGOLevels(Ontology.termIDSet(o.getGraph().getVertices()));
+		assertEquals(5, levels.getMaxLevel());
+
+		assertEquals(0, levels.getTermLevel(new TermID("GO:0000001")));
+		assertEquals(1, levels.getTermLevel(new TermID("GO:0000002")));
+		assertEquals(1, levels.getTermLevel(new TermID("GO:0000003")));
+		assertEquals(2, levels.getTermLevel(new TermID("GO:0000004")));
+		assertEquals(2, levels.getTermLevel(new TermID("GO:0000005")));
+		assertEquals(2, levels.getTermLevel(new TermID("GO:0000006")));
+		assertEquals(3, levels.getTermLevel(new TermID("GO:0000007")));
+		assertEquals(4, levels.getTermLevel(new TermID("GO:0000008")));
+		assertEquals(4, levels.getTermLevel(new TermID("GO:0000009")));
+		assertEquals(5, levels.getTermLevel(new TermID("GO:0000010")));
+		assertEquals(5, levels.getTermLevel(new TermID("GO:0000011")));
+	}
 }
