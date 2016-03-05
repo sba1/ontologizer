@@ -9,6 +9,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import ontologizer.go.Ontology.GOLevels;
 import ontologizer.go.Ontology.IVisitingGOVertex;
 
 public class OntologyTest
@@ -222,5 +223,20 @@ public class OntologyTest
 				expectedGoSlimTerms++;
 		}
 		Assert.assertEquals(expectedGoSlimTerms, goslim.getNumberOfTerms());
+	}
+
+	@Test
+	public void testGOLevelsEmpty()
+	{
+		GOLevels noLevels = graph.getGOLevels(new HashSet<TermID>());
+		Assert.assertEquals(-1, noLevels.getMaxLevel());
+		Assert.assertEquals(-1, noLevels.getTermLevel(graph.getLeafTermIDs().iterator().next()));
+
+		/* Level 0 and 1 */
+		GOLevels twoLevels = graph.getGOLevels(new HashSet<TermID>(graph.getTermChildren(graph.getRootTerm().getID())));
+		Assert.assertEquals(1, twoLevels.getMaxLevel());
+
+		GOLevels allLevels = graph.getGOLevels(Ontology.termIDSet(graph.getGraph().getVertices()));
+		Assert.assertEquals(20, allLevels.getMaxLevel());
 	}
 }
