@@ -1,5 +1,9 @@
 package ontologizer.go;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -11,6 +15,7 @@ import org.junit.Test;
 
 import ontologizer.go.Ontology.GOLevels;
 import ontologizer.go.Ontology.IVisitingGOVertex;
+import ontologizer.internal.InternalOntology;
 
 public class OntologyTest
 {
@@ -40,30 +45,30 @@ public class OntologyTest
 		Set<String> terms;
 
 		terms = graph.getTermChildrenAsStrings("GO:0000000");
-		Assert.assertTrue("Test we get some Set<String> object back", terms != null);
-		Assert.assertEquals("Root has three descendants",3, terms.size());
+		assertTrue("Test we get some Set<String> object back", terms != null);
+		assertEquals("Root has three descendants",3, terms.size());
 
 		terms = graph.getTermParentsAsStrings("GO:0000000");
-		Assert.assertTrue("Test we gat some Set<String> object back", terms != null);
-		Assert.assertTrue("Root has no ancestors", terms.size() == 0);
+		assertTrue("Test we gat some Set<String> object back", terms != null);
+		assertTrue("Root has no ancestors", terms.size() == 0);
 	}
 
 	@Test
 	public void testExistsPath()
 	{
-		Assert.assertTrue(graph.existsPath(new TermID("GO:0009987"),
+		assertTrue(graph.existsPath(new TermID("GO:0009987"),
 				new TermID("GO:0006281")));
-		Assert.assertFalse(graph.existsPath(new TermID("GO:0006281"),
+		assertFalse(graph.existsPath(new TermID("GO:0006281"),
 				new TermID("GO:0009987")));
 
-		Assert.assertTrue(graph.existsPath(new TermID("GO:0008150"),
+		assertTrue(graph.existsPath(new TermID("GO:0008150"),
 				new TermID("GO:0006281")));
-		Assert.assertFalse(graph.existsPath(new TermID("GO:0006281"),
+		assertFalse(graph.existsPath(new TermID("GO:0006281"),
 				new TermID("GO:0008150")));
 
-		Assert.assertFalse(graph.existsPath(new TermID("GO:0006139"),
+		assertFalse(graph.existsPath(new TermID("GO:0006139"),
 				new TermID("GO:0009719")));
-		Assert.assertFalse(graph.existsPath(new TermID("GO:0009719"),
+		assertFalse(graph.existsPath(new TermID("GO:0009719"),
 				new TermID("GO:0006139")));
 	}
 
@@ -105,15 +110,15 @@ public class OntologyTest
 		 * verify them then via www.godatabase.org.
 		 */
 		graph.walkToSource(new TermID("GO:0008152"), vistingGOVertex);
-		Assert.assertEquals(3,vistingGOVertex.getCount());
+		assertEquals(3,vistingGOVertex.getCount());
 		vistingGOVertex.resetCount();
 
 		graph.walkToSource(new TermID("GO:0044237"), vistingGOVertex);
-		Assert.assertEquals(5,vistingGOVertex.getCount());
+		assertEquals(5,vistingGOVertex.getCount());
 		vistingGOVertex.resetCount();
 
 		graph.walkToSource(new TermID("GO:0006281"), vistingGOVertex);
-		Assert.assertEquals(19,vistingGOVertex.getCount());
+		assertEquals(19,vistingGOVertex.getCount());
 	}
 
 	/**
@@ -135,8 +140,8 @@ public class OntologyTest
 	{
 		Term t = graph.getTerm("GO:0008152");
 		Collection<TermID> parents = graph.getSharedParents(t.getID(), t.getID());
-		Assert.assertEquals(3,  parents.size());
-		Assert.assertTrue(parents.containsAll(newTermIDCollection("GO:0008152", "GO:0008150", "GO:0000000")));
+		assertEquals(3,  parents.size());
+		assertTrue(parents.containsAll(newTermIDCollection("GO:0008152", "GO:0008150", "GO:0000000")));
 	}
 
 	@Test
@@ -145,8 +150,8 @@ public class OntologyTest
 		Term t1 = graph.getTerm("GO:0008152");
 		Term t2 = graph.getTerm("GO:0008150");
 		Collection<TermID> parents = graph.getSharedParents(t1.getID(), t2.getID());
-		Assert.assertEquals(2,  parents.size());
-		Assert.assertTrue(parents.containsAll(newTermIDCollection("GO:0008150", "GO:0000000")));
+		assertEquals(2,  parents.size());
+		assertTrue(parents.containsAll(newTermIDCollection("GO:0008150", "GO:0000000")));
 	}
 
 	@Test
@@ -158,8 +163,8 @@ public class OntologyTest
 
 		Collection<TermID> expected = graph.getTermsOfInducedGraph(null, t1.getID());
 		expected.retainAll(graph.getTermsOfInducedGraph(null, t2.getID()));
-		Assert.assertEquals(expected.size(),  actual.size());
-		Assert.assertTrue(actual.containsAll(expected));
+		assertEquals(expected.size(),  actual.size());
+		assertTrue(actual.containsAll(expected));
 	}
 
 	@Test
@@ -168,15 +173,15 @@ public class OntologyTest
 		graph.setRelevantSubontology("biological_process");
 
 		Ontology biologicalProcess = graph.getOntlogyOfRelevantTerms();
-		Assert.assertEquals(21763, biologicalProcess.getNumberOfTerms());
-		Assert.assertEquals("biological_process", biologicalProcess.getRootTerm().getName());
+		assertEquals(21763, biologicalProcess.getNumberOfTerms());
+		assertEquals("biological_process", biologicalProcess.getRootTerm().getName());
 
 		Namespace n = biologicalProcess.getRootTerm().getNamespace();
 		String nn = n.getName();
-		Assert.assertEquals("biological_process", nn);
+		assertEquals("biological_process", nn);
 
 		for (Term t : biologicalProcess)
-			Assert.assertEquals(nn, t.getNamespace().getName());
+			assertEquals(nn, t.getNamespace().getName());
 	}
 
 	private static Set<String> subsetNames(Collection<Subset> subsets)
@@ -222,21 +227,21 @@ public class OntologyTest
 			if (subsetNames(t.getSubsets()).contains("goslim_generic"))
 				expectedGoSlimTerms++;
 		}
-		Assert.assertEquals(expectedGoSlimTerms, goslim.getNumberOfTerms());
+		assertEquals(expectedGoSlimTerms, goslim.getNumberOfTerms());
 	}
 
 	@Test
 	public void testGOLevelsEmpty()
 	{
 		GOLevels noLevels = graph.getGOLevels(new HashSet<TermID>());
-		Assert.assertEquals(-1, noLevels.getMaxLevel());
-		Assert.assertEquals(-1, noLevels.getTermLevel(graph.getLeafTermIDs().iterator().next()));
+		assertEquals(-1, noLevels.getMaxLevel());
+		assertEquals(-1, noLevels.getTermLevel(graph.getLeafTermIDs().iterator().next()));
 
 		/* Level 0 and 1 */
 		GOLevels twoLevels = graph.getGOLevels(new HashSet<TermID>(graph.getTermChildren(graph.getRootTerm().getID())));
-		Assert.assertEquals(1, twoLevels.getMaxLevel());
+		assertEquals(1, twoLevels.getMaxLevel());
 
 		GOLevels allLevels = graph.getGOLevels(Ontology.termIDSet(graph.getGraph().getVertices()));
-		Assert.assertEquals(20, allLevels.getMaxLevel());
+		assertEquals(20, allLevels.getMaxLevel());
 	}
 }
