@@ -785,13 +785,74 @@ public class Ontology implements Iterable<Term>
 	 *
 	 * @param termIDs
 	 * @return
+	 *
+	 * @deprecated use termSet
 	 */
 	public Set<Term> getSetOfTermsFromSetOfTermIds(Set<TermID> termIDs)
+	{
+		return termSet(termIDs);
+	}
+
+	/**
+	 * Return a set of terms given an iterable instance of term id objects.
+	 *
+	 * @param termIDs
+	 * @return
+	 */
+	public Set<Term> termSet(Iterable<TermID> termIDs)
 	{
 		HashSet<Term> termSet = new HashSet<Term>();
 		for (TermID tid : termIDs)
 			termSet.add(getTerm(tid));
 		return termSet;
+	}
+
+	/**
+	 * Return a list of term ids given an iterable instance of term objects.
+	 * Mostly a work horse for the other termIDList() methods.
+	 *
+	 * @param termIDs a collection where to store the term ids.
+	 * @param terms the terms whose ids shall be placed into termIdList
+	 * @return
+	 */
+	private static <A extends Collection<TermID>> A termIDs(A termIDs, Iterable<Term> terms)
+	{
+		for (Term t : terms)
+			termIDs.add(t.getID());
+		return termIDs;
+	}
+
+	/**
+	 * Return a list of term ids given an iterable instance of term objects.
+	 *
+	 * @param terms
+	 * @return
+	 */
+	public static List<TermID> termIDList(Iterable<Term> terms)
+	{
+		return termIDs(new ArrayList<TermID>(), terms);
+	}
+
+	/**
+	 * Return a list of term ids given a collection of term objects.
+	 *
+	 * @param terms
+	 * @return
+	 */
+	public static List<TermID> termIDList(Collection<Term> terms)
+	{
+		return termIDs(new ArrayList<TermID>(terms.size()), terms);
+	}
+
+	/**
+	 * Return a set of term ids given a collecton of term objects.
+	 *
+	 * @param terms
+	 * @return
+	 */
+	public static Set<TermID> termIDSet(Iterable<Term> terms)
+	{
+		return termIDs(new HashSet<TermID>(), terms);
 	}
 
 	/**
