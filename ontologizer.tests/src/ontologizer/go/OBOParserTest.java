@@ -11,7 +11,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 
 public class OBOParserTest
@@ -22,6 +24,9 @@ public class OBOParserTest
 	private static final int nRelations = 63105;
 	private static final String formatVersion = "1.2";
 	private static final String date = "04:01:2012 11:50";
+
+	@Rule
+	public TemporaryFolder tmpFolder = new TemporaryFolder();
 
 	@Test
 	public void testTermBasics() throws IOException, OBOParserException
@@ -71,7 +76,7 @@ public class OBOParserTest
 	@Test
 	public void testPartOf() throws IOException, OBOParserException
 	{
-		File tmp = File.createTempFile("onto", ".obo");
+		File tmp = tmpFolder.newFile();
 		PrintWriter pw = new PrintWriter(tmp);
 		pw.append("[term]\n" +
 		          "name: test\n" +
@@ -95,7 +100,7 @@ public class OBOParserTest
 	@Test
 	public void testRegulates() throws IOException, OBOParserException
 	{
-		File tmp = File.createTempFile("onto", ".obo");
+		File tmp = tmpFolder.newFile();
 		PrintWriter pw = new PrintWriter(tmp);
 		pw.append("[term]\n" +
 		          "name: test\n" +
@@ -119,7 +124,7 @@ public class OBOParserTest
 	@Test
 	public void testUnknownRelationship() throws IOException, OBOParserException
 	{
-		File tmp = File.createTempFile("onto", ".obo");
+		File tmp = tmpFolder.newFile();
 		PrintWriter pw = new PrintWriter(tmp);
 		pw.append("[term]\n" +
 		          "name: test\n" +
@@ -143,7 +148,7 @@ public class OBOParserTest
 	@Test
 	public void testSynonyms() throws IOException, OBOParserException
 	{
-		File tmp = File.createTempFile("onto", ".obo");
+		File tmp = tmpFolder.newFile();
 		PrintWriter pw = new PrintWriter(tmp);
 		pw.append("[term]\n" +
 		          "name: test\n" +
@@ -165,7 +170,7 @@ public class OBOParserTest
 	@Test
 	public void testDef() throws IOException, OBOParserException
 	{
-		File tmp = File.createTempFile("onto", ".obo");
+		File tmp = tmpFolder.newFile();
 		PrintWriter pw = new PrintWriter(tmp);
 		pw.append("[term]\n" +
 		          "name: test\n" +
@@ -183,7 +188,7 @@ public class OBOParserTest
 	@Test
 	public void testEquivalent() throws IOException, OBOParserException
 	{
-		File tmp = File.createTempFile("onto", ".obo");
+		File tmp = tmpFolder.newFile();
 		PrintWriter pw = new PrintWriter(tmp);
 		pw.append("[term]\n" +
 		          "name: test\n" +
@@ -215,7 +220,7 @@ public class OBOParserTest
 	@Test
 	public void testObsolete() throws IOException, OBOParserException
 	{
-		File tmp = File.createTempFile("onto", ".obo");
+		File tmp = tmpFolder.newFile();
 		PrintWriter pw = new PrintWriter(tmp);
 		pw.append("[term]\n" +
 		          "name: test\n" +
@@ -233,7 +238,7 @@ public class OBOParserTest
 	@Test
 	public void testXRef() throws IOException, OBOParserException
 	{
-		File tmp = File.createTempFile("onto", ".obo");
+		File tmp = tmpFolder.newFile();
 		PrintWriter pw = new PrintWriter(tmp);
 		pw.append("[term]\n" +
 		          "name: test\n" +
@@ -254,7 +259,7 @@ public class OBOParserTest
 	@Test
 	public void testXRef2Spaces() throws IOException, OBOParserException
 	{
-		File tmp = File.createTempFile("onto", ".obo");
+		File tmp = tmpFolder.newFile();
 		PrintWriter pw = new PrintWriter(tmp);
 		pw.append("[term]\n" +
 		          "name: test\n" +
@@ -275,7 +280,7 @@ public class OBOParserTest
 	@Test
 	public void testSimpleXRef() throws IOException, OBOParserException
 	{
-		File tmp = File.createTempFile("onto", ".obo");
+		File tmp = tmpFolder.newFile();
 		PrintWriter pw = new PrintWriter(tmp);
 		pw.append("[term]\n" +
 		          "name: test\n" +
@@ -296,7 +301,7 @@ public class OBOParserTest
 	@Test
 	public void testSubset() throws IOException, OBOParserException
 	{
-		File tmp = File.createTempFile("onto", ".obo");
+		File tmp = tmpFolder.newFile();
 		PrintWriter pw = new PrintWriter(tmp);
 		pw.append("subsetdef: subset \"Subset\"\n" +
 		          "[term]\n" +
@@ -320,7 +325,7 @@ public class OBOParserTest
 	@Test
 	public void testAltId() throws IOException, OBOParserException
 	{
-		File tmp = File.createTempFile("onto", ".obo");
+		File tmp = tmpFolder.newFile();
 		PrintWriter pw = new PrintWriter(tmp);
 		pw.append("[term]\n" +
 		          "name: test\n" +
@@ -338,7 +343,7 @@ public class OBOParserTest
 	@Test
 	public void testExceptions() throws IOException
 	{
-		File tmp = File.createTempFile("onto", ".obo");
+		File tmp = tmpFolder.newFile();
 		PrintWriter pw = new PrintWriter(tmp);
 		pw.append("[term\nimport: sss\n");
 		pw.close();
@@ -359,7 +364,7 @@ public class OBOParserTest
 	@Test
 	public void testExceptions2() throws IOException
 	{
-		File tmp = File.createTempFile("onto", ".obo");
+		File tmp = tmpFolder.newFile();
 		PrintWriter pw = new PrintWriter(tmp);
 		pw.append("[term \nimport: sss\n");
 		pw.close();
@@ -380,7 +385,7 @@ public class OBOParserTest
 	@Test
 	public void testArbitraryID() throws IOException, OBOParserException
 	{
-		File tmp = File.createTempFile("onto", ".obo");
+		File tmp = tmpFolder.newFile();
 		PrintWriter pw = new PrintWriter(tmp);
 		pw.append("[term]\n" +
 		          "name: test\n" +
