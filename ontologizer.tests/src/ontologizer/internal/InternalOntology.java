@@ -7,6 +7,7 @@ import ontologizer.association.Association;
 import ontologizer.association.AssociationContainer;
 import ontologizer.go.Ontology;
 import ontologizer.go.ParentTermID;
+import ontologizer.go.Prefix;
 import ontologizer.go.Term;
 import ontologizer.go.TermContainer;
 import ontologizer.go.TermID;
@@ -58,6 +59,8 @@ public class InternalOntology
 		assoc = new AssociationContainer();
 		Random r = new Random(seed);
 
+		Prefix goPrefix = new Prefix("GO:");
+
 		/* Randomly assign the items (note that redundant associations are filtered out later) */
 		for (int i=1;i<=500;i++)
 		{
@@ -67,7 +70,7 @@ public class InternalOntology
 			for (int j=0;j<numTerms;j++)
 			{
 				int tid = r.nextInt(terms.size())+1;
-				assoc.addAssociation(new Association(new ByteString(itemName),tid));
+				assoc.addAssociation(new Association(new ByteString(itemName),new TermID(goPrefix, tid)));
 			}
 		}
 	}
