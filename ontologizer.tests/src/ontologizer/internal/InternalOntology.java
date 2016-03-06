@@ -59,7 +59,7 @@ public class InternalOntology
 		assoc = new AssociationContainer();
 		Random r = new Random(seed);
 
-		Prefix goPrefix = new Prefix("GO:");
+		Prefix goPrefix = new Prefix("GO");
 
 		/* Randomly assign the items (note that redundant associations are filtered out later) */
 		for (int i=1;i<=500;i++)
