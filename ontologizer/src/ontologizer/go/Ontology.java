@@ -1091,8 +1091,6 @@ public class Ontology implements Iterable<Term>
 	 */
 	public void setRelevantSubset(String subsetName)
 	{
-		System.out.println(subsetName);
-
 		for (Subset s : availableSubsets)
 		{
 			if (s.getName().equals(subsetName))
