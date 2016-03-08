@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import ontologizer.gui.swt.support.FileGridCompositeWidgets;
 import ontologizer.gui.swt.support.SWTUtil;
@@ -159,7 +161,7 @@ public class ProjectSettingsComposite extends Composite
 		new Evidence("NR","Not Recorded","Obsolete Evidence Codes")
 	};
 
-	private static HashMap<String,Evidence> EVIDENCE_MAP;
+	private static Map<String,Evidence> EVIDENCE_MAP;
 
 	/**
 	 * Initialize private static data;
@@ -188,8 +190,8 @@ public class ProjectSettingsComposite extends Composite
 	private Button subsetCheckbox;
 	private Button considerCheckbox;
 
-	private ArrayList<ISimpleAction> ontologyChangedList = new ArrayList<ISimpleAction>();
-	private ArrayList<ISimpleAction> associationChangedList = new ArrayList<ISimpleAction>();
+	private List<ISimpleAction> ontologyChangedList = new ArrayList<ISimpleAction>();
+	private List<ISimpleAction> associationChangedList = new ArrayList<ISimpleAction>();
 
 	private WorkSetList wsl;
 
