@@ -1385,12 +1385,18 @@ public class MainWindow extends ApplicationWindow
 							File f = new File(projectDirectory,name);
 							FileInputStream in = new FileInputStream(f);
 
-					        /* Add zip entry to the output stream */
-							zip.putNextEntry(new ZipEntry(projectName + "/" + name));
-							int len;
-							while ((len = in.read(buffer)) > 0)
-								zip.write(buffer, 0, len);
-							zip.closeEntry();
+							try
+							{
+								/* Add zip entry to the output stream */
+								zip.putNextEntry(new ZipEntry(projectName + "/" + name));
+								int len;
+								while ((len = in.read(buffer)) > 0)
+									zip.write(buffer, 0, len);
+								zip.closeEntry();
+							} finally
+							{
+								in.close();
+							}
 						}
 
 						zip.close();
