@@ -319,7 +319,7 @@ public class ProjectSettingsComposite extends Composite
 			}
 		});
 
-		createInfoText(advancedComposite);
+		createInfoText(this);
 	}
 
 	/**
@@ -331,11 +331,9 @@ public class ProjectSettingsComposite extends Composite
 
 		infoText = new StyledText(parent, SWT.WRAP);
 		infoText.setBackground(getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
-		GridData gd = new GridData(GridData.GRAB_HORIZONTAL|GridData.FILL_BOTH);
+		GridData gd = new GridData(GridData.GRAB_HORIZONTAL|GridData.FILL_HORIZONTAL|GridData.VERTICAL_ALIGN_END);
 		gd.horizontalSpan = 3;
-		gd.minimumHeight = 20;
 		infoText.setLayoutData(gd);
-		this.layout(true);
 	}
 
 	/**
@@ -507,6 +505,8 @@ public class ProjectSettingsComposite extends Composite
 	public void setInfoText(String text)
 	{
 		infoText.setText(text);
+		infoText.pack();
+		layout();
 	}
 
 	/**
