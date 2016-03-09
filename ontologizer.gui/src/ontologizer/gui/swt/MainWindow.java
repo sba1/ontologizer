@@ -42,6 +42,7 @@ import ontologizer.calculation.CalculationRegistry;
 import ontologizer.go.Ontology;
 import ontologizer.go.Subset;
 import ontologizer.go.Term;
+import ontologizer.gui.swt.ProjectSettingsComposite.InfoTextClickListener;
 import ontologizer.gui.swt.images.Images;
 import ontologizer.gui.swt.support.SWTUtil;
 import ontologizer.statistics.TestCorrectionRegistry;
@@ -660,7 +661,6 @@ public class MainWindow extends ApplicationWindow
 
 				updateSettingsCompositeInfoText();
 
-
 				WorkSetLoadThread.obtainDatafiles(currentWorkSet,
 						new Runnable(){
 							public void run()
@@ -761,10 +761,10 @@ public class MainWindow extends ApplicationWindow
 
 		FileState fs = FileCache.getState(currentWorkSet.getOboPath());
 		if (fs == FileState.CACHED)
-			info.append("Remote definition file was downloaded at " + FileCache.getDownloadTime(currentWorkSet.getOboPath()) + ". ");
+			info.append("Remote definition file was downloaded at " + FileCache.getDownloadTime(currentWorkSet.getOboPath()) + " (<a href=\"ontology\">reload</a>). ");
 		fs = FileCache.getState(currentWorkSet.getAssociationPath());
 		if (fs == FileState.CACHED)
-			info.append("Remote annotation file was downloaded at " + FileCache.getDownloadTime(currentWorkSet.getAssociationPath()) + ". ");
+			info.append("Remote annotation file was downloaded at " + FileCache.getDownloadTime(currentWorkSet.getAssociationPath()) + "(<a href=\"assoc\">reload</a>). ");
 
 		settingsComposite.setInfoText(info.toString());
 	}
@@ -1692,6 +1692,21 @@ public class MainWindow extends ApplicationWindow
 			public void act() {
 				storeGenes();
 				updateGenes();
+			}
+		});
+		settingsComposite.addInfoTextClickListener(new InfoTextClickListener()
+		{
+			@Override
+			public void click(String href)
+			{
+				if (href.equals("ontology"))
+				{
+					FileCache.invalidate(settingsComposite.getDefinitionFileString());
+				} else if (href.equals("assoc"))
+				{
+					FileCache.invalidate(settingsComposite.getAssociationsFileString());
+				}
+				updateSettingsCompositeInfoText();
 			}
 		});
 	}
