@@ -658,16 +658,8 @@ public class MainWindow extends ApplicationWindow
 				settingsComposite.setRestrictionChoices(null);
 				settingsComposite.setConsiderChoices(null);
 
-				StringBuilder info = new StringBuilder();
+				updateSettingsCompositeInfoText();
 
-				FileState fs = FileCache.getState(currentWorkSet.getOboPath());
-				if (fs == FileState.CACHED)
-					info.append("Remote definition file was downloaded at " + FileCache.getDownloadTime(currentWorkSet.getOboPath()) + ". ");
-				fs = FileCache.getState(currentWorkSet.getAssociationPath());
-				if (fs == FileState.CACHED)
-					info.append("Remote annotation file was downloaded at " + FileCache.getDownloadTime(currentWorkSet.getAssociationPath()) + ". ");
-
-				settingsComposite.setInfoText(info.toString());
 
 				WorkSetLoadThread.obtainDatafiles(currentWorkSet,
 						new Runnable(){
@@ -758,6 +750,23 @@ public class MainWindow extends ApplicationWindow
 
 			removeToolItem.setEnabled(false);
 		}
+	}
+
+	/**
+	 * Updates the info text within the settings composite.
+	 */
+	private void updateSettingsCompositeInfoText()
+	{
+		StringBuilder info = new StringBuilder();
+
+		FileState fs = FileCache.getState(currentWorkSet.getOboPath());
+		if (fs == FileState.CACHED)
+			info.append("Remote definition file was downloaded at " + FileCache.getDownloadTime(currentWorkSet.getOboPath()) + ". ");
+		fs = FileCache.getState(currentWorkSet.getAssociationPath());
+		if (fs == FileState.CACHED)
+			info.append("Remote annotation file was downloaded at " + FileCache.getDownloadTime(currentWorkSet.getAssociationPath()) + ". ");
+
+		settingsComposite.setInfoText(info.toString());
 	}
 
 	private String [] split(String str)
