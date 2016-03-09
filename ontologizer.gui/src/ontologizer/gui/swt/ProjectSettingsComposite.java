@@ -13,24 +13,30 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import ontologizer.gui.swt.support.FileGridCompositeWidgets;
-import ontologizer.gui.swt.support.SWTUtil;
-import ontologizer.worksets.WorkSet;
-import ontologizer.worksets.WorkSetList;
-
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+
+import ontologizer.gui.swt.support.FileGridCompositeWidgets;
+import ontologizer.gui.swt.support.SWTUtil;
+import ontologizer.util.LinkExtractor;
+import ontologizer.util.LinkExtractor.Extracted;
+import ontologizer.worksets.WorkSet;
+import ontologizer.worksets.WorkSetList;
 
 /**
  * A simple expander widget.
@@ -185,13 +191,22 @@ public class ProjectSettingsComposite extends Composite
 	private TableColumn evidenceDescColumn;
 	private Composite advancedComposite;
 	private Expander advancedExpander;
+
 	private StyledText infoText;
+	private Extracted infoTextExtracted;
 
 	private Button subsetCheckbox;
 	private Button considerCheckbox;
 
 	private List<ISimpleAction> ontologyChangedList = new ArrayList<ISimpleAction>();
 	private List<ISimpleAction> associationChangedList = new ArrayList<ISimpleAction>();
+
+	public static interface InfoTextClickListener
+	{
+		public void click(String href);
+	}
+
+	private List<InfoTextClickListener> infoTextClickListenerList = new ArrayList<InfoTextClickListener>();
 
 	private WorkSetList wsl;
 
@@ -336,6 +351,26 @@ public class ProjectSettingsComposite extends Composite
 		GridData gd = new GridData(GridData.GRAB_HORIZONTAL|GridData.FILL_HORIZONTAL|GridData.VERTICAL_ALIGN_END);
 		gd.horizontalSpan = 3;
 		infoText.setLayoutData(gd);
+		infoText.addListener(SWT.MouseUp, new Listener()
+		{
+			@Override
+			public void handleEvent(Event event)
+			{
+				if (infoTextExtracted == null)
+					return;
+
+				int offset = infoText.getOffsetAtLocation(new Point(event.x, event.y));
+				for (int i = 0; i < infoTextExtracted.starts.length; i++)
+				{
+					if (infoTextExtracted.starts[i] <= offset && offset < infoTextExtracted.ends[i])
+					{
+						for (InfoTextClickListener listener : infoTextClickListenerList)
+							listener.click(infoTextExtracted.hrefs[i]);
+						break;
+					}
+				}
+			}
+		});
 	}
 
 	/**
@@ -506,7 +541,21 @@ public class ProjectSettingsComposite extends Composite
 	 */
 	public void setInfoText(String text)
 	{
-		infoText.setText(text);
+		infoTextExtracted = new LinkExtractor(text).extract();
+		infoText.setText(infoTextExtracted.text);
+
+		/* Apply styles */
+		StyleRange [] styles = new StyleRange[infoTextExtracted.starts.length];
+		for (int i=0; i < infoTextExtracted.starts.length; i++)
+		{
+			int start = infoTextExtracted.starts[i];
+			int length = infoTextExtracted.ends[i] - start;
+			styles[i] = new StyleRange(start, length, null, null);
+			styles[i].underline = true;
+			styles[i].underlineStyle = SWT.UNDERLINE_LINK;
+		}
+		infoText.setStyleRanges(styles);
+
 		infoText.pack();
 		layout();
 	}
@@ -607,5 +656,15 @@ public class ProjectSettingsComposite extends Composite
 	{
 		assocFileGridCompositeWidgets.addTextChangedAction(act);
 		associationChangedList.add(act);
+	}
+
+	/**
+	 * Add an action that is invoked when a link was clicked in the info text.
+	 *
+	 * @param act
+	 */
+	public void addInfoTextClickListener(InfoTextClickListener listener)
+	{
+		infoTextClickListenerList.add(listener);
 	}
 }
