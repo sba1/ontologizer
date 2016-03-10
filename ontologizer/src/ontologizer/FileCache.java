@@ -172,6 +172,9 @@ class DownloadThread extends Thread
 			downloadCallback.ready(null, destFile.getCanonicalPath());
 		} catch (Exception e)
 		{
+			/* Delete the file in this to avoid ending up with partial files */
+			destFile.delete();
+
 			logger.log(Level.SEVERE, "Exception while downloading a file.", e);
 			/* Forward ready status */
 			downloadCallback.ready(e, null);
