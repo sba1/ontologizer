@@ -474,6 +474,9 @@ public class Ontologizer
 				{
 					public void run()
 					{
+						if (main.getShell().isDisposed())
+							return;
+
 						workSet.updateWorkSetList(workSetList);
 						fileCache.updateView();
 

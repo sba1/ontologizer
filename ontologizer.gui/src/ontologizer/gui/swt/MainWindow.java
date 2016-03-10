@@ -1525,7 +1525,7 @@ public class MainWindow extends ApplicationWindow
 			@Override
 			public void run()
 			{
-				if (display.isDisposed())
+				if (shell.isDisposed())
 					return;
 				if (!currentWorkSet.getOboPath().equals(url) && !currentWorkSet.getAssociationPath().equals(url))
 					return;
