@@ -359,15 +359,20 @@ public class ProjectSettingsComposite extends Composite
 				if (infoTextExtracted == null)
 					return;
 
-				int offset = infoText.getOffsetAtLocation(new Point(event.x, event.y));
-				for (int i = 0; i < infoTextExtracted.starts.length; i++)
+				try
 				{
-					if (infoTextExtracted.starts[i] <= offset && offset < infoTextExtracted.ends[i])
+					int offset = infoText.getOffsetAtLocation(new Point(event.x, event.y));
+					for (int i = 0; i < infoTextExtracted.starts.length; i++)
 					{
-						for (InfoTextClickListener listener : infoTextClickListenerList)
-							listener.click(infoTextExtracted.hrefs[i]);
-						break;
+						if (infoTextExtracted.starts[i] <= offset && offset < infoTextExtracted.ends[i])
+						{
+							for (InfoTextClickListener listener : infoTextClickListenerList)
+								listener.click(infoTextExtracted.hrefs[i]);
+							break;
+						}
 					}
+				} catch(IllegalArgumentException e)
+				{
 				}
 			}
 		});
