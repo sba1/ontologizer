@@ -34,6 +34,7 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 import ontologizer.FileCache;
+import ontologizer.FileCache.FileCacheUpdateCallback;
 import ontologizer.FileCache.FileState;
 import ontologizer.association.Association;
 import ontologizer.association.AssociationContainer;
@@ -1498,7 +1499,7 @@ public class MainWindow extends ApplicationWindow
 	 *
 	 * @param display
 	 */
-	public MainWindow(Display display)
+	public MainWindow(final Display display)
 	{
 		super(display);
 
@@ -1508,6 +1509,46 @@ public class MainWindow extends ApplicationWindow
 
 		/* Update states */
 		updateGenes();
+
+		/**
+		 * Add file cache update callbacks.
+		 */
+		class UpdateSettingsCompositeInfoText implements Runnable
+		{
+			private String url;
+
+			public UpdateSettingsCompositeInfoText(String url)
+			{
+				this.url = url;
+			}
+
+			@Override
+			public void run()
+			{
+				if (display.isDisposed())
+					return;
+				if (!currentWorkSet.getOboPath().equals(url) && !currentWorkSet.getAssociationPath().equals(url))
+					return;
+
+				updateSettingsCompositeInfoText();
+			}
+		}
+
+		FileCache.addUpdateCallback(
+				new FileCacheUpdateCallback()
+				{
+					@Override
+					public void update(String url)
+					{
+						display.asyncExec(new UpdateSettingsCompositeInfoText(url));
+					}
+
+					@Override
+					public void exception(Exception exception, String url)
+					{
+						display.asyncExec(new UpdateSettingsCompositeInfoText(url));
+					}
+				});
 	}
 
 	public Shell getShell()
