@@ -34,24 +34,6 @@ import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
-import ontologizer.FileCache;
-import ontologizer.FileCache.FileCacheUpdateCallback;
-import ontologizer.FileCache.FileState;
-import ontologizer.association.Association;
-import ontologizer.association.AssociationContainer;
-import ontologizer.association.Gene2Associations;
-import ontologizer.calculation.CalculationRegistry;
-import ontologizer.go.Ontology;
-import ontologizer.go.Subset;
-import ontologizer.go.Term;
-import ontologizer.gui.swt.ProjectSettingsComposite.InfoTextClickListener;
-import ontologizer.gui.swt.images.Images;
-import ontologizer.gui.swt.support.SWTUtil;
-import ontologizer.statistics.TestCorrectionRegistry;
-import ontologizer.worksets.WorkSet;
-import ontologizer.worksets.WorkSetList;
-import ontologizer.worksets.WorkSetLoadThread;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -90,6 +72,23 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+
+import ontologizer.FileCache;
+import ontologizer.FileCache.FileCacheUpdateCallback;
+import ontologizer.association.Association;
+import ontologizer.association.AssociationContainer;
+import ontologizer.association.Gene2Associations;
+import ontologizer.calculation.CalculationRegistry;
+import ontologizer.go.Ontology;
+import ontologizer.go.Subset;
+import ontologizer.go.Term;
+import ontologizer.gui.swt.ProjectSettingsComposite.InfoTextClickListener;
+import ontologizer.gui.swt.images.Images;
+import ontologizer.gui.swt.support.SWTUtil;
+import ontologizer.statistics.TestCorrectionRegistry;
+import ontologizer.worksets.WorkSet;
+import ontologizer.worksets.WorkSetList;
+import ontologizer.worksets.WorkSetLoadThread;
 
 class Settings
 {
