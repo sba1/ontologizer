@@ -759,12 +759,33 @@ public class MainWindow extends ApplicationWindow
 	{
 		StringBuilder info = new StringBuilder();
 
-		FileState fs = FileCache.getState(currentWorkSet.getOboPath());
-		if (fs == FileState.CACHED)
-			info.append("Remote definition file was downloaded at " + FileCache.getDownloadTime(currentWorkSet.getOboPath()) + " (<a href=\"ontology\">reload</a>). ");
-		fs = FileCache.getState(currentWorkSet.getAssociationPath());
-		if (fs == FileState.CACHED)
-			info.append("Remote annotation file was downloaded at " + FileCache.getDownloadTime(currentWorkSet.getAssociationPath()) + "(<a href=\"assoc\">reload</a>). ");
+		switch (FileCache.getState(currentWorkSet.getOboPath()))
+		{
+			case CACHED:
+				info.append("Remote definition file was downloaded at " + FileCache.getDownloadTime(currentWorkSet.getOboPath()) + " (<a href=\"ontology\">reload</a>). ");
+				break;
+
+			case DOWNLOADING:
+				info.append("Remote definition file is being downloaded. ");
+				break;
+
+			default:
+				break;
+		}
+
+		switch (FileCache.getState(currentWorkSet.getAssociationPath()))
+		{
+			case CACHED:
+				info.append("Remote annotation file was downloaded at " + FileCache.getDownloadTime(currentWorkSet.getAssociationPath()) + " (<a href=\"assoc\">reload</a>). ");
+				break;
+
+			case DOWNLOADING:
+				info.append("Remote annotation file is being downloaded. ");
+				break;
+
+			default:
+				break;
+		}
 
 		settingsComposite.setInfoText(info.toString());
 	}
