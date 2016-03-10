@@ -27,6 +27,7 @@ import java.util.InvalidPropertiesFormatException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
@@ -1761,12 +1762,22 @@ public class MainWindow extends ApplicationWindow
 			@Override
 			public void click(String href)
 			{
-				if (href.equals("ontology"))
+				try
 				{
-					FileCache.invalidate(settingsComposite.getDefinitionFileString());
-				} else if (href.equals("assoc"))
+					if (href.equals("ontology"))
+					{
+						String url = settingsComposite.getDefinitionFileString();
+						FileCache.invalidate(url);
+						FileCache.open(url);
+					} else if (href.equals("assoc"))
+					{
+						String url = settingsComposite.getAssociationsFileString();
+						FileCache.invalidate(url);
+						FileCache.open(url);
+					}
+				} catch(IOException e)
 				{
-					FileCache.invalidate(settingsComposite.getAssociationsFileString());
+					logger.log(Level.FINE, "Exception after click", e);
 				}
 				updateSettingsCompositeInfoText();
 			}
