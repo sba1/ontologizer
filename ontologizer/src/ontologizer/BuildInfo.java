@@ -15,7 +15,7 @@ public class BuildInfo
 	private static String revisionNumber="NA";
 	private static String date ="NA";
 	private static String version = "2.1";
-	private static String copyright = "2005-2012";
+	private static String copyright = "2005-2016";
 	private static boolean infoExtracted = false;
 
 
