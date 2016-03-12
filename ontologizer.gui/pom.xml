@@ -76,13 +76,13 @@
 			<version>${swt.version}</version>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<dependency>
-		 	<groupId>ontologizer</groupId>
-		 	<artifactId>swtchart</artifactId>
-		 	<version>0.7.0</version>
+			<groupId>ontologizer</groupId>
+			<artifactId>swtchart</artifactId>
+			<version>0.7.0</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>ontologizer</groupId>
 			<artifactId>lwjgl</artifactId>
@@ -109,14 +109,14 @@
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 		<resources>
-		 <resource>
-		  <directory>src</directory>
-		  <includes>
-		   <include>**/*.html</include>
-		   <include>**/*.png</include>
-		   <include>ChangeLog</include>
-		  </includes>
-		 </resource>
+			<resource>
+				<directory>src</directory>
+				<includes>
+					<include>**/*.html</include>
+					<include>**/*.png</include>
+					<include>ChangeLog</include>
+				</includes>
+			</resource>
 		</resources>
 
 		<plugins>
@@ -168,31 +168,31 @@
 				</configuration>
 			</plugin>
 
-		    <plugin>
-		        <groupId>org.icestuff</groupId>
-		        <artifactId>getdown-maven-plugin</artifactId>
-		        <version>0.0.1-SNAPSHOT</version>
-		        <executions>
-		            <execution>
-		                <phase>package</phase>
-		                <goals>
-		                    <goal>updates</goal>
-		                </goals>
-		                <configuration>
-		                    <!-- This is the minimum required configuration, see below for more -->
-		                    <appbase>http://sonumina.de/ontologizer</appbase>
-		                    <mainClass>ontologizer.gui.swt.Ontologizer</mainClass>
-		                    <verbose>true</verbose>
-		                    <allowOffline>true</allowOffline>
-		                    <libPath>.</libPath>
-		                    <outputJarVersions>true</outputJarVersions>
-		                    <ui>
+			<plugin>
+				<groupId>org.icestuff</groupId>
+				<artifactId>getdown-maven-plugin</artifactId>
+				<version>0.0.1-SNAPSHOT</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>updates</goal>
+						</goals>
+						<configuration>
+							<!-- This is the minimum required configuration, see below for more -->
+							<appbase>http://sonumina.de/ontologizer</appbase>
+							<mainClass>ontologizer.gui.swt.Ontologizer</mainClass>
+							<verbose>true</verbose>
+							<allowOffline>true</allowOffline>
+							<libPath>.</libPath>
+							<outputJarVersions>true</outputJarVersions>
+							<ui>
 								<name>Ontologizer</name>
-		                    </ui>
-		                </configuration>
-		            </execution>
-		        </executions>
-		    </plugin>
+							</ui>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 
 		<pluginManagement>
@@ -233,15 +233,15 @@
 	</build>
 
 
-    <pluginRepositories>
-        <pluginRepository>
-            <id>getdown-maven-plugin-mvn-repo</id>
-            <url>https://raw.github.com/rockfireredmoon/getdown-maven-plugin/mvn-repo/</url>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-            </snapshots>
-        </pluginRepository>
-    </pluginRepositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>getdown-maven-plugin-mvn-repo</id>
+			<url>https://raw.github.com/rockfireredmoon/getdown-maven-plugin/mvn-repo/</url>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
 
 </project>
