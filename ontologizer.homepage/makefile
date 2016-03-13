@@ -26,6 +26,7 @@ all: copy-static
 .PHONY: copy-static
 copy-static:
 	cd ../ontologizer.parent && mvn package
+	rm -Rf static/webstart static/cmdline
 	mkdir -p static/webstart static/cmdline
 	cp -p ../ontologizer.gui/ontologizer.jnlp static/webstart
 	cp -p ../ontologizer.gui/target/ontologizer.gui-$(VERSION).jar static/webstart/ontologizer-gui.jar
