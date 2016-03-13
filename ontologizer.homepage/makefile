@@ -1,11 +1,23 @@
 # Prior to the execution of this makefile
 # define
 #
-# KEYSTORE_FILE
-# KEYSTORE_PASSWORD_ENV
-# KEYSTORE_ALIAS
+# KEYSTORE_FILE the full path to the keystore file
+# KEYSTORE_PASSWORD_ENV the name of the env variable that contains the keystore's password
+# KEYSTORE_ALIAS the alias
 
 VERSION = 0.0.2-SNAPSHOT
+
+ifndef KEYSTORE_FILE
+$(error Please define KEYSTORE_FILE)
+endif
+
+ifndef KEYSTORE_PASSWORD_ENV
+$(error Please define KEYSTORE_PASSWORD_ENV)
+endif
+
+ifndef KEYSTORE_ALIAS
+$(error Please define KEYSTORE_ALIAS)
+ednif
 
 .PHONY: all
 all: copy-static
