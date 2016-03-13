@@ -17,7 +17,7 @@ endif
 
 ifndef KEYSTORE_ALIAS
 $(error Please define KEYSTORE_ALIAS)
-ednif
+endif
 
 .PHONY: all
 all: copy-static
