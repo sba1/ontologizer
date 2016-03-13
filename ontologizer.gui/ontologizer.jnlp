@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?> 
 <jnlp 
   spec="1.0+" 
-  codebase="http://ontologizer.de/" href="ontologizer.jnlp">
+  codebase="http://ontologizer.de/webstart/" href="ontologizer.jnlp">
   <information> 
     <title>Ontologizer</title> 
     <vendor>Ontologizer Open Source Team</vendor> 
