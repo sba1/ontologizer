@@ -72,7 +72,7 @@ The [source code](http://svn.code.sf.net/p/ontologizer/svn/) contains all the co
  
 The Ontologizer can be started directly from this website using Java webstart by clicking on the following icon:
 
-[![Foo](/images/webstart.jpg)](http://compbio.charite.de/tl_files/ontologizer/webstart/ontologizer.jnlp)
+[![Foo](/images/webstart.jpg)](/webstart/ontologizer.jnlp)
 
 Webstart applications are started directly from a web browser, which downloads the program code to the local computer. If the code has already been downloaded, the browser checks if the server has a newer version. If not, the local copy of the program is started. Further information is available at Sun's webstart site.
 

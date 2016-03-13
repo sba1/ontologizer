@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?> 
 <jnlp 
   spec="1.0+" 
-  codebase="http://compbio.charite.de/tl_files/ontologizer/webstart/" href="ontologizer.jnlp"> 
+  codebase="http://ontologizer.de/" href="ontologizer.jnlp">
   <information> 
     <title>Ontologizer</title> 
     <vendor>Ontologizer Open Source Team</vendor> 
-    <homepage href="http://compbio.charite.de/ontologizer/"/> 
+    <homepage href="http://ontologizer.de/"/>
     <description>A Multifunctional Tool for GO Term Enrichment Analysis and Data Exploration</description>
     <offline-allowed/> 
   </information> 
