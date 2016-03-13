@@ -5,7 +5,7 @@ weight = 6
 
 The command-line version of Ontologizer can be used for batch processing or pipelines. Most general users will prefer the Java WebStart version, though.
 
-First of all, you need to download the .jar file. A current version can be obtained from [from here](https://github.com/charite/charite.github.io/tree/master/media/ontologizer).
+First of all, you need to download the .jar file. A current version can be obtained from [from here](/cmdline/Ontologizer.jar).
 
 Ontologizer is a Java-Application and needs to be started via the 'java' command and be invoked with a plenty of arguments. All possible command arguments can be viewed via the --help argument. E.g. java -jar Ontologizer.jar --help. Here is a full list of options:
 

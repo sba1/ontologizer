@@ -26,9 +26,10 @@ all: copy-static
 .PHONY: copy-static
 copy-static:
 	cd ../ontologizer.parent && mvn package
-	mkdir -p static/webstart
+	mkdir -p static/webstart static/cmdline
 	cp -p ../ontologizer.gui/ontologizer.jnlp static/webstart
 	cp -p ../ontologizer.gui/target/ontologizer.gui-$(VERSION).jar static/webstart/ontologizer-gui.jar
 	cp -p ../ontologizer/target/ontologizer-$(VERSION).jar static/webstart/ontologizer.jar
 	cp -pR ../ontologizer/local-maven-repo static/webstart/
+	cp -p ../ontologizer.cmdline/ontologizer.cmdline-$(VERSION).jar static/cmdline/Ontologizer.jar
 	find static/webstart | grep .jar$ | xargs -n 1 -I'{}' jarsigner -keystore $(KEYSTORE_FILE) -storepass:env $(KEYSTORE_PASSWORD_ENV) '{}' $(KEYSTORE_ALIAS)
