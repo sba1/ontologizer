@@ -1,3 +1,8 @@
+{{ if .IsHome }}
+{{ .Scratch.Set "homeurl" "." }}
+{{ else }}
+{{ .Scratch.Set "homeurl" ".." }}
+{{ end }}
 <!DOCTYPE html>
 <html>
 
@@ -50,7 +55,7 @@ MathJax.Hub.Config({
 
     <div id="menu">
         <div class="pure-menu">
-            <a class="pure-menu-heading" href="{{ .Site.BaseURL }}">{{ .Site.Title }}</a>
+            <a class="pure-menu-heading" href="{{ .Scratch.Get "homeurl" }}">{{ .Site.Title }}</a>
 
             <ul class="pure-menu-list">
                 {{ range .Site.Pages }}
