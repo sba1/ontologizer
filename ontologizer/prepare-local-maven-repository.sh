@@ -50,6 +50,12 @@ rm -Rf commons-cli-1.2
 unzip commons-cli-1.2-bin.zip
 mvn org.apache.maven.plugins:maven-install-plugin:2.3.1:install-file -Dfile=commons-cli-1.2/commons-cli-1.2.jar -Dsource=commons-cli-1.2/commons-cli-1.2-sources.jar -DgroupId=ontologizer -DartifactId=commons-cli -Dversion=1.2 -Dpackaging=jar -DlocalRepositoryPath=../local-maven-repo
 
+# Install apache common cli 1.3.1
+wget -N http://apache.openmirror.de/commons/cli/binaries/commons-cli-1.3.1-bin.zip
+rm -Rf commons-cli-1.3.1-bin
+unzip commons-cli-1.3.1-bin.zip
+mvn org.apache.maven.plugins:maven-install-plugin:2.3.1:install-file -Dfile=commons-cli-1.3.1/commons-cli-1.3.1.jar -Djavadoc=commons-cli-1.3.1/commons-cli-1.3.1-javadoc.jar -DgroupId=ontologizer -DartifactId=commons-cli -Dversion=1.3.1 -Dpackaging=jar -DlocalRepositoryPath=../local-maven-repo
+
 # Install Nat Table
 wget -N http://sourceforge.net/projects/nattable/files/NatTable/1.6.5/nattable-core-1.6.5.jar
 mvn org.apache.maven.plugins:maven-install-plugin:2.3.1:install-file -Dfile=nattable-core-1.6.5.jar -DgroupId=ontologizer -DartifactId=nattable-core -Dversion=1.6.5 -Dpackaging=jar -DlocalRepositoryPath=../local-maven-repo
