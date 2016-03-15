@@ -4,14 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import ontologizer.calculation.CalculationRegistry;
-import ontologizer.calculation.EnrichedGOTermsResult;
-import ontologizer.calculation.EnrichedGOTermsTableWriter;
-import ontologizer.go.OBOParserException;
-import ontologizer.go.TermID;
-import ontologizer.statistics.IResampling;
-import ontologizer.statistics.TestCorrectionRegistry;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -19,6 +11,14 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.Parser;
+
+import ontologizer.calculation.CalculationRegistry;
+import ontologizer.calculation.EnrichedGOTermsResult;
+import ontologizer.calculation.EnrichedGOTermsTableWriter;
+import ontologizer.go.OBOParserException;
+import ontologizer.go.TermID;
+import ontologizer.statistics.IResampling;
+import ontologizer.statistics.TestCorrectionRegistry;
 
 /**
  * OntologizerCMD.java
