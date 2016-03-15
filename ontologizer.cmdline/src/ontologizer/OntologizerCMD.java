@@ -7,18 +7,14 @@ import java.io.IOException;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.GnuParser;
 import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.Parser;
 
-import ontologizer.calculation.CalculationRegistry;
 import ontologizer.calculation.EnrichedGOTermsResult;
 import ontologizer.calculation.EnrichedGOTermsTableWriter;
 import ontologizer.go.OBOParserException;
 import ontologizer.go.TermID;
-import ontologizer.statistics.IResampling;
-import ontologizer.statistics.TestCorrectionRegistry;
 
 /**
  * OntologizerCMD.java
@@ -35,7 +31,6 @@ import ontologizer.statistics.TestCorrectionRegistry;
  *
  * @author Peter Robinson and Sebastian Bauer
  */
-@SuppressWarnings("unused")
 public class OntologizerCMD
 {
 	/**
@@ -74,77 +69,8 @@ public class OntologizerCMD
 
 		try
 		{
-			/* Build up the calculation string to show it within the help description */
-			String calculations[] = CalculationRegistry.getAllRegistered();
-			StringBuilder calHelpStrBuilder = new StringBuilder();
-			calHelpStrBuilder.append("Specifies the calculation method to use. Possible values are: ");
-
-			for (int i=0;i<calculations.length;i++)
-			{
-				calHelpStrBuilder.append("\"");
-				calHelpStrBuilder.append(calculations[i]);
-				calHelpStrBuilder.append("\"");
-
-				/* Add default identifier if it is the default correction */
-				if (CalculationRegistry.getDefault() == CalculationRegistry.getCalculationByName(calculations[i]))
-						calHelpStrBuilder.append(" (default)");
-
-				calHelpStrBuilder.append(", ");
-			}
-			calHelpStrBuilder.setLength(calHelpStrBuilder.length()-2); /* remove redundant last two characters */
-			String calHelpString = calHelpStrBuilder.toString();
-
-			/* Build up the mtc string to show it within the help description */
-			boolean resamplingBasedMTCsExists = false;
-			String mtcs[] = TestCorrectionRegistry.getRegisteredCorrections();
-			StringBuilder mtcHelpStrBuilder = new StringBuilder();
-			mtcHelpStrBuilder.append("Specifies the MTC method to use. Possible values are: ");
-
-			for (int i=0;i<mtcs.length;i++)
-			{
-				if (TestCorrectionRegistry.getCorrectionByName(mtcs[i]) instanceof IResampling)
-					resamplingBasedMTCsExists = true;
-
-				mtcHelpStrBuilder.append("\"");
-				mtcHelpStrBuilder.append(mtcs[i]);
-				mtcHelpStrBuilder.append("\"");
-
-				/* Add default identifier if it is the default correction */
-				if (TestCorrectionRegistry.getDefault() == TestCorrectionRegistry.getCorrectionByName(mtcs[i]))
-						mtcHelpStrBuilder.append(" (default)");
-
-				mtcHelpStrBuilder.append(", ");
-			}
-			mtcHelpStrBuilder.setLength(mtcHelpStrBuilder.length()-2); /* remove redundant last two characters */
-			String mtcHelpString = mtcHelpStrBuilder.toString();
-
-			Options options = new Options();
-			Option opt;
-
-			options.addOption(new Option("h","help",false,"Shows this help"));
-			options.addOption(new Option("g","go",true,"File containig GO terminology and structure (.obo format). Required"));
-			options.addOption(new Option("a","association",true,"File containing associations from genes to GO terms. Required"));
-			options.addOption(new Option("p","population",true,"File containing genes within the population. Required"));
-			options.addOption(new Option("s","studyset",true,"File of the study set or a directory containing study set files. Required"));
-			options.addOption(new Option("i","ignore",false,"Ignore genes to which no association exist within the calculation."));
-			options.addOption(new Option("c","calculation",true,calHelpString));
-			options.addOption(new Option("m","mtc",true,mtcHelpString));
-			options.addOption(new Option("d","dot",true, "For every study set analysis write out an additional .dot file (GraphViz) containing "+
-														 "the graph that is induced by interesting nodes. The optional argument in range between 0 and 1 "+
-														 "specifies the threshold used to identify interesting nodes. "+
-														 "By appending a GO Term identifier (separated by a comma) the output is restriced to the " +
-														 "subgraph originating at this GO term."));
-			options.addOption(new Option("n","annotation",false,"Create an additional file per study set which contains the annotations."));
-			options.addOption(new Option("f","filter",true,"Filter the gene names by appling rules in a given file (currently only mapping supported)."));
-			options.addOption(new Option("o","outdir",true,"Specfies the directory in which the results will be placed."));
-
-			if (resamplingBasedMTCsExists) {
-				options.addOption(new Option("r","resamplingsteps", true, "Specifies the number of steps used in resampling based MTCs"));
-				options.addOption(new Option("t","sizetolerance", true, "Specifies the percentage at which the actual study set size and " +
-						"the size of the resampled study sets are allowed to differ"));
-			}
-			options.addOption(new Option("v","version",false,"Shows version information and exits"));
-
+			OntologizerOptions ontologizerOptions = OntologizerOptions.create();
+			Options options = ontologizerOptions.options();
 			Parser parser = new GnuParser();
 			CommandLine cmd = parser.parse(options,args);
 			if (cmd.hasOption("h"))
@@ -192,9 +118,9 @@ public class OntologizerCMD
 			if (arguments.calculationName != null)
 			{
 				boolean found = false;
-				for (int i=0;i<calculations.length;i++)
+				for (int i=0;i<ontologizerOptions.calculations().length;i++)
 				{
-					if (arguments.calculationName.equals(calculations[i]))
+					if (arguments.calculationName.equals(ontologizerOptions.calculations()[i]))
 					{
 						found = true;
 						break;
@@ -203,7 +129,7 @@ public class OntologizerCMD
 
 				if (!found)
 				{
-					String addInfo = " Did you mean perhaps \"" + SmithWaterman.findMostSimilar(calculations, arguments.calculationName) + "\"?";
+					String addInfo = " Did you mean perhaps \"" + SmithWaterman.findMostSimilar(ontologizerOptions.calculations(), arguments.calculationName) + "\"?";
 					System.err.println("Given calculation method " + arguments.calculationName + " wasn't found!" + addInfo);
 					System.exit(-1);
 				}
@@ -213,9 +139,9 @@ public class OntologizerCMD
 			if (arguments.correctionName != null)
 			{
 				boolean found = false;
-				for (int i=0;i<mtcs.length;i++)
+				for (int i=0;i<ontologizerOptions.mtcs().length;i++)
 				{
-					if (arguments.correctionName.equals(mtcs[i]))
+					if (arguments.correctionName.equals(ontologizerOptions.mtcs()[i]))
 					{
 						found = true;
 						break;
@@ -224,7 +150,7 @@ public class OntologizerCMD
 
 				if (!found)
 				{
-					String addInfo = " Did you mean perhaps \"" + SmithWaterman.findMostSimilar(mtcs, arguments.correctionName) + "\"?";
+					String addInfo = " Did you mean perhaps \"" + SmithWaterman.findMostSimilar(ontologizerOptions.mtcs(), arguments.correctionName) + "\"?";
 					System.err.println("Given MTC method " + arguments.correctionName + " wasn't found!" + addInfo);
 					System.exit(-1);
 				}
