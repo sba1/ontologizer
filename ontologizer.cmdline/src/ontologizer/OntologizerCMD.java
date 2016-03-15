@@ -150,7 +150,7 @@ public class OntologizerCMD
 			if (cmd.hasOption("h"))
 			{
 				HelpFormatter formatter = new HelpFormatter();
-				formatter.printHelp("Ontologizer", options);
+				formatter.printHelp(100, "Ontologizer", "Analyze High-Throughput Biological Data Using Gene Ontology", options, "", true);
 				System.exit(0);
 			}
 
