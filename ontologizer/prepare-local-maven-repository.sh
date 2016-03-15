@@ -1,8 +1,9 @@
 #!/bin/bash -x
 #
-# This script prepares the "local" maven repository for ontologizer.
-# We use an local maven repository in order to not to rely on
-# the maven plugin for eclipse. This also keeps the compiles consitent.
+# This script prepares the "local" Maven repository for Ontologizer.
+# We use an local maven repository in to avoid relying on the Maven
+# plugin for Eclipse and to speed up compiling. Also, some of the
+# dependencies are not available via Maven
 #
 
 rm -Rf work
