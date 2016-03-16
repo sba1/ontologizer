@@ -5,11 +5,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.GnuParser;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.Parser;
 
 import ontologizer.calculation.EnrichedGOTermsResult;
 import ontologizer.calculation.EnrichedGOTermsTableWriter;
@@ -71,7 +71,7 @@ public class OntologizerCMD
 		{
 			OntologizerOptions ontologizerOptions = OntologizerOptions.create();
 			Options options = ontologizerOptions.options();
-			Parser parser = new GnuParser();
+			CommandLineParser parser = new DefaultParser();
 			CommandLine cmd = parser.parse(options,args);
 			if (cmd.hasOption("h"))
 			{
