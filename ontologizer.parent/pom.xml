@@ -46,6 +46,7 @@
       <module>../ontologizer.gui</module>
       <module>../ontologizer.cmdline</module>
       <module>../ontologizer.benchmark</module>
+      <module>../ontologizer.cmdline.printopts</module>
      </modules>
 
      <reporting>
