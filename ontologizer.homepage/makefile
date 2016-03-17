@@ -26,10 +26,11 @@ all: copy-static
 .PHONY: copy-static
 copy-static:
 	cd ../ontologizer.parent && mvn package
-	rm -Rf static/webstart static/cmdline
-	mkdir -p static/webstart static/cmdline
+	rm -Rf static/webstart static/cmdline static/gui
+	mkdir -p static/webstart static/cmdline static/gui
 	cp -p ../ontologizer.gui/ontologizer.jnlp static/webstart
 	cp -p ../ontologizer.gui/target/ontologizer.gui-$(VERSION).jar static/webstart/ontologizer-gui.jar
+	cp -p ../ontologizer.gui/target/ontologizer.gui-$(VERSION)-jar-with-dependencies.jar static/gui/OntologizerGui.jar
 	cp -p ../ontologizer/target/ontologizer-$(VERSION).jar static/webstart/ontologizer.jar
 	cp -pR ../ontologizer/local-maven-repo static/webstart/
 	cp -p ../ontologizer.cmdline/target/ontologizer.cmdline-$(VERSION)-jar-with-dependencies.jar static/cmdline/Ontologizer.jar
