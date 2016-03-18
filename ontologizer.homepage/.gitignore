@@ -1,3 +1,5 @@
 /public
 /,project
 /static/webstart
+/static/gui
+/static/cmdline
