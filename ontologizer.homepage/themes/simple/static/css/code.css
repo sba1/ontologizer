@@ -1,0 +1,15 @@
+/* Code styles */
+
+pre, code {
+    color: #333;
+    background: rgb(250, 250, 250);
+    font-size: 100%;
+}
+
+code {
+    padding: 0.2em 0.4em;
+}
+
+pre code {
+    padding: 0;
+}
