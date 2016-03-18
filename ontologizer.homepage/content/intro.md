@@ -111,7 +111,3 @@ or by typing (on Windows)
 ```
 
 in the command line, assuming that both swt.jar and OntologizerGui.jar files are present in the current directory. On MacOSX you may have to add -XstartOnFirstThread, -d32 or both before the -cp argument, depending on the SWT version you have just downloaded.
-
-## Accessing Source
- 
-The source of Ontologizer can be found at https://github.com/sba1/ontologizer.
