@@ -3,7 +3,7 @@ title = "Ontologizer"
 type = "homepage"
 +++
 
-Ontologizer is a a tool for the statistical analysis and visualization of high-throughput biological
+Ontologizer is a tool for the statistical analysis and visualization of high-throughput biological
 data using Gene Ontology.
 
 <center>
