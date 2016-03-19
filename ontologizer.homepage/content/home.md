@@ -4,7 +4,7 @@ type = "homepage"
 +++
 
 Ontologizer is a tool for the statistical analysis and visualization of high-throughput biological
-data using Gene Ontology.
+data using Gene Ontology. Most conveniently, it can be started via the Java Webstart facility:
 
 <center>
 [![Webstart](/images/webstart.jpg)](/webstart/ontologizer.jnlp)
