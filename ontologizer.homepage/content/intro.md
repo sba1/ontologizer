@@ -64,10 +64,6 @@ It is possible to perform analysis on any number of groups (clusters) of genes s
 Finally, note that Gene Ontology annotations are made to the most specific term possible. All ancestors of the term are considered to be implicitly annotated. Therefore, if we are calculating the total annotations of a term, we need to count annotations to all (more specific) descendents of the term also. Note that we need to avoid introducing "extra" (duplicate) counts if there are multiple paths from a descendent term to an ancestor term, or if two distinct descendents of a term are annotated for a certain gene. A discussion of these issues is available in Robinson et al. (2004) [Gene-Ontology analysis reveals association of tissue-specific 5' CpG-island genes with development and embryogenesis](http://www.ncbi.nlm.nih.gov/pubmed/15254011?dopt=Abstract)
 
 
-### Downloading the Ontologizer Source Code
-
-The [source code](http://svn.code.sf.net/p/ontologizer/svn/) contains all the code as well as an Eclipse project file. The source code can be imported as an Eclipse project and compiled with Eclipse.
-
 ## Webstart
  
 The Ontologizer can be started directly from this website using Java webstart by clicking on the following icon:
