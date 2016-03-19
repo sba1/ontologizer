@@ -64,16 +64,6 @@ It is possible to perform analysis on any number of groups (clusters) of genes s
 Finally, note that Gene Ontology annotations are made to the most specific term possible. All ancestors of the term are considered to be implicitly annotated. Therefore, if we are calculating the total annotations of a term, we need to count annotations to all (more specific) descendents of the term also. Note that we need to avoid introducing "extra" (duplicate) counts if there are multiple paths from a descendent term to an ancestor term, or if two distinct descendents of a term are annotated for a certain gene. A discussion of these issues is available in Robinson et al. (2004) [Gene-Ontology analysis reveals association of tissue-specific 5' CpG-island genes with development and embryogenesis](http://www.ncbi.nlm.nih.gov/pubmed/15254011?dopt=Abstract)
 
 
-## Webstart
- 
-The Ontologizer can be started directly from this website using Java webstart by clicking on the following icon:
-
-[![Foo](/images/webstart.jpg)](/webstart/ontologizer.jnlp)
-
-Webstart applications are started directly from a web browser, which downloads the program code to the local computer. If the code has already been downloaded, the browser checks if the server has a newer version. If not, the local copy of the program is started. Further information is available at Sun's webstart site.
-
-For users, webstart means that the webbrowser will automatically download and use the latest available version of the webstart program, so users will automatically benefit from updates and bugfixes. Once the current version of the program has been downloaded, the program will start essentially as quickly as a traditional desktop application.
-
 ### Potential Problems with the Term Browser and Help Window of the Ontologizer
 
 With some combinations of debian linux and firefox, we have noticed a problem with the Ontologizer finding the libraries needed to allow browsing of GO terms and the show the HTML format of the help system. If you notice this problem, it may help to set the variable MOZILLA_FIVE_HOME in the file /etc/environment as follows:
