@@ -13,4 +13,11 @@ data using Gene Ontology. Most conveniently, it can be started via the Java Webs
 Note however that the Webstart facility will no longer work by default with recent versions of
 the Java runtime. See the [Webstart]({{< relref "webstart.md" >}}) section for details.
 
+Other Downloads
+---------------
+
+Command line: [Ontologizer.jar](/cmdline/Ontologizer.jar)
+
+GUI (without SWT): [OntologizerGui.jar](/gui/OntologizerGui.jar)
+
 
