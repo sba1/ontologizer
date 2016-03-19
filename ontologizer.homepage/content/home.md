@@ -11,7 +11,8 @@ data using Gene Ontology. Most conveniently, it can be started via the Java Webs
 </center>
 
 Note however that the Webstart facility will no longer work by default with recent versions of
-the Java runtime. See the [Webstart]({{< relref "webstart.md" >}}) section for details.
+the Java runtime due to increased security settings. See the [Webstart]({{< relref "webstart.md" >}})
+section for details.
 
 Other Downloads
 ---------------
