@@ -21,3 +21,11 @@ benefit from updates and bugfixes. Once the current version of the program has b
 downloaded, the program will start essentially as quickly as a traditional desktop
 application.
 
+Troubles
+--------
+
+The Java may refuse to start Ontologizer using Webstart facility as the binaries
+are only self-signed. To circumvent this problem, the most easy solution is to add the
+site `http://ontologizer.de` to the *Exception Site List* under the *Security*
+tab within the *Java Control Panel* application. See
+https://www.java.com/de/download/help/jcp_security.xml for details.

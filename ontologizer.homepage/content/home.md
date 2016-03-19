@@ -10,6 +10,7 @@ data using Gene Ontology. Most conveniently, it can be started via the Java Webs
 [![Webstart](/images/webstart.jpg)](/webstart/ontologizer.jnlp)
 </center>
 
->Mac OS X users, who experienced problems starting Ontologizer, may want to disable Java7 support for starting Webstart applications until the problem is solved. See [http://support.apple.com/kb/HT5559](http://support.apple.com/kb/HT5559) for instructions. Thanks to Christine Oger for finding this work-arround.
+Note however that the Webstart facility will no longer work by default with recent versions of
+the Java runtime. See the [Webstart]({{< relref "webstart.md" >}}) section for details.
 
 
