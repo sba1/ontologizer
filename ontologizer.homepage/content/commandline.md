@@ -17,28 +17,27 @@ $ java -jar Ontologizer.jar --help
 will produce following output:
 
 ```
-usage: java -jar Ontologizer.jar [-a <arg>] [-c <arg>] [-d <arg>] [-f <arg>] [-g
-       <arg>] [-h] [-i] [-m <arg>] [-n] [-o <arg>] [-p <arg>] [-r <arg>] [-s
-       <arg>] [-t <arg>] [-v]
+usage: java -jar Ontologizer.jar [-a <file>] [-c <arg>] [-d <[thrsh[,id]|id]>]
+       [-f <arg>] [-g <file>] [-h] [-i] [-m <arg>] [-n] [-o <arg>] [-p <file>]
+       [-r <arg>] [-s <path>] [-t <arg>] [-v]
 Analyze High-Throughput Biological Data Using Gene Ontology
- -a,--association <arg>       File containing associations from genes to GO
+ -a,--association <file>      File containing associations from genes to GO
                               terms. Required
  -c,--calculation <arg>       Specifies the calculation method to use. Possible
                               values are: "MGSA", "Parent-Child-Intersection",
                               "Parent-Child-Union" (default), "Term-For-Term",
                               "Topology-Elim", "Topology-Weighted"
- -d,--dot <arg>               For every study set analysis write out an
+ -d,--dot <[thrsh[,id]|id]>   For every study set analysis write out an
                               additional .dot file (GraphViz) containing the
                               graph that is induced by interesting nodes. The
-                              optional argument in range between 0 and 1
-                              specifies the threshold used to identify
-                              interesting nodes. By appending a GO Term
-                              identifier (separated by a comma) the output is
-                              restriced to the subgraph originating at this GO
-                              term.
+                              optional argument thrsh must be in range between 0
+                              and 1 and it specifies the threshold used to
+                              identify interesting nodes (defaults to 0.05). The
+                              GO term identifier id restricts the output to the
+                              subgraph originating at id.
  -f,--filter <arg>            Filter the gene names by appling rules in a given
                               file (currently only mapping supported).
- -g,--go <arg>                File containig GO terminology and structure (.obo
+ -g,--go <file>               File containig GO terminology and structure (.obo
                               format). Required
  -h,--help                    Shows this help
  -i,--ignore                  Ignore genes to which no association exist within
@@ -52,12 +51,12 @@ Analyze High-Throughput Biological Data Using Gene Ontology
                               contains the annotations.
  -o,--outdir <arg>            Specfies the directory in which the results will
                               be placed.
- -p,--population <arg>        File containing genes within the population.
+ -p,--population <file>       File containing genes within the population.
                               Required
  -r,--resamplingsteps <arg>   Specifies the number of steps used in resampling
                               based MTCs
- -s,--studyset <arg>          File of the study set or a directory containing
-                              study set files. Required
+ -s,--studyset <path>         Path to a file of a study set or to a directory
+                              containing study set files. Required
  -t,--sizetolerance <arg>     Specifies the percentage at which the actual study
                               set size and the size of the resampled study sets
                               are allowed to differ
