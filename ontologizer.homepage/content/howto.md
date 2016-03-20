@@ -1,6 +1,6 @@
 +++
 title = "How To"
-weight = 5
+weight = 20
 +++
 
 The following sections show some solutions to some common problems revolving around the lack of uniformity of gene name nomenclature, and show examples of Ontologizer output for C. elegans, mouse, yeast and Drosophila. 

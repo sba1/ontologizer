@@ -1,6 +1,6 @@
 +++
 title = "Invoke Manually"
-weight = 5
+weight = 10
 +++
 
 If the WebStart facility doesn't work for your platform, you can download [OntologizerGui.jar](/gui/OntologizerGui.jar). This comes with

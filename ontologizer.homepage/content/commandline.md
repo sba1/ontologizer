@@ -1,6 +1,6 @@
 +++
 title = "Command Line"
-weight = 6
+weight = 15
 +++
 
 The command-line version of Ontologizer can be used for batch processing or pipelines. Most general users will prefer the Java WebStart version, though. But if you want to use the command-line version, you need to download
