@@ -77,18 +77,27 @@ public class OntologizerOptions
 		Options options = new Options();
 
 		options.addOption(new Option("h","help",false,"Shows this help"));
-		options.addOption(new Option("g","go",true,"File containig GO terminology and structure (.obo format). Required"));
-		options.addOption(new Option("a","association",true,"File containing associations from genes to GO terms. Required"));
-		options.addOption(new Option("p","population",true,"File containing genes within the population. Required"));
-		options.addOption(new Option("s","studyset",true,"File of the study set or a directory containing study set files. Required"));
+		options.addOption(Option.builder("g").longOpt("go").argName("file").hasArg().desc(
+				"File containig GO terminology and structure (.obo format). Required"
+				).build());
+		options.addOption(Option.builder("a").longOpt("association").argName("file").hasArg().desc(
+				"File containing associations from genes to GO terms. Required"
+				).build());
+		options.addOption(Option.builder("p").longOpt("population").argName("file").hasArg().desc(
+				"File containing genes within the population. Required"
+				).build());
+		options.addOption(Option.builder("s").longOpt("studyset").argName("path").hasArg().desc(
+				"Path to a file of a study set or to a directory containing study set files. Required"
+				).build());
 		options.addOption(new Option("i","ignore",false,"Ignore genes to which no association exist within the calculation."));
 		options.addOption(new Option("c","calculation",true,calHelpString));
 		options.addOption(new Option("m","mtc",true,mtcHelpString));
-		options.addOption(new Option("d","dot",true, "For every study set analysis write out an additional .dot file (GraphViz) containing "+
-													 "the graph that is induced by interesting nodes. The optional argument in range between 0 and 1 "+
-													 "specifies the threshold used to identify interesting nodes. "+
-													 "By appending a GO Term identifier (separated by a comma) the output is restricted to the " +
-													 "subgraph originating at this GO term."));
+		options.addOption(Option.builder("d").longOpt("dot").argName("[thrsh[,id]|id]").hasArg().optionalArg(true).desc(
+				"For every study set analysis write out an additional .dot file (GraphViz) containing "+
+				"the graph that is induced by interesting nodes. The optional argument thrsh must be in range between 0 and 1 "+
+				"and it specifies the threshold used to identify interesting nodes (defaults to 0.05). "+
+				"The GO term identifier id restricts the output to the subgraph originating at id."
+				).build());
 		options.addOption(new Option("n","annotation",false,"Create an additional file per study set which contains the annotations."));
 		options.addOption(new Option("f","filter",true,"Filter the gene names by appling rules in a given file (currently only mapping supported)."));
 		options.addOption(new Option("o","outdir",true,"Specfies the directory in which the results will be placed."));
