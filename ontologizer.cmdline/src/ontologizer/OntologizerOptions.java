@@ -87,7 +87,7 @@ public class OntologizerOptions
 		options.addOption(new Option("d","dot",true, "For every study set analysis write out an additional .dot file (GraphViz) containing "+
 													 "the graph that is induced by interesting nodes. The optional argument in range between 0 and 1 "+
 													 "specifies the threshold used to identify interesting nodes. "+
-													 "By appending a GO Term identifier (separated by a comma) the output is restriced to the " +
+													 "By appending a GO Term identifier (separated by a comma) the output is restricted to the " +
 													 "subgraph originating at this GO term."));
 		options.addOption(new Option("n","annotation",false,"Create an additional file per study set which contains the annotations."));
 		options.addOption(new Option("f","filter",true,"Filter the gene names by appling rules in a given file (currently only mapping supported)."));
