@@ -82,6 +82,11 @@
 										<prefix>/usr/share/ontologizer/lib</prefix>
 									</mapper>
 								</data>
+								<data>
+									<linkTarget>/usr/share/ontologizer/lib/${project.build.finalName}-jar-with-dependencies.jar</linkTarget>
+									<linkName>/usr/share/ontologizer/lib/${project.artifactId}.jar</linkName>
+									<type>link</type>
+								</data>
 							</dataSet>
 						</configuration>
 					</execution>
