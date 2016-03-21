@@ -1,0 +1,6 @@
+#! /bin/sh
+#
+# Simple wrapper script to start the ontologizer application
+#
+
+java -jar /usr/share/ontologizer/lib/ontologizer.cmdline.jar "$@"

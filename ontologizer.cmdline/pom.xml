@@ -87,6 +87,15 @@
 									<linkName>/usr/share/ontologizer/lib/${project.artifactId}.jar</linkName>
 									<type>link</type>
 								</data>
+								<data>
+									<src>ontologizer</src>
+									<type>file</type>
+									<mapper>
+										<type>perm</type>
+										<prefix>/usr/bin</prefix>
+										<filemode>755</filemode>
+									</mapper>
+								</data>
 							</dataSet>
 						</configuration>
 					</execution>
