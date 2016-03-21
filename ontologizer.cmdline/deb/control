@@ -1,0 +1,8 @@
+Source: ontologizer-cli
+Section: science
+Maintainer: Sebastian Bauer <mail@sebastianbauer.info>
+Priority: extra
+Version: [[version]]
+Package: ontologizer-cli
+Architecture: any
+Description: Command-line version of Ontologizer
