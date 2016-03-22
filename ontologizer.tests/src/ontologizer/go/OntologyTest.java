@@ -200,6 +200,14 @@ public class OntologyTest
 		return names;
 	}
 
+	private static Set<String> termNames(Collection<TermID> terms)
+	{
+		Set<String> names = new HashSet<String>();
+		for (TermID t : terms)
+			names.add(t.toString());
+		return names;
+	}
+
 	@Test
 	public void testSubsetOntology()
 	{
@@ -228,6 +236,30 @@ public class OntologyTest
 				expectedGoSlimTerms++;
 		}
 		assertEquals(expectedGoSlimTerms, goslim.getNumberOfTerms());
+	}
+
+	@Test
+	public void testSlimSubsetInternalOntology()
+	{
+		Ontology o = new InternalOntology().graph;
+		Set<String> expectedSubsets = new HashSet<String>(Arrays.asList("slim"));
+		Assert.assertEquals(expectedSubsets, subsetNames(o.getAvailableSubsets()));
+
+		o.setRelevantSubset("slim");
+		Ontology slim = o.getOntlogyOfRelevantTerms();
+		assertEquals(5, slim.getNumberOfTerms());
+
+		Set<String> expectedTerms = new HashSet<String>(Arrays.asList("GO:0000002","GO:0000003"));
+		assertEquals(expectedTerms, termNames(slim.getTermChildren(new TermID("GO:0000001"))));
+
+		expectedTerms = new HashSet<String>(Arrays.asList("GO:0000007"));
+		assertEquals(expectedTerms, termNames(slim.getTermChildren(new TermID("GO:0000002"))));
+
+		expectedTerms = new HashSet<String>(Arrays.asList("GO:0000007"));
+		assertEquals(expectedTerms, termNames(slim.getTermChildren(new TermID("GO:0000003"))));
+
+		expectedTerms = new HashSet<String>(Arrays.asList("GO:0000010"));
+		assertEquals(expectedTerms, termNames(slim.getTermChildren(new TermID("GO:0000007"))));
 	}
 
 	@Test
