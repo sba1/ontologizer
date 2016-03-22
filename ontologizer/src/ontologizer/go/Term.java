@@ -61,8 +61,11 @@ public class Term implements ITerm
 	/** The intersections tags of this term, as read from the obo file. */
 	private String[] intersections;
 
+	/** Per default, terms are not associated to any subset. This is the empty array */
+	private static final Subset [] NO_SUBSETS = new Subset[]{};
+
 	/** The term's subsets */
-	private Subset[] subsets;
+	private Subset[] subsets = NO_SUBSETS;
 
 	/** The term's xrefs */
 	private TermXref[] xrefs;
