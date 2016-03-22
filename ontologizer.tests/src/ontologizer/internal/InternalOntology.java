@@ -1,5 +1,6 @@
 package ontologizer.internal;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Random;
 
@@ -8,12 +9,18 @@ import ontologizer.association.AssociationContainer;
 import ontologizer.go.Ontology;
 import ontologizer.go.ParentTermID;
 import ontologizer.go.Prefix;
+import ontologizer.go.Subset;
 import ontologizer.go.Term;
 import ontologizer.go.TermContainer;
 import ontologizer.go.TermID;
 import ontologizer.go.TermRelation;
 import ontologizer.types.ByteString;
 
+/**
+ * Represents an example ontology.
+ *
+ * @author Sebastian Bauer
+ */
 public class InternalOntology
 {
 	public Ontology graph;
@@ -22,6 +29,10 @@ public class InternalOntology
 	public InternalOntology()
 	{
 		long seed = 1;
+
+		Subset subset = new Subset("slim","Slim internal ontology");
+		ArrayList<Subset> subsets = new ArrayList<Subset>();
+		subsets.add(subset);
 
 		/* Go Graph */
 		HashSet<Term> terms = new HashSet<Term>();
@@ -36,6 +47,12 @@ public class InternalOntology
 		Term c9 = new Term("GO:0000009", "C9", new ParentTermID(c7.getID(),TermRelation.IS_A));
 		Term c10 = new Term("GO:0000010", "C10", new ParentTermID(c9.getID(),TermRelation.IS_A));
 		Term c11 = new Term("GO:0000011", "C11", new ParentTermID(c9.getID(),TermRelation.IS_A));
+
+		c1.setSubsets(subsets);
+		c2.setSubsets(subsets);
+		c3.setSubsets(subsets);
+		c7.setSubsets(subsets);
+		c10.setSubsets(subsets);
 
 		terms.add(c1);
 		terms.add(c2);
