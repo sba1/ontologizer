@@ -11,7 +11,6 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.zip.GZIPOutputStream;
 
-import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -39,11 +38,11 @@ public class AssociationParserTest
 		assertEquals(87599, ap.getAssociations().size());
 
 		Association a = ap.getAssociations().get(0);
-		Assert.assertEquals("S000007287",a.getDB_Object().toString());
+		assertEquals("S000007287",a.getDB_Object().toString());
 
 		/* Note that this excludes NOT annotations */
 		a = ap.getAssociations().get(49088);
-		Assert.assertEquals("S000004009",a.getDB_Object().toString());
+		assertEquals("S000004009",a.getDB_Object().toString());
 	}
 
 	@Test
@@ -62,7 +61,7 @@ public class AssociationParserTest
 		AssociationParser ap = new AssociationParser(new OBOParserFileInput(tmp.getAbsolutePath()), new TermContainer(oboParser.getTermMap(), "", ""));
 		AssociationContainer assoc = new AssociationContainer(ap.getAssociations(), ap.getSynonym2gene(), ap.getDbObject2gene());
 
-		Assert.assertEquals(1, assoc.getAllAnnotatedGenes().size());
+		assertEquals(1, assoc.getAllAnnotatedGenes().size());
 	}
 
 	@Test
@@ -80,7 +79,7 @@ public class AssociationParserTest
 		AssociationParser ap = new AssociationParser(new OBOParserFileInput(tmp.getAbsolutePath()), new TermContainer(oboParser.getTermMap(), "", ""));
 		AssociationContainer assoc = new AssociationContainer(ap.getAssociations(), ap.getSynonym2gene(), ap.getDbObject2gene());
 
-		Assert.assertEquals(1, assoc.getAllAnnotatedGenes().size());
+		assertEquals(1, assoc.getAllAnnotatedGenes().size());
 	}
 
 	@Test
@@ -100,8 +99,8 @@ public class AssociationParserTest
 		AssociationContainer assoc = new AssociationContainer(ap.getAssociations(), ap.getSynonym2gene(), ap.getDbObject2gene());
 
 		/* We expect only one annotated object as DBOBJID1 is the same as DBOBJID2 due to the same symbol */
-		Assert.assertEquals(1,assoc.getAllAnnotatedGenes().size());
-		Assert.assertEquals("SYMBOL",assoc.getAllAnnotatedGenes().iterator().next().toString());
+		assertEquals(1,assoc.getAllAnnotatedGenes().size());
+		assertEquals("SYMBOL",assoc.getAllAnnotatedGenes().iterator().next().toString());
 	}
 
 	@Test
@@ -120,6 +119,6 @@ public class AssociationParserTest
 		oboParser.doParse();
 
 		AssociationParser ap = new AssociationParser(new OBOParserFileInput(tmp.getAbsolutePath()),new TermContainer(oboParser.getTermMap(), "", ""));
-		Assert.assertEquals(21,ap.getAssociations().size());
+		assertEquals(21,ap.getAssociations().size());
 	}
 }
