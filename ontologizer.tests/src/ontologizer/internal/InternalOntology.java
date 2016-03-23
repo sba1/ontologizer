@@ -17,7 +17,8 @@ import ontologizer.go.TermRelation;
 import ontologizer.types.ByteString;
 
 /**
- * Represents an example ontology.
+ * Represents an example data set. It contains an ontology with 11 terms (including
+ * the single root) and a set of 500 genes.
  *
  * @author Sebastian Bauer
  */
