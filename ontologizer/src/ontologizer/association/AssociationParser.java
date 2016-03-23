@@ -15,7 +15,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import ontologizer.go.IParserInput;
-import ontologizer.go.TermContainer;
 import ontologizer.go.TermID;
 import ontologizer.go.TermMap;
 import ontologizer.linescanner.AbstractByteLineScanner;
