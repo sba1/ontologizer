@@ -9,6 +9,7 @@ import java.util.zip.GZIPInputStream;
 /**
  * An OBOParserInput for a local file.
  *
+ * @todo rename as it is not restricted to OBO
  * @author Sebastian Bauer
  */
 public class OBOParserFileInput implements IParserInput
