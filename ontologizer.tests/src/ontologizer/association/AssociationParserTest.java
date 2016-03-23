@@ -4,11 +4,13 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import org.junit.Rule;
@@ -34,6 +36,36 @@ public class AssociationParserTest
 		OBOParser oboParser = new OBOParser(new OBOParserFileInput(OBO_FILE));
 		oboParser.doParse();
 		AssociationParser ap = new AssociationParser(new OBOParserFileInput(ASSOCIATION_FILE), new TermContainer(oboParser.getTermMap(), "", ""));
+		assertEquals(ap.getFileType(),AssociationParser.Type.GAF);
+		assertEquals(87599, ap.getAssociations().size());
+
+		Association a = ap.getAssociations().get(0);
+		assertEquals("S000007287",a.getDB_Object().toString());
+
+		/* Note that this excludes NOT annotations */
+		a = ap.getAssociations().get(49088);
+		assertEquals("S000004009",a.getDB_Object().toString());
+	}
+
+	@Test
+	public void testUncompressed() throws IOException, OBOParserException
+	{
+		/* As testSimple() but bypasses auto decompression by manually decompressing
+		 * the association file
+		 */
+		File assocFile = tmpFolder.newFile();
+		GZIPInputStream in = new GZIPInputStream(new FileInputStream(ASSOCIATION_FILE));
+		FileOutputStream out = new FileOutputStream(assocFile);
+		byte [] buf = new byte[4096];
+		int read;
+		while ((read = in.read(buf)) > 0)
+			out.write(buf, 0,  read);
+		in.close();
+		out.close();
+
+		OBOParser oboParser = new OBOParser(new OBOParserFileInput(OBO_FILE));
+		oboParser.doParse();
+		AssociationParser ap = new AssociationParser(new OBOParserFileInput(assocFile.getAbsolutePath()), new TermContainer(oboParser.getTermMap(), "", ""));
 		assertEquals(ap.getFileType(),AssociationParser.Type.GAF);
 		assertEquals(87599, ap.getAssociations().size());
 

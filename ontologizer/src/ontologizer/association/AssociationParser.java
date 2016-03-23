@@ -156,7 +156,7 @@ public class AssociationParser
 			if (lines.size() == 0)
 				return;
 
-			byte [] head = lines.get(0);
+			byte [] head = merge(lines.get(0), abls.availableBuffer());
 
 			if (new String(head).startsWith("\"Probe Set ID\",\"GeneChip Array\""))
 			{
@@ -562,5 +562,20 @@ public class AssociationParser
 	public Type getFileType()
 	{
 		return fileType;
+	}
+
+	/**
+	 * Merge two byte arrays.
+	 *
+	 * @param a1
+	 * @param a2
+	 * @return
+	 */
+	private static byte [] merge(byte [] a1, byte [] a2)
+	{
+		byte [] b = new byte[a1.length + a2.length];
+		System.arraycopy(a1, 0, b, 0, a1.length);
+		System.arraycopy(a2, 0, b, a1.length,a2.length);
+		return b;
 	}
 }
