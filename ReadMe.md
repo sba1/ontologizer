@@ -35,7 +35,7 @@ ia Maven in your ```pom.xml``` in the following way:
 
 ```
 	<repositories>
-    ...
+		...
 		<repository>
 			<id>ontologizer-mvn</id>
 			<url>https://raw.githubusercontent.com/sba1/ontologizer-mvn/master/</url>
@@ -44,7 +44,7 @@ ia Maven in your ```pom.xml``` in the following way:
 				<updatePolicy>always</updatePolicy>
 			</snapshots>
 		</repository>
-    ...
+		...
 	</repositories>
 ```
 
@@ -52,16 +52,17 @@ Further more, add
 
 ```
 	<dependencies>
-    ...
+		...
 		<dependency>
 			<groupId>de.ontologizer</groupId>
 			<artifactId>ontologizer</artifactId>
 			<version>0.0.2-SNAPSHOT</version>
 		</dependency>
-    ...
+		...
 	</dependencies>
 ```
 
-to the ```pom.xml``` file to let your project depend on the Ontologizer core.
+to your ```pom.xml``` file to let your project depend on the Ontologizer core.
 Notice that the ```groupId``` is slightly different than it is used in this
-project. Also note that the URL and such is subject to change.
+project (```de.ontologizer``` vs ```ontologizer```). Also note that the URL for
+the repository is subject to change.
