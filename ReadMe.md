@@ -31,7 +31,7 @@ API
 
 The core of Ontologizer can be in principle used by other applications, although the API
 is rather dumb. Snapshots are regulary deployed in a dedicated GitHub repo and can be accessed
-ia Maven in your ```pom.xml``` in the following way:
+via Maven in your ```pom.xml``` in the following way:
 
 ```
 	<repositories>
