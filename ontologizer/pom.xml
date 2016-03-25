@@ -203,7 +203,8 @@
 						<configuration>
 							<url>file://${project.build.directory}/staging-mvn-repo</url>
 							<file>${project.build.directory}/${project.build.finalName}.jar</file>
-							<groupId>${project.groupId}</groupId>
+							<!-- Different then our groupId -->
+							<groupId>de.ontologizer</groupId>
 							<artifactId>${project.artifactId}</artifactId>
 							<version>${project.version}</version>
 						</configuration>
