@@ -224,6 +224,9 @@
 							<goal>jar</goal>
 						</goals>
 						<phase>package</phase>
+						<configuration>
+							<excludePackageNames>att.*,java_cup.*</excludePackageNames>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
