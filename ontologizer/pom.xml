@@ -204,7 +204,7 @@
 							<url>file://${project.build.directory}/staging-mvn-repo</url>
 							<file>${project.build.directory}/${project.build.finalName}.jar</file>
 							<javadoc>${project.build.directory}/${project.build.finalName}-javadoc.jar</javadoc>
-							<!-- Different then our groupId -->
+							<!-- Different to our groupId -->
 							<groupId>de.ontologizer</groupId>
 							<artifactId>${project.artifactId}</artifactId>
 							<version>${project.version}</version>
