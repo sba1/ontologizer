@@ -194,6 +194,7 @@ public class ProjectSettingsComposite extends Composite
 
 	private StyledText infoText;
 	private Extracted infoTextExtracted;
+	private String lastInfoText;
 
 	private Button subsetCheckbox;
 	private Button considerCheckbox;
@@ -546,6 +547,11 @@ public class ProjectSettingsComposite extends Composite
 	 */
 	public void setInfoText(String text)
 	{
+		if (lastInfoText != null)
+		{
+			if (lastInfoText.equals(text))
+				return;
+		}
 		infoTextExtracted = new LinkExtractor(text).extract();
 		infoText.setText(infoTextExtracted.text);
 
