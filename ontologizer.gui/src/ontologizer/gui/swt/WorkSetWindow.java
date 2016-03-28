@@ -189,20 +189,6 @@ public class WorkSetWindow extends ApplicationWindow
 	}
 
 	/**
-	 * Updates the given WorkSet (which is at the given index).
-	 *
-	 * @param idx
-	 * @param ws
-	 */
-	public void updateWorkSet(int idx, WorkSet ws)
-	{
-		TreeItem ti = workSetTree.getItem(idx);
-		TreeItem [] children = ti.getItems();
-		TreeItem oboTi = children[0];
-		TreeItem associationTi = children[1];
-	}
-
-	/**
 	 * Add an action executed on a click of the download button.
 	 *
 	 * @param act
