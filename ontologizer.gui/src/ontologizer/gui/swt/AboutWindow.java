@@ -40,7 +40,7 @@ public class AboutWindow extends ApplicationWindow
 	final static String aboutText = "Ontologizer\n\nVersion %s\nCopyright (c) Ontologizer Development Team %s.\nAll rights reserved.";
 	final static String visitText = "Visit %s for more information.";
 
-	final static String homepageText = "http://compbio.charite.de/ontologizer/";
+	final static String homepageText = "http://ontologizer.de";
 
 	public AboutWindow(Display display)
 	{
