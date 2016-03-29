@@ -7,6 +7,8 @@
 
 VERSION = 0.0.2-SNAPSHOT
 
+-include makefile.settings
+
 ifndef KEYSTORE_FILE
 $(error Please define KEYSTORE_FILE)
 endif
