@@ -115,8 +115,5 @@ public class AboutWindow extends ApplicationWindow
 				shell.setVisible(false);
 			}
 		});
-		shell.pack();
-
-
 	}
 }
