@@ -306,14 +306,9 @@ abstract public class Bayes2GOScore
 	public abstract void hiddenGeneActivated(int gid);
 	public abstract void hiddenGeneDeactivated(int gid);
 
-//	public long currentTime;
-
-
 
 	public void switchState(int toSwitch)
 	{
-//		long enterTime = System.nanoTime();
-
 		int [] geneIDs = termLinks[toSwitch].gid;
 
 		isActive[toSwitch] = !isActive[toSwitch];
@@ -378,13 +373,6 @@ abstract public class Bayes2GOScore
 			numInactiveTerms++;
 
 		}
-
-//		{
-//			long ds = currentTime / 100000000;
-//			currentTime += System.nanoTime() - enterTime;
-//			if (currentTime / 100000000 != ds)
-//				System.out.println(currentTime / 1000000);
-//		}
 	}
 
 	public void exchange(TermID t1, TermID t2)
