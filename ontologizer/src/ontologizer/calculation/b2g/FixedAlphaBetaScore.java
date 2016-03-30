@@ -332,8 +332,6 @@ public class FixedAlphaBetaScore extends Bayes2GOScore
 			int alpha2 = 1; /* Psedocounts, true negative */
 			int beta1 = 1; /* Pseudocounts, false negative */
 			int beta2 = 1; /* Pseudocounts, true positives */
-			double pl = 0;
-			double pu = 0.5;
 			int p1 = 1; /* Pseudocounts, on */
 			int p2 = 1; /* Pseudocounts, off */
 

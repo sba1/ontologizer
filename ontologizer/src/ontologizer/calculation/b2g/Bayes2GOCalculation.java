@@ -16,12 +16,9 @@ import ontologizer.calculation.ICalculationProgress;
 import ontologizer.enumeration.GOTermEnumerator;
 import ontologizer.go.Ontology;
 import ontologizer.go.TermID;
-import ontologizer.parser.ItemAttribute;
-import ontologizer.parser.ValuedItemAttribute;
 import ontologizer.set.PopulationSet;
 import ontologizer.set.StudySet;
 import ontologizer.statistics.AbstractTestCorrection;
-import ontologizer.types.ByteString;
 
 /**
  * This class implements an model-based analysis. The description of the entire

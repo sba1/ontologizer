@@ -1,8 +1,5 @@
 package ontologizer.calculation.b2g;
 
-import ontologizer.calculation.b2g.B2GParam.Type;
-
-
 class IntegerParam extends B2GParam
 {
 	private int val;

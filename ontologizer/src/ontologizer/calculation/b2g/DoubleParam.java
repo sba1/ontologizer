@@ -1,7 +1,5 @@
 package ontologizer.calculation.b2g;
 
-import ontologizer.calculation.b2g.B2GParam.Type;
-
 class DoubleParam extends B2GParam
 {
 	private double min = Double.NaN;
