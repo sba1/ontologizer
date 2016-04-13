@@ -1,0 +1,3 @@
+[submodule "ontologizer.homepage/update-maven-metadata"]
+	path = ontologizer.homepage/update-maven-metadata
+	url = git@github.com:sba1/update-maven-metadata.git

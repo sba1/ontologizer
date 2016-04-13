@@ -37,3 +37,20 @@ copy-static:
 	cp -pR ../ontologizer/local-maven-repo static/webstart/
 	cp -p ../ontologizer.cmdline/target/ontologizer.cmdline-$(VERSION)-jar-with-dependencies.jar static/cmdline/Ontologizer.jar
 	find static/webstart | grep .jar$ | xargs -n 1 -I'{}' jarsigner -keystore $(KEYSTORE_FILE) -storepass:env $(KEYSTORE_PASSWORD_ENV) '{}' $(KEYSTORE_ALIAS)
+
+#
+# Deploy the jars in a local ontologizer.mvn repo
+#
+.PHONY: deploy-jars
+deploy-jars:
+	cd ../ontologizer && mvn clean && mvn deploy
+	if [ -e ontologizer-mvn/.git ]; then \
+		cd ontologizer-mvn && \
+		git fetch origin && \
+		git checkout master && \
+		git rebase origin/master; \
+	else \
+		git clone git@github.com:sba1/ontologizer-mvn.git; \
+	fi
+	cp -Rv ../ontologizer/target/staging-mvn-repo/* ontologizer-mvn
+	cd ontologizer-mvn && ../update-maven-metadata/update-maven-metadata.py --do-it
