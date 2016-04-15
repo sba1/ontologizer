@@ -274,36 +274,7 @@
 				</executions>
 			</plugin>
 
-			<!-- see https://stackoverflow.com/questions/14013644 -->
-
-			<plugin>
-				<groupId>com.github.github</groupId>
-				<artifactId>site-maven-plugin</artifactId>
-				<version>0.12</version>
-				<configuration>
-					<server>github</server>
-					<message>Maven artifacts for ${project.version}</message>
-					<noJekyll>true</noJekyll>
-					<outputDirectory>${project.build.directory}/staging-mvn-repo</outputDirectory>
-					<branch>refs/heads/master</branch>
-					<includes>
-						<include>**/*</include>
-					</includes>
-					<repositoryName>ontologizer-mvn</repositoryName>
-					<repositoryOwner>sba1</repositoryOwner>
-					<merge>true</merge>
-				</configuration>
-				<executions>
-					<execution>
-						<goals>
-							<goal>site</goal>
-						</goals>
-						<phase>deploy</phase>
-					</execution>
-				</executions>
-			</plugin>
 		</plugins>
-
 
 		<pluginManagement>
 			<plugins>
