@@ -25,6 +25,18 @@ endif
 all: copy-static
 	hugo
 
+#
+# Check if the current checkout is clean and fail if this
+# is not the case
+#
+
+.PHONY: check-clean-checkout
+check-clean-checkout:
+	if [ $$(git status --porcelain | wc -c) -ne 0 ]; then \
+		echo "Working directory is dirty or contains untracked files. Aborting."; \
+		exit 1; \
+	fi
+
 .PHONY: copy-static
 copy-static:
 	cd ../ontologizer.parent && mvn package
@@ -42,7 +54,7 @@ copy-static:
 # Deploy the jars in a local ontologizer.mvn repo
 #
 .PHONY: deploy-jars
-deploy-jars:
+deploy-jars: check-clean-checkout
 	cd ../ontologizer && mvn clean && mvn deploy
 	if [ -e ontologizer-mvn/.git ]; then \
 		cd ontologizer-mvn && \
