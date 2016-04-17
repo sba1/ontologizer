@@ -37,8 +37,11 @@ check-clean-checkout:
 		exit 1; \
 	fi
 
+#
+# Copy static files into the static folder
+#
 .PHONY: copy-static
-copy-static:
+copy-static: check-clean-checkout
 	cd ../ontologizer.parent && mvn package
 	rm -Rf static/webstart static/cmdline static/gui
 	mkdir -p static/webstart static/cmdline static/gui
@@ -49,6 +52,22 @@ copy-static:
 	cp -pR ../ontologizer/local-maven-repo static/webstart/
 	cp -p ../ontologizer.cmdline/target/ontologizer.cmdline-$(VERSION)-jar-with-dependencies.jar static/cmdline/Ontologizer.jar
 	find static/webstart | grep .jar$ | xargs -n 1 -I'{}' jarsigner -keystore $(KEYSTORE_FILE) -storepass:env $(KEYSTORE_PASSWORD_ENV) '{}' $(KEYSTORE_ALIAS)
+
+#
+# Deploy the homepage
+#
+.PHONY: deploy
+deploy: copy-static
+	if [ -e ontologizer-pages/.git ]; then \
+		cd ontologizer-pages && \
+		git fetch origin && \
+		git checkout gh-pages && \
+		git rebase origin/gh-pages; \
+	else \
+		git clone git@github.com:sba1/ontologizer-pages.git; \
+	fi
+	hugo
+	cp -Rp public/* ontologizer-pages
 
 #
 # Deploy the jars in a local ontologizer.mvn repo
