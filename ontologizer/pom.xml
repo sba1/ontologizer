@@ -129,7 +129,6 @@
 				<includes>
 					<include>**/*.html</include>
 					<include>**/*.png</include>
-					<include>ChangeLog</include>
 				</includes>
 			</resource>
 		</resources>
@@ -169,7 +168,6 @@
 								<!-- Tell ant to use an external java compiler -->
 								<property name="build.compiler" value="extJavac" />
 								<ant antfile="build.xml" target="version"></ant>
-								<ant antfile="build.xml" target="build-user-changelog"></ant>
 							</target>
 						</configuration>
 						<goals>

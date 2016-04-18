@@ -104,6 +104,11 @@
 			<artifactId>ontologizer.svd</artifactId>
 			<version>0.0.2-SNAPSHOT</version>
 		</dependency>
+		<dependency>
+			<groupId>ontologizer</groupId>
+			<artifactId>ontologizer.changelog</artifactId>
+			<version>0.0.2-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 
 	<build>

@@ -56,22 +56,6 @@ public class BuildInfoData {
 		
 	</target>
 
-	
-	<!-- Target for building the user visible change log from the log. Requires svn command.
-	   - User-visible change logs are all texts that appear as  after the keyword "$userlog$" -->
-	<target name="build-user-changelog" depends="init">
-		<mkdir dir="${build.classes}" />
-		<javac srcdir="src/sonumina/util/changelog"
-         destdir="${build.classes}"
-		 includeantruntime="false"
-         debug="on" />
-		<java classname="sonumina.util.changelog.BuildChangeLog">
-			<classpath path="${build.classes}"/>
-			<arg file="${src.dir}/.." />
-			<arg file="src/ChangeLog"/>
-		</java>
-	</target>
-
 	<target name="init.gui" depends="init">
 		<!-- SWT support -->
 		<property name="swt.jar" value="${env.SWT_LIB}" />
