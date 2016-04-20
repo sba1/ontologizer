@@ -286,9 +286,10 @@ public class FileCache
 		new File(FileCache.cacheDirectory).mkdirs();
 
 		File index = new File(cacheDirectory,".index");
+		BufferedReader br = null;
 		try
 		{
-			BufferedReader br = new BufferedReader(new FileReader(index));
+			br = new BufferedReader(new FileReader(index));
 			String line;
 			while ((line = br.readLine()) != null)
 			{
@@ -311,7 +312,20 @@ public class FileCache
 		} catch (IOException e)
 		{
 			logger.log(Level.WARNING, "", e);
+		} finally
+		{
+			if (br != null)
+			{
+				try
+				{
+					br.close();
+				} catch (IOException e)
+				{
+					logger.log(Level.WARNING, "", e);
+				}
+			}
 		}
+
 	}
 
 	/**
