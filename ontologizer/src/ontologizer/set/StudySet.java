@@ -18,7 +18,6 @@ import java.util.logging.Logger;
 import ontologizer.association.Association;
 import ontologizer.association.AssociationContainer;
 import ontologizer.association.Gene2Associations;
-import ontologizer.enumeration.GOTermCounter;
 import ontologizer.enumeration.GOTermEnumerator;
 import ontologizer.enumeration.GOTermEnumerator.GOTermAnnotatedGenes;
 import ontologizer.filter.GeneFilter;
@@ -58,9 +57,6 @@ public class StudySet implements Iterable<ByteString>
 
 	/** The name of the study set */
 	private String name;
-
-	/** Cached GOTermCounter */
-	private GOTermCounter goTermCounter;
 
 	/** Cached GOTermEnumerator */
 	private GOTermEnumerator goTermEnumerator;
@@ -183,10 +179,11 @@ public class StudySet implements Iterable<ByteString>
 	 * call this method in order to allow the garbage
 	 * collector to free the enumerator and counter associated
 	 * memory.
+	 *
+	 * TODO: Rename
 	 */
 	public void resetCounterAndEnumerator()
 	{
-		goTermCounter = null;
 		goTermEnumerator = null;
 	}
 
@@ -332,32 +329,6 @@ public class StudySet implements Iterable<ByteString>
 
 		/* Reset counter and enumerator */
 		this.resetCounterAndEnumerator();
-	}
-
-	/**
-	 * Count the number of genes annotated for every term. Multiple
-	 * calls to this method are fast, if the gene set has not
-	 * been changed inbetween.
-	 *
-	 * @param goTerms
-     * @param associationContainer
-	 */
-	public synchronized GOTermCounter countGOTerms(Ontology graph, AssociationContainer associationContainer)
-	{
-		/* Return cached enumerator if available */
-		if (goTermCounter != null) return goTermCounter;
-
-		goTermCounter =  new GOTermCounter(graph);
-
-		/* Iterate over all gene names and add their annotations to the goTermCounter */
-		for (ByteString geneName : gene2Attribute.keySet())
-		{
-			Gene2Associations gene2Association = associationContainer.get(geneName);
-			if (gene2Association != null)
-				goTermCounter.add(gene2Association.getAssociations());
-		}
-
-		return goTermCounter;
 	}
 
 	public GOTermEnumerator enumerateGOTerms(Ontology graph, AssociationContainer associationContainer)

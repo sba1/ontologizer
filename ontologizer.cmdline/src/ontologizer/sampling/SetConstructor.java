@@ -18,7 +18,6 @@ import ontologizer.calculation.CalculationRegistry;
 import ontologizer.calculation.EnrichedGOTermsResult;
 import ontologizer.calculation.ICalculation;
 import ontologizer.calculation.TermForTermGOTermProperties;
-import ontologizer.enumeration.GOTermCounter;
 import ontologizer.enumeration.GOTermEnumerator;
 import ontologizer.enumeration.GOTermEnumerator.GOTermAnnotatedGenes;
 import ontologizer.go.Ontology;
@@ -265,7 +264,7 @@ public class SetConstructor
 
 			if (wantSubTermMatrix)
 			{
-				GOTermCounter populationTermCounter = completePop.countGOTerms(graph,assocs);
+				GOTermEnumerator populationTermCounter = completePop.enumerateGOTerms(graph,assocs);
 				PrintWriter matrixOut = new PrintWriter(new File(outDir,"subtermMatrix.txt"));
 
 				matrixOut.print("TermID");

@@ -309,7 +309,6 @@ public class Benchmark
 		for (ByteString gene : allAnnotatedGenes)
 			completePop.addGene(gene,"None");
 		completePop.filterOutAssociationlessGenes(assoc);
-		completePop.countGOTerms(graph, assoc);
 
 		final GOTermEnumerator completePopEnumerator = completePop.enumerateGOTerms(graph, assoc);
 
