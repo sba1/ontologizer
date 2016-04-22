@@ -17,7 +17,6 @@ import ontologizer.association.AssociationParser;
 import ontologizer.calculation.CalculationRegistry;
 import ontologizer.calculation.EnrichedGOTermsResult;
 import ontologizer.calculation.ICalculation;
-import ontologizer.calculation.TermForTermGOTermProperties;
 import ontologizer.enumeration.GOTermEnumerator;
 import ontologizer.enumeration.GOTermEnumerator.GOTermAnnotatedGenes;
 import ontologizer.go.Ontology;
@@ -30,7 +29,6 @@ import ontologizer.go.Namespace.NamespaceEnum;
 import ontologizer.set.PopulationSet;
 import ontologizer.set.StudySet;
 import ontologizer.statistics.AbstractTestCorrection;
-import ontologizer.statistics.PValue;
 import ontologizer.statistics.TestCorrectionRegistry;
 import ontologizer.types.ByteString;
 
