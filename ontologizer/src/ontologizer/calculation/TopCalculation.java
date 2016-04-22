@@ -6,8 +6,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import ontologizer.association.AssociationContainer;
-import ontologizer.enumeration.GOTermEnumerator;
-import ontologizer.enumeration.GOTermEnumerator.GOTermAnnotatedGenes;
+import ontologizer.enumeration.TermEnumerator;
+import ontologizer.enumeration.TermEnumerator.TermAnnotatedGenes;
 import ontologizer.go.Ontology;
 import ontologizer.go.TermID;
 import ontologizer.go.Ontology.GOLevels;
@@ -58,7 +58,7 @@ public class TopCalculation extends AbstractHypergeometricCalculation
 			 * @param p
 			 * @return
 			 */
-			private HashSet<ByteString> calculateTerm(GOTermEnumerator populationTermEnumerator, GOTermEnumerator studyTermEnumerator, StudySet studySet, TermID term, ArrayList<PValue> pList)
+			private HashSet<ByteString> calculateTerm(TermEnumerator populationTermEnumerator, TermEnumerator studyTermEnumerator, StudySet studySet, TermID term, ArrayList<PValue> pList)
 			{
 				if (term.id == 5982)
 					System.out.println("HUHUHUH" + markedGenesMap.containsKey(term));
@@ -80,12 +80,12 @@ public class TopCalculation extends AbstractHypergeometricCalculation
 				int popGeneCount = populationSet.getGeneCount();
 				int studyGeneCount = studySet.getGeneCount();
 
-				GOTermAnnotatedGenes studyAnnotatedGenes = studyTermEnumerator.getAnnotatedGenes(term);
+				TermAnnotatedGenes studyAnnotatedGenes = studyTermEnumerator.getAnnotatedGenes(term);
 
 				int goidAnnotatedPopGeneCount = 0;
 				int goidAnnotatedStudyGeneCount = 0;
 
-				GOTermAnnotatedGenes annotated = studyTermEnumerator.getAnnotatedGenes(term);
+				TermAnnotatedGenes annotated = studyTermEnumerator.getAnnotatedGenes(term);
 				for (ByteString gene : annotated.totalAnnotated)
 				{
 					if (!markedGenes.contains(gene))
@@ -145,8 +145,8 @@ public class TopCalculation extends AbstractHypergeometricCalculation
 			private PValue [] calculatePValues(StudySet studySet)
 			{
 				markedGenesMap = new HashMap<TermID, HashSet<ByteString>>();
-				GOTermEnumerator studyTermEnumerator = studySet.enumerateGOTerms(graph,goAssociations);
-				GOTermEnumerator populationTermEnumerator = populationSet.enumerateGOTerms(graph,goAssociations);
+				TermEnumerator studyTermEnumerator = studySet.enumerateGOTerms(graph,goAssociations);
+				TermEnumerator populationTermEnumerator = populationSet.enumerateGOTerms(graph,goAssociations);
 				ArrayList<PValue> list = new ArrayList<PValue>(100);
 				calculateTerm(populationTermEnumerator, studyTermEnumerator, studySet, graph.getRootTerm().getID(), list);
 				PValue p [] = new PValue[list.size()];

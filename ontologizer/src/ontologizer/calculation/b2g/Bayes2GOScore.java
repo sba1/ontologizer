@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-import ontologizer.enumeration.GOTermEnumerator;
+import ontologizer.enumeration.TermEnumerator;
 import ontologizer.go.TermID;
 import ontologizer.types.ByteString;
 
@@ -38,7 +38,7 @@ abstract public class Bayes2GOScore
 	/** Source of randomness */
 	protected Random rnd;
 
-	protected GOTermEnumerator populationEnumerator;
+	protected TermEnumerator populationEnumerator;
 	protected Set<ByteString> population;
 
 	/** Array of terms */
@@ -130,7 +130,7 @@ abstract public class Bayes2GOScore
 	 * @param populationEnumerator
 	 * @param geneValueProvider
 	 */
-	public Bayes2GOScore(Random rnd, List<TermID> termList, GOTermEnumerator populationEnumerator, IGeneValueProvider geneValueProvider)
+	public Bayes2GOScore(Random rnd, List<TermID> termList, TermEnumerator populationEnumerator, IGeneValueProvider geneValueProvider)
 	{
 		int i;
 
@@ -197,7 +197,7 @@ abstract public class Bayes2GOScore
 	 * @param populationEnumerator terms to genes.
 	 * @param observedActiveGenes defines the set of genes that are observed as active.
 	 */
-	public Bayes2GOScore(List<TermID> termList, GOTermEnumerator populationEnumerator, Set<ByteString> observedActiveGenes)
+	public Bayes2GOScore(List<TermID> termList, TermEnumerator populationEnumerator, Set<ByteString> observedActiveGenes)
 	{
 		this(null,termList, populationEnumerator, observedActiveGenes);
 	}
@@ -210,7 +210,7 @@ abstract public class Bayes2GOScore
 	 * @param populationEnumerator terms to genes.
 	 * @param observedActiveGenes defines the set of genes that are observed as active.
 	 */
-	public Bayes2GOScore(Random rnd, List<TermID> termList, GOTermEnumerator populationEnumerator, final Set<ByteString> observedActiveGenes)
+	public Bayes2GOScore(Random rnd, List<TermID> termList, TermEnumerator populationEnumerator, final Set<ByteString> observedActiveGenes)
 	{
 		/* Here a gene value provider is constructed that maps the boolean observed state back
 		 * to values some values. A gene, that is observed gets a -1, a gene that is not observed

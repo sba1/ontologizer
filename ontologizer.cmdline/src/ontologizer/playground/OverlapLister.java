@@ -15,8 +15,8 @@ import java.util.Set;
 
 import ontologizer.association.AssociationContainer;
 import ontologizer.association.AssociationParser;
-import ontologizer.enumeration.GOTermEnumerator;
-import ontologizer.enumeration.GOTermEnumerator.GOTermAnnotatedGenes;
+import ontologizer.enumeration.TermEnumerator;
+import ontologizer.enumeration.TermEnumerator.TermAnnotatedGenes;
 import ontologizer.go.Ontology;
 import ontologizer.go.OBOParser;
 import ontologizer.go.OBOParserException;
@@ -108,7 +108,7 @@ public class OverlapLister
 			for (ByteString gene : allAnnotatedGenes)
 				completePop.addGene(gene, "None");
 
-			GOTermEnumerator popTermEnumerator = completePop.enumerateGOTerms(graph,assocs);
+			TermEnumerator popTermEnumerator = completePop.enumerateGOTerms(graph,assocs);
 
 			/* making outDir if necessary */
 			File outDir = null;
@@ -128,7 +128,7 @@ public class OverlapLister
 				System.err.print(todo + " terms todo\r");
 				todo--;
 
-				GOTermAnnotatedGenes termGenes =
+				TermAnnotatedGenes termGenes =
 					popTermEnumerator.getAnnotatedGenes(term.getID());
 
 				if (termGenes.totalAnnotatedCount() > 0) {
@@ -140,7 +140,7 @@ public class OverlapLister
 					List<ByteString> termGenesList = termGenes.totalAnnotated;
 
 					for (Term otherTerm : goTerms) {
-						GOTermAnnotatedGenes otherTermGenes =
+						TermAnnotatedGenes otherTermGenes =
 							popTermEnumerator.getAnnotatedGenes(otherTerm.getID());
 
 						if (otherTermGenes.totalAnnotatedCount() > 0) {

@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-import ontologizer.enumeration.GOTermEnumerator;
+import ontologizer.enumeration.TermEnumerator;
 import ontologizer.go.TermID;
 import ontologizer.types.ByteString;
 
@@ -22,7 +22,7 @@ class VariableAlphaBetaScore extends Bayes2GOScore
 
 	private double score;
 
-	public VariableAlphaBetaScore(Random rnd, List<TermID> termList, GOTermEnumerator populationEnumerator, Set<ByteString> observedActiveGenes, double alpha, double beta)
+	public VariableAlphaBetaScore(Random rnd, List<TermID> termList, TermEnumerator populationEnumerator, Set<ByteString> observedActiveGenes, double alpha, double beta)
 	{
 		super(rnd, termList, populationEnumerator, observedActiveGenes);
 

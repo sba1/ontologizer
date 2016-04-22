@@ -21,7 +21,7 @@ import ontologizer.calculation.b2g.Bayes2GOCalculation;
 import ontologizer.calculation.b2g.Bayes2GOGOTermProperties;
 import ontologizer.dotwriter.AbstractDotAttributesProvider;
 import ontologizer.dotwriter.GODOTWriter;
-import ontologizer.enumeration.GOTermEnumerator;
+import ontologizer.enumeration.TermEnumerator;
 import ontologizer.go.Ontology;
 import ontologizer.go.Term;
 import ontologizer.go.TermID;
@@ -94,7 +94,7 @@ public class SingleTerm
 
 		/* ***************************************************************** */
 
-		final GOTermEnumerator completePopEnumerator = completePop.enumerateGOTerms(graph, assoc);
+		final TermEnumerator completePopEnumerator = completePop.enumerateGOTerms(graph, assoc);
 
 //		for (TermID tid : completePopEnumerator)
 //		{
@@ -159,7 +159,7 @@ public class SingleTerm
 //
 		HashMap<TermID,StudySet> wantedActiveTerm2StudySet = new HashMap<TermID,StudySet>();
 //
-//		final GOTermEnumerator allEnumerator = allGenes.enumerateGOTerms(graph, assoc);
+//		final TermEnumerator allEnumerator = allGenes.enumerateGOTerms(graph, assoc);
 //
 //		System.out.println("Considering a total of " + allEnumerator.getAllAnnotatedTermsAsList().size() + " terms");
 
@@ -228,7 +228,7 @@ public class SingleTerm
 				allTermIDs.add(t.getID());
 			}
 
-			final GOTermEnumerator studySetEnumerator = newStudyGenes.enumerateGOTerms(graph, assoc);
+			final TermEnumerator studySetEnumerator = newStudyGenes.enumerateGOTerms(graph, assoc);
 
 			GODOTWriter.writeDOT(graph, new File("toy-all.dot"), null, allTermIDs, new AbstractDotAttributesProvider()
 			{
@@ -455,8 +455,8 @@ public class SingleTerm
 
 	private static void evaluate(final HashMap<TermID,Double> wantedActiveTerms,
 			PopulationSet allGenes, StudySet newStudyGenes,
-			final GOTermEnumerator allEnumerator,
-			final GOTermEnumerator studySetEnumerator,
+			final TermEnumerator allEnumerator,
+			final TermEnumerator studySetEnumerator,
 			final ICalculation calc)
 	{
 		final EnrichedGOTermsResult result = calc.calculateStudySet(graph, assoc, allGenes, newStudyGenes, new Bonferroni());

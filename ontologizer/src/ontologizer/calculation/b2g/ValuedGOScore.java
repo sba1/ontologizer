@@ -3,7 +3,7 @@ package ontologizer.calculation.b2g;
 import java.util.List;
 import java.util.Random;
 
-import ontologizer.enumeration.GOTermEnumerator;
+import ontologizer.enumeration.TermEnumerator;
 import ontologizer.go.TermID;
 import ontologizer.parser.ValuedItemAttribute;
 import ontologizer.set.StudySet;
@@ -24,7 +24,7 @@ public class ValuedGOScore extends Bayes2GOScore
 	private TermID proposalT2;
 
 	public ValuedGOScore(Random rnd, List<TermID> termList,
-			GOTermEnumerator populationEnumerator,
+			TermEnumerator populationEnumerator,
 			final StudySet valuedStudySet)
 	{
 		super(rnd, termList, populationEnumerator, new Bayes2GOScore.IGeneValueProvider() {

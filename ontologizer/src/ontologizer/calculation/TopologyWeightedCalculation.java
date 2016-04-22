@@ -5,8 +5,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import ontologizer.association.AssociationContainer;
-import ontologizer.enumeration.GOTermEnumerator;
-import ontologizer.enumeration.GOTermEnumerator.GOTermAnnotatedGenes;
+import ontologizer.enumeration.TermEnumerator;
+import ontologizer.enumeration.TermEnumerator.TermAnnotatedGenes;
 import ontologizer.go.Ontology;
 import ontologizer.go.TermID;
 import ontologizer.go.Ontology.GOLevels;
@@ -19,7 +19,7 @@ public class TopologyWeightedCalculation extends AbstractHypergeometricCalculati
 {
 	static final double SIGNIFICANCE_LEVEL = 0.01;
 
-	private void computeTermSig(PopulationSet populationSet, StudySet studySet, Ontology graph, TermID u, Set<TermID> children, EnrichedGOTermsResult studySetResult, GOTermEnumerator studyTermEnumerator, GOTermEnumerator populationTermEnumerator)
+	private void computeTermSig(PopulationSet populationSet, StudySet studySet, Ontology graph, TermID u, Set<TermID> children, EnrichedGOTermsResult studySetResult, TermEnumerator studyTermEnumerator, TermEnumerator populationTermEnumerator)
 	{
 		if (graph.isRootTerm(u)) return;
 
@@ -47,7 +47,7 @@ public class TopologyWeightedCalculation extends AbstractHypergeometricCalculati
 				double w = weights.get(child);
 
 				/* Readjust the weight for every gene annotated to the child */
-				GOTermAnnotatedGenes childAnnotatedGenes = populationTermEnumerator.getAnnotatedGenes(u);
+				TermAnnotatedGenes childAnnotatedGenes = populationTermEnumerator.getAnnotatedGenes(u);
 				for (ByteString gene : childAnnotatedGenes.totalAnnotated)
 					childProp.setWeight(gene, childProp.getWeight(gene) * w);
 
@@ -72,7 +72,7 @@ public class TopologyWeightedCalculation extends AbstractHypergeometricCalculati
 
 				TopologyWeightGOTermProperties upProp = (TopologyWeightGOTermProperties)studySetResult.getGOTermProperties(up);
 
-				GOTermAnnotatedGenes upAnnotatedGenes = populationTermEnumerator.getAnnotatedGenes(up);
+				TermAnnotatedGenes upAnnotatedGenes = populationTermEnumerator.getAnnotatedGenes(up);
 
 				for (ByteString gene : upAnnotatedGenes.totalAnnotated)
 					upProp.setWeight(gene, upProp.getWeight(gene) / w);
@@ -102,16 +102,16 @@ public class TopologyWeightedCalculation extends AbstractHypergeometricCalculati
 	private TopologyWeightGOTermProperties wFisher(PopulationSet populationSet,
 			StudySet studySet, Ontology graph, TermID u,
 			EnrichedGOTermsResult studySetResult,
-			GOTermEnumerator studyTermEnumerator,
-			GOTermEnumerator populationTermEnumerator)
+			TermEnumerator studyTermEnumerator,
+			TermEnumerator populationTermEnumerator)
 	{
 
 		TopologyWeightGOTermProperties prop = ensureGOTermPropertiesExistence(
 				graph, u, studySetResult, studyTermEnumerator,
 				populationTermEnumerator);
 
-		GOTermAnnotatedGenes populationAnnotatedGenes = populationTermEnumerator.getAnnotatedGenes(u);
-		GOTermAnnotatedGenes studyAnnotatedGenes = studyTermEnumerator.getAnnotatedGenes(u);
+		TermAnnotatedGenes populationAnnotatedGenes = populationTermEnumerator.getAnnotatedGenes(u);
+		TermAnnotatedGenes studyAnnotatedGenes = studyTermEnumerator.getAnnotatedGenes(u);
 
 		double goidAnnotatedPopGeneCount = 0;
 		double goidAnnotatedStudyGeneCount = 0;
@@ -145,14 +145,14 @@ public class TopologyWeightedCalculation extends AbstractHypergeometricCalculati
 
 	private TopologyWeightGOTermProperties ensureGOTermPropertiesExistence(
 			Ontology graph, TermID u, EnrichedGOTermsResult studySetResult,
-			GOTermEnumerator studyTermEnumerator,
-			GOTermEnumerator populationTermEnumerator)
+			TermEnumerator studyTermEnumerator,
+			TermEnumerator populationTermEnumerator)
 	{
 		TopologyWeightGOTermProperties prop = (TopologyWeightGOTermProperties)studySetResult.getGOTermProperties(u);
 		if (prop == null)
 		{
-			GOTermAnnotatedGenes populationAnnotatedGenes = populationTermEnumerator.getAnnotatedGenes(u);
-			GOTermAnnotatedGenes studyAnnotatedGenes = studyTermEnumerator.getAnnotatedGenes(u);
+			TermAnnotatedGenes populationAnnotatedGenes = populationTermEnumerator.getAnnotatedGenes(u);
+			TermAnnotatedGenes studyAnnotatedGenes = studyTermEnumerator.getAnnotatedGenes(u);
 
 			prop = new TopologyWeightGOTermProperties();
 			prop.goTerm = graph.getTerm(u);
@@ -176,8 +176,8 @@ public class TopologyWeightedCalculation extends AbstractHypergeometricCalculati
 		studySetResult.setCalculationName(this.getName());
 		studySetResult.setCorrectionName(testCorrection.getName());
 
-		GOTermEnumerator studyTermEnumerator = studySet.enumerateGOTerms(graph,goAssociations);
-		GOTermEnumerator populationTermEnumerator = populationSet.enumerateGOTerms(graph,goAssociations);
+		TermEnumerator studyTermEnumerator = studySet.enumerateGOTerms(graph,goAssociations);
+		TermEnumerator populationTermEnumerator = populationSet.enumerateGOTerms(graph,goAssociations);
 
 		Set<TermID> allAnnotatedTerms = studyTermEnumerator.getAllAnnotatedTermsAsSet();
 		GOLevels levels = graph.getGOLevels(allAnnotatedTerms);

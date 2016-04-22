@@ -6,8 +6,8 @@ import java.util.Set;
 
 import ontologizer.association.AssociationContainer;
 import ontologizer.association.AssociationParser;
-import ontologizer.enumeration.GOTermEnumerator;
-import ontologizer.enumeration.GOTermEnumerator.GOTermAnnotatedGenes;
+import ontologizer.enumeration.TermEnumerator;
+import ontologizer.enumeration.TermEnumerator.TermAnnotatedGenes;
 import ontologizer.go.Ontology;
 import ontologizer.go.OBOParser;
 import ontologizer.go.OBOParserException;
@@ -121,10 +121,10 @@ public class GeneLister
 			for (ByteString gene : allAnnotatedGenes)
 				completePop.addGene(gene, "None");
 
-			GOTermEnumerator popTermEnumerator = completePop.enumerateGOTerms(graph,assocs);
+			TermEnumerator popTermEnumerator = completePop.enumerateGOTerms(graph,assocs);
 
 			/* Now find out which genes are annotated to the given term and output them */
-			GOTermAnnotatedGenes annotatedGenes = popTermEnumerator.getAnnotatedGenes(termId);
+			TermAnnotatedGenes annotatedGenes = popTermEnumerator.getAnnotatedGenes(termId);
 			Collection<ByteString> genes;
 			if (direct) genes = annotatedGenes.directAnnotated;
 			else genes = annotatedGenes.totalAnnotated;

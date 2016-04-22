@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import ontologizer.association.AssociationContainer;
-import ontologizer.enumeration.GOTermEnumerator;
+import ontologizer.enumeration.TermEnumerator;
 import ontologizer.go.Ontology;
 import ontologizer.go.TermID;
 import ontologizer.set.PopulationSet;
@@ -50,7 +50,7 @@ public class ProbabilisticCalculation implements ICalculation
 
 
 		/* Fixed (initialized from outside) */
-		private GOTermEnumerator popEnumerator;
+		private TermEnumerator popEnumerator;
 		private HashSet<ByteString> activeGenes; /* Study genes */
 		private HashSet<ByteString> allGenes;
 		private List<TermID> allTerms;

@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import ontologizer.association.AssociationContainer;
-import ontologizer.enumeration.GOTermEnumerator;
+import ontologizer.enumeration.TermEnumerator;
 import ontologizer.go.Ontology;
 import ontologizer.go.TermID;
 import ontologizer.set.PopulationSet;
@@ -58,13 +58,13 @@ public class ParentChildCalculation extends
 			public Ontology graph;
 			public AssociationContainer goAssociations;
 			public PopulationSet populationSet;
-			public GOTermEnumerator popTermEnumerator;
+			public TermEnumerator popTermEnumerator;
 			public StudySet observedStudySet;
 
 			private PValue [] calculatePValues(StudySet studySet)
 			{
 				/* We need this to get genes annotated in the study set */
-				GOTermEnumerator studyTermEnumerator = studySet.enumerateGOTerms(graph,
+				TermEnumerator studyTermEnumerator = studySet.enumerateGOTerms(graph,
 						goAssociations);
 
 				//PValue p [] = new PValue[populationTermCounter.getTotalNumberOfAnnotatedTerms()];
@@ -103,8 +103,8 @@ public class ParentChildCalculation extends
 			private ParentChildGOTermProperties calculateTerm(
 					TermID term,
 					Ontology graph,
-					GOTermEnumerator popTermEnumerator,
-					GOTermEnumerator studyTermEnumerator)
+					TermEnumerator popTermEnumerator,
+					TermEnumerator studyTermEnumerator)
 			{
 				// counts annotated to term
 				int studyTermCount = studyTermEnumerator.getAnnotatedGenes(term).totalAnnotatedCount();

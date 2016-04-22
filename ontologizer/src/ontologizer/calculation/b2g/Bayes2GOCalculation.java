@@ -13,7 +13,7 @@ import ontologizer.association.AssociationContainer;
 import ontologizer.calculation.EnrichedGOTermsResult;
 import ontologizer.calculation.ICalculation;
 import ontologizer.calculation.ICalculationProgress;
-import ontologizer.enumeration.GOTermEnumerator;
+import ontologizer.enumeration.TermEnumerator;
 import ontologizer.go.Ontology;
 import ontologizer.go.TermID;
 import ontologizer.set.PopulationSet;
@@ -238,8 +238,8 @@ public class Bayes2GOCalculation implements ICalculation
 		Bayes2GOEnrichedGOTermsResult result = new Bayes2GOEnrichedGOTermsResult(graph,goAssociations,studySet,populationSet.getGeneCount());
 		result.setCalculationName(this.getName());
 
-		GOTermEnumerator populationEnumerator = populationSet.enumerateGOTerms(graph, goAssociations);
-		GOTermEnumerator studyEnumerator = studySet.enumerateGOTerms(graph, goAssociations);
+		TermEnumerator populationEnumerator = populationSet.enumerateGOTerms(graph, goAssociations);
+		TermEnumerator studyEnumerator = studySet.enumerateGOTerms(graph, goAssociations);
 
 		if (valuedCalculation)
 		{
@@ -273,8 +273,8 @@ public class Bayes2GOCalculation implements ICalculation
 
 	private void calculateByMCMC(Ontology graph,
 			Bayes2GOEnrichedGOTermsResult result,
-			GOTermEnumerator populationEnumerator,
-			GOTermEnumerator studyEnumerator,
+			TermEnumerator populationEnumerator,
+			TermEnumerator studyEnumerator,
 			PopulationSet populationSet,
 			StudySet studySet,
 			boolean valuedCalculation)

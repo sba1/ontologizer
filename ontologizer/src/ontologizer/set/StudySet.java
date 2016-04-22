@@ -18,8 +18,8 @@ import java.util.logging.Logger;
 import ontologizer.association.Association;
 import ontologizer.association.AssociationContainer;
 import ontologizer.association.Gene2Associations;
-import ontologizer.enumeration.GOTermEnumerator;
-import ontologizer.enumeration.GOTermEnumerator.GOTermAnnotatedGenes;
+import ontologizer.enumeration.TermEnumerator;
+import ontologizer.enumeration.TermEnumerator.TermAnnotatedGenes;
 import ontologizer.filter.GeneFilter;
 import ontologizer.go.Ontology;
 import ontologizer.go.Term;
@@ -58,8 +58,8 @@ public class StudySet implements Iterable<ByteString>
 	/** The name of the study set */
 	private String name;
 
-	/** Cached GOTermEnumerator */
-	private GOTermEnumerator goTermEnumerator;
+	/** Cached TermEnumerator */
+	private TermEnumerator goTermEnumerator;
 
 	/** The current random ID. Used for unique study set names */
 	private int randomID = 0;
@@ -331,12 +331,12 @@ public class StudySet implements Iterable<ByteString>
 		this.resetCounterAndEnumerator();
 	}
 
-	public GOTermEnumerator enumerateGOTerms(Ontology graph, AssociationContainer associationContainer)
+	public TermEnumerator enumerateGOTerms(Ontology graph, AssociationContainer associationContainer)
 	{
 		return enumerateGOTerms(graph, associationContainer, null);
 	}
 
-	public GOTermEnumerator enumerateGOTerms(Ontology graph, AssociationContainer associationContainer, Set<ByteString> evidences)
+	public TermEnumerator enumerateGOTerms(Ontology graph, AssociationContainer associationContainer, Set<ByteString> evidences)
 	{
 		return enumerateGOTerms(graph, associationContainer, evidences, null);
 	}
@@ -353,12 +353,12 @@ public class StudySet implements Iterable<ByteString>
 	 *  is removed from the annotation set.
 	 * @return
 	 */
-	public synchronized GOTermEnumerator enumerateGOTerms(Ontology graph, AssociationContainer associationContainer, Set<ByteString> evidences, GOTermEnumerator.IRemover remover)
+	public synchronized TermEnumerator enumerateGOTerms(Ontology graph, AssociationContainer associationContainer, Set<ByteString> evidences, TermEnumerator.IRemover remover)
 	{
 		/* Return cached enumerator if available */
 		if (goTermEnumerator != null) return goTermEnumerator;
 
-		goTermEnumerator =  new GOTermEnumerator(graph);
+		goTermEnumerator =  new TermEnumerator(graph);
 
 		/* Iterate over all gene names and add their annotations to the goTermCounter */
 		for (ByteString geneName : gene2Attribute.keySet())
@@ -414,7 +414,7 @@ public class StudySet implements Iterable<ByteString>
 	 */
 	public void writeMinimumSubsumerMatrix(final Ontology graph,  AssociationContainer associations, File file)
 	{
-		GOTermEnumerator enumerator = goTermEnumerator;
+		TermEnumerator enumerator = goTermEnumerator;
 
 		/* If terms weren't already annotated do it now, but
 		 * remove the local reference then
@@ -535,7 +535,7 @@ public class StudySet implements Iterable<ByteString>
 	 */
 	public void writeTermAnnotatedGenes(Ontology graph, AssociationContainer associations, File file)
 	{
-		GOTermEnumerator enumerator = goTermEnumerator;
+		TermEnumerator enumerator = goTermEnumerator;
 
 		/* If terms weren't already annotated do it now, but
 		 * remove the local reference then
@@ -555,7 +555,7 @@ public class StudySet implements Iterable<ByteString>
 				out.write(id.toString());
 				out.write('\t');
 				out.write("genes={");
-				GOTermAnnotatedGenes genes = enumerator.getAnnotatedGenes(id);
+				TermAnnotatedGenes genes = enumerator.getAnnotatedGenes(id);
 				boolean first = true;
 				for (ByteString gene : genes.totalAnnotated)
 				{

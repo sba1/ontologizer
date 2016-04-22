@@ -21,15 +21,13 @@ import ontologizer.types.ByteString;
 /**
  * This class encapsulates the enumeration of explicit and implicit
  * annotations for an set of genes. You can iterate conveniently over
- * all GO terms where genes have been annotated to. Note that if you
- * are only interested in the gene counts per term you should use
- * the class GOTermCounter as this is much faster.
+ * all terms where items have been annotated to.
  *
  * @author Sebastian Bauer
  */
-public class GOTermEnumerator implements Iterable<TermID>
+public class TermEnumerator implements Iterable<TermID>
 {
-	public class GOTermAnnotatedGenes
+	public class TermAnnotatedGenes
 	{
 		/** List of directly annotated genes TODO: Make private */
 		public List<ByteString> directAnnotated = new ArrayList<ByteString>();
@@ -51,7 +49,7 @@ public class GOTermEnumerator implements Iterable<TermID>
 	/** The GO graph */
 	private Ontology graph;
 
-	private HashMap<TermID,GOTermAnnotatedGenes> map;
+	private HashMap<TermID,TermAnnotatedGenes> map;
 
 	/** Holds the number of suspicious annotations */
 //	private int suspiciousCount;
@@ -61,11 +59,11 @@ public class GOTermEnumerator implements Iterable<TermID>
 	 *
 	 * @param graph the GO graph
 	 */
-	public GOTermEnumerator(Ontology graph)
+	public TermEnumerator(Ontology graph)
 	{
 		this.graph = graph;
 
-		map = new HashMap<TermID,GOTermAnnotatedGenes>();
+		map = new HashMap<TermID,TermAnnotatedGenes>();
 	}
 
 	/**
@@ -137,12 +135,12 @@ public class GOTermEnumerator implements Iterable<TermID>
 					continue;
 			}
 
-			GOTermAnnotatedGenes termGenes = map.get(termID);
+			TermAnnotatedGenes termGenes = map.get(termID);
 
 			/* Create an entry if it doesn't exist */
 			if (termGenes == null)
 			{
-				termGenes = new GOTermAnnotatedGenes();
+				termGenes = new TermAnnotatedGenes();
 				map.put(termID,termGenes);
 			}
 
@@ -174,11 +172,11 @@ public class GOTermEnumerator implements Iterable<TermID>
 			{
 				if (graph.isRelevantTermID(term.getID()))
 				{
-					GOTermAnnotatedGenes termGenes = map.get(term.getID());
+					TermAnnotatedGenes termGenes = map.get(term.getID());
 
 					if (termGenes == null)
 					{
-						termGenes = new GOTermAnnotatedGenes();
+						termGenes = new TermAnnotatedGenes();
 						map.put(term.getID(),termGenes);
 					}
 					termGenes.totalAnnotated.add(geneName);
@@ -201,12 +199,12 @@ public class GOTermEnumerator implements Iterable<TermID>
 	 * @param goTermID
 	 * @return
 	 */
-	public GOTermAnnotatedGenes getAnnotatedGenes(TermID goTermID)
+	public TermAnnotatedGenes getAnnotatedGenes(TermID goTermID)
 	{
 		if (map.containsKey(goTermID))
 			return map.get(goTermID);
 		else
-			return new GOTermAnnotatedGenes();
+			return new TermAnnotatedGenes();
 	}
 
 
@@ -237,7 +235,7 @@ public class GOTermEnumerator implements Iterable<TermID>
 	{
 		ArrayList<GOTermOftenAnnotatedCount> list = new ArrayList<GOTermOftenAnnotatedCount>();
 
-		GOTermAnnotatedGenes goTermIDAnnotated = map.get(goTermID);
+		TermAnnotatedGenes goTermIDAnnotated = map.get(goTermID);
 		if (goTermIDAnnotated == null) return null;
 
 		/* For every term genes are annotated to */
@@ -251,7 +249,7 @@ public class GOTermEnumerator implements Iterable<TermID>
 
 			/* Find out the number of genes which are annotated to both terms */
 			int count = 0;
-			GOTermAnnotatedGenes curTermAnnotated = map.get(curTerm);
+			TermAnnotatedGenes curTermAnnotated = map.get(curTerm);
 			for (ByteString gene : curTermAnnotated.totalAnnotated)
 			{
 				if (goTermIDAnnotated.totalAnnotated.contains(gene))
@@ -325,7 +323,7 @@ public class GOTermEnumerator implements Iterable<TermID>
 	{
 		LinkedHashSet<ByteString> genes = new LinkedHashSet<ByteString>();
 
-		for (Entry<TermID,GOTermAnnotatedGenes> ent : map.entrySet())
+		for (Entry<TermID,TermAnnotatedGenes> ent : map.entrySet())
 			genes.addAll(ent.getValue().totalAnnotated);
 
 		return genes;
@@ -341,7 +339,7 @@ public class GOTermEnumerator implements Iterable<TermID>
 		 * @param tag
 		 * @return
 		 */
-		public boolean remove(TermID tid, GOTermAnnotatedGenes tag);
+		public boolean remove(TermID tid, TermAnnotatedGenes tag);
 	}
 
 	/**
@@ -352,7 +350,7 @@ public class GOTermEnumerator implements Iterable<TermID>
 	public void removeTerms(IRemover remove)
 	{
 		ArrayList<TermID> toBeRemoved = new ArrayList<TermID>();
-		for (Entry<TermID, GOTermAnnotatedGenes> entry : map.entrySet())
+		for (Entry<TermID, TermAnnotatedGenes> entry : map.entrySet())
 		{
 			if (remove.remove(entry.getKey(),entry.getValue()))
 					toBeRemoved.add(entry.getKey());

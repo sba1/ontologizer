@@ -17,8 +17,8 @@ import ontologizer.association.AssociationParser;
 import ontologizer.calculation.CalculationRegistry;
 import ontologizer.calculation.EnrichedGOTermsResult;
 import ontologizer.calculation.ICalculation;
-import ontologizer.enumeration.GOTermEnumerator;
-import ontologizer.enumeration.GOTermEnumerator.GOTermAnnotatedGenes;
+import ontologizer.enumeration.TermEnumerator;
+import ontologizer.enumeration.TermEnumerator.TermAnnotatedGenes;
 import ontologizer.go.Ontology;
 import ontologizer.go.OBOParser;
 import ontologizer.go.OBOParserFileInput;
@@ -262,7 +262,7 @@ public class SetConstructor
 
 			if (wantSubTermMatrix)
 			{
-				GOTermEnumerator populationTermCounter = completePop.enumerateGOTerms(graph,assocs);
+				TermEnumerator populationTermCounter = completePop.enumerateGOTerms(graph,assocs);
 				PrintWriter matrixOut = new PrintWriter(new File(outDir,"subtermMatrix.txt"));
 
 				matrixOut.print("TermID");
@@ -296,11 +296,11 @@ public class SetConstructor
 			if (listAllAnnotations)
 			{
 				PrintWriter annoOut = new PrintWriter(new File(outDir,"annotations.txt"));
-				GOTermEnumerator populationTermEnumerator = completePop.enumerateGOTerms(graph,assocs);
+				TermEnumerator populationTermEnumerator = completePop.enumerateGOTerms(graph,assocs);
 
 				for (TermID t : populationTermEnumerator)
 				{
-					GOTermAnnotatedGenes anno = populationTermEnumerator.getAnnotatedGenes(t);
+					TermAnnotatedGenes anno = populationTermEnumerator.getAnnotatedGenes(t);
 					for (ByteString gene : anno.directAnnotated)
 					{
 						annoOut.write(t.toString());
@@ -631,8 +631,8 @@ public class SetConstructor
 			boolean listAllTerms, Ontology graph, AssociationContainer assocs,
 			File outDir, StudySet sample) throws IOException
 	{
-		// construct a GOTermEnumerator for the reduced population set
-		GOTermEnumerator sampleEnumerator = sample.enumerateGOTerms(graph,
+		// construct a TermEnumerator for the reduced population set
+		TermEnumerator sampleEnumerator = sample.enumerateGOTerms(graph,
 				assocs);
 
 		writeSampledSet(sampleFileName, sample, outDir);
@@ -657,7 +657,7 @@ public class SetConstructor
 	 *             if writing fails
 	 */
 	private static void writeAllTermLists(String sampleFileName,
-			GOTermEnumerator sampleEnumerator, File outDir) throws IOException
+			TermEnumerator sampleEnumerator, File outDir) throws IOException
 	{
 		String allTermListDirName = sampleFileName + ".tld";
 		File allTermListDir = new File(outDir, allTermListDirName);

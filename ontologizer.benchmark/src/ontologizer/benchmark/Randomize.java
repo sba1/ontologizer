@@ -18,7 +18,7 @@ import ontologizer.calculation.EnrichedGOTermsResult;
 import ontologizer.calculation.b2g.B2GParam;
 import ontologizer.calculation.b2g.Bayes2GOCalculation;
 import ontologizer.calculation.b2g.Bayes2GOGOTermProperties;
-import ontologizer.enumeration.GOTermEnumerator;
+import ontologizer.enumeration.TermEnumerator;
 import ontologizer.go.Ontology;
 import ontologizer.go.TermID;
 import ontologizer.parser.AbstractItemParser;
@@ -72,8 +72,8 @@ public class Randomize {
 
 		graph.setRelevantSubontology("biological_process");
 
-		GOTermEnumerator popEnumerator = popSet.enumerateGOTerms(graph, assoc);
-		GOTermEnumerator studyEnumerator = studySet.enumerateGOTerms(graph, assoc);
+		TermEnumerator popEnumerator = popSet.enumerateGOTerms(graph, assoc);
+		TermEnumerator studyEnumerator = studySet.enumerateGOTerms(graph, assoc);
 
 		ArrayList<ByteString> studyGenes = new ArrayList<ByteString>(studyEnumerator.getGenes());
 

@@ -21,8 +21,8 @@ import ontologizer.calculation.EnrichedGOTermsResult;
 import ontologizer.calculation.TermForTermCalculation;
 import ontologizer.dotwriter.AbstractDotAttributesProvider;
 import ontologizer.dotwriter.GODOTWriter;
-import ontologizer.enumeration.GOTermEnumerator;
-import ontologizer.enumeration.GOTermEnumerator.GOTermAnnotatedGenes;
+import ontologizer.enumeration.TermEnumerator;
+import ontologizer.enumeration.TermEnumerator.TermAnnotatedGenes;
 import ontologizer.go.OBOParser;
 import ontologizer.go.OBOParserException;
 import ontologizer.go.OBOParserFileInput;
@@ -209,7 +209,7 @@ public class StudySetTest
 		populationSet.addGene(new ByteString("item5"), "");
 
 
-		GOTermEnumerator gote = populationSet.enumerateGOTerms(idf.graph, idf.assoc);
+		TermEnumerator gote = populationSet.enumerateGOTerms(idf.graph, idf.assoc);
 		Assert.assertEquals(idf.graph.getNumberOfTerms(), gote.getTotalNumberOfAnnotatedTerms());
 
 		assertEquals(5,gote.getAnnotatedGenes(new TermID("GO:0000001")).totalAnnotated.size());
@@ -235,9 +235,9 @@ public class StudySetTest
 		assertEquals(15,number);
 
 		/* Remove all terms with less than two annotations */
-		gote.removeTerms(new GOTermEnumerator.IRemover() {
+		gote.removeTerms(new TermEnumerator.IRemover() {
 			@Override
-			public boolean remove(TermID tid, GOTermAnnotatedGenes tag)
+			public boolean remove(TermID tid, TermAnnotatedGenes tag)
 			{
 				return tag.totalAnnotated.size() < 3;
 			}
@@ -280,7 +280,7 @@ public class StudySetTest
 		TermID rootTerm = o.getRootTerm().getID();
 		Assert.assertEquals(rootTerm,new TermID("GO:0000000"));
 
-		GOTermEnumerator e = s.enumerateGOTerms(o,assocContainer);
+		TermEnumerator e = s.enumerateGOTerms(o,assocContainer);
 		Assert.assertEquals(6721,e.getTotalNumberOfAnnotatedTerms());
 		Assert.assertEquals(assocContainer.getAllAnnotatedGenes().size(),e.getGenes().size());
 		Assert.assertEquals(assocContainer.getAllAnnotatedGenes().size(),e.getAnnotatedGenes(rootTerm).totalAnnotated.size());

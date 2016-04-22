@@ -18,7 +18,7 @@ import ontologizer.calculation.b2g.Bayes2GOCalculation;
 import ontologizer.calculation.b2g.Bayes2GOEnrichedGOTermsResult;
 import ontologizer.dotwriter.AbstractDotAttributesProvider;
 import ontologizer.dotwriter.GODOTWriter;
-import ontologizer.enumeration.GOTermEnumerator;
+import ontologizer.enumeration.TermEnumerator;
 import ontologizer.go.Ontology;
 import ontologizer.go.Term;
 import ontologizer.go.TermID;
@@ -109,7 +109,7 @@ public class Bayes2GOCalculationTest
 
 		PopulationSet populationSet = new PopulationSet();
 		populationSet.addGenes(assoc.getAllAnnotatedGenes());
-		GOTermEnumerator populationEnumerator = populationSet.enumerateGOTerms(ontology, assoc);
+		TermEnumerator populationEnumerator = populationSet.enumerateGOTerms(ontology, assoc);
 
 		StudySet valuedStudySet = new StudySet();
 		for (String t : terms)
@@ -189,7 +189,7 @@ public class Bayes2GOCalculationTest
 		HashMap<TermID,StudySet> wantedActiveTerm2StudySet = new HashMap<TermID,StudySet>();
 
 //		graph.setRelevantSubontology("biological_process");
-		final GOTermEnumerator allEnumerator = allGenes.enumerateGOTerms(graph, assoc);
+		final TermEnumerator allEnumerator = allGenes.enumerateGOTerms(graph, assoc);
 
 		System.out.println("Considering a total of " + allEnumerator.getAllAnnotatedTermsAsList().size() + " terms");
 
@@ -271,7 +271,7 @@ public class Bayes2GOCalculationTest
 			for (Term t : graph)
 				allTermIDs.add(t.getID());
 
-			final GOTermEnumerator studySetEnumerator = newStudyGenes.enumerateGOTerms(graph, assoc);
+			final TermEnumerator studySetEnumerator = newStudyGenes.enumerateGOTerms(graph, assoc);
 
 			GODOTWriter.writeDOT(graph, new File("toy-all.dot"), null, allTermIDs, new AbstractDotAttributesProvider()
 			{
@@ -440,8 +440,8 @@ public class Bayes2GOCalculationTest
 
 	private static void evaluate(final HashMap<TermID,Double> wantedActiveTerms,
 			PopulationSet allGenes, StudySet newStudyGenes,
-			final GOTermEnumerator allEnumerator,
-			final GOTermEnumerator studySetEnumerator,
+			final TermEnumerator allEnumerator,
+			final TermEnumerator studySetEnumerator,
 			ICalculation calc)
 	{
 		final EnrichedGOTermsResult result = calc.calculateStudySet(graph, assoc, allGenes, newStudyGenes, new None());
@@ -560,7 +560,7 @@ public class Bayes2GOCalculationTest
 		}
 	}
 
-//	static private void scoreDistribution(Bayes2GOCalculation calc, GOTermEnumerator allEnumerator, PopulationSet popSet, StudySet studySet)
+//	static private void scoreDistribution(Bayes2GOCalculation calc, TermEnumerator allEnumerator, PopulationSet popSet, StudySet studySet)
 //	{
 //		/** Calculates the whole score distribution */
 //		class MyResult implements Comparable<MyResult>

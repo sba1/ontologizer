@@ -20,7 +20,7 @@ import ontologizer.association.AssociationContainer;
 import ontologizer.association.Gene2Associations;
 import ontologizer.dotwriter.AbstractDotAttributesProvider;
 import ontologizer.dotwriter.GODOTWriter;
-import ontologizer.enumeration.GOTermEnumerator;
+import ontologizer.enumeration.TermEnumerator;
 import ontologizer.go.Ontology;
 import ontologizer.go.ParentTermID;
 import ontologizer.go.Term;
@@ -422,7 +422,7 @@ public class SemanticCalculation
 	private AssociationContainer goAssociations;
 
 	private StudySet allGenesStudy;
-	private GOTermEnumerator enumerator;
+	private TermEnumerator enumerator;
 	private int totalAnnotated;
 
 	/** Similarity cache (indexed by term) */

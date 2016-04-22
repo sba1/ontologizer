@@ -5,7 +5,7 @@ import java.util.Random;
 import java.util.Set;
 
 import ontologizer.calculation.util.Gamma;
-import ontologizer.enumeration.GOTermEnumerator;
+import ontologizer.enumeration.TermEnumerator;
 import ontologizer.go.TermID;
 import ontologizer.types.ByteString;
 
@@ -122,7 +122,7 @@ public class FixedAlphaBetaScore extends Bayes2GOScore
 		this.integrateParams = integrateParams;
 	}
 
-	public FixedAlphaBetaScore(Random rnd, List<TermID> termList, GOTermEnumerator populationEnumerator, Set<ByteString> observedActiveGenes)
+	public FixedAlphaBetaScore(Random rnd, List<TermID> termList, TermEnumerator populationEnumerator, Set<ByteString> observedActiveGenes)
 	{
 		super(rnd, termList, populationEnumerator, observedActiveGenes);
 

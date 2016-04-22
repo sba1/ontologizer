@@ -1,7 +1,7 @@
 package ontologizer.calculation;
 
 import ontologizer.association.AssociationContainer;
-import ontologizer.enumeration.GOTermEnumerator;
+import ontologizer.enumeration.TermEnumerator;
 import ontologizer.go.Ontology;
 import ontologizer.go.TermID;
 import ontologizer.set.PopulationSet;
@@ -66,8 +66,8 @@ public class TermForTermCalculation extends AbstractHypergeometricCalculation
 
 			private PValue [] calculatePValues(StudySet studySet)
 			{
-				GOTermEnumerator studyTermEnumerator = studySet.enumerateGOTerms(graph, goAssociations);
-				GOTermEnumerator populationTermEnumerator = populationSet.enumerateGOTerms(graph, goAssociations);
+				TermEnumerator studyTermEnumerator = studySet.enumerateGOTerms(graph, goAssociations);
+				TermEnumerator populationTermEnumerator = populationSet.enumerateGOTerms(graph, goAssociations);
 
 				int i = 0;
 

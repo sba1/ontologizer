@@ -5,8 +5,8 @@ import java.util.HashSet;
 import java.util.Random;
 
 import ontologizer.association.AssociationContainer;
-import ontologizer.enumeration.GOTermEnumerator;
-import ontologizer.enumeration.GOTermEnumerator.GOTermAnnotatedGenes;
+import ontologizer.enumeration.TermEnumerator;
+import ontologizer.enumeration.TermEnumerator.TermAnnotatedGenes;
 import ontologizer.go.Ontology;
 import ontologizer.go.TermID;
 import ontologizer.set.StudySet;
@@ -162,7 +162,7 @@ public class StudySetSampler
 	{
 		StudySet sampledStudySet = new StudySet();
 
-		GOTermEnumerator termEnum = baseStudySet.enumerateGOTerms(graph,
+		TermEnumerator termEnum = baseStudySet.enumerateGOTerms(graph,
 				associationContainer);
 
 		HashSet<ByteString> seenGenes = new HashSet<ByteString>();
@@ -170,7 +170,7 @@ public class StudySetSampler
 		for (TermID id : enrichRule)
 		{
 			// TermID id = termsToOverRepresent[i];
-			GOTermAnnotatedGenes annoGenes = termEnum.getAnnotatedGenes(id);
+			TermAnnotatedGenes annoGenes = termEnum.getAnnotatedGenes(id);
 			seenGenes.addAll(annoGenes.totalAnnotated);
 			int sampleSize = (int) (0.01 * annoGenes.totalAnnotatedCount() * enrichRule.getPercForTerm(id));
 			if (sampleSize == 0)
@@ -182,7 +182,7 @@ public class StudySetSampler
 		HashSet<ByteString> genesRest = new HashSet<ByteString>();
 		for (TermID id : termEnum)
 		{
-			GOTermAnnotatedGenes annoGenes = termEnum.getAnnotatedGenes(id);
+			TermAnnotatedGenes annoGenes = termEnum.getAnnotatedGenes(id);
 			genesRest.addAll(annoGenes.totalAnnotated);
 		}
 
@@ -211,7 +211,7 @@ public class StudySetSampler
 	{
 		StudySet studySet = new StudySet();
 
-		GOTermEnumerator termEnum = baseStudySet.enumerateGOTerms(graph,
+		TermEnumerator termEnum = baseStudySet.enumerateGOTerms(graph,
 				associationContainer);
 
 		/*
@@ -222,7 +222,7 @@ public class StudySetSampler
 
 		for (TermID id : termsToOverRepresent)
 		{
-			GOTermAnnotatedGenes annoGenes = termEnum.getAnnotatedGenes(id);
+			TermAnnotatedGenes annoGenes = termEnum.getAnnotatedGenes(id);
 			for (ByteString gene : annoGenes.totalAnnotated)
 				genesToOverRepresent.add(gene);
 		}

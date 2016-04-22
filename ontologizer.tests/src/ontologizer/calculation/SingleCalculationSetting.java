@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Random;
 
 import ontologizer.association.AssociationContainer;
-import ontologizer.enumeration.GOTermEnumerator;
+import ontologizer.enumeration.TermEnumerator;
 import ontologizer.go.Ontology;
 import ontologizer.go.TermID;
 import ontologizer.set.PopulationSet;
@@ -44,7 +44,7 @@ public class SingleCalculationSetting
 		for (ByteString gene : assoc.getAllAnnotatedGenes())
 			allGenes.addGene(gene, "");
 
-		GOTermEnumerator allEnumerator = allGenes.enumerateGOTerms(ontology,assoc);
+		TermEnumerator allEnumerator = allGenes.enumerateGOTerms(ontology,assoc);
 
 		/* Create for each wanted term an study set for its own */
 		HashMap<TermID,StudySet> wantedActiveTerm2StudySet = new HashMap<TermID,StudySet>();

@@ -66,8 +66,8 @@ import ontologizer.calculation.EnrichedGOTermsTableWriter;
 import ontologizer.calculation.b2g.Bayes2GOEnrichedGOTermsResult;
 import ontologizer.calculation.b2g.Bayes2GOGOTermProperties;
 import ontologizer.calculation.b2g.FixedAlphaBetaScore;
-import ontologizer.enumeration.GOTermEnumerator;
-import ontologizer.enumeration.GOTermEnumerator.GOTermAnnotatedGenes;
+import ontologizer.enumeration.TermEnumerator;
+import ontologizer.enumeration.TermEnumerator.TermAnnotatedGenes;
 import ontologizer.go.Namespace;
 import ontologizer.go.Term;
 import ontologizer.go.TermID;
@@ -494,8 +494,8 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 
 					str.append("<h3>Annotated Gene Products</h3>");
 					/* Enumerate the genes */
-					GOTermEnumerator enumerator = result.getStudySet().enumerateGOTerms(go,associationContainer);
-					GOTermAnnotatedGenes annotatedGenes = enumerator.getAnnotatedGenes(goTerm.getID());
+					TermEnumerator enumerator = result.getStudySet().enumerateGOTerms(go,associationContainer);
+					TermAnnotatedGenes annotatedGenes = enumerator.getAnnotatedGenes(goTerm.getID());
 
 					HashSet<String> directGenes = new HashSet<String>();
 					for (ByteString gene : annotatedGenes.directAnnotated)
@@ -1071,7 +1071,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 						}
 					} else if (e.widget.equals(annotateMenuItem))
 					{
-						GOTermEnumerator enumerator = result.getStudySet().enumerateGOTerms(go,associationContainer);
+						TermEnumerator enumerator = result.getStudySet().enumerateGOTerms(go,associationContainer);
 
 						Clipboard clipboard = new Clipboard(getDisplay());
 						StringWriter sw = new StringWriter();
@@ -1094,7 +1094,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 						clipboard.dispose();
 					} else if (e.widget.equals(notAnnotatedMenuItem))
 					{
-						GOTermEnumerator enumerator = result.getStudySet().enumerateGOTerms(go,associationContainer);
+						TermEnumerator enumerator = result.getStudySet().enumerateGOTerms(go,associationContainer);
 
 						/* Build hashset in order to have constant time access */
 						HashSet<ByteString> annotatedGenes = new HashSet<ByteString>();

@@ -26,7 +26,7 @@ import ontologizer.calculation.ICalculation;
 import ontologizer.calculation.ProbabilisticCalculation;
 import ontologizer.calculation.b2g.B2GParam;
 import ontologizer.calculation.b2g.Bayes2GOCalculation;
-import ontologizer.enumeration.GOTermEnumerator;
+import ontologizer.enumeration.TermEnumerator;
 import ontologizer.go.Ontology;
 import ontologizer.go.TermID;
 import ontologizer.parser.ItemAttribute;
@@ -310,7 +310,7 @@ public class Benchmark
 			completePop.addGene(gene,"None");
 		completePop.filterOutAssociationlessGenes(assoc);
 
-		final GOTermEnumerator completePopEnumerator = completePop.enumerateGOTerms(graph, assoc);
+		final TermEnumerator completePopEnumerator = completePop.enumerateGOTerms(graph, assoc);
 
 		for (TermID tid : completePopEnumerator)
 		{
@@ -522,7 +522,7 @@ public class Benchmark
 	private static Runnable createSingleRunRunnable(Random rnd,
 			final AssociationContainer assoc, final Ontology graph,
 			final PopulationSet completePop,
-			final GOTermEnumerator completePopEnumerator,
+			final TermEnumerator completePopEnumerator,
 			final ByteString[] allGenesArray, final PrintWriter out,
 			final PrintWriter outTime, final int numberOfRuns,
 			final StudySetSampler sampler, final double alpha,
@@ -577,7 +577,7 @@ public class Benchmark
 
 					if (newStudySet != null)
 					{
-						GOTermEnumerator studyEnumerator = newStudySet.enumerateGOTerms(graph, assoc);
+						TermEnumerator studyEnumerator = newStudySet.enumerateGOTerms(graph, assoc);
 
 						long times[] = new long[calcMethods.size()];
 
@@ -779,7 +779,7 @@ public class Benchmark
 	 */
 	private static StudySet generateStudySet(Random rnd,
 			AssociationContainer assoc, Ontology graph,
-			GOTermEnumerator completePopEnumerator,
+			TermEnumerator completePopEnumerator,
 			ByteString[] allGenesArray, StudySetSampler sampler,
 			HashMap<TermID,Double> wantedActiveTerms, double ALPHA, double BETA)
 	{
@@ -912,7 +912,7 @@ public class Benchmark
 	 */
 	private static StudySet generateValuedStudySet(Random rnd,
 			AssociationContainer assoc, Ontology graph,
-			GOTermEnumerator completePopEnumerator,
+			TermEnumerator completePopEnumerator,
 			ByteString[] allGenesArray,
 			Set<TermID> wantedActiveTerms)
 	{
