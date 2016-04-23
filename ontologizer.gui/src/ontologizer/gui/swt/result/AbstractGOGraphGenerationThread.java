@@ -7,10 +7,10 @@ import org.eclipse.swt.widgets.Display;
 
 import ontologizer.dotwriter.GODOTWriter;
 import ontologizer.dotwriter.IDotAttributesProvider;
-import ontologizer.go.Ontology;
-import ontologizer.go.TermID;
 import ontologizer.gui.swt.support.IGraphGenerationSupport;
 import ontologizer.gui.swt.support.NewGraphGenerationThread;
+import ontologizer.ontology.Ontology;
+import ontologizer.ontology.TermID;
 
 /**
  * This is a skeleton class for the generation of a go graph.

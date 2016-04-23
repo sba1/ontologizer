@@ -2,7 +2,7 @@ package ontologizer.calculation.b2g;
 
 import ontologizer.association.AssociationContainer;
 import ontologizer.calculation.EnrichedGOTermsResult;
-import ontologizer.go.Ontology;
+import ontologizer.ontology.Ontology;
 import ontologizer.set.StudySet;
 
 

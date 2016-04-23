@@ -1,8 +1,8 @@
 package ontologizer.calculation;
 
 import ontologizer.association.AssociationContainer;
-import ontologizer.go.Ontology;
-import ontologizer.go.Term;
+import ontologizer.ontology.Ontology;
+import ontologizer.ontology.Term;
 import ontologizer.set.PopulationSet;
 import ontologizer.set.StudySet;
 import ontologizer.statistics.AbstractTestCorrection;

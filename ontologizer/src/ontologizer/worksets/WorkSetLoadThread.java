@@ -18,12 +18,12 @@ import ontologizer.FileCache.FileCacheUpdateCallback;
 import ontologizer.association.AssociationContainer;
 import ontologizer.association.AssociationParser;
 import ontologizer.association.IAssociationParserProgress;
-import ontologizer.go.Ontology;
-import ontologizer.go.IOBOParserProgress;
-import ontologizer.go.OBOParser;
-import ontologizer.go.OBOParserException;
-import ontologizer.go.OBOParserFileInput;
-import ontologizer.go.TermContainer;
+import ontologizer.ontology.IOBOParserProgress;
+import ontologizer.ontology.OBOParser;
+import ontologizer.ontology.OBOParserException;
+import ontologizer.ontology.OBOParserFileInput;
+import ontologizer.ontology.Ontology;
+import ontologizer.ontology.TermContainer;
 import ontologizer.util.MemoryWarningSystem;
 
 /**

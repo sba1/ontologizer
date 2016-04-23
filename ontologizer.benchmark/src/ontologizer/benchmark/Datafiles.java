@@ -6,7 +6,7 @@ import java.io.IOException;
 
 import ontologizer.FileCache;
 import ontologizer.association.AssociationContainer;
-import ontologizer.go.Ontology;
+import ontologizer.ontology.Ontology;
 import ontologizer.worksets.WorkSet;
 import ontologizer.worksets.WorkSetLoadThread;
 

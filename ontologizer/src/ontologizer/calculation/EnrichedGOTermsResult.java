@@ -16,11 +16,11 @@ import java.util.logging.Logger;
 import ontologizer.GlobalPreferences;
 import ontologizer.association.AssociationContainer;
 import ontologizer.dotwriter.AbstractDotAttributesProvider;
-import ontologizer.go.Ontology;
-import ontologizer.go.Namespace;
-import ontologizer.go.Term;
-import ontologizer.go.TermID;
-import ontologizer.go.Ontology.IVisitingGOVertex;
+import ontologizer.ontology.Namespace;
+import ontologizer.ontology.Ontology;
+import ontologizer.ontology.Term;
+import ontologizer.ontology.TermID;
+import ontologizer.ontology.Ontology.IVisitingGOVertex;
 import ontologizer.set.StudySet;
 import ontologizer.util.Util;
 

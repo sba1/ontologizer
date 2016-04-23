@@ -13,9 +13,9 @@ import org.junit.Test;
 import att.grappa.GraphEnumeration;
 import att.grappa.GrappaConstants;
 import att.grappa.Parser;
-import ontologizer.go.Term;
-import ontologizer.go.TermID;
 import ontologizer.internal.InternalOntology;
+import ontologizer.ontology.Term;
+import ontologizer.ontology.TermID;
 
 public class GODOTWriterTest
 {

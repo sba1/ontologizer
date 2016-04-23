@@ -17,12 +17,12 @@ import ontologizer.association.AssociationContainer;
 import ontologizer.association.AssociationParser;
 import ontologizer.enumeration.TermEnumerator;
 import ontologizer.enumeration.TermEnumerator.TermAnnotatedGenes;
-import ontologizer.go.Ontology;
-import ontologizer.go.OBOParser;
-import ontologizer.go.OBOParserException;
-import ontologizer.go.OBOParserFileInput;
-import ontologizer.go.Term;
-import ontologizer.go.TermContainer;
+import ontologizer.ontology.OBOParser;
+import ontologizer.ontology.OBOParserException;
+import ontologizer.ontology.OBOParserFileInput;
+import ontologizer.ontology.Ontology;
+import ontologizer.ontology.Term;
+import ontologizer.ontology.TermContainer;
 import ontologizer.set.PopulationSet;
 import ontologizer.types.ByteString;
 

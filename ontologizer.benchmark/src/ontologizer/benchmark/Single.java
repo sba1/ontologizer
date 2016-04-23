@@ -15,7 +15,7 @@ import ontologizer.calculation.b2g.B2GParam;
 import ontologizer.calculation.b2g.Bayes2GOCalculation;
 import ontologizer.calculation.b2g.Bayes2GOGOTermProperties;
 import ontologizer.enumeration.TermEnumerator;
-import ontologizer.go.Ontology;
+import ontologizer.ontology.Ontology;
 import ontologizer.parser.AbstractItemParser;
 import ontologizer.parser.IParserCallback;
 import ontologizer.parser.ItemAttribute;

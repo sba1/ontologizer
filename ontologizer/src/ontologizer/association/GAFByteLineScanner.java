@@ -6,12 +6,12 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import ontologizer.go.IParserInput;
-import ontologizer.go.PrefixPool;
-import ontologizer.go.Term;
-import ontologizer.go.TermID;
-import ontologizer.go.TermMap;
 import ontologizer.linescanner.AbstractByteLineScanner;
+import ontologizer.ontology.IParserInput;
+import ontologizer.ontology.PrefixPool;
+import ontologizer.ontology.Term;
+import ontologizer.ontology.TermID;
+import ontologizer.ontology.TermMap;
 import ontologizer.types.ByteString;
 
 /**

@@ -8,9 +8,9 @@ import java.util.Random;
 import org.junit.Test;
 
 import ontologizer.association.AssociationContainer;
-import ontologizer.go.Ontology;
-import ontologizer.go.TermID;
 import ontologizer.internal.InternalOntology;
+import ontologizer.ontology.Ontology;
+import ontologizer.ontology.TermID;
 import ontologizer.statistics.None;
 
 public class TermForTermCalculationTest

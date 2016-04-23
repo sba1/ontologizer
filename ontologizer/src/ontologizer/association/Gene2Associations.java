@@ -2,7 +2,7 @@ package ontologizer.association;
 
 import java.util.*;
 
-import ontologizer.go.TermID;
+import ontologizer.ontology.TermID;
 import ontologizer.types.ByteString;
 
 /**

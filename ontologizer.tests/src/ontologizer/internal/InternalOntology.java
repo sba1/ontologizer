@@ -6,14 +6,14 @@ import java.util.Random;
 
 import ontologizer.association.Association;
 import ontologizer.association.AssociationContainer;
-import ontologizer.go.Ontology;
-import ontologizer.go.ParentTermID;
-import ontologizer.go.Prefix;
-import ontologizer.go.Subset;
-import ontologizer.go.Term;
-import ontologizer.go.TermContainer;
-import ontologizer.go.TermID;
-import ontologizer.go.TermRelation;
+import ontologizer.ontology.Ontology;
+import ontologizer.ontology.ParentTermID;
+import ontologizer.ontology.Prefix;
+import ontologizer.ontology.Subset;
+import ontologizer.ontology.Term;
+import ontologizer.ontology.TermContainer;
+import ontologizer.ontology.TermID;
+import ontologizer.ontology.TermRelation;
 import ontologizer.types.ByteString;
 
 /**

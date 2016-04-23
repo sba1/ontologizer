@@ -6,11 +6,11 @@ import org.junit.Test;
 
 import ontologizer.association.Association;
 import ontologizer.association.AssociationContainer;
-import ontologizer.go.Ontology;
-import ontologizer.go.ParentTermID;
-import ontologizer.go.Term;
-import ontologizer.go.TermContainer;
-import ontologizer.go.TermRelation;
+import ontologizer.ontology.Ontology;
+import ontologizer.ontology.ParentTermID;
+import ontologizer.ontology.Term;
+import ontologizer.ontology.TermContainer;
+import ontologizer.ontology.TermRelation;
 import ontologizer.set.PopulationSet;
 import ontologizer.set.StudySet;
 import ontologizer.statistics.None;

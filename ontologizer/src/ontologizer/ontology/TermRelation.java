@@ -1,4 +1,4 @@
-package ontologizer.go;
+package ontologizer.ontology;
 
 /**
  * The relation a term can have to another.

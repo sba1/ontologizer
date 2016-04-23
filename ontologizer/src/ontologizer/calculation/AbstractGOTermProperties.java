@@ -1,6 +1,6 @@
 package ontologizer.calculation;
 
-import ontologizer.go.Term;
+import ontologizer.ontology.Term;
 import ontologizer.statistics.PValue;
 
 /**

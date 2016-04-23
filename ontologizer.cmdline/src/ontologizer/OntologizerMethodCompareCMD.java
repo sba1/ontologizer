@@ -8,11 +8,11 @@ import java.util.Iterator;
 
 import ontologizer.calculation.EnrichedGOTermsResult;
 import ontologizer.calculation.EnrichedGOTermsTableWriter;
-import ontologizer.go.Ontology;
-import ontologizer.go.OBOParser;
-import ontologizer.go.OBOParserException;
-import ontologizer.go.OBOParserFileInput;
-import ontologizer.go.TermContainer;
+import ontologizer.ontology.OBOParser;
+import ontologizer.ontology.OBOParserException;
+import ontologizer.ontology.OBOParserFileInput;
+import ontologizer.ontology.Ontology;
+import ontologizer.ontology.TermContainer;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.GnuParser;

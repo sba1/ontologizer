@@ -8,10 +8,10 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import ontologizer.BuildInfo;
-import ontologizer.go.Ontology;
-import ontologizer.go.Term;
-import ontologizer.go.TermID;
-import ontologizer.go.TermRelation;
+import ontologizer.ontology.Ontology;
+import ontologizer.ontology.Term;
+import ontologizer.ontology.TermID;
+import ontologizer.ontology.TermRelation;
 import sonumina.math.graph.AbstractGraph.DotAttributesProvider;
 import sonumina.math.graph.DOTWriter;
 

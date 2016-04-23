@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Random;
 
 import ontologizer.enumeration.TermEnumerator;
-import ontologizer.go.TermID;
+import ontologizer.ontology.TermID;
 import ontologizer.parser.ValuedItemAttribute;
 import ontologizer.set.StudySet;
 import ontologizer.types.ByteString;

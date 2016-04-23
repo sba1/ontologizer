@@ -1,4 +1,4 @@
-package ontologizer.go;
+package ontologizer.ontology;
 
 /**
  * This class is used to specify a parent accompanied with

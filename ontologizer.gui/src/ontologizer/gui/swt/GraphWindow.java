@@ -7,14 +7,14 @@ import java.util.Set;
 
 import ontologizer.GlobalPreferences;
 import ontologizer.dotwriter.AbstractDotAttributesProvider;
-import ontologizer.go.Ontology;
-import ontologizer.go.Namespace;
-import ontologizer.go.Prefix;
-import ontologizer.go.Term;
-import ontologizer.go.TermID;
 import ontologizer.gui.swt.result.GraphGenerationThread;
 import ontologizer.gui.swt.support.GraphCanvas;
 import ontologizer.gui.swt.support.IGraphGenerationFinished;
+import ontologizer.ontology.Namespace;
+import ontologizer.ontology.Ontology;
+import ontologizer.ontology.Prefix;
+import ontologizer.ontology.Term;
+import ontologizer.ontology.TermID;
 import ontologizer.util.Util;
 
 import org.eclipse.swt.SWT;

@@ -1,4 +1,4 @@
-package ontologizer.go;
+package ontologizer.ontology;
 
 import static org.junit.Assert.assertEquals;
 
@@ -12,6 +12,9 @@ import java.io.PrintWriter;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+
+import ontologizer.ontology.IParserInput;
+import ontologizer.ontology.OBOParserFileInput;
 
 public class OBOParserFileInputTest
 {

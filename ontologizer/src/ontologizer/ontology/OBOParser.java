@@ -1,4 +1,4 @@
-package ontologizer.go;
+package ontologizer.ontology;
 
 import java.io.IOException;
 import java.io.InputStream;

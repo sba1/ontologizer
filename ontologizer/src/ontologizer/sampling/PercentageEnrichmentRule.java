@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 
-import ontologizer.go.TermID;
+import ontologizer.ontology.TermID;
 
 /**
  * Specifies the rule how terms should be enriched in sampling of artificial

@@ -6,7 +6,7 @@ import java.util.Set;
 
 import ontologizer.calculation.util.Gamma;
 import ontologizer.enumeration.TermEnumerator;
-import ontologizer.go.TermID;
+import ontologizer.ontology.TermID;
 import ontologizer.types.ByteString;
 
 /**

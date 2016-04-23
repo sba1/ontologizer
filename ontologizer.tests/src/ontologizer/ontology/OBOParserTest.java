@@ -1,4 +1,4 @@
-package ontologizer.go;
+package ontologizer.ontology;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -14,6 +14,13 @@ import java.util.HashSet;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+
+import ontologizer.ontology.OBOParser;
+import ontologizer.ontology.OBOParserException;
+import ontologizer.ontology.OBOParserFileInput;
+import ontologizer.ontology.Term;
+import ontologizer.ontology.TermID;
+import ontologizer.ontology.TermRelation;
 
 
 public class OBOParserTest

@@ -8,8 +8,8 @@ import org.junit.Test;
 
 import ontologizer.association.Gene2Associations;
 import ontologizer.enumeration.TermEnumerator.TermAnnotatedGenes;
-import ontologizer.go.TermID;
 import ontologizer.internal.InternalOntology;
+import ontologizer.ontology.TermID;
 import ontologizer.types.ByteString;
 
 public class GOTermEnumeratorTest

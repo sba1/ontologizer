@@ -1,4 +1,4 @@
-package ontologizer.go;
+package ontologizer.ontology;
 
 /**
  * The read-only interface for terms.

@@ -1,4 +1,4 @@
-package ontologizer.go;
+package ontologizer.ontology;
 
 import java.util.HashMap;
 import java.util.Map;

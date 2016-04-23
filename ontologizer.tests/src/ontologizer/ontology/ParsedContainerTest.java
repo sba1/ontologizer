@@ -1,8 +1,13 @@
-package ontologizer.go;
+package ontologizer.ontology;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import ontologizer.ontology.OBOParser;
+import ontologizer.ontology.OBOParserFileInput;
+import ontologizer.ontology.Term;
+import ontologizer.ontology.TermContainer;
 
 public class ParsedContainerTest
 {

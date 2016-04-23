@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import ontologizer.go.TermID;
+import ontologizer.ontology.TermID;
 import ontologizer.types.ByteString;
 
 /**

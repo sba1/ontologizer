@@ -1,4 +1,4 @@
-package ontologizer.go;
+package ontologizer.ontology;
 
 /**
  * This class represents a single subset. Terms can be accompanied by

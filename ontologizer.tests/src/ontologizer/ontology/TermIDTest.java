@@ -1,7 +1,11 @@
-package ontologizer.go;
+package ontologizer.ontology;
 
 import org.junit.Assert;
 import org.junit.Test;
+
+import ontologizer.ontology.Prefix;
+import ontologizer.ontology.PrefixPool;
+import ontologizer.ontology.TermID;
 
 
 public class TermIDTest

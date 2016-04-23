@@ -11,12 +11,12 @@ import ontologizer.association.AssociationContainer;
 import ontologizer.calculation.AbstractGOTermProperties;
 import ontologizer.calculation.AbstractGOTermsResult;
 import ontologizer.dotwriter.AbstractDotAttributesProvider;
-import ontologizer.go.Ontology;
-import ontologizer.go.Term;
-import ontologizer.go.TermID;
 import ontologizer.gui.swt.ISimpleAction;
 import ontologizer.gui.swt.support.GraphCanvas;
 import ontologizer.gui.swt.support.IGraphGenerationFinished;
+import ontologizer.ontology.Ontology;
+import ontologizer.ontology.Term;
+import ontologizer.ontology.TermID;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;

@@ -9,12 +9,12 @@ import ontologizer.calculation.AbstractGOTermProperties;
 import ontologizer.calculation.svd.SVDGOTermProperties;
 import ontologizer.calculation.svd.SVDResult;
 import ontologizer.dotwriter.AbstractDotAttributesProvider;
-import ontologizer.go.TermID;
 import ontologizer.gui.swt.support.Chart;
 import ontologizer.gui.swt.support.GraphCanvas;
 import ontologizer.gui.swt.support.SWTUtil;
 import ontologizer.gui.swt.support.ScatterPlot;
 import ontologizer.gui.swt.support.Chart.XYSeries;
+import ontologizer.ontology.TermID;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;

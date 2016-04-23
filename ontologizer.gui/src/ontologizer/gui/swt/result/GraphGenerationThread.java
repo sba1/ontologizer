@@ -6,12 +6,12 @@ import java.util.HashSet;
 import ontologizer.calculation.AbstractGOTermsResult;
 import ontologizer.dotwriter.AbstractDotAttributesProvider;
 import ontologizer.dotwriter.GODOTWriter;
-import ontologizer.go.Ontology;
-import ontologizer.go.Term;
-import ontologizer.go.TermID;
 import ontologizer.gui.swt.support.IGraphGenerationFinished;
 import ontologizer.gui.swt.support.IGraphGenerationSupport;
 import ontologizer.gui.swt.support.NewGraphGenerationThread;
+import ontologizer.ontology.Ontology;
+import ontologizer.ontology.Term;
+import ontologizer.ontology.TermID;
 
 import org.eclipse.swt.widgets.Display;
 

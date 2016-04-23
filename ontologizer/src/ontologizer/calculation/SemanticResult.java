@@ -6,7 +6,7 @@ import java.io.PrintWriter;
 import java.util.logging.Logger;
 
 import ontologizer.association.AssociationContainer;
-import ontologizer.go.Ontology;
+import ontologizer.ontology.Ontology;
 import ontologizer.types.ByteString;
 
 public class SemanticResult

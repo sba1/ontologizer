@@ -2,7 +2,7 @@ package ontologizer.calculation.svd;
 
 import ontologizer.association.AssociationContainer;
 import ontologizer.calculation.AbstractGOTermsResult;
-import ontologizer.go.Ontology;
+import ontologizer.ontology.Ontology;
 import cern.colt.matrix.DoubleMatrix2D;
 import cern.colt.matrix.impl.DenseDoubleMatrix2D;
 import cern.colt.matrix.linalg.SingularValueDecomposition;

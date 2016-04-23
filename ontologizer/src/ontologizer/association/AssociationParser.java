@@ -14,10 +14,10 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import ontologizer.go.IParserInput;
-import ontologizer.go.TermID;
-import ontologizer.go.TermMap;
 import ontologizer.linescanner.AbstractByteLineScanner;
+import ontologizer.ontology.IParserInput;
+import ontologizer.ontology.TermID;
+import ontologizer.ontology.TermMap;
 import ontologizer.types.ByteString;
 
 /**

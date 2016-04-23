@@ -1,10 +1,16 @@
-package ontologizer.go;
+package ontologizer.ontology;
 import java.util.ArrayList;
 import java.util.HashSet;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import ontologizer.ontology.Namespace;
+import ontologizer.ontology.ParentTermID;
+import ontologizer.ontology.Term;
+import ontologizer.ontology.TermContainer;
+import ontologizer.ontology.TermRelation;
 
 
 public class TermContainerTest

@@ -7,10 +7,10 @@ import org.junit.Assert;
 
 import ontologizer.association.AssociationContainer;
 import ontologizer.association.AssociationParser;
-import ontologizer.go.OBOParser;
-import ontologizer.go.OBOParserFileInput;
-import ontologizer.go.OBOParserTest;
-import ontologizer.go.TermContainer;
+import ontologizer.ontology.OBOParser;
+import ontologizer.ontology.OBOParserFileInput;
+import ontologizer.ontology.OBOParserTest;
+import ontologizer.ontology.TermContainer;
 import ontologizer.types.ByteString;
 
 public class AssociationParserTest2

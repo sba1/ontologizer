@@ -1,9 +1,18 @@
-package ontologizer.go;
+package ontologizer.ontology;
 
 import java.util.ArrayList;
 
 import org.junit.Assert;
 import org.junit.Test;
+
+import ontologizer.ontology.ITerm;
+import ontologizer.ontology.Namespace;
+import ontologizer.ontology.ParentTermID;
+import ontologizer.ontology.Prefix;
+import ontologizer.ontology.PrefixPool;
+import ontologizer.ontology.Term;
+import ontologizer.ontology.TermID;
+import ontologizer.ontology.TermRelation;
 
 public class TermTest
 {

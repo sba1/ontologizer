@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.GZIPInputStream;
 
-import ontologizer.go.IParserInput;
+import ontologizer.ontology.IParserInput;
 
 final class ByteArrayParserInput implements IParserInput
 {

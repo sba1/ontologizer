@@ -15,9 +15,9 @@ import java.util.Iterator;
 import ontologizer.association.AssociationContainer;
 import ontologizer.dotwriter.AbstractDotAttributesProvider;
 import ontologizer.dotwriter.GODOTWriter;
-import ontologizer.go.Ontology;
-import ontologizer.go.Term;
-import ontologizer.go.TermID;
+import ontologizer.ontology.Ontology;
+import ontologizer.ontology.Term;
+import ontologizer.ontology.TermID;
 
 /**
  * An abstraction of any result containing GO terms utilizing

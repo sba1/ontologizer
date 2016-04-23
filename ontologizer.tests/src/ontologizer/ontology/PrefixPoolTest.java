@@ -1,7 +1,10 @@
-package ontologizer.go;
+package ontologizer.ontology;
 
 import org.junit.Assert;
 import org.junit.Test;
+
+import ontologizer.ontology.Prefix;
+import ontologizer.ontology.PrefixPool;
 
 
 public class PrefixPoolTest

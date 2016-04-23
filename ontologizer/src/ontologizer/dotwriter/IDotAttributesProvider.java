@@ -1,6 +1,6 @@
 package ontologizer.dotwriter;
 
-import ontologizer.go.TermID;
+import ontologizer.ontology.TermID;
 
 /**
  * An interface for providing attributes for dot graph.

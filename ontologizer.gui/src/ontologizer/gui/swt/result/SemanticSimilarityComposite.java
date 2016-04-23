@@ -15,10 +15,10 @@ import net.sourceforge.nattable.NatTable;
 import ontologizer.GlobalPreferences;
 import ontologizer.association.Gene2Associations;
 import ontologizer.calculation.SemanticResult;
-import ontologizer.go.Ontology;
-import ontologizer.go.TermID;
 import ontologizer.gui.swt.support.IGraphCanvas;
 import ontologizer.gui.swt.support.IMinimizedAdapter;
+import ontologizer.ontology.Ontology;
+import ontologizer.ontology.TermID;
 import ontologizer.types.ByteString;
 import ontologizer.util.Util;
 

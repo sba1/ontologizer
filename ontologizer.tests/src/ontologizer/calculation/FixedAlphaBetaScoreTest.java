@@ -12,10 +12,10 @@ import org.junit.Test;
 import ontologizer.association.AssociationContainer;
 import ontologizer.calculation.b2g.FixedAlphaBetaScore;
 import ontologizer.enumeration.TermEnumerator;
-import ontologizer.go.Ontology;
-import ontologizer.go.Term;
-import ontologizer.go.TermID;
 import ontologizer.internal.InternalOntology;
+import ontologizer.ontology.Ontology;
+import ontologizer.ontology.Term;
+import ontologizer.ontology.TermID;
 import sonumina.math.graph.SlimDirectedGraphView;
 
 public class FixedAlphaBetaScoreTest

@@ -3,7 +3,7 @@
  *
  */
 
-package ontologizer.go;
+package ontologizer.ontology;
 
 
 /**

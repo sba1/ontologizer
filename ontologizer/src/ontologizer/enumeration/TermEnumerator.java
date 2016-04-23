@@ -12,10 +12,10 @@ import java.util.Map.Entry;
 
 import ontologizer.association.Association;
 import ontologizer.association.Gene2Associations;
-import ontologizer.go.Ontology;
-import ontologizer.go.Term;
-import ontologizer.go.TermID;
-import ontologizer.go.Ontology.IVisitingGOVertex;
+import ontologizer.ontology.Ontology;
+import ontologizer.ontology.Term;
+import ontologizer.ontology.TermID;
+import ontologizer.ontology.Ontology.IVisitingGOVertex;
 import ontologizer.types.ByteString;
 
 /**

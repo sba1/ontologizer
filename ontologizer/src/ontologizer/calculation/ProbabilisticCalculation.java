@@ -8,8 +8,8 @@ import java.util.Set;
 
 import ontologizer.association.AssociationContainer;
 import ontologizer.enumeration.TermEnumerator;
-import ontologizer.go.Ontology;
-import ontologizer.go.TermID;
+import ontologizer.ontology.Ontology;
+import ontologizer.ontology.TermID;
 import ontologizer.set.PopulationSet;
 import ontologizer.set.StudySet;
 import ontologizer.statistics.AbstractTestCorrection;

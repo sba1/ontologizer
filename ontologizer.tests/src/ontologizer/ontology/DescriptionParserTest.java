@@ -1,4 +1,4 @@
-package ontologizer.go;
+package ontologizer.ontology;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -6,6 +6,8 @@ import static org.junit.Assert.assertNull;
 import java.util.ArrayList;
 
 import org.junit.Test;
+
+import ontologizer.ontology.DescriptionParser;
 
 public class DescriptionParserTest
 {

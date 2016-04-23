@@ -2,8 +2,8 @@ package ontologizer.association;
 
 import java.util.regex.*;
 
-import ontologizer.go.PrefixPool;
-import ontologizer.go.TermID;
+import ontologizer.ontology.PrefixPool;
+import ontologizer.ontology.TermID;
 import ontologizer.types.ByteString;
 
 /**

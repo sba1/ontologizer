@@ -7,8 +7,8 @@ import java.util.Random;
 import ontologizer.association.AssociationContainer;
 import ontologizer.enumeration.TermEnumerator;
 import ontologizer.enumeration.TermEnumerator.TermAnnotatedGenes;
-import ontologizer.go.Ontology;
-import ontologizer.go.TermID;
+import ontologizer.ontology.Ontology;
+import ontologizer.ontology.TermID;
 import ontologizer.set.StudySet;
 import ontologizer.types.ByteString;
 

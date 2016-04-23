@@ -13,8 +13,8 @@ import org.apache.commons.cli.ParseException;
 
 import ontologizer.calculation.EnrichedGOTermsResult;
 import ontologizer.calculation.EnrichedGOTermsTableWriter;
-import ontologizer.go.OBOParserException;
-import ontologizer.go.TermID;
+import ontologizer.ontology.OBOParserException;
+import ontologizer.ontology.TermID;
 
 /**
  * OntologizerCMD.java

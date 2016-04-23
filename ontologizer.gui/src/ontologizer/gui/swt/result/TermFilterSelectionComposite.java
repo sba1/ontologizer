@@ -5,9 +5,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 
-import ontologizer.go.Term;
 import ontologizer.gui.swt.ISimpleAction;
 import ontologizer.gui.swt.support.SWTUtil;
+import ontologizer.ontology.Term;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;

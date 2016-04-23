@@ -68,13 +68,13 @@ import ontologizer.calculation.b2g.Bayes2GOGOTermProperties;
 import ontologizer.calculation.b2g.FixedAlphaBetaScore;
 import ontologizer.enumeration.TermEnumerator;
 import ontologizer.enumeration.TermEnumerator.TermAnnotatedGenes;
-import ontologizer.go.Namespace;
-import ontologizer.go.Term;
-import ontologizer.go.TermID;
 import ontologizer.gui.swt.Ontologizer;
 import ontologizer.gui.swt.support.GraphCanvas;
 import ontologizer.gui.swt.support.IGraphGenerationFinished;
 import ontologizer.gui.swt.support.SWTUtil;
+import ontologizer.ontology.Namespace;
+import ontologizer.ontology.Term;
+import ontologizer.ontology.TermID;
 import ontologizer.types.ByteString;
 
 /**

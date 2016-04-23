@@ -6,7 +6,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 
 import ontologizer.enumeration.TermEnumerator.TermAnnotatedGenes;
-import ontologizer.go.TermID;
+import ontologizer.ontology.TermID;
 import ontologizer.types.ByteString;
 
 /**

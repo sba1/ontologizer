@@ -12,8 +12,8 @@ import ontologizer.calculation.AbstractGOTermProperties;
 import ontologizer.calculation.EnrichedGOTermsResult;
 import ontologizer.calculation.b2g.Bayes2GOEnrichedGOTermsResult;
 import ontologizer.calculation.b2g.Bayes2GOGOTermProperties;
-import ontologizer.go.TermID;
 import ontologizer.gui.swt.support.GraphPaint;
+import ontologizer.ontology.TermID;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;

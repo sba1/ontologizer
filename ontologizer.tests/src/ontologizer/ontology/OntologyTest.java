@@ -1,4 +1,4 @@
-package ontologizer.go;
+package ontologizer.ontology;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -13,9 +13,17 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import ontologizer.go.Ontology.GOLevels;
-import ontologizer.go.Ontology.IVisitingGOVertex;
 import ontologizer.internal.InternalOntology;
+import ontologizer.ontology.Namespace;
+import ontologizer.ontology.OBOParser;
+import ontologizer.ontology.OBOParserFileInput;
+import ontologizer.ontology.Ontology;
+import ontologizer.ontology.Subset;
+import ontologizer.ontology.Term;
+import ontologizer.ontology.TermContainer;
+import ontologizer.ontology.TermID;
+import ontologizer.ontology.Ontology.GOLevels;
+import ontologizer.ontology.Ontology.IVisitingGOVertex;
 
 public class OntologyTest
 {

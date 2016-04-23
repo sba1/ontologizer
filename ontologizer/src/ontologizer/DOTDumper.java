@@ -8,10 +8,10 @@ import java.util.HashMap;
 
 import ontologizer.calculation.AbstractGOTermProperties;
 import ontologizer.calculation.EnrichedGOTermsResult;
-import ontologizer.go.Ontology;
-import ontologizer.go.Term;
-import ontologizer.go.TermID;
-import ontologizer.go.Ontology.IVisitingGOVertex;
+import ontologizer.ontology.Ontology;
+import ontologizer.ontology.Term;
+import ontologizer.ontology.TermID;
+import ontologizer.ontology.Ontology.IVisitingGOVertex;
 
 /**
  * A class writing dot files for the comparision of different calculation
