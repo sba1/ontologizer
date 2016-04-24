@@ -1,16 +1,11 @@
 package ontologizer.calculation;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import ontologizer.GlobalPreferences;
@@ -18,9 +13,9 @@ import ontologizer.association.AssociationContainer;
 import ontologizer.dotwriter.AbstractDotAttributesProvider;
 import ontologizer.ontology.Namespace;
 import ontologizer.ontology.Ontology;
+import ontologizer.ontology.Ontology.IVisitingGOVertex;
 import ontologizer.ontology.Term;
 import ontologizer.ontology.TermID;
-import ontologizer.ontology.Ontology.IVisitingGOVertex;
 import ontologizer.set.StudySet;
 import ontologizer.util.Util;
 
