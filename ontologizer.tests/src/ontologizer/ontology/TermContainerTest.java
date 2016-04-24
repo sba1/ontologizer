@@ -49,14 +49,14 @@ public class TermContainerTest
 		Assert.assertTrue(container.getFormatVersion().equals("noformat"));
 		Assert.assertTrue(container.getDate().equals("nodate"));
 
-		Assert.assertTrue(container.getGOName("GO:0000000").equals("root"));
-		Assert.assertTrue(container.getGOName(root.getID()).equals("root"));
-		Assert.assertTrue(container.getGOName("GO:0008150").equals("biological process"));
-		Assert.assertTrue(container.getGOName(bioproc.getID()).equals("biological process"));
-		Assert.assertTrue(container.getGOName("GO:0005575").equals("cellular component"));
-		Assert.assertTrue(container.getGOName(cellcomp.getID()).equals("cellular component"));
-		Assert.assertTrue(container.getGOName("GO:0003674").equals("molecular function"));
-		Assert.assertTrue(container.getGOName(molfunc.getID()).equals("molecular function"));
+		Assert.assertTrue(container.getName("GO:0000000").equals("root"));
+		Assert.assertTrue(container.getName(root.getID()).equals("root"));
+		Assert.assertTrue(container.getName("GO:0008150").equals("biological process"));
+		Assert.assertTrue(container.getName(bioproc.getID()).equals("biological process"));
+		Assert.assertTrue(container.getName("GO:0005575").equals("cellular component"));
+		Assert.assertTrue(container.getName(cellcomp.getID()).equals("cellular component"));
+		Assert.assertTrue(container.getName("GO:0003674").equals("molecular function"));
+		Assert.assertTrue(container.getName(molfunc.getID()).equals("molecular function"));
 
 		Assert.assertTrue(container.get("GO:0000000").equals(root));
 		Assert.assertTrue(container.get(root.getID()).equals(root));

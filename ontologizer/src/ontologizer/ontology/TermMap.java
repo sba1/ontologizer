@@ -11,7 +11,7 @@ import java.util.Map;
  */
 public class TermMap implements Iterable<Term>
 {
-	/** The set of GO terms */
+	/** The set of terms */
 	private Map<TermID, Term> map = new HashMap<TermID, Term>();
 
 	private TermMap()

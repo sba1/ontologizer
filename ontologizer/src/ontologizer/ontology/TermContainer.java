@@ -9,7 +9,7 @@ import java.util.*;
  * processing the information about the terms.
  *
  * This class implements the Iterable interface so you can iterate over all
- * GOTerms conveniently.
+ * terms conveniently.
  *
  * @author Peter N. Robinson, Sebastian Bauer, Steffen Grossmann
  */
@@ -57,9 +57,9 @@ public class TermContainer extends TermMap implements Iterable<Term>
 	}
 
 	/**
-	 * Given a GO:id such as GO:0001234 get the corresponding English name
+	 * Given a GOid such as GO:0001234 get the corresponding English name
 	 */
-	public String getGOName(String GOid)
+	public String getName(String GOid)
 	{
 		Term got = get(GOid);
 		if (got == null)
@@ -69,9 +69,9 @@ public class TermContainer extends TermMap implements Iterable<Term>
 	}
 
 	/**
-	 * Given a GO id get the corresponding English name
+	 * Given a GOid get the corresponding English name
 	 */
-	public String getGOName(TermID id)
+	public String getName(TermID id)
 	{
 		Term got = get(id);
 		if (got == null)

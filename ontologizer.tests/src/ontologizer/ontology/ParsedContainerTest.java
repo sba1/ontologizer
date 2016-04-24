@@ -38,12 +38,12 @@ public class ParsedContainerTest
 		Assert.assertTrue(container.getFormatVersion().equals(oboParser.getFormatVersion()));
 		Assert.assertTrue(container.getDate().equals(oboParser.getDate()));
 
-		Assert.assertTrue(container.getGOName("GO:0008150").equals("biological_process"));
-		Assert.assertTrue(container.getGOName(bioproc.getID()).equals("biological_process"));
-		Assert.assertTrue(container.getGOName("GO:0005575").equals("cellular_component"));
-		Assert.assertTrue(container.getGOName(cellcomp.getID()).equals("cellular_component"));
-		Assert.assertTrue(container.getGOName("GO:0003674").equals("molecular_function"));
-		Assert.assertTrue(container.getGOName(molfunc.getID()).equals("molecular_function"));
+		Assert.assertTrue(container.getName("GO:0008150").equals("biological_process"));
+		Assert.assertTrue(container.getName(bioproc.getID()).equals("biological_process"));
+		Assert.assertTrue(container.getName("GO:0005575").equals("cellular_component"));
+		Assert.assertTrue(container.getName(cellcomp.getID()).equals("cellular_component"));
+		Assert.assertTrue(container.getName("GO:0003674").equals("molecular_function"));
+		Assert.assertTrue(container.getName(molfunc.getID()).equals("molecular_function"));
 
 		Assert.assertTrue(container.get("GO:0008150").equals(bioproc));
 		Assert.assertTrue(container.get(bioproc.getID()).equals(bioproc));
