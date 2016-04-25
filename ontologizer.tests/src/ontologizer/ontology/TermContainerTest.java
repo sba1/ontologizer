@@ -25,7 +25,7 @@ public class TermContainerTest
 	@Before
 	public void setUp() throws Exception
 	{
-		root = new Term("GO:0000000", "root", null);
+		root = new Term("GO:0000000", "root", (ParentTermID)null);
 		ArrayList<ParentTermID> rootlist = new ArrayList<ParentTermID>();
 		rootlist.add(new ParentTermID(root.getID(),TermRelation.PART_OF_A));
 		bioproc = new Term("GO:0008150", "biological process", new Namespace("B"), rootlist);
@@ -68,7 +68,7 @@ public class TermContainerTest
 		Assert.assertTrue(container.get(molfunc.getID()).equals(molfunc));
 
 		Assert.assertTrue(container.get("GO:0000815") == null);
-		Term anotherTerm = new Term("GO:0000815", "dummy", null);
+		Term anotherTerm = new Term("GO:0000815", "dummy", (ParentTermID)null);
 		Assert.assertTrue(container.get(anotherTerm.getID()) == null);
 	}
 }
