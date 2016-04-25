@@ -10,6 +10,7 @@ import ontologizer.ontology.TermID;
 
 public class TermIDTest
 {
+	@SuppressWarnings("deprecation")
 	@Test
 	public void test()
 	{
