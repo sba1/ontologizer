@@ -2,10 +2,26 @@ package sonumina.collections;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.Iterator;
+
 import org.junit.Test;
 
 public class FullStringIndexTest
 {
+	/**
+	 * Simple util to get a number of items of an iterable.
+	 *
+	 * @param iterable
+	 * @return
+	 */
+	private static <T> int size(Iterable<T> iterable)
+	{
+		int count = 0;
+		for (Iterator<T> iter = iterable.iterator(); iter.hasNext(); iter.next())
+			count++;
+		return count;
+	}
+
 	@Test
 	public void test1()
 	{
@@ -17,30 +33,13 @@ public class FullStringIndexTest
 		fsi.add("ABCD", 5);
 		assertEquals(5,fsi.size());
 
-		int cnt = 0;
-		for (Integer i : fsi.contains("A"))
-			cnt++;
-		assertEquals(3,cnt);
-
-		cnt = 0;
-		for (Integer i : fsi.contains("AB"))
-			cnt++;
-		assertEquals(2,cnt);
-
-		cnt = 0;
-		for (Integer i : fsi.contains("AQ"))
-			cnt++;
-		assertEquals(1,cnt);
-
-		cnt = 0;
-		for (Integer i : fsi.contains("Z"))
-			cnt++;
-		assertEquals(0,cnt);
+		assertEquals(3, size(fsi.contains("A")));
+		assertEquals(2, size(fsi.contains("AB")));
+		assertEquals(1, size(fsi.contains("AQ")));
+		assertEquals(0, size(fsi.contains("Z")));
 
 		fsi.clear();
-		cnt = 0;
-		for (Integer i : fsi.contains("A"))
-			cnt++;
-		assertEquals(0,cnt);
+
+		assertEquals(0, size(fsi.contains("A")));
 	}
 }
