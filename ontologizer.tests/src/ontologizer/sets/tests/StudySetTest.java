@@ -89,21 +89,21 @@ class InternalDatafiles extends Datafiles
 		/* Associations */
 		assoc = new AssociationContainer();
 
-		assoc.addAssociation(new Association(new ByteString("item1"),4));
-		assoc.addAssociation(new Association(new ByteString("item1"),11));
+		assoc.addAssociation(new Association(new ByteString("item1"),"GO:0000004"));
+		assoc.addAssociation(new Association(new ByteString("item1"),"GO:0000011"));
 
-		assoc.addAssociation(new Association(new ByteString("item2"),10));
-		assoc.addAssociation(new Association(new ByteString("item2"),13));
+		assoc.addAssociation(new Association(new ByteString("item2"),"GO:0000010"));
+		assoc.addAssociation(new Association(new ByteString("item2"),"GO:0000013"));
 
-		assoc.addAssociation(new Association(new ByteString("item3"),7));
-		assoc.addAssociation(new Association(new ByteString("item3"),15));
+		assoc.addAssociation(new Association(new ByteString("item3"),"GO:0000007"));
+		assoc.addAssociation(new Association(new ByteString("item3"),"GO:0000015"));
 
-		assoc.addAssociation(new Association(new ByteString("item4"),12));
-		assoc.addAssociation(new Association(new ByteString("item4"),13));
-		assoc.addAssociation(new Association(new ByteString("item4"),14));
+		assoc.addAssociation(new Association(new ByteString("item4"),"GO:0000012"));
+		assoc.addAssociation(new Association(new ByteString("item4"),"GO:0000013"));
+		assoc.addAssociation(new Association(new ByteString("item4"),"GO:0000014"));
 
-		assoc.addAssociation(new Association(new ByteString("item5"),6));
-		assoc.addAssociation(new Association(new ByteString("item5"),14));
+		assoc.addAssociation(new Association(new ByteString("item5"),"GO:0000006"));
+		assoc.addAssociation(new Association(new ByteString("item5"),"GO:0000014"));
 
 		GODOTWriter.writeDOT(graph, new File("example.dot"), null, tids, new AbstractDotAttributesProvider() {
 			public String getDotNodeAttributes(TermID id) {
@@ -229,10 +229,8 @@ public class StudySetTest
 
 		TermForTermCalculation tft = new TermForTermCalculation();
 		EnrichedGOTermsResult result = tft.calculateStudySet(idf.graph, idf.assoc, populationSet, studySet, new None());
-		int number = 0;
-		for (AbstractGOTermProperties prop : result)
-			number++;
-		assertEquals(15,number);
+
+		assertEquals(15,result.getSize());
 
 		/* Remove all terms with less than two annotations */
 		gote.removeTerms(new TermEnumerator.IRemover() {
