@@ -6,7 +6,7 @@ VERSION=0.0.3-SNAPSHOT
 
 .PHONY: all
 all: clperf
-	cd ../ontologizer.parent && mvn package -DskipTests
+	cd ../ontologizer.parent && mvn package -DskipTests -pl ontologizer:ontologizer.benchmark -am
 	ONTOLOGIZER_ENABLE_EXPERIMENTAL=yes java -jar target/ontologizer.benchmark-$(VERSION)-jar-with-dependencies.jar \
 		--obo ../ontologizer.tests/data/gene_ontology.1_2.obo.gz \
 		--association ../ontologizer.tests/data/gene_association.sgd.gz \
