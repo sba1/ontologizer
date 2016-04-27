@@ -44,15 +44,15 @@ public class ProbabilisticCalculationTest
 
 		/* for C2 */
 		for (int i=0;i<10;i++)
-			assocContainer.addAssociation(new Association(new ByteString("gene"+i),2));
+			assocContainer.addAssociation(new Association(new ByteString("gene"+i),"GO:0000002"));
 
 		/* for C3 */
 		for (int i=10;i<20;i++)
-			assocContainer.addAssociation(new Association(new ByteString("gene"+i),3));
+			assocContainer.addAssociation(new Association(new ByteString("gene"+i),"GO:0000003"));
 
 		/* for C4 */
 		for (int i=20;i<100;i++)
-			assocContainer.addAssociation(new Association(new ByteString("gene"+i),4));
+			assocContainer.addAssociation(new Association(new ByteString("gene"+i),"GO:0000004"));
 
 		/* Study */
 		StudySet study = new StudySet("study");
