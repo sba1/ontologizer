@@ -65,9 +65,6 @@ public class SingleCalculationSetting
 			newStudyGenes.addGenes(wantedActiveTerm2StudySet.get(t));
 		newStudyGenes.filterOutDuplicateGenes(assoc);
 
-		int tp = newStudyGenes.getGeneCount();
-		int tn = allGenes.getGeneCount();
-
 		/* Obfuscate the study set, i.e., create the observed state */
 
 		/* false -> true (alpha, false positive) */
