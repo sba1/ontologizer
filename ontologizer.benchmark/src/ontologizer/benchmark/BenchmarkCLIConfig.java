@@ -51,4 +51,8 @@ public class BenchmarkCLIConfig
 
 	@Parameter(names={"--output-dir"}, description="Folder where all the output is stored. Defaults to the current directory.", arity=1)
 	public String outputDirectory;
+
+	@Parameter(names={"--seed"}, description="Seed that should be used for random number generations. Specifying 0 means to generate one. " +
+				"The seed will be stored in a file called \"seed\" in this case.", arity=1)
+	public long seed = 0;
 }
