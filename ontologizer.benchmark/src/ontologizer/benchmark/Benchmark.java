@@ -291,9 +291,13 @@ public class Benchmark
 			}
 		}
 
-		/* Write out the seed so it can be recovered. All the randomness is based upon this seed */
+		/* Get a seed */
 		long seed = System.nanoTime();
-		new PrintWriter(new File(outputDirectory, "seed")).println(seed);
+
+		/* Write out the seed so it can be recovered. All the randomness is based upon this seed */
+		PrintWriter seedOut = new PrintWriter(new File(outputDirectory, "seed"));
+		seedOut.println(seed);
+		seedOut.close();
 
 		final Random rnd = new Random(seed);
 
