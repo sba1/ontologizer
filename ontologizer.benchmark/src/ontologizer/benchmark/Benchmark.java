@@ -264,8 +264,8 @@ public class Benchmark
 		MIN_TERMS = cliConfig.minTerms;
 		MAX_TERMS = cliConfig.maxTerms;
 
-		/* Start */
-		int numProcessors = Runtime.getRuntime().availableProcessors();
+		int numProcessors = cliConfig.numProcessors;
+		if (numProcessors == 0) numProcessors = Runtime.getRuntime().availableProcessors();
 
 		if (cliConfig.proxy != null)
 		{

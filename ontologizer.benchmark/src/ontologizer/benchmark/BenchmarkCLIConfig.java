@@ -3,6 +3,7 @@ package ontologizer.benchmark;
 import com.beust.jcommander.IParameterValidator;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
+import com.beust.jcommander.validators.PositiveInteger;
 
 
 /**
@@ -55,4 +56,7 @@ public class BenchmarkCLIConfig
 	@Parameter(names={"--seed"}, description="Seed that should be used for random number generations. Specifying 0 means to generate one. " +
 				"The seed will be stored in a file called \"seed\" in this case.", arity=1)
 	public long seed = 0;
+
+	@Parameter(names={"--num-processors"}, description="Specifies the number of processors that shall be used. Defaults to 0 which means to take all available.", arity=1, validateWith=PositiveInteger.class)
+	public int numProcessors = 0;
 }
