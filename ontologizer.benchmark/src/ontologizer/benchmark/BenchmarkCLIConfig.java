@@ -1,6 +1,9 @@
 package ontologizer.benchmark;
 
+import java.util.List;
+
 import com.beust.jcommander.IParameterValidator;
+import com.beust.jcommander.IValueValidator;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.ParameterException;
 import com.beust.jcommander.validators.PositiveInteger;
@@ -24,6 +27,19 @@ public class BenchmarkCLIConfig
 		}
 	}
 
+	public static class RateValueValidator implements IValueValidator<List<Double>>
+	{
+		@Override
+		public void validate(String name, List<Double> value) throws ParameterException
+		{
+			for (double v : value)
+			{
+				if (v < 0.0 || v >= 1.0)
+					throw new ParameterException("Parameter " + name + " should be between 0 and 1");
+			}
+		}
+	}
+
 	@Parameter(names={"--term-combinations-per-run"}, description="How many term combinations per should be drawn per run. A run consists of drawing identically sized sets of terms.", validateWith=ProperPositiveInteger.class)
 	public int termCombinationsPerRun = 300;
 
@@ -35,6 +51,12 @@ public class BenchmarkCLIConfig
 
 	@Parameter(names={"--help"},description="Shows this help.",help=true)
 	public boolean help;
+
+	@Parameter(names={"--alpha"},variableArity=true, description="The false-positive rates to use when obsfuscating term combinations. Multiple values between 0 and 1 are accepted.", validateValueWith=RateValueValidator.class)
+	public List<Double> alpha;
+
+	@Parameter(names={"--beta"},variableArity=true, description="The false-negative rates to use when obsfuscating term combinations. Multiple values between 0 and 1 are accepted.", validateValueWith=RateValueValidator.class)
+	public List<Double> beta;
 
 	@Parameter(names={"-o", "--obo"}, description="The obo file that shall be used for running the benchmark. For instance, " +
 				"\"http://www.geneontology.org/ontology/gene_ontology_edit.obo\"", arity=1, required=true)
