@@ -24,7 +24,7 @@ public class BenchmarkCLIConfig
 		}
 	}
 
-	@Parameter(names={"--term-combinations-per-run"}, description="How many term combinations per should be drawn per run", validateWith=ProperPositiveInteger.class)
+	@Parameter(names={"--term-combinations-per-run"}, description="How many term combinations per should be drawn per run. A run consists of drawing identically sized sets of terms.", validateWith=ProperPositiveInteger.class)
 	public int termCombinationsPerRun = 300;
 
 	@Parameter(names={"--min-terms-per-combination"}, description="The minimum number of distinct terms per combination", validateWith=ProperPositiveInteger.class)
