@@ -7,9 +7,9 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
-import java.util.Map.Entry;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -37,6 +37,7 @@ import ontologizer.sampling.StudySetSampler;
 import ontologizer.set.PopulationSet;
 import ontologizer.set.StudySet;
 import ontologizer.statistics.AbstractTestCorrection;
+import ontologizer.statistics.Bonferroni;
 import ontologizer.statistics.None;
 import ontologizer.types.ByteString;
 
@@ -149,7 +150,12 @@ public class Benchmark
 		}
 	}
 
+	/** All available calculation methods */
+	static ArrayList<Method> availableCalcMethods;
+
+	/** The selected calculation methods */
 	static ArrayList<Method> calcMethods;
+
 //	static double [] calcAlpha = new double[]{/*0.05,0.1,0.25,*/0.5};
 //	static double [] calcBeta = new double[]{/*0.05,0.1,0.25,*/0.5};
 //	static int [] calcDesiredTerms = new int []{1/*,2,4,6,8*/};
@@ -158,21 +164,22 @@ public class Benchmark
 	{
 		Method m;
 
+		availableCalcMethods = new ArrayList<Method>();
 		calcMethods = new ArrayList<Method>();
 
 		/* Bayes2GO Ideal, note that Bayes2GO was the working title */
-//		calcMethods.add(new Method("MGSA","b2g.ideal"));
+		availableCalcMethods.add(new Method("MGSA","b2g.ideal"));
 
 		/* Bayes2GO Ideal, with pop as ref */
-//		m = new Method("MGSA","b2g.ideal.pop");
-//		m.takePopulationAsReference = true;
-//		calcMethods.add(m);
+		m = new Method("MGSA","b2g.ideal.pop");
+		m.takePopulationAsReference = true;
+		availableCalcMethods.add(m);
 
 		/* Bayes2GO Ideal, with pop as ref, random start */
-//		m = new Method("MGSA","b2g.ideal.pop.random");
-//		m.takePopulationAsReference = true;
-//		m.useRandomStart = true;
-//		calcMethods.add(m);
+		m = new Method("MGSA","b2g.ideal.pop.random");
+		m.takePopulationAsReference = true;
+		m.useRandomStart = true;
+		availableCalcMethods.add(m);
 
 //		/* Tests for alpha/beta sensitivity */
 //		for (double a : calcAlpha)
@@ -186,64 +193,66 @@ public class Benchmark
 //				}
 //			}
 //		}
-//		calcMethods.add(new Method("Term-For-Term","tft"));
-//		m = new Method("Term-For-Term","tft.bf");
-//		m.testCorrection = new Bonferroni();
-//		calcMethods.add(m);
-//		calcMethods.add(new Method("Parent-Child-Union","pcu"));
-//		calcMethods.add(new Method("GenGO","gg"));
-//		calcMethods.add(new Method("Topology-Weighted","tweight"));
+		availableCalcMethods.add(new Method("Term-For-Term","tft"));
+		m = new Method("Term-For-Term","tft.bf");
+		m.testCorrection = new Bonferroni();
+		availableCalcMethods.add(m);
+		availableCalcMethods.add(new Method("Parent-Child-Union","pcu"));
+		availableCalcMethods.add(new Method("GenGO","gg"));
+		availableCalcMethods.add(new Method("Topology-Weighted","tweight"));
 
-//		m = new Method("MGSA","b2g.em.pop");
-//		m.takePopulationAsReference = true;
-//		m.em = true;
-//		calcMethods.add(m);
+		m = new Method("MGSA","b2g.em.pop");
+		m.takePopulationAsReference = true;
+		m.em = true;
+		availableCalcMethods.add(m);
 
-//		m = new Method("MGSA", "b2g.mcmc");
-//		m.mcmc = true;
-//		calcMethods.add(m);
+		m = new Method("MGSA", "b2g.mcmc");
+		m.mcmc = true;
+		availableCalcMethods.add(m);
 
 		m = new Method("MGSA", "b2g.mcmc.pop");
 		m.takePopulationAsReference = true;
 		m.mcmc = true;
 		calcMethods.add(m);
+		availableCalcMethods.add(m);
 
-//		m = new Method("MGSA", "b2g.mcmc.cexpt");
-//		m.mcmc = true;
-//		m.useCorrectExpectedTerms = true;
-//		calcMethods.add(m);
+		m = new Method("MGSA", "b2g.mcmc.cexpt");
+		m.mcmc = true;
+		m.useCorrectExpectedTerms = true;
+		availableCalcMethods.add(m);
 
-//		m = new Method("MGSA","b2g.ideal.nop");
-//		m.usePrior = false;
-//		calcMethods.add(m);
+		m = new Method("MGSA","b2g.ideal.nop");
+		m.usePrior = false;
+		availableCalcMethods.add(m);
 
-//		m = new Method("MGSA","b2g.mcmc.nop");
-//		m.usePrior = false;
-//		m.mcmc = true;
-//		calcMethods.add(m);
+		m = new Method("MGSA","b2g.mcmc.nop");
+		m.usePrior = false;
+		m.mcmc = true;
+		availableCalcMethods.add(m);
 
-//		m = new Method("MGSA","b2g.mcmc.pop.nop");
-//		m.usePrior = false;
-//		m.mcmc = true;
-//		m.takePopulationAsReference = true;
-//		calcMethods.add(m);
+		m = new Method("MGSA","b2g.mcmc.pop.nop");
+		m.usePrior = false;
+		m.mcmc = true;
+		m.takePopulationAsReference = true;
+		availableCalcMethods.add(m);
 
-//		m = new Method("MGSA", "b2g.mcmc.pop.maxbeta");
-//		m.takePopulationAsReference = true;
-//		m.mcmc = true;
-//		m.useMaxBeta = true;
-//		calcMethods.add(m);
+		m = new Method("MGSA", "b2g.mcmc.pop.maxbeta");
+		m.takePopulationAsReference = true;
+		m.mcmc = true;
+		m.useMaxBeta = true;
+		availableCalcMethods.add(m);
 
-//		m = new Method("MGSA","b2g.ideal.pop.nop");
-//		m.usePrior = false;
-//		m.takePopulationAsReference = true;
-//		calcMethods.add(m);
+		m = new Method("MGSA","b2g.ideal.pop.nop");
+		m.usePrior = false;
+		m.takePopulationAsReference = true;
+		availableCalcMethods.add(m);
 
 		m = new Method("MGSA","b2g.values.pop");
 		m.takePopulationAsReference = true;
 		m.mcmc = true;
 		m.shallDealWithValues = true;
 		calcMethods.add(m);
+		availableCalcMethods.add(m);
 	}
 
 	public static void main(String[] args) throws Exception
