@@ -58,6 +58,9 @@ public class BenchmarkCLIConfig
 	@Parameter(names={"--beta"},variableArity=true, description="The false-negative rates to use when obsfuscating term combinations. Multiple values between 0 and 1 are accepted.", validateValueWith=RateValueValidator.class)
 	public List<Double> beta;
 
+	@Parameter(names={"--methods"}, variableArity=true, descriptionKey="methods")
+	public List<String> methods;
+
 	@Parameter(names={"-o", "--obo"}, description="The obo file that shall be used for running the benchmark. For instance, " +
 				"\"http://www.geneontology.org/ontology/gene_ontology_edit.obo\"", arity=1, required=true)
 	public String obo;

@@ -4,11 +4,16 @@ import java.io.File;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 import java.util.Random;
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -253,13 +258,65 @@ public class Benchmark
 		m.shallDealWithValues = true;
 		calcMethods.add(m);
 		availableCalcMethods.add(m);
+
+		Collections.sort(availableCalcMethods, new Comparator<Method>()
+		{
+			@Override
+			public int compare(Method o1, Method o2)
+			{
+				return o1.abbrev.compareTo(o2.abbrev);
+			}
+		});
 	}
 
 	public static void main(String[] args) throws Exception
 	{
 		/* Command line parsing */
 		BenchmarkCLIConfig cliConfig = new BenchmarkCLIConfig();
-		JCommander jc = new JCommander(cliConfig);
+		JCommander jc = new JCommander(cliConfig, new ResourceBundle()
+		{
+			private HashMap<String,String> descriptions = new HashMap<String,String>();
+
+			{
+				/* Join, slow but should work. Should really use Java8 */
+				String methods = null;
+				for (Method m : availableCalcMethods)
+				{
+					if (methods == null) methods = m.abbrev;
+					else methods += ", " + m.abbrev;
+				}
+
+				descriptions.put("methods", "Defines the methods to benchmark. Possible choices are: " + methods);
+			}
+
+			@Override
+			protected Object handleGetObject(String key)
+			{
+				return descriptions.get(key);
+			}
+
+			@Override
+			public Enumeration<String> getKeys()
+			{
+				/* Adapt Iterator to Enumeration */
+				return new Enumeration<String>()
+				{
+					private Iterator<String> iter = descriptions.keySet().iterator();
+
+					@Override
+					public boolean hasMoreElements()
+					{
+						return iter.hasNext();
+					}
+
+					@Override
+					public String nextElement()
+					{
+						return iter.next();
+					}
+				};
+			}
+		});
 		jc.parse(args);
 
 		jc.setProgramName(Benchmark.class.getSimpleName());
