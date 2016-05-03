@@ -272,7 +272,7 @@ public class Benchmark
 		TERMS_PER_RUN = cliConfig.termCombinationsPerRun;
 		MIN_TERMS = cliConfig.minTerms;
 		MAX_TERMS = cliConfig.maxTerms;
-		if (cliConfig.alpha.size() > 0)
+		if (cliConfig.alpha != null && cliConfig.alpha.size() > 0)
 		{
 			ALPHAs = new double[cliConfig.alpha.size()];
 			int i = 0;
@@ -280,7 +280,7 @@ public class Benchmark
 				ALPHAs[i++] = a;
 		}
 
-		if (cliConfig.beta.size() > 0)
+		if (cliConfig.beta != null && cliConfig.beta.size() > 0)
 		{
 			BETAs = new double[cliConfig.beta.size()];
 			int i = 0;
