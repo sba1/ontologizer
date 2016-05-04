@@ -354,6 +354,24 @@ public class Benchmark
 			GlobalPreferences.setProxyHost(cliConfig.proxy);
 		}
 
+		if (cliConfig.methods != null)
+		{
+			HashMap<String,Method> name2Method = new HashMap<String,Method>();
+			for (Method m : availableCalcMethods)
+				name2Method.put(m.abbrev, m);
+			calcMethods.clear();
+
+			for (String abbrev : cliConfig.methods)
+			{
+				if (!name2Method.containsKey(abbrev))
+				{
+					System.err.println("Specified method \"" + abbrev + "\" not supported!");
+					System.exit(1);
+				}
+				calcMethods.add(name2Method.get(abbrev));
+			}
+		}
+
 		String oboPath = cliConfig.obo;
 		String assocPath = cliConfig.assoc;
 		File outputDirectory = new File(cliConfig.outputDirectory==null?System.getProperty("user.dir"):cliConfig.outputDirectory);
