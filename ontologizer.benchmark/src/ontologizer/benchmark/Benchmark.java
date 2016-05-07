@@ -104,7 +104,6 @@ public class Benchmark
 	/**
 	 * Defines how many terms are taken when beta is varied.
 	 */
-	private static int TERMS_WHEN_VARING_BETA = 15;
 	private static double VARING_BETA [] = new double[]{0.2,0.4,0.6,0.8};
 
 	private static AbstractTestCorrection testCorrection = new None();
@@ -527,15 +526,17 @@ public class Benchmark
 			}
 		}
 
-/*		This enables the creation of terms with different betas */
-//		for (ArrayList<TermID> termCombi : kSubsetSampler.sampleManyOrderedWithoutReplacement(TERMS_WHEN_VARING_BETA,TERMS_PER_RUN))
-//		{
-//			Combination comb = new Combination();
-//			comb.termCombi = termCombi;
-//			comb.isSenseful = false;
-//			comb.hasVaryingBeta = true;
-//			combinationList.add(comb);
-//		}
+		if (cliConfig.termsWhenVaryingBeta > 0)
+		{
+			for (ArrayList<TermID> termCombi : kSubsetSampler.sampleManyOrderedWithoutReplacement(cliConfig.termsWhenVaryingBeta,TERMS_PER_RUN))
+			{
+				Combination comb = new Combination();
+				comb.termCombi = termCombi;
+				comb.isSenseful = false;
+				comb.hasVaryingBeta = true;
+				combinationList.add(comb);
+			}
+		}
 
 		KSubsetSampler<TermID> kSensefulSubsetSampler = new KSubsetSampler<TermID>(sensefulTerms,rnd);
 		for (int i=MIN_TERMS;i<=MAX_TERMS;i++)

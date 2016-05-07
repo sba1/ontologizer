@@ -58,6 +58,10 @@ public class BenchmarkCLIConfig
 	@Parameter(names={"--beta"},variableArity=true, description="The false-negative rates to use when obsfuscating term combinations. Multiple values between 0 and 1 are accepted.", validateValueWith=RateValueValidator.class)
 	public List<Double> beta;
 
+	@Parameter(names={"--terms-when-varying-beta"}, description="How many terms should be chosen, in the experiment, in which the beta is varied for each term." +
+				"Defaults to 0 which means that this experiment is not performed. Note that the beta values are fixed for now.", validateWith=PositiveInteger.class)
+	public int termsWhenVaryingBeta = 0;
+
 	@Parameter(names={"--methods"}, variableArity=true, descriptionKey="methods")
 	public List<String> methods;
 
