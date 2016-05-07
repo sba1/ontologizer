@@ -287,6 +287,9 @@ public class Benchmark
 				}
 
 				descriptions.put("methods", "Defines the methods to benchmark. Possible choices are: " + methods);
+				descriptions.put("num-processors", "Specifies the number of processors that shall be used. " +
+													"Defaults to 0 which means to take all available. " +
+													"Maximum number that makes sense on this system is: " + Runtime.getRuntime().availableProcessors() + ".");
 			}
 
 			@Override

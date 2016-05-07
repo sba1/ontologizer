@@ -82,6 +82,6 @@ public class BenchmarkCLIConfig
 				"The seed will be stored in a file called \"seed\" in this case.", arity=1)
 	public long seed = 0;
 
-	@Parameter(names={"--num-processors"}, description="Specifies the number of processors that shall be used. Defaults to 0 which means to take all available.", arity=1, validateWith=PositiveInteger.class)
+	@Parameter(names={"--num-processors"}, descriptionKey="num-processors", arity=1, validateWith=PositiveInteger.class)
 	public int numProcessors = 0;
 }
