@@ -42,7 +42,7 @@ check-clean-checkout:
 #
 .PHONY: copy-static
 copy-static: # check-clean-checkout
-#	cd ../ontologizer.parent && mvn package
+	cd ../ontologizer.parent && mvn package
 	rm -Rf static/webstart static/cmdline static/gui
 	mkdir -p static/webstart static/cmdline static/gui
 	cp -p ../ontologizer.gui/ontologizer.jnlp static/webstart
