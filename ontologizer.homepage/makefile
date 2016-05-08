@@ -5,7 +5,7 @@
 # KEYSTORE_PASSWORD_ENV the name of the env variable that contains the keystore's password
 # KEYSTORE_ALIAS the alias
 
-VERSION = 0.0.2-SNAPSHOT
+VERSION = 0.0.3-SNAPSHOT
 
 -include makefile.settings
 
