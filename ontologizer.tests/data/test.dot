@@ -1,0 +1,5 @@
+digraph G {
+ graph [
+  nodesep=0.4
+ ];
+}

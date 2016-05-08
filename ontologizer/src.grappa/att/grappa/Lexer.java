@@ -424,12 +424,18 @@ public class Lexer
 	buffer[0] = (char) next_char;
 
 	synchronized(cmnstrbuf) {
+	    boolean haveSeenDot = false;
 	    cmnstrbuf.delete(0,cmnstrbuf.length()); // faster than cmnstrbuf.setLength(0)!
 	    cmnstrbuf.append(buffer, 0, 1);
 	    advance();
 
 	    // collect up characters while they fit in id
-	    while (id_char(next_char)) {
+	    // more recent version of dot also spit out floating points.
+	    while (id_char(next_char) || next_char =='.') {
+		if (next_char =='.') {
+			if (haveSeenDot) break;
+			haveSeenDot = true;
+		}
 		buffer[0] = (char) next_char;
 		cmnstrbuf.append(buffer, 0, 1);
 		advance();
