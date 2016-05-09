@@ -16,7 +16,7 @@ public class DOTParserTest
 	public void testParseDOTwithFloat() throws Exception
 	{
 		Parser parser = new Parser(new FileInputStream("data/test.dot"), System.err);
-		parser.debug_parse(10);
+		parser.debug_parse(0);
 		att.grappa.Graph g = parser.getGraph();
 
 		int numNodes = 0;
