@@ -26,5 +26,6 @@ public class DOTParserTest
 			e.nextElement();
 			numNodes++;
 		}
+		assertEquals(0, numNodes);
 	}
 }
