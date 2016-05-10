@@ -58,7 +58,6 @@ public class WorkSetLoadThread extends Thread
 		public boolean assocDownloaded;
 
 		private List<Runnable> callbacks = new LinkedList<Runnable>();
-		private List<IWorkSetProgress> progresses = new LinkedList<IWorkSetProgress>();
 
 		/**
 		 * Add a new callback.
@@ -104,7 +103,7 @@ public class WorkSetLoadThread extends Thread
 		}
 	}
 
-	static private WorkSetLoadThread wslt;
+	private static WorkSetLoadThread wslt;
 
 	static
 	{
@@ -112,7 +111,7 @@ public class WorkSetLoadThread extends Thread
 		wslt.start();
 	}
 
-	static private IWorkSetProgress dummyWorkSetProgress = new IWorkSetProgress()
+	private static IWorkSetProgress dummyWorkSetProgress = new IWorkSetProgress()
 	{
 		public void initGauge(int maxWork) {}
 		public void message(String message) {}
@@ -126,7 +125,7 @@ public class WorkSetLoadThread extends Thread
 	 * @param df
 	 * @param run
 	 */
-	static public void obtainDatafiles(WorkSet df, Runnable run)
+	public static void obtainDatafiles(WorkSet df, Runnable run)
 	{
 		obtainDatafiles(df, null, run);
 	}
@@ -138,7 +137,7 @@ public class WorkSetLoadThread extends Thread
 	 * @param df
 	 * @param run
 	 */
-	static public void obtainDatafiles(WorkSet df, IWorkSetProgress progress, Runnable run)
+	public static void obtainDatafiles(WorkSet df, IWorkSetProgress progress, Runnable run)
 	{
 		ObtainWorkSetMessage owsm = new ObtainWorkSetMessage();
 		owsm.workset = df;
@@ -223,17 +222,10 @@ public class WorkSetLoadThread extends Thread
 			class CleanupTasksRunnable implements Runnable
 			{
 				private String url;
-				private Exception exception;
 
 				public CleanupTasksRunnable(String url)
 				{
 					this.url = url;
-				}
-
-				public CleanupTasksRunnable(Exception exception, String url)
-				{
-					this.url = url;
-					this.exception = exception;
 				}
 
 				public void run()
@@ -299,7 +291,7 @@ public class WorkSetLoadThread extends Thread
 			public void exception(Exception exception, String url)
 			{
 				/* An error occurred when downloading the specified URL */
-				execAsync(new CleanupTasksRunnable(exception, url));
+				execAsync(new CleanupTasksRunnable(url));
 			}
 		};
 
@@ -465,7 +457,7 @@ public class WorkSetLoadThread extends Thread
 
 				workSetProgress.message("Parsing association file");
 				workSetProgress.updateGauge(0);
-				AssociationParser ap = new AssociationParser(new OBOParserFileInput(assocName),graph.getTermContainer(),null,new IAssociationParserProgress()
+				AssociationParser ap = new AssociationParser(new OBOParserFileInput(assocName),graph.getTermMap(),null,new IAssociationParserProgress()
 				{
 					public void init(int max)
 					{
