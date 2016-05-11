@@ -461,8 +461,6 @@ public class Bayes2GOCalculationTest
 			}
 		}
 		System.out.println("There are " + cnt + " terms to which none of the genes of the study set are annotated.");
-		boolean pIsReverseMarginal = false;
-
 		System.out.println("Method is " + calc.getName());
 
 		System.out.println("We have a statement over a total of " + result.getSize() + " terms.");
@@ -483,7 +481,6 @@ public class Bayes2GOCalculationTest
 				wantedScore = b2gResult.getScore().score(terms);
 				System.out.println("Score of reduced set is " + wantedScore);
 			}
-			pIsReverseMarginal = true;
 		}
 
 		//scoreDistribution(calc,allEnumerator,allGenes,newStudyGenes);
