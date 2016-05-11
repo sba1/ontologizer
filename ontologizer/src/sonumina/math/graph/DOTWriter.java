@@ -89,8 +89,10 @@ public class DOTWriter
 		for (V v : nodeSet)
 		{
 			String attributes = provider.getDotNodeAttributes(v);
+			String name = provider.getDotNodeName(v);
+			if (name == null) name = Integer.toString(i);
 
-			out.write(Integer.toString(i));
+			out.write(name);
 			if (attributes != null)
 				out.write("[" + attributes + "]");
 			out.write(";\n");
@@ -108,7 +110,12 @@ public class DOTWriter
 
 				if (v2idx.containsKey(d))
 				{
-					out.write(v2idx.get(s) + " -> " + v2idx.get(d));
+					String sName = provider.getDotNodeName(s);
+					String dName = provider.getDotNodeName(d);
+					if (sName == null) sName = Integer.toString(v2idx.get(s));
+					if (dName == null) dName = Integer.toString(v2idx.get(d));
+
+					out.write(sName + " -> " + dName);
 
 					String attributes = provider.getDotEdgeAttributes(s,d);
 					if (attributes != null)

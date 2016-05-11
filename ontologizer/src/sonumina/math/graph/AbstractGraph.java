@@ -371,6 +371,11 @@ abstract public class AbstractGraph<VertexType>
 	 */
 	public static class DotAttributesProvider<VertexType>
 	{
+		public String getDotNodeName(VertexType vt)
+		{
+			return null;
+		}
+
 		public String getDotNodeAttributes(VertexType vt)
 		{
 			return null;
