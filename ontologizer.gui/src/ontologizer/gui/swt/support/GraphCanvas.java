@@ -66,8 +66,6 @@ public class GraphCanvas extends Canvas implements IGraphCanvas
 	private ScrollBar horizontalScrollBar;
 	private ScrollBar verticalScrollBar;
 
-	private GraphCanvas thisCanvas;
-
 	private boolean mouseDown;
 	private int mouseCenterX;
 	private int mouseCenterY;
@@ -85,8 +83,6 @@ public class GraphCanvas extends Canvas implements IGraphCanvas
 	public GraphCanvas(Composite parent, int style)
 	{
 		super(parent, style | SWT.NO_BACKGROUND | SWT.DOUBLE_BUFFERED | SWT.HORIZONTAL | SWT.VERTICAL);
-
-		thisCanvas = this;
 
 		scaleToFit = true;
 		horizontalScrollBar = getHorizontalBar();
@@ -156,7 +152,7 @@ public class GraphCanvas extends Canvas implements IGraphCanvas
 
 					/* emit event */
 					Event ev = new Event();
-				    ev.widget = thisCanvas;
+				    ev.widget = GraphCanvas.this;
 				    ev.type = SWT.Selection;
 				    ev.text = getNameOfCurrentSelectedNode();
 				    notifyListeners(SWT.Selection, ev);
