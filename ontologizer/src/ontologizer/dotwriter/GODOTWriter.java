@@ -100,7 +100,7 @@ public class GODOTWriter
 						private String direction = reverseDirection?"":"dir=\"back\"";
 
 						@Override
-						public String getDotNodeName(Term vt) { return vt.getID().toString().replace(':', '_'); }
+						public String getDotNodeName(Term vt) { return vt.getID().toString().replace(':', '_'); } // FIXME: Escape single _
 
 						@Override
 						public String getDotNodeAttributes(Term vt) { return provider.getDotNodeAttributes(vt.getID());	}
