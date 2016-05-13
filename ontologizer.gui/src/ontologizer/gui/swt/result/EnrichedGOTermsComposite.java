@@ -427,7 +427,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 		Term goTerm = (Term)item.getData("term");
 		if (goTerm != null)
 		{
-			graphVisual.selectNode(Integer.toString(goTerm.getID().id));
+			graphVisual.selectNode(goTerm.getID().toString().replace(':', '_'));
 		}
 	}
 
