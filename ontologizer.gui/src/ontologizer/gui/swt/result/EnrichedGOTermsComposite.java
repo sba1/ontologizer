@@ -1024,8 +1024,8 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 			{
 				try
 				{
-					int id = Integer.parseInt(e.text);
-					Integer selection = termID2ListLine.get(id);
+					TermID termId = new TermID(e.text.replace('_', ':'));
+					Integer selection = termID2ListLine.get(termId.id);
 					if (selection != null)
 					{
 						table.setSelection(selection);
