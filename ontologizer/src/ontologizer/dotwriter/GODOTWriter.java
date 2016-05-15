@@ -20,6 +20,30 @@ public class GODOTWriter
 	private static Logger logger = Logger.getLogger(GODOTWriter.class.getCanonicalName());
 
 	/**
+	 * Encode the term id for using it as node's name within the dot file.
+	 *
+	 * @param termId
+	 * @return
+	 *
+	 * @todo Properly escape possibly existing underscore
+	 */
+	public static String encodeTermID(TermID termId)
+	{
+		return termId.toString().replace(':', '_');
+	}
+
+	/**
+	 * Decode the string encoded with encodeTermID().
+	 *
+	 * @param encodedTermId
+	 * @return
+	 */
+	public static TermID decodeTermID(String encodedTermId)
+	{
+		return new TermID(encodedTermId.replace('_', ':'));
+	}
+
+	/**
 	 * Writes out a basic dot file which can be used within graphviz. All terms
 	 * of the terms parameter are included in the graph if they are within the
 	 * sub graph originating at the rootTerm. In other words, all nodes
@@ -100,7 +124,7 @@ public class GODOTWriter
 						private String direction = reverseDirection?"":"dir=\"back\"";
 
 						@Override
-						public String getDotNodeName(Term vt) { return vt.getID().toString().replace(':', '_'); } // FIXME: Escape single _
+						public String getDotNodeName(Term vt) { return GODOTWriter.encodeTermID(vt.getID()); }
 
 						@Override
 						public String getDotNodeAttributes(Term vt) { return provider.getDotNodeAttributes(vt.getID());	}

@@ -66,6 +66,7 @@ import ontologizer.calculation.EnrichedGOTermsTableWriter;
 import ontologizer.calculation.b2g.Bayes2GOEnrichedGOTermsResult;
 import ontologizer.calculation.b2g.Bayes2GOGOTermProperties;
 import ontologizer.calculation.b2g.FixedAlphaBetaScore;
+import ontologizer.dotwriter.GODOTWriter;
 import ontologizer.enumeration.TermEnumerator;
 import ontologizer.enumeration.TermEnumerator.TermAnnotatedGenes;
 import ontologizer.gui.swt.Ontologizer;
@@ -427,7 +428,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 		Term goTerm = (Term)item.getData("term");
 		if (goTerm != null)
 		{
-			graphVisual.selectNode(goTerm.getID().toString().replace(':', '_'));
+			graphVisual.selectNode(GODOTWriter.encodeTermID(goTerm.getID()));
 		}
 	}
 
@@ -1024,7 +1025,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 			{
 				try
 				{
-					TermID termId = new TermID(e.text.replace('_', ':'));
+					TermID termId = GODOTWriter.decodeTermID(e.text);
 					Integer selection = termID2ListLine.get(termId.id);
 					if (selection != null)
 					{
@@ -1053,12 +1054,11 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 			{
 				try
 				{
-					String stringId = graphVisual.getNameOfCurrentSelectedNode().replace('_', ':');
-					System.out.println(stringId);
+					TermID selectedTermId = GODOTWriter.decodeTermID(graphVisual.getNameOfCurrentSelectedNode());
 
 					if (e.widget.equals(childTermsMenuItem))
 					{
-						Set<TermID> termIDs = go.getTermChildren(new TermID(stringId));
+						Set<TermID> termIDs = go.getTermChildren(selectedTermId);
 						for (TermID termID : termIDs)
 						{
 							Integer selection = termID2ListLine.get(termID.id);
@@ -1077,7 +1077,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 						StringWriter sw = new StringWriter();
 						PrintWriter pw = new PrintWriter(sw);
 
-						for (ByteString gene : enumerator.getAnnotatedGenes(new TermID(stringId)).totalAnnotated)
+						for (ByteString gene : enumerator.getAnnotatedGenes(selectedTermId).totalAnnotated)
 						{
 							String desc = result.getStudySet().getGeneDescription(gene);
 
@@ -1098,7 +1098,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 
 						/* Build hashset in order to have constant time access */
 						HashSet<ByteString> annotatedGenes = new HashSet<ByteString>();
-						annotatedGenes.addAll(enumerator.getAnnotatedGenes(new TermID(stringId)).totalAnnotated);
+						annotatedGenes.addAll(enumerator.getAnnotatedGenes(selectedTermId).totalAnnotated);
 
 						Clipboard clipboard = new Clipboard(getDisplay());
 						StringBuilder str = new StringBuilder();
