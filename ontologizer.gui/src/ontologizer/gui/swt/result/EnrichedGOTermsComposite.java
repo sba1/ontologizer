@@ -530,9 +530,9 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 			browser.setText(str.toString());
 		} else
 		{
-			str.append(item.getText(1));
+			str.append(item.getText(NAME));
 			str.append(" (");
-			str.append(item.getText(0));
+			str.append(item.getText(GOID));
 			str.append(")");
 			str.append("\n\n");
 			Term goTerm = (Term)item.getData("term");
