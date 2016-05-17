@@ -26,6 +26,17 @@ $ mvn package
 If successful, the command line version can be found in ```ontologizer.cmdline``` and the
 UI version in the ```ontologizer.gui``` modules in the respective ```target``` folders.
 
+For instance, still being in the ```ontologizer.parent``` folder, you can start the GUI
+version by
+
+```
+$ cd ../ontologizer.gui/target
+$ java -jar Ontologizer-jar-with-dependencies.jar
+```
+
+The ```Ontologizer-jar-with-dependencies.jar``` includes all dependencies, incl. SWT
+for your platform.
+
 API
 ---
 
