@@ -12,6 +12,7 @@ import ontologizer.calculation.AbstractGOTermProperties;
 import ontologizer.calculation.EnrichedGOTermsResult;
 import ontologizer.calculation.b2g.Bayes2GOEnrichedGOTermsResult;
 import ontologizer.calculation.b2g.Bayes2GOGOTermProperties;
+import ontologizer.dotwriter.GODOTWriter;
 import ontologizer.gui.swt.support.GraphPaint;
 import ontologizer.ontology.TermID;
 
@@ -55,11 +56,11 @@ public class EnrichedGOTermsResultHTMLWriter
 
 							double x = center.x;
 							double y = center.y;
+
 //							double w = (Double)n.getAttributeValue(Node.WIDTH_ATTR);
 //							double h = (Double)n.getAttributeValue(Node.HEIGHT_ATTR);
 
-							int id = Integer.parseInt(n.getName());
-							TermID tid = new TermID(id);
+							TermID tid = GODOTWriter.decodeTermID(n.getName());
 							data.term2node.put(tid,n);
 
 							if (x < data.minX) data.minX = x;
