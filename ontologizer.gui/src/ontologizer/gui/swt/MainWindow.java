@@ -1527,6 +1527,10 @@ public class MainWindow extends ApplicationWindow
 			{
 				if (shell.isDisposed())
 					return;
+
+				if (currentWorkSet == null)
+					return;
+
 				if (!currentWorkSet.getOboPath().equals(url) && !currentWorkSet.getAssociationPath().equals(url))
 					return;
 
