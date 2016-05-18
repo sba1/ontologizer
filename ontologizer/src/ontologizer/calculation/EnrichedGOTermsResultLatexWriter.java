@@ -1,4 +1,4 @@
-package ontologizer.gui.swt.result;
+package ontologizer.calculation;
 
 import java.io.File;
 import java.io.IOException;
@@ -7,8 +7,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Locale;
 
-import ontologizer.calculation.AbstractGOTermProperties;
-import ontologizer.calculation.EnrichedGOTermsResult;
 import ontologizer.calculation.b2g.Bayes2GOEnrichedGOTermsResult;
 import ontologizer.calculation.b2g.Bayes2GOGOTermProperties;
 import ontologizer.ontology.TermID;

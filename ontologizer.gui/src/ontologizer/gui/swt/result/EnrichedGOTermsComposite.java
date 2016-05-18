@@ -62,6 +62,7 @@ import ontologizer.GlobalPreferences;
 import ontologizer.association.Gene2Associations;
 import ontologizer.calculation.AbstractGOTermProperties;
 import ontologizer.calculation.EnrichedGOTermsResult;
+import ontologizer.calculation.EnrichedGOTermsResultLatexWriter;
 import ontologizer.calculation.EnrichedGOTermsTableWriter;
 import ontologizer.calculation.b2g.Bayes2GOEnrichedGOTermsResult;
 import ontologizer.calculation.b2g.Bayes2GOGOTermProperties;
