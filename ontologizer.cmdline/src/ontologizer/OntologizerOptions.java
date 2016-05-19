@@ -89,7 +89,7 @@ public class OntologizerOptions
 		options.addOption(Option.builder("s").longOpt("studyset").argName("path").hasArg().desc(
 				"Path to a file of a study set or to a directory containing study set files. Required"
 				).build());
-		options.addOption(new Option("i","ignore",false,"Ignore genes to which no association exist within the calculation."));
+		options.addOption(new Option("i","ignore",false,"Ignore genes within the calculation to which no association exists."));
 		options.addOption(new Option("c","calculation",true,calHelpString));
 		options.addOption(new Option("m","mtc",true,mtcHelpString));
 		options.addOption(Option.builder("d").longOpt("dot").argName("[thrsh[,id]|id]").hasArg().optionalArg(true).desc(
@@ -100,7 +100,7 @@ public class OntologizerOptions
 				).build());
 		options.addOption(new Option("n","annotation",false,"Create an additional file per study set which contains the annotations."));
 		options.addOption(new Option("f","filter",true,"Filter the gene names by appling rules in a given file (currently only mapping supported)."));
-		options.addOption(new Option("o","outdir",true,"Specfies the directory in which the results will be placed."));
+		options.addOption(new Option("o","outdir",true,"Specifies the directory in which the results will be placed."));
 
 		if (resamplingBasedMTCsExists) {
 			options.addOption(new Option("r","resamplingsteps", true, "Specifies the number of steps used in resampling based MTCs"));
