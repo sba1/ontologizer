@@ -311,6 +311,7 @@ public class ProjectSettingsComposite extends Composite
 		evidenceTable = new Table(advancedComposite, SWT.BORDER|SWT.CHECK);
 		evidenceTable.setLayoutData(gd);
 		evidenceTable.setEnabled(false);
+		evidenceTable.setToolTipText("An evidence code specifies how the annotation to the term is supported. This selection defines the evidence codes that are considered.");
 		evidenceNameColumn = new TableColumn(evidenceTable, SWT.NONE);
 		evidenceDescColumn = new TableColumn(evidenceTable, SWT.NONE);
 
