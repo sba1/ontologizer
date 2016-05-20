@@ -701,14 +701,7 @@ public class MainWindow extends ApplicationWindow
 											settingsComposite.setAssociationErrorString("Error in obtaining the association file.");
 										} else
 										{
-											HashSet<String> evidences = new HashSet<String>();
-											for (Gene2Associations g2a : assoc)
-											{
-												for (Association a : g2a)
-													evidences.add(a.getEvidence().toString());
-											}
-
-											settingsComposite.setEvidences(evidences);
+											settingsComposite.setEvidences(assoc.getAllEvidenceCodes());
 											settingsComposite.setAssociationErrorString(null);
 										}
 									}

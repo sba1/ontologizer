@@ -191,4 +191,20 @@ public class AssociationContainer implements Iterable<Gene2Associations>
 	{
 		return gene2assocs.values().iterator();
 	}
+
+	/**
+	 * Return all evidence codes that can be found in the container.
+	 *
+	 * @return
+	 */
+	public Collection<String> getAllEvidenceCodes()
+	{
+		Collection<String> evidences = new HashSet<String>();
+		for (Gene2Associations g2a : this)
+		{
+			for (Association a : g2a)
+				evidences.add(a.getEvidence().toString());
+		}
+		return evidences;
+	}
 }
