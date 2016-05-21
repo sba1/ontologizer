@@ -197,14 +197,22 @@ public class AssociationContainer implements Iterable<Gene2Associations>
 	 *
 	 * @return
 	 */
-	public Collection<String> getAllEvidenceCodes()
+	public Map<String,Integer> getAllEvidenceCodes()
 	{
-		Collection<String> evidences = new HashSet<String>();
+		Map<String,Integer> evidenceCounts = new HashMap<String, Integer>();
 		for (Gene2Associations g2a : this)
 		{
 			for (Association a : g2a)
-				evidences.add(a.getEvidence().toString());
+			{
+				String ev = a.getEvidence().toString();
+				int count;
+
+				if (evidenceCounts.containsKey(ev)) count = evidenceCounts.get(ev) + 1;
+				else count = 1;
+
+				evidenceCounts.put(ev, count);
+			}
 		}
-		return evidences;
+		return evidenceCounts;
 	}
 }

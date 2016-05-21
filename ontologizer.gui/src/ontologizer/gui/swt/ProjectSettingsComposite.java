@@ -9,9 +9,11 @@ package ontologizer.gui.swt;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
@@ -188,6 +190,7 @@ public class ProjectSettingsComposite extends Composite
 	private Combo considerCombo;
 	private Table evidenceTable;
 	private TableColumn evidenceNameColumn;
+	private TableColumn evidenceNumberColumn;
 	private TableColumn evidenceDescColumn;
 	private Composite advancedComposite;
 	private Expander advancedExpander;
@@ -313,6 +316,7 @@ public class ProjectSettingsComposite extends Composite
 		evidenceTable.setEnabled(false);
 		evidenceTable.setToolTipText("An evidence code specifies how the annotation to the term is supported. This selection defines the evidence codes that are considered.");
 		evidenceNameColumn = new TableColumn(evidenceTable, SWT.NONE);
+		evidenceNumberColumn = new TableColumn(evidenceTable, SWT.NONE);
 		evidenceDescColumn = new TableColumn(evidenceTable, SWT.NONE);
 
 		/* If a new work set has been selected */
@@ -577,24 +581,33 @@ public class ProjectSettingsComposite extends Composite
 	 *
 	 * @param evidences
 	 */
-	public void setEvidences(Collection<String> evidences)
+	public void setEvidences(Map<String,Integer> evidences)
 	{
 		evidenceTable.removeAll();
-		ArrayList<String> sortedEvidences = new ArrayList<String>(evidences);
-		Collections.sort(sortedEvidences);
+		ArrayList<Entry<String,Integer>> sortedEvidences = new ArrayList<Entry<String,Integer>>(evidences.entrySet());
+		Collections.sort(sortedEvidences, new Comparator<Entry<String,Integer>>()
+		{
+			@Override
+			public int compare(Entry<String, Integer> o1, Entry<String, Integer> o2)
+			{
+				return o1.getKey().compareTo(o2.getKey());
+			}
+		});
 
-		for (String ev : sortedEvidences)
+		for (Entry<String,Integer> ev : sortedEvidences)
 		{
 			TableItem evi = new TableItem(evidenceTable,0);
-			evi.setText(0,ev);
-			Evidence realEvidence = EVIDENCE_MAP.get(ev);
+			evi.setText(0,ev.getKey());
+			evi.setText(1, ev.getValue() + "");
+			Evidence realEvidence = EVIDENCE_MAP.get(ev.getKey());
 			if (realEvidence != null)
-				evi.setText(1,realEvidence.description);
+				evi.setText(2,realEvidence.description);
 			else
-				evi.setText(1,"Unknown");
+				evi.setText(2,"Unknown");
 			evi.setChecked(true);
 		}
 		evidenceNameColumn.pack();
+		evidenceNumberColumn.pack();
 		evidenceDescColumn.pack();
 		layout();
 		evidenceTable.setEnabled(true);
