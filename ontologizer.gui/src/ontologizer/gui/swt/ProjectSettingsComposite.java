@@ -26,9 +26,12 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
@@ -315,6 +318,7 @@ public class ProjectSettingsComposite extends Composite
 		evidenceTable.setLayoutData(gd);
 		evidenceTable.setEnabled(false);
 		evidenceTable.setToolTipText("An evidence code specifies how the annotation to the term is supported. This selection defines the evidence codes that are considered.");
+		evidenceTable.setMenu(createEvidenceMenu(evidenceTable));
 		evidenceNameColumn = new TableColumn(evidenceTable, SWT.NONE);
 		evidenceNumberColumn = new TableColumn(evidenceTable, SWT.NONE);
 		evidenceDescColumn = new TableColumn(evidenceTable, SWT.NONE);
@@ -343,6 +347,41 @@ public class ProjectSettingsComposite extends Composite
 		});
 
 		createInfoText(this);
+	}
+
+	/**
+	 * Creates the context menu for the evidence table.
+	 *
+	 * @return
+	 */
+	private Menu createEvidenceMenu(Control parent)
+	{
+		Menu evidenceMenu = new Menu(parent);
+		MenuItem all = new MenuItem(evidenceMenu, 0);
+		all.setText("Select All");
+		all.addSelectionListener(new SelectionAdapter()
+		{
+			@Override
+			public void widgetSelected(SelectionEvent e)
+			{
+				TableItem [] items = evidenceTable.getItems();
+				for (int i=0; i < items.length; i++)
+					items[i].setChecked(true);
+			}
+		});
+		MenuItem clear = new MenuItem(evidenceMenu, 0);
+		clear.setText("Clear Selection");
+		clear.addSelectionListener(new SelectionAdapter()
+		{
+			@Override
+			public void widgetSelected(SelectionEvent e)
+			{
+				TableItem [] items = evidenceTable.getItems();
+				for (int i=0; i < items.length; i++)
+					items[i].setChecked(false);
+			}
+		});
+		return evidenceMenu;
 	}
 
 	/**
