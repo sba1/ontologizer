@@ -22,7 +22,6 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
-import java.util.HashSet;
 import java.util.InvalidPropertiesFormatException;
 import java.util.LinkedList;
 import java.util.List;
@@ -75,9 +74,7 @@ import org.eclipse.swt.widgets.TreeItem;
 
 import ontologizer.FileCache;
 import ontologizer.FileCache.FileCacheUpdateCallback;
-import ontologizer.association.Association;
 import ontologizer.association.AssociationContainer;
-import ontologizer.association.Gene2Associations;
 import ontologizer.calculation.CalculationRegistry;
 import ontologizer.gui.swt.ProjectSettingsComposite.InfoTextClickListener;
 import ontologizer.gui.swt.images.Images;
