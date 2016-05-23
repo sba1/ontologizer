@@ -167,6 +167,8 @@ public class MainWindow extends ApplicationWindow
 	private ToolBar toolbar = null;
 	private Combo methodCombo = null;
 	private Combo mtcCombo = null;
+	private ToolItem newPopulationToolItem = null;
+	private ToolItem newStudyToolItem = null;
 	private ToolItem removeToolItem = null;
 	private ToolItem analyzeToolItem = null;
 	private ToolItem newProjectToolItem = null;
@@ -632,6 +634,9 @@ public class MainWindow extends ApplicationWindow
 	 */
 	private void updateGenes()
 	{
+		boolean populationCreateable = false;
+		boolean studyCreateable = false;
+
 		TreeItem[] items = workspaceTree.getSelection();
 		if (items != null && items.length>0)
 		{
@@ -704,6 +709,8 @@ public class MainWindow extends ApplicationWindow
 									}
 								});
 							}});
+				if (getPopulationItem(projectItem) == null)
+					populationCreateable = true;
 			}
 
 			if (isTreeItemProject(currentSelectedItem))
@@ -733,6 +740,7 @@ public class MainWindow extends ApplicationWindow
 			}
 
 			removeToolItem.setEnabled(true);
+			studyCreateable = true;
 		} else
 		{
 			currentSelectedItem = null;
@@ -741,6 +749,12 @@ public class MainWindow extends ApplicationWindow
 
 			removeToolItem.setEnabled(false);
 		}
+
+		newPopulationToolItem.setEnabled(populationCreateable);
+		newPopulationItem.setEnabled(populationCreateable);
+
+		newStudyToolItem.setEnabled(studyCreateable);
+		newStudyItem.setEnabled(studyCreateable);
 	}
 
 	/**
@@ -1568,10 +1582,10 @@ public class MainWindow extends ApplicationWindow
 			}
 		});
 
-		ToolItem newPopToolItem = new ToolItem(toolbar,0);
-		newPopToolItem.setText("New Population");
-		newPopToolItem.setImage(Images.loadImage("newpop.png"));
-		newPopToolItem.addSelectionListener(new SelectionAdapter()
+		newPopulationToolItem = new ToolItem(toolbar,0);
+		newPopulationToolItem.setText("New Population");
+		newPopulationToolItem.setImage(Images.loadImage("newpop.png"));
+		newPopulationToolItem.addSelectionListener(new SelectionAdapter()
 		{
 			public void widgetSelected(SelectionEvent e)
 			{
@@ -1579,10 +1593,10 @@ public class MainWindow extends ApplicationWindow
 			}
 		});
 
-		ToolItem newStudyItem = new ToolItem(toolbar,0);
-		newStudyItem.setText("New Study");
-		newStudyItem.setImage(Images.loadImage("newstudy.png"));
-		newStudyItem.addSelectionListener(new SelectionAdapter()
+		newStudyToolItem = new ToolItem(toolbar,0);
+		newStudyToolItem.setText("New Study");
+		newStudyToolItem.setImage(Images.loadImage("newstudy.png"));
+		newStudyToolItem.addSelectionListener(new SelectionAdapter()
 		{
 			public void widgetSelected(SelectionEvent e)
 			{
