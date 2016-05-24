@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.InvalidPropertiesFormatException;
 import java.util.LinkedList;
 import java.util.List;
@@ -157,6 +158,8 @@ public class MainWindow extends ApplicationWindow
 	private Menu submenu1 = null;
 
 	private ProjectSettingsComposite settingsComposite;
+
+	private Composite emptyComposite = null;
 
 	private Text statusText = null;
 	private ProgressBar statusProgressBar = null;
@@ -746,6 +749,19 @@ public class MainWindow extends ApplicationWindow
 			currentSelectedItem = null;
 			setTextArea.setText("");
 			setTextArea.setToolTipText(null);
+
+			setAssociationsFileString("");
+			setDefinitonFileString("");
+			setMappingFileString("");
+			setSubontology("");
+			setSubset("");
+			settingsComposite.setEvidences(new HashMap<String,Integer>());
+
+			if (rightStackedLayout.topControl != emptyComposite)
+			{
+				rightStackedLayout.topControl = emptyComposite;
+				settingsComposite.getParent().layout();
+			}
 
 			removeToolItem.setEnabled(false);
 		}
@@ -1745,6 +1761,8 @@ public class MainWindow extends ApplicationWindow
 		settingsSeparatorLineGridData.grabExcessHorizontalSpace = true;
 		settingsSeparatorLineGridData.horizontalAlignment = GridData.FILL;
 		settingsSeparatorLineGridData.horizontalSpan = 3;
+
+		emptyComposite = new Composite(stackComposite, SWT.NONE);
 
 		settingsComposite = new ProjectSettingsComposite(stackComposite, SWT.NONE);
 		settingsComposite.setLayoutData(gridData10);
