@@ -240,6 +240,17 @@ public class MainWindow extends ApplicationWindow
 	 */
 	public void addProject(File projectDirectory)
 	{
+		addProject(projectDirectory, false);
+	}
+
+	/**
+	 * Adds a new project.
+	 *
+	 * @param projectDirectory
+	 * @param activate indicate whether the project should be active
+	 */
+	public void addProject(File projectDirectory, boolean activate)
+	{
 		String [] names = projectDirectory.list();
 
 		if (names == null)
@@ -292,6 +303,12 @@ public class MainWindow extends ApplicationWindow
 
 		TreeItemData tid = getTreeItemData(projectTreeItem);
 		projectTreeItem.setExpanded(!tid.settings.isClosed);
+
+		if (activate)
+		{
+			workspaceTree.setSelection(projectTreeItem);
+			updateGenes();
+		}
 	}
 
 	/**

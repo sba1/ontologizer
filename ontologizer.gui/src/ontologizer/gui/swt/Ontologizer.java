@@ -787,7 +787,7 @@ public class Ontologizer
 
 	public static void newProject(File project)
 	{
-		main.addProject(project);
+		main.addProject(project, true);
 	}
 
 	/************************************************************************/
