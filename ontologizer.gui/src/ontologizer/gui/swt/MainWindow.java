@@ -656,6 +656,7 @@ public class MainWindow extends ApplicationWindow
 	{
 		boolean populationCreateable = false;
 		boolean studyCreateable = false;
+		boolean ontologizable = false;
 
 		TreeItem[] items = workspaceTree.getSelection();
 		if (items != null && items.length>0)
@@ -759,6 +760,9 @@ public class MainWindow extends ApplicationWindow
 				}
 			}
 
+			List<Set> sets = getSetEntriesOfCurrentPopulation();
+			if (sets != null && sets.size() > 1)
+				ontologizable = true;
 			removeToolItem.setEnabled(true);
 			studyCreateable = true;
 		} else
@@ -783,6 +787,8 @@ public class MainWindow extends ApplicationWindow
 			removeToolItem.setEnabled(false);
 		}
 
+		analyzeToolItem.setEnabled(ontologizable);
+		similarityToolItem.setEnabled(ontologizable);
 		newPopulationToolItem.setEnabled(populationCreateable);
 		newPopulationItem.setEnabled(populationCreateable);
 
