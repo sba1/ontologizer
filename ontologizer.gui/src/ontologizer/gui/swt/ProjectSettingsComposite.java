@@ -222,7 +222,7 @@ public class ProjectSettingsComposite extends Composite
 		this(parent,style,true);
 	}
 
-	public ProjectSettingsComposite(Composite parent, int style, boolean mapping)
+	public ProjectSettingsComposite(Composite parent, int style, boolean provideAdvancedOptions)
 	{
 		super(parent, style);
 
@@ -254,74 +254,74 @@ public class ProjectSettingsComposite extends Composite
 
 /* TODO: Use ExpandableComposite comp of JFace */
 
-		advancedExpander = new Expander(this,0);
-		gd = new GridData(GridData.FILL_HORIZONTAL|GridData.GRAB_VERTICAL|GridData.GRAB_HORIZONTAL|GridData.GRAB_VERTICAL|GridData.VERTICAL_ALIGN_BEGINNING);
-		gd.horizontalSpan = 3;
-		advancedExpander.setLayoutData(gd);
-
-		advancedComposite = new Composite(advancedExpander, 0);
-		advancedComposite.setLayout(SWTUtil.newEmptyMarginGridLayout(3));
-		advancedExpander.setControl(advancedComposite);
-
-		subsetCheckbox = new Button(advancedComposite,SWT.CHECK);
-		subsetCheckbox.setText("Use Subset of Ontology");
-		subsetCheckbox.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-		subsetCheckbox.setEnabled(false);
-		subsetCheckbox.addSelectionListener(new SelectionAdapter()
+		if (provideAdvancedOptions)
 		{
-			@Override
-			public void widgetSelected(SelectionEvent e)
+			advancedExpander = new Expander(this,0);
+			gd = new GridData(GridData.FILL_HORIZONTAL|GridData.GRAB_VERTICAL|GridData.GRAB_HORIZONTAL|GridData.GRAB_VERTICAL|GridData.VERTICAL_ALIGN_BEGINNING);
+			gd.horizontalSpan = 3;
+			advancedExpander.setLayoutData(gd);
+
+			advancedComposite = new Composite(advancedExpander, 0);
+			advancedComposite.setLayout(SWTUtil.newEmptyMarginGridLayout(3));
+			advancedExpander.setControl(advancedComposite);
+
+			subsetCheckbox = new Button(advancedComposite,SWT.CHECK);
+			subsetCheckbox.setText("Use Subset of Ontology");
+			subsetCheckbox.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+			subsetCheckbox.setEnabled(false);
+			subsetCheckbox.addSelectionListener(new SelectionAdapter()
 			{
-				updateSubsetEnabled();
-			}
-		});
+				@Override
+				public void widgetSelected(SelectionEvent e)
+				{
+					updateSubsetEnabled();
+				}
+			});
 
-		subsetCombo = new Combo(advancedComposite,SWT.BORDER);
-		gd = new GridData(GridData.FILL_HORIZONTAL|GridData.GRAB_HORIZONTAL);
-		gd.horizontalSpan = 2;
-		subsetCombo.setLayoutData(gd);
-		subsetCombo.setEnabled(false);
+			subsetCombo = new Combo(advancedComposite,SWT.BORDER);
+			gd = new GridData(GridData.FILL_HORIZONTAL|GridData.GRAB_HORIZONTAL);
+			gd.horizontalSpan = 2;
+			subsetCombo.setLayoutData(gd);
+			subsetCombo.setEnabled(false);
 
-		considerCheckbox = new Button(advancedComposite,SWT.CHECK);
-		considerCheckbox.setText("Consider Terms from");
-		considerCheckbox.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-		considerCheckbox.setEnabled(false);
-		considerCheckbox.addSelectionListener(new SelectionAdapter()
-		{
-			@Override
-			public void widgetSelected(SelectionEvent e)
+			considerCheckbox = new Button(advancedComposite,SWT.CHECK);
+			considerCheckbox.setText("Consider Terms from");
+			considerCheckbox.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+			considerCheckbox.setEnabled(false);
+			considerCheckbox.addSelectionListener(new SelectionAdapter()
 			{
-				updateConsiderEnabled();
-			}
-		});
-		considerCombo = new Combo(advancedComposite,SWT.BORDER);
-		considerCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL|GridData.GRAB_HORIZONTAL));
-		Label subOntologyLabel = new Label(advancedComposite,0);
-		subOntologyLabel.setText("Subontology");
-		considerCombo.setEnabled(false);
+				@Override
+				public void widgetSelected(SelectionEvent e)
+				{
+					updateConsiderEnabled();
+				}
+			});
+			considerCombo = new Combo(advancedComposite,SWT.BORDER);
+			considerCombo.setLayoutData(new GridData(GridData.FILL_HORIZONTAL|GridData.GRAB_HORIZONTAL));
+			Label subOntologyLabel = new Label(advancedComposite,0);
+			subOntologyLabel.setText("Subontology");
+			considerCombo.setEnabled(false);
 
-		if (mapping)
-		{
 			mappingFileGridCompositeWidgets = new FileGridCompositeWidgets(advancedComposite,true);
 			mappingFileGridCompositeWidgets.setLabel("Mapping");
 			mappingFileGridCompositeWidgets.setToolTipText("Specifies an additional mapping file in which each line consits of a single name mapping. The name of the first column is mapped to the name of the second column before the annotation process begins. Columns should be tab-separated.");
 			mappingFileGridCompositeWidgets.setFilterExtensions(new String[]{"*.*"});
 			mappingFileGridCompositeWidgets.setFilterNames(new String[]{"All files"});
-		}
 
-		Label evidenceLabel = new Label(advancedComposite,0);
-		evidenceLabel.setText("Evidences");
-		evidenceLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
-		gd = new GridData(GridData.GRAB_HORIZONTAL|GridData.FILL_BOTH);
-		gd.horizontalSpan = 2;
-		evidenceTable = new Table(advancedComposite, SWT.BORDER|SWT.CHECK);
-		evidenceTable.setLayoutData(gd);
-		evidenceTable.setEnabled(false);
-		evidenceTable.setToolTipText("An evidence code specifies how the annotation to the term is supported. This selection defines the evidence codes that are considered.");
-		evidenceTable.setMenu(createEvidenceMenu(evidenceTable));
-		evidenceNameColumn = new TableColumn(evidenceTable, SWT.NONE);
-		evidenceNumberColumn = new TableColumn(evidenceTable, SWT.NONE);
-		evidenceDescColumn = new TableColumn(evidenceTable, SWT.NONE);
+			Label evidenceLabel = new Label(advancedComposite,0);
+			evidenceLabel.setText("Evidences");
+			evidenceLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+			gd = new GridData(GridData.GRAB_HORIZONTAL|GridData.FILL_BOTH);
+			gd.horizontalSpan = 2;
+			evidenceTable = new Table(advancedComposite, SWT.BORDER|SWT.CHECK);
+			evidenceTable.setLayoutData(gd);
+			evidenceTable.setEnabled(false);
+			evidenceTable.setToolTipText("An evidence code specifies how the annotation to the term is supported. This selection defines the evidence codes that are considered.");
+			evidenceTable.setMenu(createEvidenceMenu(evidenceTable));
+			evidenceNameColumn = new TableColumn(evidenceTable, SWT.NONE);
+			evidenceNumberColumn = new TableColumn(evidenceTable, SWT.NONE);
+			evidenceDescColumn = new TableColumn(evidenceTable, SWT.NONE);
+		}
 
 		/* If a new work set has been selected */
 		workSetCombo.addSelectionListener(new SelectionAdapter()
