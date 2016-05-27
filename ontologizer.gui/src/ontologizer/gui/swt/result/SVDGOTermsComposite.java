@@ -319,7 +319,6 @@ public class SVDGOTermsComposite extends AbstractResultComposite
 					attrString.append("Gene Ontology");
 				} else
 				{
-					SVDGOTermProperties prop = (SVDGOTermProperties)result.getGOTermProperties(id);
 					attrString.append(id.toString());
 					attrString.append("\\n");
 					attrString.append(go.getTerm(id).getName());
