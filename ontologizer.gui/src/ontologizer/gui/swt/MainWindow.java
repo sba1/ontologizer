@@ -1444,36 +1444,7 @@ public class MainWindow extends ApplicationWindow
 				{
 					try
 					{
-						/* Write out a zip archive containing all the data of the project */
-						String projectName = projectDirectory.getName();
-						ZipOutputStream zip = new ZipOutputStream(new FileOutputStream(newName));
-						ZipEntry entry = new ZipEntry(projectName + "/");
-						zip.putNextEntry(entry);
-						zip.closeEntry();
-
-						byte [] buffer = new byte[4096];
-
-						String [] names = projectDirectory.list();
-						for (String name : names)
-						{
-							File f = new File(projectDirectory,name);
-							FileInputStream in = new FileInputStream(f);
-
-							try
-							{
-								/* Add zip entry to the output stream */
-								zip.putNextEntry(new ZipEntry(projectName + "/" + name));
-								int len;
-								while ((len = in.read(buffer)) > 0)
-									zip.write(buffer, 0, len);
-								zip.closeEntry();
-							} finally
-							{
-								in.close();
-							}
-						}
-
-						zip.close();
+						exportProject(projectDirectory, newName);
 					} catch (Exception e1)
 					{
 						MessageBox mb = new MessageBox(getShell());
@@ -2169,5 +2140,48 @@ public class MainWindow extends ApplicationWindow
 	public Collection<String> getCheckedEvidences()
 	{
 		return settingsComposite.getCheckedEvidences();
+	}
+
+	/**
+	 * Export the project of the given project directory into
+	 * a zip file called archiveName.
+	 *
+	 * @param projectDirectory
+	 * @param archiveName
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
+	private void exportProject(File projectDirectory, String archiveName) throws FileNotFoundException, IOException
+	{
+		/* Write out a zip archive containing all the data of the project */
+		String projectName = projectDirectory.getName();
+		ZipOutputStream zip = new ZipOutputStream(new FileOutputStream(archiveName));
+		ZipEntry entry = new ZipEntry(projectName + "/");
+		zip.putNextEntry(entry);
+		zip.closeEntry();
+
+		byte [] buffer = new byte[4096];
+
+		String [] names = projectDirectory.list();
+		for (String name : names)
+		{
+			File f = new File(projectDirectory,name);
+			FileInputStream in = new FileInputStream(f);
+
+			try
+			{
+				/* Add zip entry to the output stream */
+				zip.putNextEntry(new ZipEntry(projectName + "/" + name));
+				int len;
+				while ((len = in.read(buffer)) > 0)
+					zip.write(buffer, 0, len);
+				zip.closeEntry();
+			} finally
+			{
+				in.close();
+			}
+		}
+
+		zip.close();
 	}
 }
