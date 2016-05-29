@@ -956,7 +956,7 @@ public class MainWindow extends ApplicationWindow
 	 * @param ti
 	 * @return
 	 */
-	static private TreeItemData getTreeItemData(TreeItem ti)
+	private static TreeItemData getTreeItemData(TreeItem ti)
 	{
 		return (TreeItemData)ti.getData();
 	}
@@ -968,7 +968,7 @@ public class MainWindow extends ApplicationWindow
 	 * @param pop
 	 * @return
 	 */
-	static private boolean isTreeItemPopulation(TreeItem pop)
+	private static boolean isTreeItemPopulation(TreeItem pop)
 	{
 		return getTreeItemData(pop).isPopulation;
 	}
@@ -980,7 +980,7 @@ public class MainWindow extends ApplicationWindow
 	 * @param project
 	 * @return
 	 */
-	static private boolean isTreeItemProject(TreeItem project)
+	private static boolean isTreeItemProject(TreeItem project)
 	{
 		return getTreeItemData(project).isProjectFolder;
 	}
