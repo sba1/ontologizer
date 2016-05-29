@@ -27,6 +27,7 @@ import ontologizer.util.Util;
  */
 public class EnrichedGOTermsResult extends AbstractGOTermsResult
 {
+	@SuppressWarnings("unused")
 	private static Logger logger = Logger.getLogger(EnrichedGOTermsResult.class.getName());
 
 	private int populationGeneCount;
