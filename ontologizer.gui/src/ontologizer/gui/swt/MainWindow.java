@@ -97,8 +97,9 @@ class TreeItemData
 	public String entries;
 	public int numEntries;
 	public int numKnownEntries = -1;
-	public File projectDirectory;
-	public ProjectSettings settings;
+
+	/** The project where this entry belongs to */
+	public Project project;
 };
 
 /**
@@ -257,12 +258,12 @@ public class MainWindow extends ApplicationWindow
 					prop.loadFromXML(fis);
 					fis.close();
 					TreeItemData tid = getTreeItemData(projectTreeItem);
-					tid.settings.annotationsFileName = prop.getProperty("annotationsFileName",getAssociationsFileString());
-					tid.settings.ontologyFileName = prop.getProperty("ontologyFileName",getDefinitionFileString());
-					tid.settings.mappingFileName = prop.getProperty("mappingFileName",getMappingFileString());
-					tid.settings.subontology = prop.getProperty("subontology", getSubontologyString());
-					tid.settings.subset = prop.getProperty("subset",getSubsetString());
-					tid.settings.isClosed = Boolean.parseBoolean(prop.getProperty("isClosed","false"));
+					tid.project.settings.annotationsFileName = prop.getProperty("annotationsFileName",getAssociationsFileString());
+					tid.project.settings.ontologyFileName = prop.getProperty("ontologyFileName",getDefinitionFileString());
+					tid.project.settings.mappingFileName = prop.getProperty("mappingFileName",getMappingFileString());
+					tid.project.settings.subontology = prop.getProperty("subontology", getSubontologyString());
+					tid.project.settings.subset = prop.getProperty("subset",getSubsetString());
+					tid.project.settings.isClosed = Boolean.parseBoolean(prop.getProperty("isClosed","false"));
 				} catch (InvalidPropertiesFormatException e)
 				{
 					e.printStackTrace();
@@ -280,7 +281,7 @@ public class MainWindow extends ApplicationWindow
 		}
 
 		TreeItemData tid = getTreeItemData(projectTreeItem);
-		projectTreeItem.setExpanded(!tid.settings.isClosed);
+		projectTreeItem.setExpanded(!tid.project.settings.isClosed);
 
 		if (activate)
 		{
@@ -300,12 +301,13 @@ public class MainWindow extends ApplicationWindow
 	{
 		TreeItemData newItemData = new TreeItemData();
 		newItemData.isProjectFolder = true;
-		newItemData.projectDirectory = directory;
-		newItemData.settings = new ProjectSettings();
-		newItemData.settings.annotationsFileName = getAssociationsFileString();
-		newItemData.settings.ontologyFileName = getDefinitionFileString();
-		newItemData.settings.subontology = getSubontologyString();
-		newItemData.settings.subset = getSubsetString();
+		newItemData.project = new Project();
+		newItemData.project.projectDirectory = directory;
+		newItemData.project.settings = new ProjectSettings();
+		newItemData.project.settings.annotationsFileName = getAssociationsFileString();
+		newItemData.project.settings.ontologyFileName = getDefinitionFileString();
+		newItemData.project.settings.subontology = getSubontologyString();
+		newItemData.project.settings.subset = getSubsetString();
 
 		TreeItem newItem = new TreeItem(workspaceTree,0);
 		newItem.setData(newItemData);
@@ -326,12 +328,12 @@ public class MainWindow extends ApplicationWindow
 		if (getPopulationItem(parent) != null)
 			return null;
 
-		File directory = getTreeItemData(parent).projectDirectory;
+		Project project = getTreeItemData(parent).project;
 		TreeItemData newItemData = new TreeItemData();
 		newItemData.isPopulation = true;
-		newItemData.projectDirectory = directory;
+		newItemData.project = project;
 		newItemData.filename = name;
-		File f = new File(directory,name);
+		File f = new File(project.projectDirectory,name);
 		try
 		{
 			BufferedReader is;
@@ -371,12 +373,12 @@ public class MainWindow extends ApplicationWindow
 	 */
 	private TreeItem newStudyItem(TreeItem parent, String name)
 	{
-		File directory = getTreeItemData(parent).projectDirectory;
+		Project project = getTreeItemData(parent).project;
 		TreeItemData newItemData = new TreeItemData();
 		newItemData.isPopulation = false;
-		newItemData.projectDirectory = directory;
+		newItemData.project = project;
 		newItemData.filename = name;
-		File f = new File(directory,name);
+		File f = new File(project.projectDirectory, name);
 		try
 		{
 			BufferedReader is;
@@ -413,7 +415,7 @@ public class MainWindow extends ApplicationWindow
 		TreeItemData tid = getTreeItemData(item);
 		if (isTreeItemProject(item))
 		{
-			item.setText(tid.projectDirectory.getName());
+			item.setText(tid.project.projectDirectory.getName());
 		} else
 		{
 			/* Workaround to ensure that the item is really redrawn */
@@ -432,29 +434,30 @@ public class MainWindow extends ApplicationWindow
 	private boolean renameItem(TreeItem item, String name)
 	{
 		TreeItemData tid = getTreeItemData(item);
+		Project project = tid.project;
 
 		if (isTreeItemProject(item))
 		{
-			File dest = new File(tid.projectDirectory.getParentFile(),name);
+			File dest = new File(project.projectDirectory.getParentFile(),name);
 			if (dest.exists())
 				return false;
 
-			if (!tid.projectDirectory.renameTo(dest))
+			if (!project.projectDirectory.renameTo(dest))
 				return false;
 
-			tid.projectDirectory = dest;
+			project.projectDirectory = dest;
 
 			TreeItem [] children = item.getItems();
 			for (int i=0;i<children.length;i++)
 			{
 				TreeItemData tidChild = getTreeItemData(children[i]);
-				tidChild.projectDirectory = dest;
+				tidChild.project.projectDirectory = dest;
 			}
 
 		}	else
 		{
-			File src = new File(tid.projectDirectory,tid.filename);
-			File dest = new File(tid.projectDirectory,name);
+			File src = new File(project.projectDirectory,tid.filename);
+			File dest = new File(project.projectDirectory,name);
 
 			if (dest.exists())
 				return false;
@@ -493,14 +496,14 @@ public class MainWindow extends ApplicationWindow
 					return false;
 			}
 
-			File f = new File(tid.projectDirectory,PROJECT_SETTINGS_NAME);
+			File f = new File(tid.project.projectDirectory,PROJECT_SETTINGS_NAME);
 			if (f.exists()) f.delete();
 
-			if (!(tid.projectDirectory.delete()))
+			if (!(tid.project.projectDirectory.delete()))
 				return false;
 		} else
 		{
-			File f = new File(tid.projectDirectory,tid.filename);
+			File f = new File(tid.project.projectDirectory,tid.filename);
 			if (!f.delete())
 				return false;
 		}
@@ -520,7 +523,7 @@ public class MainWindow extends ApplicationWindow
 		for (TreeItem ti : tis)
 		{
 			TreeItemData tid = getTreeItemData(ti);
-			l.add(tid.projectDirectory.getName());
+			l.add(tid.project.projectDirectory.getName());
 		}
 		return l;
 	}
@@ -538,12 +541,12 @@ public class MainWindow extends ApplicationWindow
 			tid = getTreeItemData(currentSelectedItem);
 			if (tid.isProjectFolder)
 			{
-				tid.settings.annotationsFileName = getAssociationsFileString();
-				tid.settings.ontologyFileName = getDefinitionFileString();
-				tid.settings.mappingFileName = getMappingFileString();
-				tid.settings.isClosed = !currentSelectedItem.getExpanded();
-				tid.settings.subontology = getSubontologyString();
-				tid.settings.subset = getSubsetString();
+				tid.project.settings.annotationsFileName = getAssociationsFileString();
+				tid.project.settings.ontologyFileName = getDefinitionFileString();
+				tid.project.settings.mappingFileName = getMappingFileString();
+				tid.project.settings.isClosed = !currentSelectedItem.getExpanded();
+				tid.project.settings.subontology = getSubontologyString();
+				tid.project.settings.subset = getSubsetString();
 				storeProjectSettings(tid);
 				return;
 			}
@@ -556,7 +559,7 @@ public class MainWindow extends ApplicationWindow
 			try
 			{
 				/* TODO: Add an explicit saving mechanism */
-				File out = new File(tid.projectDirectory,tid.filename);
+				File out = new File(tid.project.projectDirectory,tid.filename);
 				BufferedWriter fw = new BufferedWriter(new FileWriter(out));
 				fw.write(tid.entries);
 				fw.close();
@@ -577,10 +580,10 @@ public class MainWindow extends ApplicationWindow
 	{
 		if (!tid.isProjectFolder) return;
 
-		Properties prop = tid.settings.getSettingsAsProperty();
+		Properties prop = tid.project.settings.getSettingsAsProperty();
 		try
 		{
-			FileOutputStream fos = new FileOutputStream(new File(tid.projectDirectory,PROJECT_SETTINGS_NAME));
+			FileOutputStream fos = new FileOutputStream(new File(tid.project.projectDirectory,PROJECT_SETTINGS_NAME));
 			prop.storeToXML(fos,"Ontologizer Project File");
 			fos.close();
 		} catch (FileNotFoundException e)
@@ -644,7 +647,7 @@ public class MainWindow extends ApplicationWindow
 			TreeItem projectItem = getProjectItem(currentSelectedItem);
 			if (projectItem != null)
 			{
-				ProjectSettings settings = getTreeItemData(projectItem).settings;
+				ProjectSettings settings = getTreeItemData(projectItem).project.settings;
 
 				setAssociationsFileString(settings.annotationsFileName);
 				setDefinitonFileString(settings.ontologyFileName);
@@ -926,7 +929,7 @@ public class MainWindow extends ApplicationWindow
 			{
 				/* Empty population */
 				Set set = new Set();
-				set.name = projectData.projectDirectory.getName();
+				set.name = projectData.project.projectDirectory.getName();
 				set.entries = new String[0];
 				list.add(set);
 			}
@@ -959,6 +962,18 @@ public class MainWindow extends ApplicationWindow
 	private static TreeItemData getTreeItemData(TreeItem ti)
 	{
 		return (TreeItemData)ti.getData();
+	}
+
+	/**
+	 * Return the project settings of the project to which the given ti is
+	 * associated.
+	 *
+	 * @param ti
+	 * @return
+	 */
+	private static Project getTreeItemProject(TreeItem ti)
+	{
+		return getTreeItemData(ti).project;
 	}
 
 	/**
@@ -1405,7 +1420,7 @@ public class MainWindow extends ApplicationWindow
 				TreeItem projectItem = getProjectItem(currentSelectedItem);
 				if (projectItem == null) return;
 				TreeItemData projectItemData = getTreeItemData(projectItem);
-				File projectDirectory = projectItemData.projectDirectory;
+				File projectDirectory = projectItemData.project.projectDirectory;
 
 				FileDialog fileDialog = new FileDialog(shell,SWT.SAVE);
 				fileDialog.setFilterExtensions(new String[]{"*.onto","*.*"});
@@ -1415,7 +1430,7 @@ public class MainWindow extends ApplicationWindow
 					fileDialog.setFilterPath(f.getParent());
 				}
 
-				fileDialog.setFileName(projectItemData.projectDirectory.getName() + ".onto");
+				fileDialog.setFileName(projectItemData.project.projectDirectory.getName() + ".onto");
 
 				String newName = fileDialog.open();
 				if (newName != null)
@@ -1833,7 +1848,7 @@ public class MainWindow extends ApplicationWindow
 				TreeItemData tid = getTreeItemData((TreeItem) e.item);
 				if (tid != null && tid.isProjectFolder)
 				{
-					tid.settings.isClosed = false;
+					tid.project.settings.isClosed = false;
 					storeProjectSettings(tid);
 				}
 			}
@@ -1843,7 +1858,7 @@ public class MainWindow extends ApplicationWindow
 				TreeItemData tid = getTreeItemData((TreeItem) e.item);
 				if (tid != null && tid.isProjectFolder)
 				{
-					tid.settings.isClosed = true;
+					tid.project.settings.isClosed = true;
 					storeProjectSettings(tid);
 				}
 			}
@@ -1890,7 +1905,7 @@ public class MainWindow extends ApplicationWindow
 
 				TreeItemData tid = getTreeItemData(item);
 
-				if (tid.isProjectFolder) text.setText(tid.projectDirectory.getName());
+				if (tid.isProjectFolder) text.setText(tid.project.projectDirectory.getName());
 				else text.setText(tid.filename);
 
 				text.addFocusListener(new FocusAdapter(){
@@ -2000,7 +2015,7 @@ public class MainWindow extends ApplicationWindow
 
 			/* Find proper parent which must be a project */
 			TreeItem parent = getProjectItem(items[0]);
-			File projectDirectory = getTreeItemData(parent).projectDirectory;
+			File projectDirectory = getTreeItemProject(parent).projectDirectory;
 
 			File newPopFile = new File(projectDirectory,"Population");
 			if (!newPopFile.exists())
@@ -2030,7 +2045,7 @@ public class MainWindow extends ApplicationWindow
 			/* Find proper parent which must be a project */
 			TreeItem parent = getProjectItem(items[0]);
 
-			File projectDirectory = getTreeItemData(parent).projectDirectory;
+			File projectDirectory = getTreeItemProject(parent).projectDirectory;
 
 			/* Create a new study set, ensure that it doesn't exists before */
 			File f;
