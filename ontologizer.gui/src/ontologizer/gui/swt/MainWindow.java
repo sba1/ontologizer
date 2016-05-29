@@ -88,7 +88,7 @@ import ontologizer.worksets.WorkSet;
 import ontologizer.worksets.WorkSetList;
 import ontologizer.worksets.WorkSetLoadThread;
 
-class Settings
+class ProjectSettings
 {
 	public String ontologyFileName;
 	public String annotationsFileName;
@@ -120,7 +120,7 @@ class TreeItemData
 	public int numEntries;
 	public int numKnownEntries = -1;
 	public File projectDirectory;
-	public Settings settings;
+	public ProjectSettings settings;
 };
 
 /**
@@ -323,7 +323,7 @@ public class MainWindow extends ApplicationWindow
 		TreeItemData newItemData = new TreeItemData();
 		newItemData.isProjectFolder = true;
 		newItemData.projectDirectory = directory;
-		newItemData.settings = new Settings();
+		newItemData.settings = new ProjectSettings();
 		newItemData.settings.annotationsFileName = getAssociationsFileString();
 		newItemData.settings.ontologyFileName = getDefinitionFileString();
 		newItemData.settings.subontology = getSubontologyString();
@@ -666,7 +666,7 @@ public class MainWindow extends ApplicationWindow
 			TreeItem projectItem = getProjectItem(currentSelectedItem);
 			if (projectItem != null)
 			{
-				Settings settings = getTreeItemData(projectItem).settings;
+				ProjectSettings settings = getTreeItemData(projectItem).settings;
 
 				setAssociationsFileString(settings.annotationsFileName);
 				setDefinitonFileString(settings.ontologyFileName);
