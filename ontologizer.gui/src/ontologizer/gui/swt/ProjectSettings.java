@@ -2,6 +2,11 @@ package ontologizer.gui.swt;
 
 import java.util.Properties;
 
+/**
+ * Settings that belongs to the entire project.
+ *
+ * @author Sebastian Bauer
+ */
 class ProjectSettings
 {
 	public String ontologyFileName;
