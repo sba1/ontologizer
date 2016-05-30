@@ -27,6 +27,16 @@ class ProjectSettings
 		prop.setProperty("subset",subset);
 		return prop;
 	}
+
+	public void fromProperties(Properties prop)
+	{
+		annotationsFileName = prop.getProperty("annotationsFileName", "");
+		ontologyFileName = prop.getProperty("ontologyFileName", "");
+		mappingFileName = prop.getProperty("mappingFileName", "");
+		subontology = prop.getProperty("subontology", "");
+		subset = prop.getProperty("subset", "");
+		isClosed = Boolean.parseBoolean(prop.getProperty("isClosed","false"));
+	}
 };
 
 

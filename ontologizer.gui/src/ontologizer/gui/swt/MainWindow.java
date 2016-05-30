@@ -258,12 +258,7 @@ public class MainWindow extends ApplicationWindow
 					prop.loadFromXML(fis);
 					fis.close();
 					TreeItemData tid = getTreeItemData(projectTreeItem);
-					tid.project.settings.annotationsFileName = prop.getProperty("annotationsFileName",getAssociationsFileString());
-					tid.project.settings.ontologyFileName = prop.getProperty("ontologyFileName",getDefinitionFileString());
-					tid.project.settings.mappingFileName = prop.getProperty("mappingFileName",getMappingFileString());
-					tid.project.settings.subontology = prop.getProperty("subontology", getSubontologyString());
-					tid.project.settings.subset = prop.getProperty("subset",getSubsetString());
-					tid.project.settings.isClosed = Boolean.parseBoolean(prop.getProperty("isClosed","false"));
+					tid.project.settings.fromProperties(prop);
 				} catch (InvalidPropertiesFormatException e)
 				{
 					e.printStackTrace();
