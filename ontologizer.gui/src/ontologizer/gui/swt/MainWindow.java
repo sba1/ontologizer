@@ -580,7 +580,7 @@ public class MainWindow extends ApplicationWindow
 	{
 		if (!tid.isProjectFolder) return;
 
-		Properties prop = tid.project.settings.getSettingsAsProperty();
+		Properties prop = tid.project.settings.toProperties();
 		try
 		{
 			FileOutputStream fos = new FileOutputStream(new File(tid.project.projectDirectory,PROJECT_SETTINGS_NAME));

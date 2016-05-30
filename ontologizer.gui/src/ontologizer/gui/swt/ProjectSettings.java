@@ -16,7 +16,7 @@ class ProjectSettings
 	public String subontology;
 	public boolean isClosed;
 
-	public Properties getSettingsAsProperty()
+	public Properties toProperties()
 	{
 		Properties prop = new Properties();
 		prop.setProperty("annotationsFileName",annotationsFileName);
