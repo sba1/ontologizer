@@ -299,15 +299,25 @@ public class MainWindow extends ApplicationWindow
 		newItemData.project = new Project();
 		newItemData.project.projectDirectory = directory;
 		newItemData.project.settings = new ProjectSettings();
-		newItemData.project.settings.annotationsFileName = getAssociationsFileString();
-		newItemData.project.settings.ontologyFileName = getDefinitionFileString();
-		newItemData.project.settings.subontology = getSubontologyString();
-		newItemData.project.settings.subset = getSubsetString();
+		applyCurrentProjectSettings(newItemData.project);
 
 		TreeItem newItem = new TreeItem(workspaceTree,0);
 		newItem.setData(newItemData);
 		updateTextOfItem(newItem);
 		return newItem;
+	}
+
+	/**
+	 * Apply currently chosen project settings on the given project.
+	 *
+	 * @param project
+	 */
+	private void applyCurrentProjectSettings(Project project)
+	{
+		project.settings.annotationsFileName = getAssociationsFileString();
+		project.settings.ontologyFileName = getDefinitionFileString();
+		project.settings.subontology = getSubontologyString();
+		project.settings.subset = getSubsetString();
 	}
 
 	/**
