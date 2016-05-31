@@ -296,9 +296,7 @@ public class MainWindow extends ApplicationWindow
 	{
 		TreeItemData newItemData = new TreeItemData();
 		newItemData.isProjectFolder = true;
-		newItemData.project = new Project();
-		newItemData.project.projectDirectory = directory;
-		newItemData.project.settings = new ProjectSettings();
+		newItemData.project = new Project(directory);
 		applyCurrentProjectSettings(newItemData.project);
 
 		TreeItem newItem = new TreeItem(workspaceTree,0);

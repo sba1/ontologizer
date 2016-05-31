@@ -10,5 +10,10 @@ import java.io.File;
 public class Project
 {
 	public File projectDirectory;
-	public ProjectSettings settings;
+	public ProjectSettings settings = new ProjectSettings();
+
+	public Project(File projectDirectory)
+	{
+		this.projectDirectory = projectDirectory;
+	}
 }
