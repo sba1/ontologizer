@@ -316,6 +316,7 @@ public class MainWindow extends ApplicationWindow
 	{
 		project.settings.annotationsFileName = getAssociationsFileString();
 		project.settings.ontologyFileName = getDefinitionFileString();
+		project.settings.mappingFileName = getMappingFileString();
 		project.settings.subontology = getSubontologyString();
 		project.settings.subset = getSubsetString();
 	}
