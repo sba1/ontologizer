@@ -1784,12 +1784,12 @@ public class MainWindow extends ApplicationWindow
 				{
 					if (href.equals("ontology"))
 					{
-						String url = settingsComposite.getDefinitionFileString();
+						String url = getDefinitionFileString();
 						FileCache.invalidate(url);
 						FileCache.open(url);
 					} else if (href.equals("assoc"))
 					{
-						String url = settingsComposite.getAssociationsFileString();
+						String url = getAssociationsFileString();
 						FileCache.invalidate(url);
 						FileCache.open(url);
 					}
