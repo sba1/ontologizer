@@ -545,12 +545,8 @@ public class MainWindow extends ApplicationWindow
 			tid = getTreeItemData(currentSelectedItem);
 			if (tid.isProjectFolder)
 			{
-				tid.project.settings.annotationsFileName = getAssociationsFileString();
-				tid.project.settings.ontologyFileName = getDefinitionFileString();
-				tid.project.settings.mappingFileName = getMappingFileString();
+				applyCurrentProjectSettings(tid.project);
 				tid.project.settings.isClosed = !currentSelectedItem.getExpanded();
-				tid.project.settings.subontology = getSubontologyString();
-				tid.project.settings.subset = getSubsetString();
 				storeProjectSettings(tid);
 				return;
 			}
