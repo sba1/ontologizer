@@ -13,6 +13,7 @@ import ontologizer.association.AssociationContainer;
 import ontologizer.calculation.EnrichedGOTermsResult;
 import ontologizer.calculation.ICalculation;
 import ontologizer.calculation.ICalculationProgress;
+import ontologizer.calculation.IProgressFeedback;
 import ontologizer.enumeration.TermEnumerator;
 import ontologizer.ontology.Ontology;
 import ontologizer.ontology.TermID;
@@ -27,7 +28,7 @@ import ontologizer.statistics.AbstractTestCorrection;
  * @see http://nar.oxfordjournals.org/content/early/2010/02/19/nar.gkq045.short
  * @author Sebastian Bauer
  */
-public class Bayes2GOCalculation implements ICalculation
+public class Bayes2GOCalculation implements ICalculation, IProgressFeedback
 {
 	private static Logger logger = Logger.getLogger(Bayes2GOCalculation.class.getCanonicalName());
 
