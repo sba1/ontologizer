@@ -45,7 +45,7 @@ public class LogWindow extends ApplicationWindow
 		logItem.setMenu(logMenu);
 
 		MenuItem saveItem = new MenuItem(logMenu, SWT.NONE);
-		saveItem.setText("Save Log...");
+		saveItem.setText("Save...");
 		saveItem.addSelectionListener(new SelectionAdapter()
 		{
 			@Override
