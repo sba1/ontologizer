@@ -59,9 +59,6 @@ public class TopCalculation extends AbstractHypergeometricCalculation
 			 */
 			private HashSet<ByteString> calculateTerm(TermEnumerator populationTermEnumerator, TermEnumerator studyTermEnumerator, StudySet studySet, TermID term, ArrayList<PValue> pList)
 			{
-				if (term.id == 5982)
-					System.out.println("HUHUHUH" + markedGenesMap.containsKey(term));
-
 				/* Leave early if we already processed this term */
 				if (markedGenesMap.containsKey(term))
 					return markedGenesMap.get(term);
