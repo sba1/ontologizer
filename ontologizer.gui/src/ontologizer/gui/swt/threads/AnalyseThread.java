@@ -14,6 +14,7 @@ import ontologizer.calculation.CalculationRegistry;
 import ontologizer.calculation.EnrichedGOTermsResult;
 import ontologizer.calculation.ICalculation;
 import ontologizer.calculation.ICalculationProgress;
+import ontologizer.calculation.IProgressFeedback;
 import ontologizer.calculation.b2g.B2GParam;
 import ontologizer.calculation.b2g.Bayes2GOCalculation;
 import ontologizer.filter.GeneFilter;
@@ -140,28 +141,9 @@ public class AnalyseThread extends AbstractOntologizerThread
 			if (calculation == null)
 				calculation = CalculationRegistry.getDefault();
 
-			if (calculation instanceof Bayes2GOCalculation)
+			if (calculation instanceof IProgressFeedback)
 			{
-				Bayes2GOCalculation b2g = (Bayes2GOCalculation)calculation;
-
-				if (!Double.isNaN(alpha)) b2g.setAlpha(alpha);
-				else
-				{
-					b2g.setAlpha(B2GParam.Type.MCMC);
-					b2g.setAlphaBounds(0,upperAlpha);
-				}
-				if (!Double.isNaN(beta)) b2g.setBeta(beta);
-				else
-				{
-					b2g.setBeta(B2GParam.Type.MCMC);
-					b2g.setBetaBounds(0,upperBeta);
-				}
-				if (expectedNumber != -1) b2g.setExpectedNumber(expectedNumber);
-				else b2g.setExpectedNumber(B2GParam.Type.MCMC);
-
-				b2g.setMcmcSteps(numberOfMCMCSteps);
-
-				b2g.setProgress(new ICalculationProgress()
+				((IProgressFeedback)calculation).setProgress(new ICalculationProgress()
 				{
 					public void init(final int max)
 					{
@@ -187,6 +169,28 @@ public class AnalyseThread extends AbstractOntologizerThread
 							}});
 					}
 				});
+			}
+
+			if (calculation instanceof Bayes2GOCalculation)
+			{
+				Bayes2GOCalculation b2g = (Bayes2GOCalculation)calculation;
+
+				if (!Double.isNaN(alpha)) b2g.setAlpha(alpha);
+				else
+				{
+					b2g.setAlpha(B2GParam.Type.MCMC);
+					b2g.setAlphaBounds(0,upperAlpha);
+				}
+				if (!Double.isNaN(beta)) b2g.setBeta(beta);
+				else
+				{
+					b2g.setBeta(B2GParam.Type.MCMC);
+					b2g.setBetaBounds(0,upperBeta);
+				}
+				if (expectedNumber != -1) b2g.setExpectedNumber(expectedNumber);
+				else b2g.setExpectedNumber(B2GParam.Type.MCMC);
+
+				b2g.setMcmcSteps(numberOfMCMCSteps);
 			}
 
 			/* Set the desired test correction or set the default */
