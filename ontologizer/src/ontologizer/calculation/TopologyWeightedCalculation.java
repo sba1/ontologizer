@@ -191,7 +191,8 @@ public class TopologyWeightedCalculation extends AbstractHypergeometricCalculati
 
 		for (int i=maxLevel;i>=0;i--)
 		{
-			calculationProgress.update(maxLevel - i + 1);
+			if (calculationProgress != null)
+				calculationProgress.update(maxLevel - i + 1);
 
 			Set<TermID> terms = levels.getLevelTermSet(i);
 
