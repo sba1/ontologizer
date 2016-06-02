@@ -15,9 +15,11 @@ import ontologizer.set.StudySet;
 import ontologizer.statistics.AbstractTestCorrection;
 import ontologizer.types.ByteString;
 
-public class TopologyWeightedCalculation extends AbstractHypergeometricCalculation
+public class TopologyWeightedCalculation extends AbstractHypergeometricCalculation implements IProgressFeedback
 {
 	static final double SIGNIFICANCE_LEVEL = 0.01;
+
+	private ICalculationProgress calculationProgress;
 
 	private void computeTermSig(PopulationSet populationSet, StudySet studySet, Ontology graph, TermID u, Set<TermID> children, EnrichedGOTermsResult studySetResult, TermEnumerator studyTermEnumerator, TermEnumerator populationTermEnumerator)
 	{
@@ -182,8 +184,15 @@ public class TopologyWeightedCalculation extends AbstractHypergeometricCalculati
 		Set<TermID> allAnnotatedTerms = studyTermEnumerator.getAllAnnotatedTermsAsSet();
 		GOLevels levels = graph.getGOLevels(allAnnotatedTerms);
 
-		for (int i=levels.getMaxLevel();i>=0;i--)
+		int maxLevel = levels.getMaxLevel();
+
+		if (calculationProgress != null)
+			calculationProgress.init(maxLevel);
+
+		for (int i=maxLevel;i>=0;i--)
 		{
+			calculationProgress.update(maxLevel - i + 1);
+
 			Set<TermID> terms = levels.getLevelTermSet(i);
 
 			for (TermID t : terms)
@@ -217,6 +226,12 @@ public class TopologyWeightedCalculation extends AbstractHypergeometricCalculati
 	public boolean supportsTestCorrection()
 	{
 		return false;
+	}
+
+	@Override
+	public void setProgress(ICalculationProgress calculationProgress)
+	{
+		this.calculationProgress = calculationProgress;
 	}
 
 }
