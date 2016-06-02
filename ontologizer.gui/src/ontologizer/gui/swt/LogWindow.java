@@ -44,6 +44,18 @@ public class LogWindow extends ApplicationWindow
 		Menu logMenu = new Menu(menu);
 		logItem.setMenu(logMenu);
 
+		MenuItem copyItem = new MenuItem(logMenu, SWT.NONE);
+		copyItem.setText("Copy");
+		copyItem.addSelectionListener(new SelectionAdapter()
+		{
+			@Override
+			public void widgetSelected(SelectionEvent e)
+			{
+				logStyledText.copy();
+			}
+		});
+		new MenuItem(logMenu,SWT.SEPARATOR);
+
 		MenuItem saveItem = new MenuItem(logMenu, SWT.NONE);
 		saveItem.setText("Save...");
 		saveItem.addSelectionListener(new SelectionAdapter()
