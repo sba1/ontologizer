@@ -38,6 +38,26 @@ public class LogWindow extends ApplicationWindow
 
 		logStyledText = new StyledText(shell,SWT.BORDER|SWT.READ_ONLY|SWT.V_SCROLL|SWT.H_SCROLL);
 
+		shell.setMenuBar(createMenu());
+
+		shell.addShellListener(new ShellAdapter()
+		{
+			@Override
+			public void shellClosed(ShellEvent e)
+			{
+				e.doit = false;
+				shell.setVisible(false);
+			}
+		});
+	}
+
+	/**
+	 * Create the menu of the window.
+	 *
+	 * @return
+	 */
+	private Menu createMenu()
+	{
 		Menu menu = new Menu(shell,SWT.BAR);
 		MenuItem logItem = new MenuItem(menu, SWT.CASCADE);
 		logItem.setText("Log");
@@ -77,17 +97,7 @@ public class LogWindow extends ApplicationWindow
 				}
 			}
 		});
-		shell.setMenuBar(menu);
-
-		shell.addShellListener(new ShellAdapter()
-		{
-			@Override
-			public void shellClosed(ShellEvent e)
-			{
-				e.doit = false;
-				shell.setVisible(false);
-			}
-		});
+		return menu;
 	}
 
 
