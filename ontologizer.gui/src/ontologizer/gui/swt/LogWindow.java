@@ -64,18 +64,6 @@ public class LogWindow extends ApplicationWindow
 		Menu logMenu = new Menu(menu);
 		logItem.setMenu(logMenu);
 
-		MenuItem copyItem = new MenuItem(logMenu, SWT.NONE);
-		copyItem.setText("Copy");
-		copyItem.addSelectionListener(new SelectionAdapter()
-		{
-			@Override
-			public void widgetSelected(SelectionEvent e)
-			{
-				logStyledText.copy();
-			}
-		});
-		new MenuItem(logMenu,SWT.SEPARATOR);
-
 		MenuItem saveItem = new MenuItem(logMenu, SWT.NONE);
 		saveItem.setText("Save...");
 		saveItem.addSelectionListener(new SelectionAdapter()
@@ -97,6 +85,23 @@ public class LogWindow extends ApplicationWindow
 				}
 			}
 		});
+
+		MenuItem editItem = new MenuItem(menu, SWT.CASCADE);
+		editItem.setText("Edit");
+		Menu editMenu = new Menu(menu);
+		editItem.setMenu(editMenu);
+
+		MenuItem copyItem = new MenuItem(editMenu, SWT.NONE);
+		copyItem.setText("Copy");
+		copyItem.addSelectionListener(new SelectionAdapter()
+		{
+			@Override
+			public void widgetSelected(SelectionEvent e)
+			{
+				logStyledText.copy();
+			}
+		});
+
 		return menu;
 	}
 
