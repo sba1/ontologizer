@@ -101,6 +101,16 @@ public class LogWindow extends ApplicationWindow
 				logStyledText.copy();
 			}
 		});
+		new MenuItem(editMenu,SWT.SEPARATOR);
+		MenuItem selectAllItem = new MenuItem(editMenu, SWT.NONE);
+		selectAllItem.setText("Select All");
+		selectAllItem.addSelectionListener(new SelectionAdapter()
+		{
+			public void widgetSelected(SelectionEvent e)
+			{
+				logStyledText.selectAll();
+			};
+		});
 
 		return menu;
 	}
