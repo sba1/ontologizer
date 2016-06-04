@@ -19,11 +19,12 @@ public class CalculationTestUtils
 	}
 
 	/**
-	 * Perform a standard test calculation on the initial ontology
+	 * Perform a standard test calculation using the supplied algorithm
+	 * on the initial ontology.
 	 *
 	 * @return
 	 */
-	public static EnrichedGOTermsResult performTestCalculation()
+	public static EnrichedGOTermsResult performTestCalculation(ICalculation calc)
 	{
 		InternalOntology internalOntology = new InternalOntology();
 
@@ -37,8 +38,7 @@ public class CalculationTestUtils
 		assertEquals(500, scs.pop.getGeneCount());
 		assertEquals(57, scs.study.getGeneCount());
 
-		TermForTermCalculation tft = new TermForTermCalculation();
-		EnrichedGOTermsResult r = tft.calculateStudySet(ontology, assoc, scs.pop, scs.study, new None());
+		EnrichedGOTermsResult r = calc.calculateStudySet(ontology, assoc, scs.pop, scs.study, new None());
 		EnrichedGOTermsTableWriter.writeTable(System.out, r);
 
 		assertEquals(11, r.getSize());

@@ -23,7 +23,7 @@ public class TermForTermCalculationTest
 				this.p = p;
 			}
 		}
-		EnrichedGOTermsResult r = performTestCalculation();
+		EnrichedGOTermsResult r = performTestCalculation(new TermForTermCalculation());
 
 		TermForTermGOTermProperties [] p = new TermForTermGOTermProperties[r.getSize()];
 		p[0] = prop(r, "GO:0000001");
