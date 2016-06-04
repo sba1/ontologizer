@@ -1,6 +1,7 @@
 package ontologizer.calculation;
 
-import static org.junit.Assert.*;
+import static ontologizer.calculation.CalculationTestUtils.prop;
+import static org.junit.Assert.assertEquals;
 
 import java.util.HashMap;
 import java.util.Random;
@@ -15,11 +16,6 @@ import ontologizer.statistics.None;
 
 public class TermForTermCalculationTest
 {
-	private static TermForTermGOTermProperties prop(EnrichedGOTermsResult result, String id)
-	{
-		return (TermForTermGOTermProperties)result.getGOTermProperties(new TermID(id));
-	}
-
 	@Test
 	public void whetherTFTWorks()
 	{
