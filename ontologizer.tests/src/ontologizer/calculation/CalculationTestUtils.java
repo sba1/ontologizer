@@ -13,9 +13,10 @@ import ontologizer.statistics.None;
 
 public class CalculationTestUtils
 {
-	public static TermForTermGOTermProperties prop(EnrichedGOTermsResult result, String id)
+	@SuppressWarnings("unchecked")
+	public static <T> T prop(EnrichedGOTermsResult result, String id)
 	{
-		return (TermForTermGOTermProperties)result.getGOTermProperties(new TermID(id));
+		return (T)result.getGOTermProperties(new TermID(id));
 	}
 
 	/**
