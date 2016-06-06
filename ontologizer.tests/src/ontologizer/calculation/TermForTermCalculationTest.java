@@ -1,11 +1,9 @@
 package ontologizer.calculation;
 
+import static ontologizer.calculation.CalculationTestUtils.assertResultEquals;
 import static ontologizer.calculation.CalculationTestUtils.performTestCalculation;
-import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-
-import ontologizer.ontology.TermID;
 
 public class TermForTermCalculationTest
 {
@@ -29,15 +27,6 @@ public class TermForTermCalculationTest
 			new Expected("GO:0000011",  65,  2, 0.9977121167095124),
 		};
 
-		assertEquals(expected.length, r.getSize());
-
-		for (int i = 0; i < expected.length; i++)
-		{
-			AbstractGOTermProperties p = r.getGOTermProperties(new TermID(expected[i].id));
-			assertEquals(p.getClass(), TermForTermGOTermProperties.class);
-			assertEquals("Entry " + i, expected[i].pop, p.annotatedPopulationGenes);
-			assertEquals("Entry " + i, expected[i].study, p.annotatedStudyGenes);
-			assertEquals("Entry " + i, expected[i].p, p.p, 1e-5);
-		}
+		assertResultEquals(expected, r);
 	}
 }
