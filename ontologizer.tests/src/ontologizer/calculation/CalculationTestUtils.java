@@ -48,14 +48,14 @@ public class CalculationTestUtils
 		return r;
 	}
 
-	public static void assertResultEquals(Expected[] expected, EnrichedGOTermsResult r)
+	public static void assertResultEquals(Expected[] expected, Class<?> expectedPropClass, EnrichedGOTermsResult r)
 	{
 		assertEquals(expected.length, r.getSize());
 
 		for (int i = 0; i < expected.length; i++)
 		{
 			AbstractGOTermProperties p = r.getGOTermProperties(new TermID(expected[i].id));
-			assertEquals(p.getClass(), TermForTermGOTermProperties.class);
+			assertEquals(expectedPropClass, p.getClass());
 			assertEquals("Entry " + i, expected[i].pop, p.annotatedPopulationGenes);
 			assertEquals("Entry " + i, expected[i].study, p.annotatedStudyGenes);
 			assertEquals("Entry " + i, expected[i].p, p.p, 1e-5);
