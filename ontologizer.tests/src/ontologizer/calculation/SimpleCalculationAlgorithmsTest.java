@@ -5,7 +5,7 @@ import static ontologizer.calculation.CalculationTestUtils.performTestCalculatio
 
 import org.junit.Test;
 
-public class TermForTermCalculationTest
+public class SimpleCalculationAlgorithmsTest
 {
 	@Test
 	public void whetherTFTWorks()
