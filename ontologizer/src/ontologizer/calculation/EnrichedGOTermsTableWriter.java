@@ -46,9 +46,7 @@ public class EnrichedGOTermsTableWriter
 		{
 			out.println(props.propLineToString(result.getPopulationGeneCount(), result.getStudyGeneCount()));
 		}
-
 		out.flush();
-		out.close();
 	}
 
 	/**
@@ -63,7 +61,10 @@ public class EnrichedGOTermsTableWriter
 		{
 			logger.log(Level.INFO, "Writing to \"" + file.getCanonicalPath() + "\".");
 
-			writeTable(new FileOutputStream(file), result);
+			FileOutputStream out = new FileOutputStream(file);
+			writeTable(out, result);
+
+			out.close();
 
 			logger.log(Level.INFO, "\"" + file.getCanonicalPath() + "\"" + " successfully written.");
 		} catch (IOException e)
