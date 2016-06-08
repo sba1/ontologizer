@@ -55,10 +55,11 @@ public class CalculationTestUtils
 		for (int i = 0; i < expected.length; i++)
 		{
 			AbstractGOTermProperties p = r.getGOTermProperties(new TermID(expected[i].id));
+			String id = expected[i].id;
 			assertEquals(expectedPropClass, p.getClass());
-			assertEquals("Entry " + i, expected[i].pop, p.annotatedPopulationGenes);
-			assertEquals("Entry " + i, expected[i].study, p.annotatedStudyGenes);
-			assertEquals("Entry " + i, expected[i].p, p.p, 1e-5);
+			assertEquals("Entry " + id, expected[i].pop, p.annotatedPopulationGenes);
+			assertEquals("Entry " + id, expected[i].study, p.annotatedStudyGenes);
+			assertEquals("Entry " + id, expected[i].p, p.p, 1e-5);
 		}
 	}
 
