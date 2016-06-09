@@ -5,3 +5,6 @@ jdk:
 
 before_script:
     - cd ontologizer.parent
+
+script:
+    - mvn package -B
