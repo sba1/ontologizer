@@ -23,6 +23,9 @@ $ cd ontologizer.parent
 $ mvn package
 ```
 
+Note that when using Java8 this may break currently, due to bugs in the Javadocs. Add
+```-Dmaven.javadoc.skip=true``` to the previous command if you encounter this problem.
+
 If successful, the command line version can be found in ```ontologizer.cmdline``` and the
 UI version in the ```ontologizer.gui``` modules in the respective ```target``` folders.
 
