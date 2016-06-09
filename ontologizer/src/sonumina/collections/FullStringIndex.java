@@ -55,8 +55,8 @@ public class FullStringIndex<T>
 	/**
 	 * Associates the given string with the given object.
 	 *
-	 * @param string
-	 * @param t
+	 * @param string the string to be added.
+	 * @param o the object associated with the string.
 	 */
 	public void add(String string, T o)
 	{

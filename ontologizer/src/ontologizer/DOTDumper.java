@@ -94,9 +94,9 @@ public class DOTDumper
 	 * Note that the studyResList should result from the same study! (only different
 	 * calculation methods and multiple test corrections are allowed)
 	 *
-	 * @param studResList
-	 * @param file
-	 * @param alpha
+	 * @param studResList set of study set
+	 * @param file specifies the file in which the result should be dumped.
+	 * @param alpha significance level.
 	 */
 	public void Dump2DOT(StudySetResultList studResList, File file, double alpha)
 	{

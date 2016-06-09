@@ -45,7 +45,7 @@ public class BuildInfo
 	/**
 	 * Returns the revision number.
 	 *
-	 * @return
+	 * @return the revision number as string.
 	 */
 	public static String getRevisionNumber()
 	{
@@ -57,7 +57,7 @@ public class BuildInfo
 	/**
 	 * Returns the compilation date.
 	 *
-	 * @return
+	 * @return the compile date as string.
 	 */
 	public static String getDate()
 	{
@@ -69,7 +69,7 @@ public class BuildInfo
 	/**
 	 * Returns the version string.
 	 *
-	 * @return
+	 * @return the version as string.
 	 */
 	public static String getVersion()
 	{
@@ -79,7 +79,7 @@ public class BuildInfo
 	/**
 	 * Returns the copyright years.
 	 *
-	 * @return
+	 * @return the copyright years as string.
 	 */
 	public static String getCopyright()
 	{
@@ -89,7 +89,7 @@ public class BuildInfo
 	/**
 	 * Returns the build string.
 	 *
-	 * @return
+	 * @return the build info as string.
 	 */
 	public static String getBuildString()
 	{
