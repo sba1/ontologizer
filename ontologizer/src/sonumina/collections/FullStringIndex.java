@@ -77,7 +77,7 @@ public class FullStringIndex<T>
 	 * Returns the size of the index, i.e., the total
 	 * number of strings.
 	 *
-	 * @return
+	 * @return size of the index.
 	 */
 	public int size()
 	{
@@ -89,7 +89,7 @@ public class FullStringIndex<T>
 	 * elements that contain the given string.
 	 *
 	 * @param string
-	 * @return
+	 * @return iterable ready to be iterated over.
 	 */
 	public Iterable<T> contains(final String string)
 	{

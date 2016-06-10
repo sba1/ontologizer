@@ -29,7 +29,7 @@ abstract public class AbstractGraph<VertexType>
 		/**
 		 * Called for every vertex visited by the algorithm.
 		 *
-		 * @param goTermID
+		 * @param vertex the vertex that has been just visited.
 		 *
 		 * @return false if algorithm should be stopped (i.e. no further
 		 *         calls to this method will be issued) otherwise true
@@ -50,18 +50,18 @@ abstract public class AbstractGraph<VertexType>
 	/**
 	 * Returns the vertices to which the in-going edges point to.
 	 *
-	 * @param vt
-	 * @return
+	 * @param v the vertex for which the in-going edges should be returned.
+	 * @return iterator over all in-going edges.
 	 */
-	public abstract Iterator<VertexType>getParentNodes(VertexType vt);
+	public abstract Iterator<VertexType>getParentNodes(VertexType v);
 
 	/**
 	 * Returns the vertices to which the outgoing edges point to.
 	 *
-	 * @param vt
-	 * @return
+	 * @param v the vertex for which the outgoing edges should be returned.
+	 * @return Iterator over all outgoing edges.
 	 */
-	public abstract Iterator<VertexType>getChildNodes(VertexType vt);
+	public abstract Iterator<VertexType>getChildNodes(VertexType v);
 
 	/**
 	 * Performs a breadth-first search onto the graph starting at a given

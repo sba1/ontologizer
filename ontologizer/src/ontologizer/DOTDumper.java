@@ -82,8 +82,7 @@ public class DOTDumper
 	private final String someColors[] = new String[] {"#888888", "#222222", "green", "blue", "violet"};
 
 	/**
-	 * @param terms
-	 * @param graph
+	 * @param graph defines the graph that the DOTDumper acts upon.
 	 */
 	public DOTDumper(Ontology graph)
 	{
@@ -223,11 +222,6 @@ public class DOTDumper
 		public Ontology graph;
 		public int rows, cols;
 
-		/**
-		 * @param terms
-		 * @param map
-		 * @param results
-		 */
 		public MultResultNodeVisitor(Ontology goGraph, HashMap<Term, MultResultNode> map, int nRows, int nCols)
 		{
 			graph = goGraph;
