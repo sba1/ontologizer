@@ -277,7 +277,7 @@ public class FileCache
 	/**
 	 * Sets the directory in which remote files are cached.
 	 *
-	 * @param cachePath
+	 * @param cachePath the path for the cache.
 	 */
 	public static void setCacheDirectory(String cachePath)
 	{
@@ -330,8 +330,6 @@ public class FileCache
 
 	/**
 	 * Returns the full path of the cache directory.
-	 *
-	 * @return
 	 */
 	public static String getCacheDirectory()
 	{
@@ -366,8 +364,6 @@ public class FileCache
 
 	/**
 	 * Add a new callback which is invoked on a cache update.
-	 *
-	 * @param callback
 	 */
 	public static void addUpdateCallback(FileCacheUpdateCallback callback)
 	{
@@ -379,8 +375,8 @@ public class FileCache
 
 	/**
 	 * Removes the given callback added with addUpdateCallback().
-	 * @param callback
-	 * @see addUpdateCallback()
+	 *
+	 * @see #addUpdateCallback
 	 */
 	public static void removeUpdateCallback(FileCacheUpdateCallback callback)
 	{
@@ -400,10 +396,9 @@ public class FileCache
 	}
 
 	/**
-	 * Returns the name of the local file representing
-	 * the url.
+	 * Returns the name of the local file representing the url.
 	 *
-	 * @param url
+	 * @param url the URL whose local representative shall be returned.
 	 * @return null if file is not stored locally.
 	 */
 	public static String getLocalFileName(String url)
@@ -425,8 +420,11 @@ public class FileCache
 	/**
 	 * Starts to open the given url. If file is in cache, the file name in this
 	 * cache is returned otherwise null.
-	 * @param url
-	 * @return
+	 *
+	 * @param url the URL to be downloaded
+	 *
+	 * @return null or the local file path mapping to the url. If null is returned
+	 *  the file will be downloaded asynchronously.
 	 * @throws IOException
 	 */
 	public static String open(final String url) throws IOException
@@ -435,11 +433,14 @@ public class FileCache
 	}
 
 	/**
+	 * Load the given URL in a non-blocking/asynchronous manner.
 	 *
-	 * @param url
-	 * @param basePath
-	 * @param run
-	 * @return
+	 * @param url the URL to be downloaded
+	 * @param ready callback that is invoked when the file has been downloaded (or an error happened
+	 *  during that condition).
+	 *
+	 * @return null or the local file path mapping to the url. If null is returned
+	 *  the file will be downloaded asynchronously.
 	 * @throws IOException
 	 */
 	public static String open(final String url, FileDownload ready) throws IOException
@@ -596,11 +597,13 @@ public class FileCache
 	}
 
 	/**
-	 * Returns the cached filename. Note that the function may block the calling task
-	 * until the file is retrieved!
+	 * Returns the cached filename for a given URL. Note that the function may block
+	 * the calling task until the file is retrieved!
 	 *
-	 * @param url
-	 * @return
+	 * @param url the URL for which the cached file name shall be returned
+	 *
+	 * @return the local file name for the given URL.
+	 *
 	 * @throws IOException
 	 * @throws InterruptedException
 	 */
@@ -613,9 +616,10 @@ public class FileCache
 	 * Returns the cached filename. Note that the function may block the calling task
 	 * until the file is retrieved!
 	 *
-	 * @param url
-	 * @param ready
-	 * @return
+	 * @param url the URL for which the cached file name shall be returned
+	 * @param ready callback monitoring the progress of the download
+	 *
+	 * @return the local file name for the given URL.
 	 *
 	 * @throws IOException
 	 * @throws InterruptedException
@@ -626,8 +630,8 @@ public class FileCache
 
 		/**
 		 * Handles the FileDownload Callback. The given lock object is notified
-		 * once the download has been completed, thus, a synchron download can be
-		 * mimiced.
+		 * once the download has been completed, thus, a synchronous download can be
+		 * mimicked.
 		 *
 		 * @author Sebastian Bauer
 		 */
@@ -683,8 +687,8 @@ public class FileCache
 	/**
 	 * Returns the state of the URL with respect to the cache.
 	 *
-	 * @param url
-	 * @return
+	 * @param url the URL for which the state should be returned.
+	 * @return the file state.
 	 */
 	public static FileState getState(String url)
 	{
@@ -713,8 +717,8 @@ public class FileCache
 	 * Returns whether an open XXXBlocking call would block
 	 * or not.
 	 *
-	 * @param url
-	 * @return
+	 * @param url the URL for which the information should be determined
+	 * @return whether an open would block or not.
 	 */
 	public static boolean isNonBlocking(String url)
 	{
@@ -729,8 +733,8 @@ public class FileCache
 	 * Returns a formatted string that represents the time
 	 * at which the given URL was downloaded.
 	 *
-	 * @param url
-	 * @return
+	 * @param url the URL for which the information should be determined
+	 * @return the download time
 	 */
 	public static String getDownloadTime(String url)
 	{
