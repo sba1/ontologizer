@@ -55,10 +55,7 @@ public class EnrichedGOTermsResult extends AbstractGOTermsResult
 	}
 
 	/**
-	 * Returns the name of the calculation method used for this
-	 * result.
-	 *
-	 * @return
+	 * @return the name of the calculation method used for this result.
 	 */
 	public String getCalculationName()
 	{
@@ -77,10 +74,8 @@ public class EnrichedGOTermsResult extends AbstractGOTermsResult
 	}
 
 	/**
-	 * Returns the name of the multiple test correction used
+	 * @return the name of the multiple test correction used
 	 * for this result.
-	 *
-	 * @return
 	 */
 	public String getCorrectionName()
 	{

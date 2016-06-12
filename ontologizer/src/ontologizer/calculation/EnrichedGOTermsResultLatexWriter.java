@@ -17,8 +17,8 @@ public class EnrichedGOTermsResultLatexWriter
 	 * Converts the given double value to a proper latex formated
 	 * version.
 	 *
-	 * @param val
-	 * @return
+	 * @param val the val to be converted.
+	 * @return a suitable representation of val for LaTex.
 	 */
 	public static String toLatex(double val)
 	{
@@ -40,10 +40,11 @@ public class EnrichedGOTermsResultLatexWriter
 	}
 
 	/**
-	 * @param terms
-	 * @param htmlFile
-	 * @param dotFile
-	 * @param pngFile
+	 * Write the result as latex.
+	 *
+	 * @param result the result to be written
+	 * @param texFile the name of the file to be written
+	 * @param terms the terms that should be part of the output table
 	 */
 	public static void write(EnrichedGOTermsResult result, File texFile, Collection<TermID> terms)
 	{

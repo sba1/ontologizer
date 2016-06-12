@@ -32,12 +32,12 @@ public class IndependentUniformCalculation implements ICalculation
 	/**
 	 * Start calculation based on fisher exact test of the given study.
 	 *
-	 * @param graph
-	 * @param goAssociations
-	 * @param populationSet
-	 * @param studySet
+	 * @param graph graph that defines the ontology
+	 * @param goAssociations the association to use
+	 * @param populationSet the population set
+	 * @param studySet the study set
 	 *
-	 * @return
+	 * @return the result
 	 */
 	public EnrichedGOTermsResult calculateStudySet(Ontology graph,
 			AssociationContainer goAssociations, PopulationSet populationSet,

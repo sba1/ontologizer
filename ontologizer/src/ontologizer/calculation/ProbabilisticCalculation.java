@@ -104,10 +104,9 @@ public class ProbabilisticCalculation implements ICalculation
 		}
 
 		/**
-		 * The function which should be optimized.
+		 * The objective function.
 		 *
-		 * @param data
-		 * @return
+		 * @return current value according to the objective function.
 		 */
 		public double objective()
 		{

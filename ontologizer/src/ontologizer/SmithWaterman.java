@@ -4,7 +4,7 @@ package ontologizer;
  * This is a simple implementation of a smith waterman local alignment score.
  *
  * @author Sebastian Bauer
- * @see http://en.wikipedia.org/wiki/Smith%E2%80%93Waterman_algorithm
+ * @see <A href="http://en.wikipedia.org/wiki/Smith%E2%80%93Waterman_algorithm">Smith-Waterman algorithm</A>
  */
 public class SmithWaterman
 {
@@ -45,9 +45,9 @@ public class SmithWaterman
     /**
 	 * Returns the score according to smith waterman.
 	 *
-	 * @param s1
-	 * @param s2
-	 * @return
+	 * @param s1 first string of the calculation
+	 * @param s2 second string of the calculation
+	 * @return the score
 	 */
 	static public int getScore(String s1, String s2)
 	{

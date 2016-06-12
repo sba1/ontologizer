@@ -78,24 +78,24 @@ public class AbstractGOTermsResult implements Iterable<AbstractGOTermProperties>
 	}
 
 	/**
-	 * Return the go term properties for the given term.
+	 * Return the result term properties for the given term.
 	 *
-	 * @param goID
-	 * @return
+	 * @param termId the of the interesting term
+	 * @return the result term's result properties
 	 */
-	public AbstractGOTermProperties getGOTermProperties(TermID goID)
+	public AbstractGOTermProperties getGOTermProperties(TermID termId)
 	{
-		Integer index = go2Index.get(go.getTerm(goID));
+		Integer index = go2Index.get(go.getTerm(termId));
 		if (index == null)
 			return null;
 		return list.get(index);
 	}
 
 	/**
-	 * Returns the result of the given goTerm.
+	 * Return the result term properties for the given term.
 	 *
 	 * @param term
-	 * @return
+	 * @return the
 	 */
 	public AbstractGOTermProperties getGOTermProperties(Term term)
 	{
@@ -105,9 +105,7 @@ public class AbstractGOTermsResult implements Iterable<AbstractGOTermProperties>
 	}
 
 	/**
-	 * Return the assigned associations.
-	 *
-	 * @return
+	 * @return the associated associations
 	 */
 	public AssociationContainer getAssociations()
 	{
@@ -115,10 +113,8 @@ public class AbstractGOTermsResult implements Iterable<AbstractGOTermProperties>
 	}
 
 	/**
-	 * Returns the size of the result list, i.e., through how many
-	 * elements you can iterate.
-	 *
-	 * @return
+	 * @return the size of the result list, i.e., through how many
+	 * elements you can iterate
 	 */
 	public int getSize()
 	{
@@ -126,9 +122,7 @@ public class AbstractGOTermsResult implements Iterable<AbstractGOTermProperties>
 	}
 
 	/**
-	 * Returns the associated GO graph.
-	 *
-	 * @return
+	 * @return the associated ontology.
 	 */
 	public Ontology getGO()
 	{
@@ -142,8 +136,7 @@ public class AbstractGOTermsResult implements Iterable<AbstractGOTermProperties>
 	 * representing the specified terms up to the given rootTerm node are
 	 * included.
 	 *
-	 * @param goTerms
-	 * @param graph
+	 * @param graph the underlaying go graph.
 	 * @param file
 	 * 			defines the file in which the output is written to.
 	 * @param rootTerm
@@ -158,6 +151,7 @@ public class AbstractGOTermsResult implements Iterable<AbstractGOTermProperties>
 	 */
 	public void writeDOT(Ontology graph, File file, TermID rootTerm, HashSet<TermID> terms, AbstractDotAttributesProvider provider)
 	{
+		/* FIXME: graph really necessary? (we have getGO()) */
 		if (list.isEmpty())
 			return;
 

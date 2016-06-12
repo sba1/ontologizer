@@ -64,8 +64,7 @@ public class DOTDumper
 		}
 
 		/**
-		 * @param goid the GO Identifies
-		 * @param name the descriptive name
+		 * @param term the GO Identifies
 		 * @param rows the number rows
 		 * @param cols the number of columns
 		 */

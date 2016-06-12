@@ -118,7 +118,7 @@ public class AssociationParser
 	 * @param terms the container of the GO terms
 	 * @param names list of genes from which the associations should be gathered.
 	 *        If null all associations are taken,
-	 * @param evidence keep only the annotation whose evidence match the given ones. If null, all annotations are used.
+	 * @param evidences keep only the annotation whose evidence match the given ones. If null, all annotations are used.
 	 *        Note that this field is currently used when the filenames referes to a GAF file.
 	 * @param progress
 	 * @throws IOException
@@ -540,9 +540,7 @@ public class AssociationParser
 	}
 
 	/**
-	 * Returns the list of object symbols of all associations.
-	 *
-	 * @return
+	 * @return the list of object symbols of all associations.
 	 */
 	public List<ByteString> getListOfObjectSymbols()
 	{
@@ -555,9 +553,7 @@ public class AssociationParser
 	}
 
 	/**
-	 * Returns the file type of the associations.
-	 *
-	 * @return
+	 * @return the file type of the associations.
 	 */
 	public Type getFileType()
 	{

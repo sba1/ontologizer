@@ -187,9 +187,7 @@ public class Association
 	}
 
 	/**
-	 * Returns the objects symbol (primary id).
-	 *
-	 * @return
+	 * @return the objects symbol (primary id).
 	 */
 	public ByteString getObjectSymbol()
 	{
@@ -197,9 +195,7 @@ public class Association
 	}
 
 	/**
-	 * Returns the association's synonym.
-	 *
-	 * @return
+	 * @return the association's synonym.
 	 */
 	public ByteString getSynonym()
 	{
@@ -207,8 +203,7 @@ public class Association
 	}
 
 	/**
-	 * Returns whether this association is qualified as "NOT".
-	 * @return
+	 * @return whether this association is qualified as "NOT".
 	 */
 	public boolean hasNotQualifier()
 	{
@@ -225,9 +220,7 @@ public class Association
 	}
 
 	/**
-	 * Returns the aspect.
-	 *
-	 * @return
+	 * @return the associations's aspect.
 	 */
 	public ByteString getAspect()
 	{
@@ -235,9 +228,7 @@ public class Association
 	}
 
 	/**
-	 * Returns the evidence code of the annotation.
-	 *
-	 * @return
+	 * @return the evidence code of the annotation.
 	 */
 	public ByteString getEvidence()
 	{
@@ -307,9 +298,9 @@ public class Association
 	/**
 	 * Create an association from a GAF line. Uses the supplied prefix pool.
 	 *
-	 * @param line
-	 * @param pp
-	 * @return
+	 * @param line the GAF line
+	 * @param pp the prefix pool to be used.
+	 * @return the created association
 	 */
 	public static Association createFromGAFLine(String line, PrefixPool pp)
 	{
@@ -321,8 +312,8 @@ public class Association
 	/**
 	 * Create an association from a GAF line.
 	 *
-	 * @param line
-	 * @return
+	 * @param line the GAF line
+	 * @return the created association
 	 */
 	public static Association createFromGAFLine(String line)
 	{
@@ -330,10 +321,11 @@ public class Association
 	}
 
 	/**
-	 * Create an association from a GAF Bytestring line.
+	 * Create an association from a GAF ByteString line using the given prefix pool.
 	 *
-	 * @param line
-	 * @return
+	 * @param line the GAF line
+	 * @param pp the prefix pool to be used.
+	 * @return the created association
 	 */
 	public static Association createFromGAFLine(ByteString line, PrefixPool pp)
 	{
@@ -341,11 +333,10 @@ public class Association
 	}
 
 	/**
-	 * Create an association from a GAF Bytestring line.
+	 * Create an association from a GAF ByteString line.
 	 *
-	 * @param line
-	 * @param pp
-	 * @return
+	 * @param line the GAF line
+	 * @return the created association
 	 */
 	public static Association createFromGAFLine(ByteString line)
 	{
@@ -355,11 +346,11 @@ public class Association
 	/**
 	 * Create an association from a byte array.
 	 *
-	 * @param lineBuf
-	 * @param offset
-	 * @param len
-	 * @param prefixPool
-	 * @return
+	 * @param byteBuf the byteBuf
+	 * @param offset the offset of the first byte to be considered
+	 * @param len number of bytes to be considered
+	 * @param prefixPool the prefix pool that should be used.
+	 * @return the created association
 	 */
 	public static Association createFromGAFLine(byte[] byteBuf, int offset, int len, PrefixPool prefixPool)
 	{

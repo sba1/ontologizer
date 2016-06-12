@@ -48,9 +48,7 @@ public final class GlobalPreferences
 	}
 
 	/**
-	 * Returns the DOT path.
-	 *
-	 * @return
+	 * @return the DOT path.
 	 */
 	static public String getDOTPath()
 	{
@@ -68,9 +66,7 @@ public final class GlobalPreferences
 	}
 
 	/**
-	 * Returns the number of permutations.
-	 *
-	 * @return
+	 * @return the number of permutations.
 	 */
 	static public int getNumberOfPermutations()
 	{
@@ -98,9 +94,7 @@ public final class GlobalPreferences
 	}
 
 	/**
-	 * Returns the proxy server.
-	 *
-	 * @return
+	 * @return the proxy server.
 	 */
 	public static String getProxyHost()
 	{
@@ -131,9 +125,7 @@ public final class GlobalPreferences
 	}
 
 	/**
-	 * Returns the proxy port.
-	 *
-	 * @return
+	 * @return the proxy port.
 	 */
 	public static int getProxyPort()
 	{
@@ -205,9 +197,7 @@ public final class GlobalPreferences
 	}
 
 	/**
-	 * Returns the expected number of terms setting for MGSA.
-	 *
-	 * @return
+	 * @return the expected number of terms setting for MGSA.
 	 */
 	public static int getExpectedNumber()
 	{

@@ -31,10 +31,8 @@ public class AssociationContainer implements Iterable<Gene2Associations>
 	 * gene (one gene can have multiple annotations) in Gene2Association
 	 * objects.
 	 *
-	 * @param assocFile
-	 *            name of the gene_associations.XXX file
 	 * @param assocs
-	 *            a list of all Associations refererring to genes of the current
+	 *            a list of all Associations referring to genes of the current
 	 *            dataset
 	 * @param s2g
 	 *            HashMap of synonyms for gene names extracted from the
@@ -62,7 +60,7 @@ public class AssociationContainer implements Iterable<Gene2Associations>
 	/**
 	 * Constructor for an empty container.
 	 *
-	 * @see addAssociation
+	 * @see #addAssociation(Association)
 	 */
 	public AssociationContainer()
 	{
@@ -77,7 +75,7 @@ public class AssociationContainer implements Iterable<Gene2Associations>
 	/**
 	 * Adds a new association.
 	 *
-	 * @param a
+	 * @param a the associated to be added
 	 */
 	public void addAssociation(Association a)
 	{
@@ -138,10 +136,10 @@ public class AssociationContainer implements Iterable<Gene2Associations>
 	}
 
 	/**
-	 * Returns whether the given name is a object symbol.
+	 * Returns whether the given name is an object symbol.
 	 *
-	 * @param name
-	 * @return
+	 * @param name defines the name that should be checked
+	 * @return whether name is an object symbol or not
 	 */
 	public boolean isObjectSymbol(ByteString name)
 	{
@@ -151,8 +149,8 @@ public class AssociationContainer implements Iterable<Gene2Associations>
 	/**
 	 * Returns whether the given name is an object id.
 	 *
-	 * @param name
-	 * @return
+	 * @param name defines the name that should be checked
+	 * @return whether name is an object id or not
 	 */
 	public boolean isObjectID(ByteString name)
 	{
@@ -162,8 +160,8 @@ public class AssociationContainer implements Iterable<Gene2Associations>
 	/**
 	 * Returns whether the given name is a synonym.
 	 *
-	 * @param name
-	 * @return
+	 * @param name defines the name that should be checked
+	 * @return whether name is a synonym
 	 */
 	public boolean isSynonym(ByteString name)
 	{
@@ -193,9 +191,7 @@ public class AssociationContainer implements Iterable<Gene2Associations>
 	}
 
 	/**
-	 * Return all evidence codes that can be found in the container.
-	 *
-	 * @return
+	 * @return all evidence codes that can be found in the container.
 	 */
 	public Map<String,Integer> getAllEvidenceCodes()
 	{

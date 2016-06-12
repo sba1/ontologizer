@@ -29,27 +29,24 @@ public interface ICalculation
 	public String getDescription();
 
 	/**
-	 * Allows performing calculations on the single StudySet level.
-	 * This makes more sense than acting on whole directories.
+	 * Perform the enrichment calculation on the given study set.
 	 *
-	 * @param graph
-	 * @param goAssociations
-	 * @param populationSet
-	 * @param studySet
-	 * @param testCorrection
+	 * @param graph graph that defines the ontology
+	 * @param associations the association to use
+	 * @param populationSet the population set (contains all possible items)
+	 * @param studySet the study set (contains the all "special" items)
+	 * @param testCorrection the test correction that should be used.
 	 * @return the result of the calculation
 	 */
 	public EnrichedGOTermsResult calculateStudySet(
 			Ontology graph,
-			AssociationContainer goAssociations,
+			AssociationContainer associations,
 			PopulationSet populationSet,
 			StudySet studySet,
 			AbstractTestCorrection testCorrection);
 
 	/**
-	 * Returns whether the calculation method supports multiple
-	 * test correction.
-	 * @return
+	 * @return whether the calculation method supports multiple test correction.
 	 */
 	public boolean supportsTestCorrection();
 }

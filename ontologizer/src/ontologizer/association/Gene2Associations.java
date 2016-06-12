@@ -86,8 +86,8 @@ public class Gene2Associations implements Iterable<Association>
 	/**
 	 * Returns whether the given term id is associated.
 	 *
-	 * @param tid
-	 * @return
+	 * @param tid the id of the term that should be checked.
+	 * @return whether tid is contained in this mapping.
 	 */
 	public boolean containsID(TermID tid)
 	{

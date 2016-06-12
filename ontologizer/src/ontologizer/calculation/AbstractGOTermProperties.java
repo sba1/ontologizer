@@ -57,7 +57,7 @@ public abstract class AbstractGOTermProperties extends PValue
 	 * @param propNumber
 	 * @return boolean whether the property number represents a
 	 *         population gene count or not.
-	 * @see isPropertyStudyGeneCount()
+	 * @see #isPropertyStudyGeneCount(int)
 	 */
 	public boolean isPropertyPopulationGeneCount(int propNumber)
 	{
@@ -73,12 +73,13 @@ public abstract class AbstractGOTermProperties extends PValue
 	 * stored within a possible table this function is provided
 	 * (and can be overwritten by subclass implementors).
 	 *
-	 * @param propNumber
+	 * @param propNumber the number of the property that should be
+	 *  checked.
 	 * @return boolean whether the property number represents a
 	 *         study gene count or not.
-	 * @see isPropertyPopulationGeneCount()
+	 * @see #isPropertyPopulationGeneCount(int)
 	 */
-	public boolean isPropertyStudyGeneCount(int i)
+	public boolean isPropertyStudyGeneCount(int propNumber)
 	{
 		return false;
 	}

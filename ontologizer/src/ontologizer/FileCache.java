@@ -49,8 +49,6 @@ class DownloadThread extends Thread
 	/**
 	 * @param u defines the URL where to download.
 	 * @param destFile defines the file to which the download is written.
-	 * @param threadCallback basic callback.
-	 * @param callback callback from the issuer.
 	 */
 	public DownloadThread(URL u, File destFile)
 	{
@@ -75,9 +73,7 @@ class DownloadThread extends Thread
 	}
 
 	/**
-	 * Returns the content length or -1 if it has not been defined yet.
-	 *
-	 * @return
+	 * @return the content length or -1 if it has not been defined yet.
 	 */
 	public int getContentLength()
 	{
@@ -88,9 +84,7 @@ class DownloadThread extends Thread
 	}
 
 	/**
-	 * Returns the currently transfered amount.
-	 *
-	 * @return
+	 * @return the currently transfered amount.
 	 */
 	public int getContentActual()
 	{
@@ -101,9 +95,7 @@ class DownloadThread extends Thread
 	}
 
 	/**
-	 * Returns the list of subscribers.
-	 *
-	 * @return
+	 * @return the list of subscripers.
 	 */
 	public List<FileCache.FileDownload> getCallbackSubscriberList()
 	{
