@@ -110,6 +110,7 @@ public class Association
 	private final static int SYNONYMFIELD = 10;
 
 	/** Index fo dbObjectType field */
+	@SuppressWarnings("unused")
 	private final static int DBOBJECTTYPEFIELD = 11;
 
 	/** Use this pattern to split tab-separated fields on a line */
