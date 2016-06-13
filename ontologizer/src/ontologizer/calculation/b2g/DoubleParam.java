@@ -69,9 +69,7 @@ class DoubleParam extends B2GParam
 	}
 
 	/**
-	 * Returns whether variable has a minimum.
-	 *
-	 * @return
+	 * @return whether variable has a minimum.
 	 */
 	public boolean hasMin()
 	{
@@ -89,9 +87,7 @@ class DoubleParam extends B2GParam
 	}
 
 	/**
-	 * Returns whether variable has a maximum.
-	 *
-	 * @return
+	 * @return whether variable has a maximum.
 	 */
 	public boolean hasMax()
 	{

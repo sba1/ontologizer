@@ -321,7 +321,7 @@ public class FileCache
 	}
 
 	/**
-	 * Returns the full path of the cache directory.
+	 * @return the full path of the cache directory.
 	 */
 	public static String getCacheDirectory()
 	{
@@ -356,6 +356,8 @@ public class FileCache
 
 	/**
 	 * Add a new callback which is invoked on a cache update.
+	 *
+	 * @param callback specifies the callback to be added
 	 */
 	public static void addUpdateCallback(FileCacheUpdateCallback callback)
 	{
@@ -368,7 +370,8 @@ public class FileCache
 	/**
 	 * Removes the given callback added with addUpdateCallback().
 	 *
-	 * @see #addUpdateCallback
+	 * @param callback specifies the callback to removed
+	 * @see #addUpdateCallback(FileCacheUpdateCallback)
 	 */
 	public static void removeUpdateCallback(FileCacheUpdateCallback callback)
 	{
@@ -417,7 +420,6 @@ public class FileCache
 	 *
 	 * @return null or the local file path mapping to the url. If null is returned
 	 *  the file will be downloaded asynchronously.
-	 * @throws IOException
 	 */
 	public static String open(final String url) throws IOException
 	{
@@ -433,7 +435,6 @@ public class FileCache
 	 *
 	 * @return null or the local file path mapping to the url. If null is returned
 	 *  the file will be downloaded asynchronously.
-	 * @throws IOException
 	 */
 	public static String open(final String url, FileDownload ready) throws IOException
 	{
@@ -595,9 +596,6 @@ public class FileCache
 	 * @param url the URL for which the cached file name shall be returned
 	 *
 	 * @return the local file name for the given URL.
-	 *
-	 * @throws IOException
-	 * @throws InterruptedException
 	 */
 	public static String getCachedFileNameBlocking(String url) throws IOException, InterruptedException
 	{
@@ -612,9 +610,6 @@ public class FileCache
 	 * @param ready callback monitoring the progress of the download
 	 *
 	 * @return the local file name for the given URL.
-	 *
-	 * @throws IOException
-	 * @throws InterruptedException
 	 */
 	public static String getCachedFileNameBlocking(String url, final FileDownload ready) throws IOException, InterruptedException
 	{

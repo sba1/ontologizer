@@ -405,9 +405,7 @@ public class FixedAlphaBetaScore extends Bayes2GOScore
 	}
 
 	/**
-	 * Returns possible alpha values.
-	 *
-	 * @return
+	 * @return possible alpha values.
 	 */
 	public double [] getAlphaValues()
 	{
@@ -434,9 +432,7 @@ public class FixedAlphaBetaScore extends Bayes2GOScore
 	}
 
 	/**
-	 * Returns the inferred alpha distribution.
-	 *
-	 * @return
+	 * @return the inferred alpha distribution.
 	 */
 	public double [] getAlphaDistribution()
 	{
@@ -444,9 +440,7 @@ public class FixedAlphaBetaScore extends Bayes2GOScore
 	}
 
 	/**
-	 * Returns possible alpha values.
-	 *
-	 * @return
+	 * @return possible beta values.
 	 */
 	public double [] getBetaValues()
 	{
@@ -454,9 +448,7 @@ public class FixedAlphaBetaScore extends Bayes2GOScore
 	}
 
 	/**
-	 * Returns the inferred alpha distribution.
-	 *
-	 * @return
+	 * @return the inferred alpha distribution.
 	 */
 	public double [] getBetaDistribution()
 	{

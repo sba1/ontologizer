@@ -25,7 +25,7 @@ import ontologizer.statistics.AbstractTestCorrection;
  * This class implements an model-based analysis. The description of the entire
  * method can be found in "GOing Bayesian: model-based gene set analysis of genome-scale data"
  *
- * @see http://nar.oxfordjournals.org/content/early/2010/02/19/nar.gkq045.short
+ * @see <A HREF="http://nar.oxfordjournals.org/content/early/2010/02/19/nar.gkq045.short">GOing Bayesian: model-based gene set analysis of genome-scale data</A>
  * @author Sebastian Bauer
  */
 public class Bayes2GOCalculation implements ICalculation, IProgressFeedback
@@ -147,9 +147,7 @@ public class Bayes2GOCalculation implements ICalculation, IProgressFeedback
 	}
 
 	/**
-	 * Sets the expected number of terms.
-	 *
-	 * @param expectedNumber
+	 * @param expectedNumber specifies the expected number of terms.
 	 */
 	public void setExpectedNumber(int expectedNumber)
 	{
@@ -157,9 +155,7 @@ public class Bayes2GOCalculation implements ICalculation, IProgressFeedback
 	}
 
 	/**
-	 * Sets the type of expected number variable.
-	 *
-	 * @param expectedNumber
+	 * @param type specifies the type of the expected number variable.
 	 */
 	public void setExpectedNumber(B2GParam.Type type)
 	{

@@ -20,12 +20,12 @@ public class GODOTWriter
 	private static Logger logger = Logger.getLogger(GODOTWriter.class.getCanonicalName());
 
 	/**
-	 * Encode the term id for using it as node's name within the dot file.
+	 * Encode the term id string of the given term id.
 	 *
-	 * @param termId
-	 * @return
+	 * @param termId to be encoded
+	 * @return the encoded term id for using it as node's name within the dot file.
 	 *
-	 * @todo Properly escape possibly existing underscore
+	 * TODO: Properly escape possibly existing underscore
 	 */
 	public static String encodeTermID(TermID termId)
 	{
@@ -33,10 +33,10 @@ public class GODOTWriter
 	}
 
 	/**
-	 * Decode the string encoded with encodeTermID().
+	 * Decode the string that was encoded via {@link #encodeTermID(TermID)}
 	 *
-	 * @param encodedTermId
-	 * @return
+	 * @param encodedTermId the string to be decoded
+	 * @return the decoded string
 	 */
 	public static TermID decodeTermID(String encodedTermId)
 	{
@@ -50,8 +50,7 @@ public class GODOTWriter
 	 * representing the specified terms up to the given rootTerm node are
 	 * included.
 	 *
-	 * @param goTerms
-	 * @param graph
+	 * @param graph the ontology
 	 * @param file
 	 * 			defines the file in which the output is written to.
 	 * @param rootTerm
@@ -76,8 +75,7 @@ public class GODOTWriter
 	 * representing the specified terms up to the given rootTerm node are
 	 * included.
 	 *
-	 * @param goTerms
-	 * @param graph
+	 * @param graph the ontology
 	 * @param file
 	 * 			defines the file in which the output is written to.
 	 * @param rootTerm

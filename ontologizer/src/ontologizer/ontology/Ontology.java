@@ -82,7 +82,7 @@ public class Ontology implements Iterable<Term>
 	/**
 	 * Construct the GO Graph from the given container.
 	 *
-	 * @param termContainer
+	 * @param newTermContainer
 	 * @deprecated use Ontology.create() instead
 	 */
 	@Deprecated
@@ -97,7 +97,7 @@ public class Ontology implements Iterable<Term>
 	 * Returns the induced subgraph which contains the terms with the given ids.
 	 *
 	 * @param termIDs
-	 * @return
+	 * @return the subgraph induced by given the term ids.
 	 */
 	public Ontology getInducedGraph(Collection<TermID> termIDs)
 	{
@@ -119,9 +119,7 @@ public class Ontology implements Iterable<Term>
 	}
 
 	/**
-	 * Returns terms that have no descendants.
-	 *
-	 * @return
+	 * @return terms that have no descendants.
 	 */
 	public ArrayList<Term> getLeafTerms()
 	{
@@ -136,9 +134,7 @@ public class Ontology implements Iterable<Term>
 	}
 
 	/**
-	 * Returns term id of terms that have no descendants.
-	 *
-	 * @return
+	 * @return term id of terms that have no descendants.
 	 */
 	public Collection<TermID> getLeafTermIDs()
 	{
@@ -153,9 +149,7 @@ public class Ontology implements Iterable<Term>
 	}
 
 	/**
-	 * Returns the term in topological order.
-	 *
-	 * @return
+	 * @return the term in topological order.
 	 */
 	public ArrayList<Term> getTermsInTopologicalOrder()
 	{
@@ -163,9 +157,7 @@ public class Ontology implements Iterable<Term>
 	}
 
 	/**
-	 * Returns a slim representation of the ontology.
-	 *
-	 * @return
+	 * @return a slim representation of the ontology.
 	 */
 	public SlimDirectedGraphView<Term> getSlimGraphView()
 	{
@@ -259,9 +251,7 @@ public class Ontology implements Iterable<Term>
 	}
 
 	/**
-	 * Returns all available subsets.
-	 *
-	 * @return
+	 * @return all available subsets.
 	 */
 	public Collection<Subset> getAvailableSubsets()
 	{
@@ -314,7 +304,7 @@ public class Ontology implements Iterable<Term>
 	/**
 	 * Return the set of term IDs containing the given term's children.
 	 *
-	 * @param term - the term's id as a TermID
+	 * @param termID - the term's id as a TermID
 	 * @return the set of termID of the descendants as term-IDs
 	 */
 	public Set<TermID> getTermChildren(TermID termID)
@@ -356,7 +346,7 @@ public class Ontology implements Iterable<Term>
 	/**
 	 * Return the set of term IDs containing the given term-ID's ancestors.
 	 *
-	 * @param Term-ID
+	 * @param goTermID
 	 * @return the set of Term-IDs of ancestors
 	 */
 	public Set<TermID> getTermParents(TermID goTermID)
@@ -403,11 +393,10 @@ public class Ontology implements Iterable<Term>
 
 
 	/**
-	 * Return the set of GO term IDs containing the given GO term's ancestors.
-	 * Includes the type of relationship.
-
-	 * @param destID
-	 * @return
+	 * Return the set of GO term IDs containing the given GO term's parents.
+	 *
+	 * @param goTermID
+	 * @return the set of parent terms including the type of relationship.
 	 */
 	public Set<ParentTermID> getTermParentsWithRelation(TermID goTermID)
 	{
@@ -432,17 +421,18 @@ public class Ontology implements Iterable<Term>
 	}
 
 	/**
-	 * Get the relation that relates term to ancestor or null.
+	 * Get the relation that relates term to the parent or null.
 	 *
-	 * @param ancestor
-	 * @param term
-	 * @return
+	 * @param parent selects the parent
+	 * @param term selects the term
+	 * @return the relation type of term and the parent term or null if no
+	 *  parent is not the parent of term.
 	 */
-	public TermRelation getDirectRelation(TermID ancestor, TermID term)
+	public TermRelation getDirectRelation(TermID parent, TermID term)
 	{
 		Set<ParentTermID> parents = getTermParentsWithRelation(term);
 		for (ParentTermID p : parents)
-			if (p.termid.equals(ancestor)) return p.relation;
+			if (p.termid.equals(parent)) return p.relation;
 		return null;
 	}
 
@@ -451,7 +441,7 @@ public class Ontology implements Iterable<Term>
 	 * parents.
 	 *
 	 * @param tid
-	 * @return
+	 * @return set the siblings
 	 */
 	public Set<TermID> getTermsSiblings(TermID tid)
 	{
@@ -465,10 +455,10 @@ public class Ontology implements Iterable<Term>
 
 	/**
 	 * Determines if there exists a directed path from sourceID to destID on the
-	 * GO Graph.
+	 * ontology graph (in that direction).
 	 *
-	 * @param sourceID
-	 * @param destID
+	 * @param sourceID the id of the source term
+	 * @param destID teh id of the destination term
 	 */
 	public boolean existsPath(TermID sourceID, TermID destID)
 	{
@@ -638,7 +628,7 @@ public class Ontology implements Iterable<Term>
 	 * Note that the term container usually contains all terms while
 	 * the graph object may contain a subset.
 	 *
-	 * @return
+	 * @return the term container attached to this ontology graph.
 	 * @deprecated Use getTermMap
 	 */
 	@Deprecated
@@ -660,14 +650,14 @@ public class Ontology implements Iterable<Term>
 	}
 
 	/**
-	 * Returns the term to a given term string or null.
+	 * Returns the term represented by the given term id string or null.
 	 *
-	 * @param term
-	 * @return
+	 * @param termId the term string id
+	 * @return the proper term object corresponding to the given term string id.
 	 */
-	public Term getTerm(String term)
+	public Term getTerm(String termId)
 	{
-		Term go = termContainer.get(term);
+		Term go = termContainer.get(termId);
 		if (go == null)
 		{
 			/* GO Term Container doesn't include the root term so we have to handle
@@ -675,7 +665,7 @@ public class Ontology implements Iterable<Term>
 			 */
 			try
 			{
-				TermID id = new TermID(term);
+				TermID id = new TermID(termId);
 				if (id.id == rootTerm.getID().id)
 					return rootTerm;
 			} catch (IllegalArgumentException iea)
@@ -699,14 +689,14 @@ public class Ontology implements Iterable<Term>
 	 * If no term with the given primary ID is found all
 	 * alternative IDs are used. If still no term is found null is returned.
 	 *
-	 * @param term ID as string
-	 * @return
+	 * @param termId the term id string
+	 * @return the term.
 	 */
-	public Term getTermIncludingAlternatives(String termIdString)
+	public Term getTermIncludingAlternatives(String termId)
 	{
 
 		// try using the primary id
-		Term term = getTerm(termIdString);
+		Term term = getTerm(termId);
 		if (term != null)
 			return term;
 
@@ -719,8 +709,8 @@ public class Ontology implements Iterable<Term>
 			setUpMappingAlternativeId2PrimaryId();
 
 		// try to find a mapping to a primary term-id
-		if (alternativeId2primaryId.containsKey(termIdString)){
-			String primaryId 	= alternativeId2primaryId.get(termIdString);
+		if (alternativeId2primaryId.containsKey(termId)){
+			String primaryId 	= alternativeId2primaryId.get(termId);
 			term 				= termContainer.get(primaryId);
 		}
 
@@ -732,7 +722,7 @@ public class Ontology implements Iterable<Term>
 			 */
 			try
 			{
-				TermID id = new TermID(termIdString);
+				TermID id = new TermID(termId);
 				if (id.id == rootTerm.getID().id)
 					return rootTerm;
 			} catch (IllegalArgumentException iea)
@@ -754,10 +744,10 @@ public class Ontology implements Iterable<Term>
 	}
 
 	/**
-	 * Returns the full-fledged term.
+	 * Returns the full-fledged term given its id.
 	 *
-	 * @param id
-	 * @return
+	 * @param id the term id
+	 * @return the term instance.
 	 */
 	public Term getTerm(TermID id)
 	{
@@ -771,8 +761,8 @@ public class Ontology implements Iterable<Term>
 	/**
 	 * Returns whether the given term is included in the graph.
 	 *
-	 * @param term
-	 * @return
+	 * @param term which term to check
+	 * @return if term is included in the graph.
 	 */
 	public boolean termExists(TermID term)
 	{
@@ -784,7 +774,7 @@ public class Ontology implements Iterable<Term>
 	 * Returns the set of terms given from the set of term ids.
 	 *
 	 * @param termIDs
-	 * @return
+	 * @return set of terms
 	 *
 	 * @deprecated use termSet
 	 */
@@ -797,7 +787,7 @@ public class Ontology implements Iterable<Term>
 	 * Return a set of terms given an iterable instance of term id objects.
 	 *
 	 * @param termIDs
-	 * @return
+	 * @return set of terms
 	 */
 	public Set<Term> termSet(Iterable<TermID> termIDs)
 	{
@@ -813,7 +803,7 @@ public class Ontology implements Iterable<Term>
 	 *
 	 * @param termIDs a collection where to store the term ids.
 	 * @param terms the terms whose ids shall be placed into termIdList
-	 * @return
+	 * @return a collection of term ids
 	 */
 	private static <A extends Collection<TermID>> A termIDs(A termIDs, Iterable<Term> terms)
 	{
@@ -825,8 +815,8 @@ public class Ontology implements Iterable<Term>
 	/**
 	 * Return a list of term ids given an iterable instance of term objects.
 	 *
-	 * @param terms
-	 * @return
+	 * @param terms the collection of term objects
+	 * @return list of term ids
 	 */
 	public static List<TermID> termIDList(Iterable<Term> terms)
 	{
@@ -836,8 +826,8 @@ public class Ontology implements Iterable<Term>
 	/**
 	 * Return a list of term ids given a collection of term objects.
 	 *
-	 * @param terms
-	 * @return
+	 * @param terms the collection of term objects
+	 * @return list of term ids
 	 */
 	public static List<TermID> termIDList(Collection<Term> terms)
 	{
@@ -845,10 +835,10 @@ public class Ontology implements Iterable<Term>
 	}
 
 	/**
-	 * Return a set of term ids given a collecton of term objects.
+	 * Return a set of term ids given a collection of term objects.
 	 *
-	 * @param terms
-	 * @return
+	 * @param terms iterable of terms
+	 * @return set of term ids
 	 */
 	public static Set<TermID> termIDSet(Iterable<Term> terms)
 	{
@@ -858,10 +848,12 @@ public class Ontology implements Iterable<Term>
 	/**
 	 * Returns a set of induced terms that are the terms of the induced graph.
 	 * Providing null as root-term-ID will induce all terms up to the root to be included.
-	 * @param rootTerm the root term (all terms up to this are included). if you provide null all terms
+	 *
+	 * @param rootTermID the root term (all terms up to this are included). if you provide null all terms
 	 * up to the original root term are included.
-	 * @param term the inducing term.
-	 * @return
+	 * @param termID the inducing term.
+	 *
+	 * @return set of term ids
 	 */
 	public Set<TermID> getTermsOfInducedGraph(final TermID rootTermID, TermID termID)
 	{
@@ -908,9 +900,7 @@ public class Ontology implements Iterable<Term>
 	}
 
 	/**
-	 * Returns all level 1 terms.
-	 *
-	 * @return
+	 * @return all level 1 terms.
 	 */
 	public Collection<Term> getLevel1Terms()
 	{
@@ -920,9 +910,9 @@ public class Ontology implements Iterable<Term>
 	/**
 	 * Returns the parents shared by both t1 and t2.
 	 *
-	 * @param t1
-	 * @param t2
-	 * @return
+	 * @param t1 term 1
+	 * @param t2 term 2
+	 * @return set of term ids that defines the terms shared by t1 and t2
 	 */
 	public Collection<TermID> getSharedParents(TermID t1, TermID t2)
 	{
@@ -994,7 +984,7 @@ public class Ontology implements Iterable<Term>
 	 * only the relevant terms.
 	 *
 	 * @param termids
-	 * @return
+	 * @return levels of the terms as defined in the set.
 	 */
 	public GOLevels getGOLevels(final Set<TermID> termids)
 	{
@@ -1037,9 +1027,7 @@ public class Ontology implements Iterable<Term>
 	}
 
 	/**
-	 * Returns the highest term id used in this ontology.
-	 *
-	 * @return
+	 * @return the highest term id used in this ontology.
 	 */
 	public int maximumTermID()
 	{
@@ -1087,9 +1075,7 @@ public class Ontology implements Iterable<Term>
 	}
 
 	/**
-	 * Returns the current relevant subject.
-	 *
-	 * @return
+	 * @return the current relevant subject.
 	 */
 	public Subset getRelevantSubset()
 	{
@@ -1116,9 +1102,7 @@ public class Ontology implements Iterable<Term>
 	}
 
 	/**
-	 * Gets the relevant subontology.
-	 *
-	 * @return
+	 * @return the relevant subontology.
 	 */
 	public TermID getRelevantSubontology()
 	{
@@ -1129,8 +1113,8 @@ public class Ontology implements Iterable<Term>
 	/**
 	 * Returns whether the given term is relevant (i.e., is contained in a relevant sub ontology and subset).
 	 *
-	 * @param term
-	 * @return
+	 * @param term the term to check
+	 * @return whether term is relevant.
 	 */
 	public boolean isRelevantTerm(Term term)
 	{
@@ -1161,14 +1145,14 @@ public class Ontology implements Iterable<Term>
 	/**
 	 * Returns whether the given term is relevant (i.e., is contained in a relevant sub ontology and subset).
 	 *
-	 * @param goTermID
-	 * @return
+	 * @param termId defines the id of the term to check.
+	 * @return whether the term specified by the term id is relevant
 	 */
-	public boolean isRelevantTermID(TermID goTermID)
+	public boolean isRelevantTermID(TermID termId)
 	{
 		Term t;
-		if (isRootTerm(goTermID)) t = rootTerm;
-		else t = termContainer.get(goTermID);
+		if (isRootTerm(termId)) t = rootTerm;
+		else t = termContainer.get(termId);
 
 		return isRelevantTerm(t);
 	}
@@ -1176,7 +1160,7 @@ public class Ontology implements Iterable<Term>
 	/**
 	 * Returns a redundant relation to this term.
 	 *
-	 * @param t
+	 * @param t term to check
 	 * @return null, if there is no redundant relation
 	 */
 	public TermID findARedundantISARelation(Term t)
@@ -1210,7 +1194,7 @@ public class Ontology implements Iterable<Term>
 	}
 
 	/**
-	 * Returns redundant is a relations.
+	 * Finds redundant is a relations and outputs them.
 	 */
 	public void findRedundantISARelations()
 	{
@@ -1225,9 +1209,7 @@ public class Ontology implements Iterable<Term>
 	}
 
 	/**
-	 * Returns the graph of relevant terms.
-	 *
-	 * @return
+	 * @return the graph of relevant terms.
 	 */
 	public Ontology getOntlogyOfRelevantTerms()
 	{
@@ -1324,10 +1306,10 @@ public class Ontology implements Iterable<Term>
 	}
 
 	/**
-	 * Create a ontology from a term container.
+	 * Create an ontology from a term container.
 	 *
-	 * @param tc
-	 * @return
+	 * @param tc defines the term container
+	 * @return the ontology derived from tc
 	 */
 	public static Ontology create(TermContainer tc)
 	{

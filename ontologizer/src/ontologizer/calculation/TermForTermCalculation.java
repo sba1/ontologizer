@@ -29,15 +29,7 @@ public class TermForTermCalculation extends AbstractHypergeometricCalculation
 		return "No description yet";
 	}
 
-	/**
-	 * Start calculation based on fisher exact test of the given study.
-	 * @param graph
-	 * @param goAssociations
-	 * @param populationSet
-	 * @param studySet
-	 *
-	 * @return
-	 */
+	@Override
 	public EnrichedGOTermsResult calculateStudySet(
 			Ontology graph,
 			AssociationContainer goAssociations,

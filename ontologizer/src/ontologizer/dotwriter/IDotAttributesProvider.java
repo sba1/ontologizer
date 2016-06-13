@@ -9,15 +9,13 @@ import ontologizer.ontology.TermID;
  */
 public interface IDotAttributesProvider
 {
-	/** Returns the dot attributes for the given term. */
+	/** @return the dot attributes for the given term */
 	public String getDotNodeAttributes(TermID id);
 
 	/**
-	 * Returns the dot attributes for the given edge.
-	 *
-	 * @param id1
-	 * @param id2
-	 * @return
+	 * @param id1 the term id of the source of the edge
+	 * @param id2 the term id of the destination of the edge
+	 * @return the dot attributes for the edge going from id1 to id2
 	 */
 	public String getDotEdgeAttributes(TermID id1, TermID id2);
 }

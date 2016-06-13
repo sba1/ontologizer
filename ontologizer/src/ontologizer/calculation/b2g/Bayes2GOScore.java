@@ -98,8 +98,8 @@ abstract public class Bayes2GOScore
 		/**
 		 * Return the value that is associated with the given gene.
 		 *
-		 * @param gene
-		 * @return
+		 * @param gene the gene whose value should be returned
+		 * @return the value
 		 */
 		double getGeneValue(ByteString gene);
 
@@ -108,7 +108,7 @@ abstract public class Bayes2GOScore
 		 * For instance, if the associated values are p values, then one would return the desired
 		 * significance level.
 		 *
-		 * @return
+		 * @return the threshold
 		 */
 		double getThreshold();
 
@@ -252,8 +252,8 @@ abstract public class Bayes2GOScore
 	 * Returns the score of the setting if the given terms
 	 * are active and all others are inactive.
 	 *
-	 * @param activeTerms
-	 * @return
+	 * @param activeTerms defines which terms are considered as active
+	 * @return the score
 	 */
 	public double score(Collection<TermID> activeTerms)
 	{
@@ -291,9 +291,7 @@ abstract public class Bayes2GOScore
 	}
 
 	/**
-	 * Returns the score of the current state.
-	 *
-	 * @return
+	 * @return the score of the current state.
 	 */
 	public abstract double getScore();
 

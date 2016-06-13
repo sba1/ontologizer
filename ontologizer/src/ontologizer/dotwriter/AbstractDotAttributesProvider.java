@@ -21,13 +21,6 @@ public class AbstractDotAttributesProvider implements IDotAttributesProvider
 		return null;
 	}
 
-	/**
-	 * Returns the dot attributes for the given edge.
-	 *
-	 * @param id1
-	 * @param id2
-	 * @return
-	 */
 	public String getDotEdgeAttributes(TermID id1, TermID id2)
 	{
 		return null;

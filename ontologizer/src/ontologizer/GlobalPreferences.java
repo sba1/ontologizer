@@ -76,17 +76,17 @@ public final class GlobalPreferences
 	/**
 	 * Sets the number of permutations.
 	 *
-	 * @param numberOfPermutations2
+	 * @param numberOfPermutations specifies the global number of permutations.
 	 */
-	static public void setNumberOfPermutations(int numberOfPermutations2)
+	static public void setNumberOfPermutations(int numberOfPermutations)
 	{
-		numberOfPermutations = numberOfPermutations2;
+		GlobalPreferences.numberOfPermutations = numberOfPermutations;
 	}
 
 	/**
 	 * Sets the proxy server.
 	 *
-	 * @param proxyServer
+	 * @param proxyServer specifies the global proxy server
 	 */
 	public static void setProxyHost(String proxyServer)
 	{
@@ -114,7 +114,7 @@ public final class GlobalPreferences
 	/**
 	 * Sets the proxy port.
 	 *
-	 * @param proxyPort
+	 * @param proxyPort the port of the proxy server
 	 */
 	public static void setProxyPort(String proxyPort)
 	{
