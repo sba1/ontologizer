@@ -943,24 +943,6 @@ public class Ontology implements Iterable<Term>
 		return sharedParents;
 	}
 
-	/**
-	 * Determines all tupels of terms which all are unrelated, meaning that the
-	 * terms are not allowed to be in the same lineage.
-	 *
-	 * @param baseTerms
-	 * @param tupelSize
-	 * @return
-	 */
-	public ArrayList<HashSet<TermID>> getUnrelatedTermTupels(
-			HashSet<TermID> baseTerms, int tupelSize)
-	{
-		ArrayList<HashSet<TermID>> unrelatedTupels = new ArrayList<HashSet<TermID>>();
-
-		// TODO: Not sure what to implement here...
-
-		return unrelatedTupels;
-	}
-
 	static public class GOLevels
 	{
 		private HashMap<Integer,HashSet<TermID>> level2terms = new HashMap<Integer,HashSet<TermID>>();
