@@ -61,9 +61,7 @@ public interface ITerm
 	public TermID[] getAlternatives();
 
 	/**
-	 * Returns the subsets.
-	 *
-	 * @return
+	 * @return the subsets.
 	 */
 	public Subset[] getSubsets();
 
@@ -82,9 +80,7 @@ public interface ITerm
 	public TermXref[] getXrefs();
 
 	/**
-	 * Return the terms that are declared in an intersection relation.
-	 *
-	 * @return
+	 * @return the terms that are declared in an intersection relation.
 	 */
 	public String[] getIntersections();
 }

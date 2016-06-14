@@ -197,7 +197,7 @@ public class TermEnumerator implements Iterable<TermID>
 	 * goTermID.
 	 *
 	 * @param goTermID
-	 * @return
+	 * @return the annotated genes
 	 */
 	public TermAnnotatedGenes getAnnotatedGenes(TermID goTermID)
 	{
@@ -219,17 +219,17 @@ public class TermEnumerator implements Iterable<TermID>
 
 		public int compareTo(GOTermOftenAnnotatedCount o)
 		{
-			/* We sort reversly */
+			/* We sort reversely */
 			return o.counts - counts;
 		}
 	};
 
 	/**
-	 * Returns the terms which shares genes with the given term and neither a ascendant nor
+	 * Returns the terms which shares genes with the given term and neither an ascendant nor
 	 * descendant.
 	 *
 	 * @param goTermID
-	 * @return
+	 * @return terms that share items with goTermID
 	 */
 	public GOTermOftenAnnotatedCount [] getTermsOftenAnnotatedWithAndNotOnPath(TermID goTermID)
 	{
@@ -278,9 +278,7 @@ public class TermEnumerator implements Iterable<TermID>
 	}
 
 	/**
-	 * Returns the total number of terms to which at least a single gene has been annotated.
-	 *
-	 * @return
+	 * @return the total number of terms to which at least a single gene has been annotated.
 	 */
 	public int getTotalNumberOfAnnotatedTerms()
 	{
@@ -289,9 +287,7 @@ public class TermEnumerator implements Iterable<TermID>
 
 
 	/**
-	 * Returns the currently annotated terms as a set.
-	 *
-	 * @return
+	 * @return the currently annotated terms as a set.
 	 */
 	public Set<TermID> getAllAnnotatedTermsAsSet()
 	{
@@ -302,9 +298,7 @@ public class TermEnumerator implements Iterable<TermID>
 	}
 
 	/**
-	 * Returns the currently annotated terms as a list.
-	 *
-	 * @return
+	 * @return the currently annotated terms as a list.
 	 */
 	public List<TermID> getAllAnnotatedTermsAsList()
 	{
@@ -315,9 +309,7 @@ public class TermEnumerator implements Iterable<TermID>
 	}
 
 	/**
-	 * Returns all genes contained within this set.
-	 *
-	 * @return
+	 * @return all genes contained within this set.
 	 */
 	public Set<ByteString> getGenes()
 	{
@@ -337,7 +329,7 @@ public class TermEnumerator implements Iterable<TermID>
 		 * Returns whether the given term should be removed.
 		 *
 		 * @param tag
-		 * @return
+		 * @return true if the term shall be removed
 		 */
 		public boolean remove(TermID tid, TermAnnotatedGenes tag);
 	}

@@ -66,7 +66,7 @@ public class TermXref {
 	/**
 	 * Returns 'db' - 'db-ID' if no name was given <br>
 	 * Returns 'db' - 'db-ID' - 'db-name' if  name was given
-	 * @return
+	 * @return the string representation
 	 */
 	@Override
 	public String toString() {

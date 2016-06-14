@@ -39,7 +39,7 @@ public class Subset
 	 * description.
 	 *
 	 * @param str
-	 * @return
+	 * @return the subset created from str
 	 */
 	public static Subset createFromString(String str)
 	{

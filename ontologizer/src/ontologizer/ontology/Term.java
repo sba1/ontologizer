@@ -111,7 +111,7 @@ public class Term implements ITerm
 	 *            A string such as glutathione dehydrogenase.
 	 * @param namespace
 	 *            The name space attribute of the term or null.
-	 * @param parentList
+	 * @param parents
 	 *            The parent terms of this term including the relation type. The
 	 *            supplied list can be reused after the object have been
 	 *            constructed.
@@ -245,9 +245,7 @@ public class Term implements ITerm
 	}
 
 	/**
-	 * gets the namespace of the term as a Namespace enum
-	 *
-	 * @return
+	 * @return the namespace of the term as a Namespace enum
 	 */
 	public Namespace getNamespace()
 	{
@@ -257,9 +255,7 @@ public class Term implements ITerm
 	}
 
 	/**
-	 * Returns the parent terms including the relation.
-	 *
-	 * @return
+	 * @return the parent terms including the relation.
 	 */
 	public ParentTermID[] getParents() {
 		return parents;
@@ -343,9 +339,7 @@ public class Term implements ITerm
 	}
 
 	/**
-	 * Returns the alternatives of this term.
-	 *
-	 * @return
+	 * @return the alternatives of this term.
 	 */
 	public TermID[] getAlternatives()
 	{
@@ -364,9 +358,7 @@ public class Term implements ITerm
 	}
 
 	/**
-	 * Returns the subsets.
-	 *
-	 * @return
+	 * @return the subsets.
 	 */
 	public Subset[] getSubsets() {
 		return subsets;

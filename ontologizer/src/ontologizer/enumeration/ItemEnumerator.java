@@ -32,9 +32,7 @@ public class ItemEnumerator implements Iterable<ByteString>
 	}
 
 	/**
-	 * Returns all used term ids.
-	 *
-	 * @return
+	 * @return all used term ids.
 	 */
 	public ArrayList<TermID> getAllTermIDs()
 	{
@@ -47,8 +45,8 @@ public class ItemEnumerator implements Iterable<ByteString>
 	/**
 	 * Create an item enumerator from a term enumerator.
 	 *
-	 * @param termEnumerator
-	 * @return
+	 * @param termEnumerator the term enumerator to use
+	 * @return the item enumerator
 	 */
 	public static ItemEnumerator createFromTermEnumerator(TermEnumerator termEnumerator)
 	{

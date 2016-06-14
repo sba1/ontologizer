@@ -33,11 +33,12 @@ public class DirectedGraphLayout<T>
 	static public interface IGetDimension<T>
 	{
 		/**
-		 * Determine the dimension of the given vertex.
+		 * Determine the dimension of the given vertex. Note that
+		 * this method may be called more than once.
 		 *
 		 * @param vertex
 		 * @param d
-		 * @note that this method may be called more than once.
+		 *
 		 */
 		void get(T vertex, Dimension d);
 	}

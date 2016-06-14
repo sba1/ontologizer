@@ -5,7 +5,7 @@ import java.math.BigInteger;
 /**
  * Found on the net.
  *
- * @see http://www.merriampark.com/perm.htm
+ * @see <a ref="http://www.merriampark.com/perm.htm">http://www.merriampark.com/perm.htm"</a>
  *
  */
 public class PermutationGenerator

@@ -171,8 +171,6 @@ public class AssociationContainer implements Iterable<Gene2Associations>
 	/**
 	 * A way to get all annotated genes in the container
 	 *
-	 * @author Steffen Grossmann
-	 *
 	 * @return The annotated genes as a Set
 	 */
 	public Set<ByteString> getAllAnnotatedGenes()

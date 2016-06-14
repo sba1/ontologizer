@@ -85,7 +85,7 @@ abstract public class AbstractByteLineScanner
 	 * Returns the number of bytes that are still available in the buffer after
 	 * the reading has been aborted.
 	 *
-	 * @return
+	 * @return number of bytes still available
 	 */
 	public int available() {
 		return available;
@@ -95,7 +95,7 @@ abstract public class AbstractByteLineScanner
 	 * Returns the bytes that are still available in the buffer after
 	 * the reading has been aborted.
 	 *
-	 * @return
+	 * @return bytes that are still available
 	 */
 	public byte [] availableBuffer() {
 		byte [] b = new byte[available];

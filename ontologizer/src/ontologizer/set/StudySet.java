@@ -136,9 +136,7 @@ public class StudySet implements Iterable<ByteString>
 	}
 
 	/**
-	 * Returns the genes in order of the iterator as an array.
-	 *
-	 * @return
+	 * @return the genes in order of the iterator as an array.
 	 */
 	public ByteString [] getGenes()
 	{
@@ -153,8 +151,8 @@ public class StudySet implements Iterable<ByteString>
 	 * Returns the associated attribute (i.e., description) of a gene within
 	 * a study set.
 	 *
-	 * @param name
-	 * @return
+	 * @param name the name of the gene whose description should be returned
+	 * @return the description
 	 */
 	public ItemAttribute getItemAttribute(ByteString name)
 	{
@@ -190,10 +188,11 @@ public class StudySet implements Iterable<ByteString>
 	/**
 	 * Add an additional gene to the study set.
 	 *
-	 * @param geneName
-	 * @param description
-	 * @note  After a gene has been added, countGOTerms() should
+	 * Note that after a gene has been added, countGOTerms() should
 	 * be called again.
+	 *
+	 * @param geneName the name of the gene to be added
+	 * @param description a description associated to the gene
 	 */
 	public void addGene(ByteString geneName, String description)
 	{
@@ -208,8 +207,8 @@ public class StudySet implements Iterable<ByteString>
 	/**
 	 * Add an additional gene to the study set.
 	 *
-	 * @param geneName
-	 * @param attribute
+	 * @param geneName the name of gene to be added
+	 * @param attribute the attribute
 	 */
 	public void addGene(ByteString geneName, ItemAttribute attribute)
 	{
@@ -235,7 +234,7 @@ public class StudySet implements Iterable<ByteString>
 	 * from the study set, so any change within the hashset doesn't
 	 * have any effect on the study set's genes.
 	 *
-	 * @return
+	 * @return the hash set
 	 */
 	public HashSet<ByteString> getAllGeneNames()
 	{
@@ -250,7 +249,7 @@ public class StudySet implements Iterable<ByteString>
 	 * but differ in their name (i.e. synonyms). This method filters
 	 * them out by using the association container.
 	 *
-	 * @param associationContainer
+	 * @param associationContainer the association container the defines
 	 */
 	public void filterOutDuplicateGenes(AssociationContainer associationContainer)
 	{
@@ -296,7 +295,8 @@ public class StudySet implements Iterable<ByteString>
 	/**
 	 * Filters out genes which don't contain an association
 	 *
-	 * @param associationContainer
+	 * @param associationContainer the association container that is used to determine
+	 *  of a gene has associations or not.
 	 */
 	public void filterOutAssociationlessGenes(AssociationContainer associationContainer)
 	{
@@ -346,12 +346,12 @@ public class StudySet implements Iterable<ByteString>
 	 * calls to this method are fast, if the gene set has not
 	 * been changed in-between.
 	 *
-	 * @param graph
-	 * @param associationContainer
+	 * @param graph defines the ontology
+	 * @param associationContainer defines the associations
 	 * @param evidences which type of annotation to respect
 	 * @param remover an instance to decide whether a given term
 	 *  is removed from the annotation set.
-	 * @return
+	 * @return the term enumerator
 	 */
 	public synchronized TermEnumerator enumerateGOTerms(Ontology graph, AssociationContainer associationContainer, Set<ByteString> evidences, TermEnumerator.IRemover remover)
 	{
@@ -374,8 +374,7 @@ public class StudySet implements Iterable<ByteString>
 	}
 
 	/**
-	 * Generates an unique name derived from the study sets' name
-	 * @return
+	 * @return an unique name derived from the study sets' name
 	 */
 	private String generateUniqueName()
 	{
@@ -529,9 +528,9 @@ public class StudySet implements Iterable<ByteString>
 	/**
 	 * Write out a list of all terms and the names of the genes annotated to them.
 	 *
-	 * @param graph
-	 * @param associations
-	 * @param file
+	 * @param graph the ontology
+	 * @param associations the associations
+	 * @param file the file that should be written
 	 */
 	public void writeTermAnnotatedGenes(Ontology graph, AssociationContainer associations, File file)
 	{
@@ -722,7 +721,7 @@ public class StudySet implements Iterable<ByteString>
 	/**
 	 * Adds the genes of the study set to this study set.
 	 *
-	 * @param studySet
+	 * @param studySet the study set from which the genes should be added.
 	 */
 	public void addGenes(StudySet studySet)
 	{
@@ -731,10 +730,7 @@ public class StudySet implements Iterable<ByteString>
 	}
 
 	/**
-	 * Returns whether the given study set has only valued item attributes.
-	 *
-	 * @param studySet
-	 * @return
+	 * @return whether the given study set has only valued item attributes.
 	 */
 	public boolean hasOnlyValuedItemAttributes()
 	{

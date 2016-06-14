@@ -54,7 +54,7 @@ public class TermMap implements Iterable<Term>
 	 * Create a term id map.
 	 *
 	 * @param terms
-	 * @return
+	 * @return the term map
 	 */
 	public static TermMap create(Iterable<Term> terms)
 	{

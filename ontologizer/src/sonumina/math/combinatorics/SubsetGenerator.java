@@ -43,7 +43,7 @@ public class SubsetGenerator
 	 * Returns the next subset or null if all subsets have already been created.
 	 * Note that the returned array is read only!
 	 *
-	 * @return
+	 * @return the next subset
 	 */
 	public Subset next()
 	{

@@ -25,9 +25,7 @@ public class WorkSet
 	}
 
 	/**
-	 * Return the workset name.
-	 *
-	 * @return
+	 * @return the workset name.
 	 */
 	public String getName()
 	{

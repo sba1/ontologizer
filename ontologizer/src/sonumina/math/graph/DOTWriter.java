@@ -14,11 +14,11 @@ public class DOTWriter
 	 * Writes out a graph as a dot file.
 	 *
 	 * @param g the graph that should be written out
-	 * @param os. For the output.
-	 * @param nodeSet. Defines the subset of nodes to be written out.
-	 * @param provider. Provides the attributes.
-	 * @param nodeSep. The space between nodes of the same rank.
-	 * @param rankSep. The space between two nodes of subsequent ranks.
+	 * @param os for the output.
+	 * @param nodeSet defines the subset of nodes to be written out.
+	 * @param provider specifies the attributes provider.
+	 * @param nodeSep defines the space between nodes of the same rank.
+	 * @param rankSep defines the space between two nodes of subsequent ranks.
 	 */
 	public static <V> void write(AbstractGraph<V> g, OutputStream os, Iterable<V> nodeSet, final DotAttributesProvider<V> provider, final double nodeSep, final double rankSep)
 	{
@@ -60,9 +60,9 @@ public class DOTWriter
 	 * Writes out a graph as a dot file.
 	 *
 	 * @param g the graph that should be written out
-	 * @param fos. For the output.
-	 * @param nodeSet. Defines the subset of nodes to be written out.
-	 * @param provider. Provides the attributes.
+	 * @param os for the output.
+	 * @param nodeSet defines the subset of nodes to be written out.
+	 * @param provider specifies the attributes provider.
 	 */
 	public static <V> void write(AbstractGraph<V> g, OutputStream os, Iterable<V> nodeSet, DotAttributesProvider<V> provider)
 	{

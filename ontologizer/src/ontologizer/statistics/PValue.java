@@ -32,7 +32,7 @@ public class PValue implements Cloneable, Comparable<PValue>
 	 * to a given threshold.
 	 *
 	 * @param thresh
-	 * @return
+	 * @return true if significant, else false
 	 */
 	public boolean isSignificant(double thresh)
 	{

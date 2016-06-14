@@ -60,7 +60,7 @@ public class DescriptionParser
 	 * Parse the given description using the default filter. It will simply skip over the reference.
 	 *
 	 * @param txt
-	 * @return
+	 * @return the parsed description
 	 */
 	public static String parse(String txt)
 	{

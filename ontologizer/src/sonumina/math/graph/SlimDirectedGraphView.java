@@ -57,9 +57,7 @@ public class SlimDirectedGraphView<VertexType>
 	}
 
 	/**
-	 * Returns the number of vertices.
-	 *
-	 * @return
+	 * @return the number of vertices.
 	 */
 	public int getNumberOfVertices()
 	{
@@ -70,7 +68,7 @@ public class SlimDirectedGraphView<VertexType>
 	 * Returns the vertex at the given index.
 	 *
 	 * @param index
-	 * @return
+	 * @return the vertex
 	 */
 	@SuppressWarnings("unchecked")
 	public VertexType getVertex(int index)
@@ -82,7 +80,7 @@ public class SlimDirectedGraphView<VertexType>
 	 * Returns the index of the given vertex.
 	 *
 	 * @param v
-	 * @return
+	 * @return the index
 	 */
 	public int getVertexIndex(VertexType v)
 	{
@@ -94,7 +92,7 @@ public class SlimDirectedGraphView<VertexType>
 	 * array.
 	 *
 	 * @param vertices
-	 * @return
+	 * @return the array of indices
 	 */
 	public int [] getVertexIndices(Collection<VertexType> vertices)
 	{
@@ -110,7 +108,8 @@ public class SlimDirectedGraphView<VertexType>
 
 	/**
 	 * Determines whether node with the index i is an ancestor of node with index j.
-	 * @note The ancestors of a given term include the given term itself.
+	 * Note that the ancestors of a given term include the given term itself.
+	 *
 	 * @param i
 	 * @param j
 	 * @return true if the node with the index i is an ancestor
@@ -126,7 +125,8 @@ public class SlimDirectedGraphView<VertexType>
 	/**
 	 * Determines whether the node with index i is a
 	 * descendant of the node with the index j.
-	 * @note The descendants of a given term include the given term itself.
+	 * Note that the descendants of a given term include the given term itself.
+	 *
 	 * @param i
 	 * @param j
 	 * @return true if the node with the index i is a descendant
@@ -389,7 +389,7 @@ public class SlimDirectedGraphView<VertexType>
 	 * Create the slim view from the given directed graph.
 	 *
 	 * @param graph
-	 * @return
+	 * @return the slim graph corresponding to graph
 	 */
 	public static <V> SlimDirectedGraphView<V> create(DirectedGraph<V> graph)
 	{

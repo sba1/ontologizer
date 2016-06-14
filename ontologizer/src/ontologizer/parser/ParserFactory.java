@@ -49,10 +49,10 @@ public final class ParserFactory
 	}
 
 	/**
-	 * Returns an instance of a gene name parser.
+	 * Creates a new instance of a gene name parser and return it.
 	 *
-	 * @param entries
-	 * @return
+	 * @param entries specifies the entries that serve as an input to the parser
+	 * @return the created parser instance
 	 */
 	public static AbstractItemParser getNewInstance(String[] entries)
 	{

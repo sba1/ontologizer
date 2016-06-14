@@ -44,12 +44,12 @@ public class KSubsetSampler<T>
 	 * Constructor. The objects from which to sample have to be provided by
 	 * something one can iterate through.
 	 *
-	 * @param objects
+	 * @param objects the objects to sample from
 	 */
-	public KSubsetSampler(Iterable<T> object)
+	public KSubsetSampler(Iterable<T> objects)
 	{
 		this.objects = new ArrayList<T>();
-		for (T obj : object)
+		for (T obj : objects)
 		{
 			this.objects.add(obj);
 		}

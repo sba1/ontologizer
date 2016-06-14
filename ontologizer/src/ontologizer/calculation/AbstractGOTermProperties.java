@@ -9,6 +9,7 @@ import ontologizer.statistics.PValue;
  * GOTermProperty should have.
  *
  * @author Sebastian Bauer
+ * @author Steffen Grossmann
  */
 public abstract class AbstractGOTermProperties extends PValue
 {
@@ -97,8 +98,6 @@ public abstract class AbstractGOTermProperties extends PValue
 	 *            The number of annotated genes in the StudySet
 	 *
 	 * @return The line as a String
-	 *
-	 * @author grossman
 	 */
 
 	//TODO: Solve the passing of StudySet related data differently
@@ -132,8 +131,6 @@ public abstract class AbstractGOTermProperties extends PValue
 	 * Creates a header to use in connection with propLineToString method
 	 *
 	 * @return The header as a String
-	 *
-	 * @author grossman
 	 */
 	public String propHeaderToString()
 	{

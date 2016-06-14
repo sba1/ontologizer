@@ -86,11 +86,12 @@ public final class ByteString
 	}
 
 	/**
+	 * Return the specified substring.
 	 *
-	 * @param beginIndex
-	 * @param endIndex
-	 * @return
-	 * @see String.substring()
+	 * @param beginIndex specifies beginning of the substring (inclusive)
+	 * @param endIndex specifies the end of the substring (exclusive)
+	 * @return the substring
+	 * @see java.lang.String#substring(int, int)
 	 */
 	public ByteString substring(int beginIndex, int endIndex)
 	{
@@ -101,10 +102,10 @@ public final class ByteString
 	}
 
 	/**
-	 * Returns whether this string is a prefix of the given string.
+	 * Tests if this string is a prefix of the given string.
 	 *
-	 * @param string
-	 * @return
+	 * @param string specifies the string that should be checked
+	 * @return true if this string is a prefix of the given string, else false.
 	 */
 	public boolean isPrefixOf(String string)
 	{
@@ -260,7 +261,7 @@ public final class ByteString
 	 * @param buf
 	 * @param off
 	 * @param len
-	 * @return
+	 * @return the parsed integer.
 	 */
 	public static int parseFirstInt(byte [] buf, int off, int len)
 	{

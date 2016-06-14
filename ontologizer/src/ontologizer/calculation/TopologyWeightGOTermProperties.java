@@ -72,7 +72,7 @@ public class TopologyWeightGOTermProperties extends AbstractGOTermProperties
 	 * has been set yet, returns 1.
 	 *
 	 * @param gene
-	 * @return
+	 * @return the weight
 	 */
 	public double getWeight(ByteString gene)
 	{

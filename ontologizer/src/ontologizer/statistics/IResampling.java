@@ -19,9 +19,7 @@ public interface IResampling
 	public void setNumberOfResamplingSteps(int n);
 
 	/**
-	 * Get the number of steps.
-	 *
-	 * @return
+	 * @return the number of steps.
 	 */
 	public int getNumberOfResamplingSteps();
 
@@ -36,9 +34,7 @@ public interface IResampling
 	public void setSizeTolerance(int t);
 
 	/**
-	 * get sizeTolerance
-	 *
-	 * @return
+	 * @return the size tolerance
 	 */
 	public int getSizeTolerance();
 

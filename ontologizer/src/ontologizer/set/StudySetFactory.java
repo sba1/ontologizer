@@ -26,10 +26,9 @@ public class StudySetFactory
 	/**
 	 * Creates a study set from a file.
 	 *
-	 * @param file
-	 * @param isPopulation
-	 * @return
-	 * @throws IOException
+	 * @param file the file to read
+	 * @param isPopulation if this is a population file or not
+	 * @return the created study set
 	 */
 	public static StudySet createFromFile(File file, boolean isPopulation) throws IOException
 	{
@@ -50,10 +49,9 @@ public class StudySetFactory
 	/**
 	 * Creates a study set from an array.
 	 *
-	 * @param entries
-	 * @param isPopulation
-	 * @return
-	 * @throws IOException
+	 * @param entries the array with item entries
+	 * @param isPopulation if this is a population file or not
+	 * @return the created study set
 	 */
 	public static StudySet createFromArray(String [] entries, boolean isPopulation) throws IOException
 	{
@@ -62,12 +60,11 @@ public class StudySetFactory
 	}
 
 	/**
-	 * Creates a new study set.
+	 * Creates a new study set using an item parser.
 	 *
-	 * @param itemParser
-	 * @param isPopulation
-	 * @return
-	 * @throws IOException
+	 * @param itemParser the item parser to use
+	 * @param isPopulation if this is a population file or not
+	 * @return the created study set
 	 */
 	public static StudySet createFromParser(AbstractItemParser itemParser, boolean isPopulation) throws IOException
 	{

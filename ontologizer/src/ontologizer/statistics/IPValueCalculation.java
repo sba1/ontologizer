@@ -13,7 +13,7 @@ public interface IPValueCalculation
 	 * Calculate raw (unadjusted) p values. An array of p value objects will be
 	 * returned.
 	 *
-	 * @return
+	 * @return the calculated raw p-values
 	 */
 	PValue[] calculateRawPValues();
 
@@ -24,7 +24,7 @@ public interface IPValueCalculation
 	 * the returning array has to match the size of the array returned by
 	 * calculateRawPValues().
 	 *
-	 * @return
+	 * @return the calculated random p-values
 	 */
 	PValue[] calculateRandomPValues();
 
@@ -32,7 +32,7 @@ public interface IPValueCalculation
 	 * Gives back the size of the study set currently processed. Needed for
 	 * storing of sampled p-values for different sample sizes.
 	 *
-	 * @return
+	 * @return the size of the current study set
 	 */
 	int currentStudySetSize();
 }

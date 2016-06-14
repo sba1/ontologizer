@@ -48,7 +48,7 @@ public abstract class AbstractTestCorrection
 	 * the ignoreAtMTC attribute set.
 	 *
 	 * @param p
-	 * @return
+	 * @return number of relevant p values
 	 */
 	protected int countRelevantPValues(PValue [] p)
 	{
@@ -65,8 +65,8 @@ public abstract class AbstractTestCorrection
 	 * Returns an array of all raw p values that don't have
 	 * the ignoreAtMTC attribute set.
 	 *
-	 * @param pValueCalculation
-	 * @return
+	 * @param p array of p values
+	 * @return array of p values that don't have ignoreAtMTC set
 	 */
 	protected PValue [] getRelevantRawPValues(PValue [] p)
 	{

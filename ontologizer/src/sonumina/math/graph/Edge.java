@@ -18,9 +18,7 @@ public class Edge<Type>
 	}
 
 	/**
-	 * Returns the edge's destination.
-	 *
-	 * @return
+	 * @return the edge's destination.
 	 */
 	public final Type getDest()
 	{
@@ -28,9 +26,7 @@ public class Edge<Type>
 	}
 
 	/**
-	 * Returns the edge's source.
-	 *
-	 * @return
+	 * @return the edge's source.
 	 */
 	public final Type getSource()
 	{
@@ -42,7 +38,7 @@ public class Edge<Type>
 	 * returns always 1 and hence must be overwritten by subclasses
 	 * in order to return different weights.
 	 *
-	 * @return
+	 * @return the weight
 	 */
 	public int getWeight()
 	{

@@ -247,12 +247,12 @@ abstract public class AbstractGraph<VertexType>
 	}
 
 	/**
-	 * Identifies nodes.
+	 * Return map of short cut links. Short cuts are links from one node to a sibling node
 	 *
-	 * @param vt
-	 * @param grabber
-	 * @param visitor
-	 * @return
+	 * @param vt the start vertex
+	 * @param grabber defines which nodes should be traversed.
+	 * @param visitor defines which nodes were visisted
+	 * @return the short cut link map.
 	 */
 	public HashMap<VertexType,VertexType> getDFSShotcutLinks(VertexType vt, INeighbourGrabber<VertexType> grabber, IVisitor<VertexType> visitor)
 	{
@@ -270,9 +270,10 @@ abstract public class AbstractGraph<VertexType>
 
 	/**
 	 * Returns whether there is a path from source to dest.
+	 *
 	 * @param source
 	 * @param dest
-	 * @return
+	 * @return whether there is a path from source to dest or not
 	 */
 	public boolean existsPath(final VertexType source, final VertexType dest)
 	{
@@ -297,11 +298,10 @@ abstract public class AbstractGraph<VertexType>
 	}
 
 	/**
-	 * Returns the vertices in a topological order.
+	 * Returns the vertices in a topological order. Note that if the length
+	 * of the returned differs from the number of vertices we have a cycle.
 	 *
-	 * If the length of the returned differs from the number of vertices we have a cycle.
-	 *
-	 * @return
+	 * @return a list of vertices in a topological order.
 	 */
 	public ArrayList<VertexType> topologicalOrder()
 	{
@@ -398,17 +398,15 @@ abstract public class AbstractGraph<VertexType>
 	}
 
 	/**
-	 * Returns the vertices is a iterable object.
-	 *
-	 * @return
+	 * @return the vertices is an iterable object.
 	 */
 	abstract public Iterable<VertexType> getVertices();
 
 	/**
 	 * Writes out the graph as a dot file.
 	 *
-	 * @param fos. For the output.
-	 * @param provider. Provides the attributes.
+	 * @param fos specifies the output
+	 * @param provider specifies the attribute provider.
 	 */
 	public void writeDOT(OutputStream fos, DotAttributesProvider<VertexType> provider)
 	{
@@ -418,11 +416,11 @@ abstract public class AbstractGraph<VertexType>
 	/**
 	 * Writes out the graph as a dot file.
 	 *
-	 * @param fos. For the output.
-	 * @param nodeSet. Defines the subset of nodes to be written out.
-	 * @param provider. Provides the attributes.
-	 * @param nodeSep. The space between nodes of the same rank.
-	 * @param rankSep. The space between two nodes of subsequent ranks.
+	 * @param fos specifies the output
+	 * @param nodeSet specifies the subset of nodes to be written out.
+	 * @param provider specifies the attribute provider
+	 * @param nodeSep specifies the space between nodes of the same rank.
+	 * @param rankSep specifies the space between two nodes of subsequent ranks.
 	 */
 	public void writeDOT(OutputStream fos, Iterable<VertexType> nodeSet, final DotAttributesProvider<VertexType> provider, final double nodeSep, final double rankSep)
 	{
@@ -432,9 +430,9 @@ abstract public class AbstractGraph<VertexType>
 	/**
 	 * Writes out the graph as a dot file.
 	 *
-	 * @param fos. For the output.
-	 * @param nodeSet. Defines the subset of nodes to be written out.
-	 * @param provider. Provides the attributes.
+	 * @param fos specifies the output
+	 * @param nodeSet specifies the subset of nodes to be written out.
+	 * @param provider specifies the attribute provider
 	 */
 	public void writeDOT(OutputStream fos, Iterable<VertexType> nodeSet, DotAttributesProvider<VertexType> provider)
 	{

@@ -496,7 +496,7 @@ public class SemanticCalculation
 	 * Returns the information content of the given term.
 	 *
 	 * @param id
-	 * @return
+	 * @return the ic
 	 */
 	public double p(TermID id)
 	{
@@ -617,7 +617,7 @@ public class SemanticCalculation
 	 *
 	 * @param g1
 	 * @param g2
-	 * @return
+	 * @return the similarity
 	 */
 	public double sim(ByteString g1, ByteString g2)
 	{
@@ -644,7 +644,7 @@ public class SemanticCalculation
 	 * Calculates the similarity of genes of the study set.
 	 *
 	 * @param study
-	 * @return
+	 * @return the similarity result
 	 */
 	public SemanticResult calculate(StudySet study)
 	{
@@ -739,9 +739,7 @@ public class SemanticCalculation
 		}
 
 		/**
-		 * Start working on the feeded pairs.
-		 * @param unemployedQueue
-		 * @throws InterruptedException
+		 * Start working on the fed pairs.
 		 */
 		public void fire() throws InterruptedException
 		{

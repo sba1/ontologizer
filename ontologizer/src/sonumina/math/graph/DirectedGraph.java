@@ -122,9 +122,7 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 	}
 
 	/**
-	 * Returns the vertices as an iterable object.
-	 *
-	 * @return
+	 * @return the vertices as an iterable object.
 	 */
 	public Iterable<VertexType> getVertices()
 	{
@@ -197,7 +195,7 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 	 *
 	 * @param source
 	 * @param dest
-	 * @return
+	 * @return true if the edge exists, else false
 	 */
 	public boolean hasEdge(VertexType source, VertexType dest)
 	{
@@ -328,13 +326,13 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 	 * into the given object (i.e. all edges where the object
 	 * is the edge's destination)
 	 *
-	 * @param t
+	 * @param v the vertex for which to return the in edges.
 	 *
-	 * @return
+	 * @return the iterator
 	 */
-	public Iterator<Edge<VertexType>> getInEdges(VertexType t)
+	public Iterator<Edge<VertexType>> getInEdges(VertexType v)
 	{
-		VertexAttributes<VertexType> va = vertices.get(t);
+		VertexAttributes<VertexType> va = vertices.get(v);
 		assert(va != null);
 		return va.inEdges.iterator();
 	}
@@ -433,13 +431,13 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 	 * out of given object. (i.e. all edges where the object
 	 * is the edge's source)
 	 *
-	 * @param t
+	 * @param v the vertex for which all outgoing edges shall be returned
 	 *
-	 * @return
+	 * @return the iterator for all outgoing edges
 	 */
-	public Iterator<Edge<VertexType>> getOutEdges(VertexType t)
+	public Iterator<Edge<VertexType>> getOutEdges(VertexType v)
 	{
-		VertexAttributes<VertexType> va = vertices.get(t);
+		VertexAttributes<VertexType> va = vertices.get(v);
 		assert(va != null);
 		return va.outEdges.iterator();
 	}
@@ -461,12 +459,14 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 	/**
 	 * Returns the vertices in an Iterable that are connected by the given node.
 	 *
-	 * @param vt
-	 * @return
+	 * FIXME: Check if this is really returning descendants
+	 *
+	 * @param v the vertex for which the descendants shall be returned
+	 * @return the iterable
 	 */
-	public Iterable<VertexType> getDescendantVertices(VertexType vt)
+	public Iterable<VertexType> getDescendantVertices(VertexType v)
 	{
-		VertexAttributes<VertexType> va = vertices.get(vt);
+		VertexAttributes<VertexType> va = vertices.get(v);
 		assert(va != null);
 
 		List<VertexType> descendant = new ArrayList<VertexType>(va.outEdges.size());
@@ -714,7 +714,6 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 	 * Calculates the longest path from the given vertex to all vertices.
 	 *
 	 * @param source defines the source
-	 * @param againstFlow if specified the path is walked against the direction of the graph
 	 * @param visitor object implementing IDistanceVisitor which can be used to process the
 	 *        results
 	 */
@@ -735,7 +734,6 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 	 * @param source where to start.
 	 * @param dest where to end.
 	 * @return the number of paths.
-	 * @note The implementation uses ugly recursion.
 	 */
 	public int getNumberOfPaths(VertexType source, VertexType dest)
 	{
@@ -749,12 +747,11 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 	}
 
 	/**
-	 * Returns all pathes from source to dest.
+	 * Returns all paths from source to dest.
 	 *
 	 * @param source where to start.
 	 * @param dest where to end.
 	 * @return the number of paths.
-	 * @note The implementation uses ugly recursion.
 	 */
 	public ArrayList<VertexType> getAllPathes(VertexType source, VertexType dest, ArrayList<VertexType> pathes)
 	{
@@ -773,9 +770,7 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 	}
 
 	/**
-	 * Returns an arbitrary node of the graph
-	 *
-	 * @return
+	 * @return an arbitrary node of the graph
 	 */
 	public VertexType getArbitaryNode()
 	{
@@ -783,9 +778,7 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 	}
 
 	/**
-	 * Returns the number of vertices.
-	 *
-	 * @return
+	 * @return the number of vertices.
 	 */
 	public int getNumberOfVertices()
 	{
@@ -803,8 +796,8 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 	/**
 	 * Get the in-degree of the given vertex.
 	 *
-	 * @param v
-	 * @return
+	 * @param v vertex for which the in-degree shall be determined
+	 * @return the in-degree
 	 */
 	public int getInDegree(VertexType v)
 	{
@@ -814,10 +807,10 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 	}
 
 	/**
-	 * Get the in-degree of the given vertex.
+	 * Get the out-degree of the given vertex.
 	 *
-	 * @param v
-	 * @return
+	 * @param v vertex for which the out-degree shall be determined
+	 * @return the out-degree
 	 */
 	public int getOutDegree(VertexType v)
 	{
@@ -865,7 +858,7 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 	 * Returns a subgraph of the graph that includes all given vertices.
 	 *
 	 * @param verticesToBeIncluded
-	 * @return
+	 * @return the subgraph
 	 */
 	public DirectedGraph<VertexType> subGraph(Collection<VertexType> verticesToBeIncluded)
 	{
@@ -877,7 +870,7 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 	 * only, if it is spanned between two vertices in the given set.
 	 *
 	 * @param verticesToBeIncluded
-	 * @return
+	 * @return the subgraph
 	 */
 	public DirectedGraph<VertexType>subGraph(Set<VertexType> verticesToBeIncluded)
 	{
@@ -907,7 +900,7 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 	 * a subgraph that contains the given vertices.
 	 *
 	 * @param verticesToBeIncluded
-	 * @return
+	 * @return the transitive closure of the subgraph
 	 */
 	public DirectedGraph<VertexType> transitiveClosureOfSubGraph(final Set<VertexType> verticesToBeIncluded)
 	{
@@ -965,7 +958,7 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 	 * maintained.
 	 *
 	 * @param verticesToBeIncluded
-	 * @return
+	 * @return the path maintaining subgraph
 	 */
 	public DirectedGraph<VertexType> pathMaintainingSubGraph(Set<VertexType> verticesToBeIncluded)
 	{
@@ -1030,9 +1023,9 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 	/**
 	 * Returns a set of induced terms that are the terms of the induced graph.
 	 *
-	 * @param rootTerm the root term (all terms up to this are included)
-	 * @param term the inducing term.
-	 * @return
+	 * @param root the root term (all terms up to this are included)
+	 * @param termID the inducing term.
+	 * @return the set of vertices defining the upper induced graph
 	 */
 	public Set<VertexType> getVerticesOfUpperInducedGraph(final VertexType root, VertexType termID)
 	{

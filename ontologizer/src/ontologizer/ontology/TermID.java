@@ -194,9 +194,7 @@ public class TermID
 	}
 
 	/**
-	 * Returns the term's prefix.
-	 *
-	 * @return
+	 * @return the term's prefix.
 	 */
 	public Prefix getPrefix()
 	{

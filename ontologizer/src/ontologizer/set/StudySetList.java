@@ -157,7 +157,7 @@ public class StudySetList implements Iterable<StudySet>
 	 * Returns the size of the study list (i.e. the number of study sets contained
 	 * within the list)
 	 *
-	 * @return
+	 * @return the stud set size
 	 */
 	public int size()
 	{
