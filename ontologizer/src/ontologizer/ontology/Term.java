@@ -7,27 +7,13 @@ import java.util.List;
 import ontologizer.types.ByteString;
 
 /**
- * This class provides a representation of individual GOTerms <BR />
+ * This class provides a representation of individual terms
  *
- * Example: <BR />
- * [Term] <BR />
- * id: GO:0000018 <BR />
- * name: regulation of DNA recombination <BR />
- * namespace: biological_process <BR />
- * def: "Any process that modulates the frequency\, rate or extent of DNA
- * recombination\, the processes by which a new genotype is formed by
- * reassortment of genes resulting in gene combinations different from those
- * that were present in the parents." [GO:curators, ISBN:0198506732] <BR />
- * is_a: GO:0051052 (cardinality 0..n) <BR />
- * relationship: part_of GO:0006310 (cardinality 0..n) <BR />
- * <BR />
- * <P>
- * Both isa and part-of refer to child-parent relationships in the GO directed
+ * Both isa and part-of refer to child-parent relationships in the directed
  * acyclic graph. The Ontologizer does not distinguish between these types of
  * child-parent relationships, but rather places both type of parent in an
  * ArrayList termed parents. This will allow us to traverse the DAG while we are
  * tabulating the counts of functions found in a cluster
- * </P>
  *
  * @author Peter Robinson, Sebastian Bauer, Sebastian Koehler
  */

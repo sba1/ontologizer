@@ -40,8 +40,7 @@ public final class GlobalPreferences
 	}
 
 	/**
-	 * Private constructor to indicate a uninstanciable
-	 * class.
+	 * Private constructor to indicate a class that cannot be instantiated.
 	 */
 	private GlobalPreferences()
 	{

@@ -12,8 +12,8 @@ import ontologizer.types.ByteString;
  * association files.
  * </P>
  * <P>
- * The meaning of the attributes is described in detail at:
- * http://www.geneontology.org/doc/GO.annotation.html#file
+ * The meaning of the attributes is described in detail:
+ * http://geneontology.org/page/annotation
  * </P>
  * <P>
  * The file format is (in brief)
@@ -27,14 +27,14 @@ import ontologizer.types.ByteString;
  * <LI> NOT: annotators are allowed to prefix NOT if a gene product is <B>not</B>
  * associated with some GO term. cardinality=0,1, example "NOT GO:nnnnnnnn"</LI>
  * <LI> GOid: The GO identifier. Cardinality=1, example = GO:0007049</LI>
- * <LI> DB:Reference database ref. Cardinality 1, >1 (separate by |),
+ * <LI> DB:Reference database ref. Cardinality 1, &gt;1 (separate by |),
  * example:PUBMED:9651482</LI>
  * <LI> Evidence: one of IMP, IGI, IPI,ISS, IDA, IEP, IEA, TAS, NAS, ND, IC.
  * Cardinality = 1</LI>
- * <LI> With (or) from, cardinality 0,1,>1</LI>
+ * <LI> With (or) from, cardinality 0,1,&gt;1</LI>
  * <LI> Aspect: One of P(biological process), F (molecular function), C
- * (cellular componment). Cardinality=1</LI>
- * <LI> DB_Object_Name: Name of Gene or Gene Product. Cardinality 0,1, >1 (e.g.,
+ * (cellular component). Cardinality=1</LI>
+ * <LI> DB_Object_Name: Name of Gene or Gene Product. Cardinality 0,1, &gt;1 (e.g.,
  * ZK637.11)</LI>
  * <LI> Synonym: Gene symbol or other text. cardinality 0,1,>1 </LI>
  * <LI> DB_Object_Type: One of gene, protein, protein_structure. Cardinality 1

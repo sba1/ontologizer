@@ -13,7 +13,7 @@ import ontologizer.types.ByteString;
 
 /**
  * Parse FASTA file for gene name, which is taken to be the first word following
- * a ">" and delimited by white space, slash or parens. The object returns a
+ * a "&gt;" and delimited by white space, slash or parens. The object returns a
  * HashMap with key = gene name (first word on the line), value = description
  * (entire line minus the ">" sign).
  *
@@ -25,7 +25,7 @@ public final class FastaParser extends AbstractItemParser
 	private File file;
 
 	/**
-	 * The first word between ">" and the subsequent DELIM character will be
+	 * The first word between "&gt;" and the subsequent DELIM character will be
 	 * taken to be the gene name. Anything following the delim character will be
 	 * taken to be part of the description of the gene.
 	 */
