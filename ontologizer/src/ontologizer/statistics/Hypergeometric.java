@@ -38,10 +38,11 @@ public class Hypergeometric
 	 * <LI>To do this, we need to divide the population into two groups, genes
 	 * with and without annotation. The arguments to the function supply us with
 	 * <B>n</B>, the total number of genes in the population group, and <B>p
-	 * </P>, the proportion of genes with annotation to the term in question.
+	 * </B>, the proportion of genes with annotation to the term in question.
 	 * We can then calculate the number of genes in the population annotated to
 	 * the term by <B>round(n*p)</B>, and the number of genes not annotated to
 	 * the term by <B>round(n*(1-p))</B>.</LI>
+	 * </UL>
 	 *
 	 *
 	 * @param n
@@ -99,7 +100,7 @@ public class Hypergeometric
 	}
 
 	/**
-	 * Calculates the probabilty that if you draw n balls from
+	 * Calculates the probability that if you draw n balls from
 	 * an urn without replacement containing N balls where M among
 	 * them are white (and so N-M are black) you will get x white
 	 * balls.
@@ -135,8 +136,8 @@ public class Hypergeometric
 	}
 
 	/**
-	 * Calculates P(X > x) where X is the hypergeometric distribution
-	 * with indices N,M,n. If lowerTail is set to true, then P(X <= x)
+	 * Calculates P(X &gt; x) where X is the hypergeometric distribution
+	 * with indices N,M,n. If lowerTail is set to true, then P(X &lt;= x)
 	 * is calculated.
 	 *
 	 * @param x number of white balls drawn without replacement
@@ -144,7 +145,7 @@ public class Hypergeometric
 	 * @param M number of white balls in the urn
 	 * @param n number of balls drawn from the urn
 	 * @param lowerTail defines if the lower tail should be calculated, i.e., if the
-	 *      parameter is set to true then P(X<=x) is calculated, otherwise P(X > x) is
+	 *      parameter is set to true then P(X &lt;= x) is calculated, otherwise P(X &gt; x) is
 	 *      calculated.
 	 * @return the probability
 	 */

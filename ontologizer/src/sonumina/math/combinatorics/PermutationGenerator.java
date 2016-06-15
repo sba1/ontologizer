@@ -3,9 +3,9 @@ package sonumina.math.combinatorics;
 import java.math.BigInteger;
 
 /**
- * Found on the net.
+ * Generates permutations.
  *
- * @see <a ref="http://www.merriampark.com/perm.htm">http://www.merriampark.com/perm.htm"</a>
+ * @see <a href="http://www.merriampark.com/perm.htm">http://www.merriampark.com/perm.htm</a>
  *
  */
 public class PermutationGenerator

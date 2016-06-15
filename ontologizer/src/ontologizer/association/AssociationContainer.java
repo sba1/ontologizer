@@ -117,7 +117,8 @@ public class AssociationContainer implements Iterable<Gene2Associations>
 	 * finally, look for a synonym (another entry in the gene_association file
 	 * that will have been parsed into the present object).
 	 *
-	 * @param geneName
+	 * @param geneName name of the gene whose associations are interesting
+	 * @return associations for the given gene
 	 */
 	public Gene2Associations get(ByteString geneName)
 	{

@@ -13,7 +13,7 @@ import ontologizer.types.ByteString;
  * Parse FASTA file for gene name, which is taken to be the first word following
  * a "&gt;" and delimited by white space, slash or parens. The object returns a
  * HashMap with key = gene name (first word on the line), value = description
- * (entire line minus the ">" sign).
+ * (entire line minus the "&gt;" sign).
  *
  * @author Peter Robinson
  */
@@ -32,8 +32,6 @@ public final class FastaParser extends AbstractItemParser
 	/**
 	 * @param file
 	 *            A file containing FASTA-formated sequences for all the genes.
-	 * @throws IOException
-	 *           On every io error.
 	 */
 	public FastaParser(final File file)
 	{

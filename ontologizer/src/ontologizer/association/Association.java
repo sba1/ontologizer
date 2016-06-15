@@ -7,15 +7,10 @@ import ontologizer.ontology.TermID;
 import ontologizer.types.ByteString;
 
 /**
- * <P>
  * Objects of this class represent individual associations as defined by GO
- * association files.
- * </P>
- * <P>
- * The meaning of the attributes is described in detail:
- * http://geneontology.org/page/annotation
- * </P>
- * <P>
+ * association files. The meaning of the attributes is described in detail at
+ * http://geneontology.org/page/annotation.
+ *
  * The file format is (in brief)
  * <OL>
  * <LI> DB (database contributing the association file; cardinality=1; example:
@@ -36,7 +31,7 @@ import ontologizer.types.ByteString;
  * (cellular component). Cardinality=1</LI>
  * <LI> DB_Object_Name: Name of Gene or Gene Product. Cardinality 0,1, &gt;1 (e.g.,
  * ZK637.11)</LI>
- * <LI> Synonym: Gene symbol or other text. cardinality 0,1,>1 </LI>
+ * <LI> Synonym: Gene symbol or other text. cardinality 0,1,&gt;1 </LI>
  * <LI> DB_Object_Type: One of gene, protein, protein_structure. Cardinality 1
  * </LI>
  * <LI> Taxon taxonomic identifiers, Cardinality 1,2</LI>
@@ -50,7 +45,6 @@ import ontologizer.types.ByteString;
  * Controller class for details. Note that not all entries in association files
  * conform entirely to this scheme. For instance, in some cases, DB_Object and
  * DB_Object_Symbol are null.
- * </P>
  *
  * @author Peter Robinson, Sebastian Bauer
  */
