@@ -103,7 +103,7 @@ public final class GlobalPreferences
 	/**
 	 * Sets the proxy port.
 	 *
-	 * @param proxyPort
+	 * @param proxyPort the port of the proxy server
 	 */
 	public static void setProxyPort(int proxyPort)
 	{

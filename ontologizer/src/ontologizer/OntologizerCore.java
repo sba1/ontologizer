@@ -119,9 +119,9 @@ public class OntologizerCore
 	 * Construct the object.
 	 *
 	 * @param args specifies the arguments
-	 * @throws IOException
-	 * @throws FileNotFoundException
-	 * @throws OBOParserException
+	 * @throws IOException if an i/o operation failed
+	 * @throws FileNotFoundException if a file could not be found
+	 * @throws OBOParserException on failure of the obo parser
 	 */
 	public OntologizerCore(Arguments args) throws FileNotFoundException, IOException, OBOParserException
 	{

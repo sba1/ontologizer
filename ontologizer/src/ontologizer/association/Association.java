@@ -144,8 +144,8 @@ public class Association
 	 * Constructs a new association object annotating
 	 * the given db_object_symbol to the given termID.
 	 *
-	 * @param db_object_symbol
-	 * @param termID
+	 * @param db_object_symbol the object symbol of the association
+	 * @param termID specifies the id of the term to which the object is associated
 	 */
 	public Association(ByteString db_object_symbol, TermID termID)
 	{
@@ -158,8 +158,8 @@ public class Association
 	 * Constructs a new association object annotating
 	 * the given db_object_symbol with the given term.
 	 *
-	 * @param db_object_symbol
-	 * @param term as full term with prefix and number.
+	 * @param db_object_symbol the object symbol of the association
+	 * @param term specifies the term to which the object is associated
 	 */
 	public Association(ByteString db_object_symbol, String term)
 	{
