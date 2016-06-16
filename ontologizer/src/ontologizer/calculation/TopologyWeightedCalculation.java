@@ -23,7 +23,7 @@ public class TopologyWeightedCalculation extends AbstractHypergeometricCalculati
 
 	private void computeTermSig(PopulationSet populationSet, StudySet studySet, Ontology graph, TermID u, Set<TermID> children, EnrichedGOTermsResult studySetResult, TermEnumerator studyTermEnumerator, TermEnumerator populationTermEnumerator)
 	{
-		if (graph.isRootTerm(u)) return;
+		if (graph.isArtificialRootTerm(u)) return;
 
 		/* Execute Fisher */
 		TopologyWeightGOTermProperties prop = wFisher(populationSet, studySet, graph, u, studySetResult, studyTermEnumerator, populationTermEnumerator);
