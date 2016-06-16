@@ -230,7 +230,7 @@ public class Ontology implements Iterable<Term>
 	}
 
 	/**
-	 * Determines whether the given id is the id of the (possible artifactial)
+	 * Determines whether the given id is the id of the (possible artificial)
 	 * root term
 	 *
 	 * @return The root vertex as a GOVertex object
