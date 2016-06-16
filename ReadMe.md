@@ -70,7 +70,7 @@ Further more, add
 		<dependency>
 			<groupId>de.ontologizer</groupId>
 			<artifactId>ontologizer</artifactId>
-			<version>0.0.2-SNAPSHOT</version>
+			<version>0.0.3-SNAPSHOT</version>
 		</dependency>
 		...
 	</dependencies>
