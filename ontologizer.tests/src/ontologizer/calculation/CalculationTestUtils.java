@@ -23,7 +23,7 @@ public class CalculationTestUtils
 	 * Perform a standard test calculation using the supplied algorithm
 	 * on the initial ontology.
 	 *
-	 * @return
+	 * @return the result
 	 */
 	public static EnrichedGOTermsResult performTestCalculation(ICalculation calc)
 	{
