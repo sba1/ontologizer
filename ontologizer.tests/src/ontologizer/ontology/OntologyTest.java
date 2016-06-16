@@ -286,6 +286,15 @@ public class OntologyTest
 	}
 
 	@Test
+	public void testIsArtificialRootTerm()
+	{
+		Ontology o = new InternalOntology().graph;
+		assertFalse(o.isArtificialRootTerm(new TermID("GO:0000001")));
+		assertFalse(o.isArtificialRootTerm(new TermID("GO:0000002")));
+		assertFalse(o.isArtificialRootTerm(new TermID("GO:0000003")));
+	}
+
+	@Test
 	public void testGOLevelInternalOntology()
 	{
 		Ontology o = new InternalOntology().graph;

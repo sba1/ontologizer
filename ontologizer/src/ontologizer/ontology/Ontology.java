@@ -241,6 +241,17 @@ public class Ontology implements Iterable<Term>
 	}
 
 	/**
+	 * Determines if the given term is the artificial root term.
+	 *
+	 * @param id the id of the term to check
+	 * @return if id is the artificial root term.
+	 */
+	public boolean isArtificialRootTerm(TermID id)
+	{
+		return isRootTerm(id) && getLevel1Terms().contains(id);
+	}
+
+	/**
 	 * Get (possibly artificial) TermID of the root vertex of graph
 	 *
 	 * @return The term representing to root
