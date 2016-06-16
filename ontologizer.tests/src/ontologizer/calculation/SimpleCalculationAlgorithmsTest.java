@@ -77,4 +77,52 @@ public class SimpleCalculationAlgorithmsTest
 
 		assertResultEquals(expected, ParentChildGOTermProperties.class, r);
 	}
+
+	@Test
+	public void whetherTopElimWorks()
+	{
+		EnrichedGOTermsResult r = performTestCalculation(new TopCalculation());
+
+		/* FIXME: Verify manually first */
+		Expected [] expected = new Expected[]
+		{
+			new Expected("GO:0000001", 500, 57, 1.0   			      ),
+			new Expected("GO:0000002", 444, 57, 1.0    				  ),
+			new Expected("GO:0000003", 383, 31, 0.9999801590716945    ),
+			new Expected("GO:0000004",  57, 57, 1.6147443936120442E-76),
+			new Expected("GO:0000005", 338, 25, 0.9999779361656085    ),
+			new Expected("GO:0000006", 333, 26, 0.9998514855899283    ),
+			new Expected("GO:0000007", 291, 22, 0.9995316242235475    ),
+			new Expected("GO:0000008",  63,  5, 0.875807235640327     ),
+			new Expected("GO:0000009", 179, 10, 0.9996126881087588    ),
+			new Expected("GO:0000010",  66,  5, 0.9011589801093324    ),
+			new Expected("GO:0000011",  65,  2, 0.9977121167095124    ),
+		};
+
+		assertResultEquals(expected, TopGOTermProperties.class, r);
+	}
+
+	@Test
+	public void whetherTopWeightWorks()
+	{
+		EnrichedGOTermsResult r = performTestCalculation(new TopologyWeightedCalculation());
+
+		/* FIXME: Verify manually first */
+		Expected [] expected = new Expected[]
+		{
+			new Expected("GO:0000001", 500, 57, 1.0                   ),
+			new Expected("GO:0000002", 444, 57, 9.733128646571134E-4  ),
+			new Expected("GO:0000003", 383, 31, 0.9999706101410725    ),
+			new Expected("GO:0000004",  57, 57, 1.6147443936120442E-76),
+			new Expected("GO:0000005", 338, 25, 0.9999695141707435    ),
+			new Expected("GO:0000006", 333, 26, 0.9997932927235037    ),
+			new Expected("GO:0000007", 291, 22, 0.9996069647059065    ),
+			new Expected("GO:0000008",  63,  5, 0.875807235640327     ),
+			new Expected("GO:0000009", 179, 10, 0.9996126881087588    ),
+			new Expected("GO:0000010",  66,  5, 0.9011589801093324    ),
+			new Expected("GO:0000011",  65,  2, 0.9977121167095124    ),
+		};
+
+		assertResultEquals(expected, TopologyWeightGOTermProperties.class, r);
+	}
 }
