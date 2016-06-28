@@ -20,21 +20,21 @@
     <jar href="local-maven-repo/ontologizer/swtchart/0.7.0/swtchart-0.7.0.jar"/>
   </resources> 
   <resources os="Windows"> 
-    <jar href="local-maven-repo/ontologizer/swt-win32-win32-x86/3.7.1/swt-win32-win32-x86-3.7.1.jar"/>
+    <jar href="local-maven-repo/ontologizer/swt-win32-win32-x86/4.6/swt-win32-win32-x86-4.6.jar"/>
   </resources>
   <resources os="Linux" arch="i386">
-    <jar href="local-maven-repo/ontologizer/swt-gtk-linux-x86/3.7.1/swt-gtk-linux-x86-3.7.1.jar"/>
+    <jar href="local-maven-repo/ontologizer/swt-gtk-linux-x86/4.6/swt-gtk-linux-x86-4.6.jar"/>
   </resources>
   <resources os="Linux" arch="amd64">
-    <jar href="local-maven-repo/ontologizer/swt-gtk-linux-x86_64/3.7.1/swt-gtk-linux-x86_64-3.7.1.jar"/>
+    <jar href="local-maven-repo/ontologizer/swt-gtk-linux-x86_64/4.6/swt-gtk-linux-x86_64-4.6.jar"/>
   </resources>
   <resources os="Mac OS X" arch="i386">
     <j2se version="1.5+" java-vm-args="-d32 -XstartOnFirstThread"/>
-    <jar href="local-maven-repo/ontologizer/swt-cocoa-macosx/3.7.1/swt-cocoa-macosx-3.7.1.jar" />
+    <jar href="local-maven-repo/ontologizer/swt-cocoa-macosx/4.6/swt-cocoa-macosx-4.6.jar" />
   </resources>
   <resources os="Mac OS X" arch="x86_64">
     <j2se version="1.5+" java-vm-args="-XstartOnFirstThread"/>
-    <jar href="local-maven-repo/ontologizer/swt-cocoa-macosx-x86_64/3.7.1/swt-cocoa-macosx-x86_64-3.7.1.jar" />
+    <jar href="local-maven-repo/ontologizer/swt-cocoa-macosx-x86_64/4.6/swt-cocoa-macosx-x86_64-4.6.jar" />
   </resources>
 
   <application-desc main-class="ontologizer.gui.swt.Ontologizer"/> 
