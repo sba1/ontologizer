@@ -13,7 +13,7 @@
       <all-permissions/> 
   </security> 
   <resources> 
-    <j2se version="1.5+" max-heap-size="768m" java-vm-args="-XstartOnFirstThread"/>
+    <j2se version="1.7+" max-heap-size="768m" java-vm-args="-XstartOnFirstThread"/>
     <jar href="ontologizer.jar"/> 
     <jar href="ontologizer-gui.jar"/> 
     <jar href="local-maven-repo/ontologizer/nattable-core/1.6.5/nattable-core-1.6.5.jar"/>
@@ -29,11 +29,11 @@
     <jar href="local-maven-repo/ontologizer/swt-gtk-linux-x86_64/4.6/swt-gtk-linux-x86_64-4.6.jar"/>
   </resources>
   <resources os="Mac OS X" arch="i386">
-    <j2se version="1.5+" java-vm-args="-d32 -XstartOnFirstThread"/>
+    <j2se version="1.7+" java-vm-args="-d32 -XstartOnFirstThread"/>
     <jar href="local-maven-repo/ontologizer/swt-cocoa-macosx/4.6/swt-cocoa-macosx-4.6.jar" />
   </resources>
   <resources os="Mac OS X" arch="x86_64">
-    <j2se version="1.5+" java-vm-args="-XstartOnFirstThread"/>
+    <j2se version="1.7+" java-vm-args="-XstartOnFirstThread"/>
     <jar href="local-maven-repo/ontologizer/swt-cocoa-macosx-x86_64/4.6/swt-cocoa-macosx-x86_64-4.6.jar" />
   </resources>
 
