@@ -3,23 +3,9 @@ title = "How To"
 weight = 20
 +++
 
-The following sections show some solutions to some common problems revolving around the lack of uniformity of gene name nomenclature, and show examples of Ontologizer output for C. elegans, mouse, yeast and Drosophila. 
+The following sections show some solutions to some common problems revolving around the lack of uniformity of gene name nomenclature, and show examples of Ontologizer output for C. elegans, mouse, yeast and Drosophila.
 
-### Gene Ontology Files
-
-The Ontologizer requires the Gene Ontology Terms file (gene_ontology.obo), which is the file that describes individual GO terms and their relationships to one another. This file can be downloaded from the [Gene Ontology homepage](http://geneontology.org/). Alternatively, the Ontologizer can automatically download the latest version if you specify the URL to this file.
-
-### Gene Association Files
-
-The OBO file describes only the functional hierarchy of terms and does not provide functional annotations for actual genes. For this purpose, users need to download the appropriate annotation file. These files are generally entitled gene_association.XXX, where XXX stands for the database or species (e.g., mgi for [Mouse Genome Informatics](http://www.informatics.jax.org/), and sgd for [Saccharomyces Genome Database](http://www.yeastgenome.org/). Association files can also be downloaded from the Gene Ontology homepage. The Ontologizer can also automatically download the latest version of the association file for a number of commonly analyzed organisms (See the tutorial within the Ontologizer application for more details).
-
-### Data Files
-
-The Ontologizer produces listings of GO annotations for user supplied lists of genes or gene products. One situation in which this can be useful is for "clustering" analysis of microarray data, but there are many other potential uses. The Ontologizer assumes that each group of genes resides in its own file, and presently accepts FASTA files as well as files in which each gene is on its own line. For FASTA and plain files, the first word on a line (for FASTA files, the first word following the ">" sign) is taken to be the name of the gene or gene product, and anything else on the line is taken to be a description. It is easy to extend the source code to allow for other types of file formats.
-
-The user should copy files representing the results of clustering into a separate directory. Note that the names of the genes or gene products need to correspond to the nomenclature used in the association file for the Ontologizer to function properly. This can be especially problematic if (for instance) EST names are present in the results of clustering. Several solutions to such problems are presented below on this web page in the form of Perl scripts that can transform files and gene names such that the Ontologizer will recognize the names.
-
-### Preparing Data for the Ontologizer
+## Preparing Data for the Ontologizer
 
 The Ontologizer uses the gene or gene-product nomeclature as found in the various gene_association files. The Ontologizer recognizes names entered as DB_Object, DB_Object_Name, or Synonym in these files. However, in many cases, gene names will be listed in other form, such as for instance EST accession numbers or Affymetrix ids. Further details on the gene_association files can be found on the Gene Ontology website. In these cases, it will be necessary to transform your data by mapping non-standard gene ids to a form that will be recognized by the Ontologizer.
 
@@ -48,7 +34,7 @@ The results window contains a table with one line for each gene in the populatio
 ## Datasets
 
 ### Datasets for GO Analysis
-A typical dataset for statistical analysis using the Ontologizer or many other GO tools will consist of a list of gene/protein names making up a study set (for instance, all differentially expressed genes in an experiment) and a longer list of gene/protein names making up the population (for instance, all genes represented on a microarray that was used to perform the experiment). It has been our experience that is is difficult to find such datasets on the web, which is a stumbling block for testing new algorithms or tools for GO analysis. 
+A typical dataset for statistical analysis using the Ontologizer or many other GO tools will consist of a list of gene/protein names making up a study set (for instance, all differentially expressed genes in an experiment) and a longer list of gene/protein names making up the population (for instance, all genes represented on a microarray that was used to perform the experiment). It has been our experience that is is difficult to find such datasets on the web, which is a stumbling block for testing new algorithms or tools for GO analysis.
 
 On this page we present an R/Bioconductor script that makes it easy to create study sets/population sets using publically available microarray datasets from NCBI's Gene Expression Omnibus (GEO) database. It should be easy to adapt this script to analyze in house datasets derived from Affymetrix microarray hybridizations. Currently there are thousands of datasets in the GEO database, so extensive testing and comparisons of different algorithms should be possible. On this page, we explain the R script and present several datasets obtained using it.
 
@@ -74,7 +60,7 @@ biocLite("GEOquery")
 NCBI's Gene Expression Omnibus (GEO) database is a repository of thousands of microarray datasets. GEO DataSets (GDS) are curated sets of GEO Sample data. A GDS record represents a collection of biologically and statistically comparable GEO Samples and forms the basis of GEO's suite of data display and analysis tools.
 
 ### R/Bioconductor Code for Creating Study and Population Datasets
- 
+
 The following code demonstrates how to use R/Bioconductor to download and analyze datasets from the NCBI GEO database and to create study and population sets from them.
 
 {{< highlight R >}}
