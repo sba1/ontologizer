@@ -1,6 +1,6 @@
 +++
 title = "Input"
-weight = 0
+weight = 18
 +++
 
 For conducting an Ontologizer gene enrichment analysis, three types of files are
