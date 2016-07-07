@@ -1,6 +1,16 @@
 package ontologizer.gui.swt;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.InvalidPropertiesFormatException;
+import java.util.List;
+import java.util.Properties;
+import java.util.logging.Logger;
 
 /**
  * Represents a single Ontologizer project.
@@ -9,11 +19,119 @@ import java.io.File;
  */
 public class Project
 {
+	/** The logger */
+	private static Logger logger = Logger.getLogger(Project.class.getCanonicalName());
+
+	/** Filename of the settings file */
+	private static final String PROJECT_SETTINGS_NAME = ".project";
+
+	/** Filename of the population file */
+	private static final String POPULATION_NAME = "Population";
+
 	public File projectDirectory;
 	public ProjectSettings settings = new ProjectSettings();
+	private List<ItemSet> itemSets = new ArrayList<ItemSet>();
 
 	public Project(File projectDirectory)
 	{
 		this.projectDirectory = projectDirectory;
+
+		refresh();
+	}
+
+	/**
+	 * Read the given filename as item set.
+	 *
+	 * @return the item set.
+	 */
+	private ItemSet readAsItemSet(String name)
+	{
+		File f = new File(projectDirectory, name);
+		ItemSet set = new ItemSet();
+
+		try
+		{
+			BufferedReader is;
+			String line;
+			StringBuilder str = new StringBuilder();
+
+			is = new BufferedReader(new FileReader(f));
+			while ((line = is.readLine()) != null)
+			{
+				str.append(line);
+				str.append("\n");
+				set.numEntries++;
+			}
+			is.close();
+
+			set.entries = str.toString();
+		} catch (IOException e)
+		{
+		}
+		return set;
+	}
+
+	private void addPopulation(String name)
+	{
+		ItemSet set = readAsItemSet(name);
+		set.population = true;
+		itemSets.add(set);
+	}
+
+	private void addStudy(String name)
+	{
+		ItemSet set = readAsItemSet(name);
+		set.population = true;
+		itemSets.add(set);
+	}
+
+	public void refresh()
+	{
+		itemSets.clear();
+
+		String [] names = projectDirectory.list();
+
+		if (names == null)
+		{
+			logger.warning("Listing the contents of " + projectDirectory.getPath() + " failed");
+			return;
+		}
+
+		for (String name : names)
+		{
+			if (name.equalsIgnoreCase(POPULATION_NAME))
+			{
+				addPopulation(name);
+				continue;
+			}
+
+			if (name.equals(PROJECT_SETTINGS_NAME))
+			{
+				Properties prop = new Properties();
+				try
+				{
+					FileInputStream fis = new FileInputStream(new File(projectDirectory,PROJECT_SETTINGS_NAME));
+					prop.loadFromXML(fis);
+					fis.close();
+					settings.fromProperties(prop);
+				} catch (InvalidPropertiesFormatException e)
+				{
+					e.printStackTrace();
+				} catch (FileNotFoundException e)
+				{
+					e.printStackTrace();
+				} catch (IOException e)
+				{
+					e.printStackTrace();
+				}
+				continue;
+			}
+			addStudy(name);
+		}
+	}
+
+	public Iterable<ItemSet> itemSets()
+	{
+		return itemSets;
 	}
 }
