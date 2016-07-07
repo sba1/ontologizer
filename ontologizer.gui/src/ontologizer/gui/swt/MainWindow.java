@@ -516,9 +516,7 @@ public class MainWindow extends ApplicationWindow
 	}
 
 	/**
-	 * Returns a list of the names of all projects.
-	 *
-	 * @return
+	 * @return a list of the names of all projects.
 	 */
 	public List<String> getProjectNames()
 	{
@@ -824,10 +822,7 @@ public class MainWindow extends ApplicationWindow
 	}
 
 	/**
-	 * Returns the entries of the current selected population/study
-	 * set.
-	 *
-	 * @return
+	 * @return the entries of the current selected population/study set.
 	 */
 	public String [] getCurrentSetEntries()
 	{
@@ -835,9 +830,7 @@ public class MainWindow extends ApplicationWindow
 	}
 
 	/**
-	 * Returns the definition file string.
-	 *
-	 * @return
+	 * @return the definition file string.
 	 */
 	public String getDefinitionFileString()
 	{
@@ -855,9 +848,7 @@ public class MainWindow extends ApplicationWindow
 	}
 
 	/**
-	 * Retunrs the mapping file string.
-	 *
-	 * @return
+	 * @return the mapping file string.
 	 */
 	public String getMappingFileString()
 	{
@@ -875,9 +866,7 @@ public class MainWindow extends ApplicationWindow
 	}
 
 	/**
-	 * Returns the association file string.
-	 *
-	 * @return
+	 * @return the association file string.
 	 */
 	public String getAssociationsFileString()
 	{
@@ -1216,9 +1205,7 @@ public class MainWindow extends ApplicationWindow
 	}
 
 	/**
-	 * Returns the name of the currently selected method.
-	 *
-	 * @return
+	 * @return the name of the currently selected method.
 	 */
 	public String getSelectedMethodName()
 	{
@@ -2076,9 +2063,7 @@ public class MainWindow extends ApplicationWindow
 	}
 
 	/**
-	 * Returns the selected working set.
-	 *
-	 * @return
+	 * @return the selected working set.
 	 */
 	public WorkSet getSelectedWorkingSet()
 	{
@@ -2086,9 +2071,7 @@ public class MainWindow extends ApplicationWindow
 	}
 
 	/**
-	 * Returns the currently selected subontology.
-	 *
-	 * @return
+	 * @return the currently selected subontology.
 	 */
 	public String getSubontologyString()
 	{
@@ -2126,9 +2109,7 @@ public class MainWindow extends ApplicationWindow
 	}
 
 	/**
-	 * Returns the currently selected evidences.
-	 *
-	 * @return
+	 * @return the currently selected evidences.
 	 */
 	public Collection<String> getCheckedEvidences()
 	{

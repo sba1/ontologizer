@@ -497,9 +497,7 @@ public class GeneEditor extends Composite
 	}
 
 	/**
-	 * Returns the total number of entries.
-	 *
-	 * @return
+	 * @return the total number of entries.
 	 */
 	public int getNumberOfEntries()
 	{
@@ -533,9 +531,7 @@ public class GeneEditor extends Composite
 	}
 
 	/**
-	 * Returns the number of known entries.
-	 *
-	 * @return
+	 * @return the number of known entries.
 	 */
 	public int getNumberOfKnownEntries()
 	{
@@ -567,9 +563,7 @@ public class GeneEditor extends Composite
 	}
 
 	/**
-	 * Returns whether the document is empty.
-	 *
-	 * @return
+	 * @return whether the document is empty.
 	 */
 	public boolean isEmpty()
 	{
@@ -696,9 +690,7 @@ public class GeneEditor extends Composite
 	}
 
 	/**
-	 * Returns the contents as an array of lines.
-	 *
-	 * @return
+	 * @return the contents as an array of lines.
 	 */
 	public String [] getLines()
 	{
