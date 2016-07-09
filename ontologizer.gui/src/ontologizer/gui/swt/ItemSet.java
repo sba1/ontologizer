@@ -6,6 +6,7 @@ package ontologizer.gui.swt;
 public class ItemSet
 {
 	public boolean population;
+	public String name;
 	public String entries;
 	public int numEntries;
 	public int numKnownEntries = -1;

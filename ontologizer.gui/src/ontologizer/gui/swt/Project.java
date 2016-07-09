@@ -48,6 +48,7 @@ public class Project
 	{
 		File f = new File(projectDirectory, name);
 		ItemSet set = new ItemSet();
+		set.name = name;
 
 		try
 		{
@@ -133,5 +134,22 @@ public class Project
 	public Iterable<ItemSet> itemSets()
 	{
 		return itemSets;
+	}
+
+	/**
+	 * Find a item set by the given name.
+	 *
+	 * @param name the name of the item set to be found.
+	 *
+	 * @return the found item set or null.
+	 */
+	public ItemSet findItemSetByName(String name)
+	{
+		for (ItemSet set : itemSets())
+		{
+			if (set.name.equals(name))
+				return set;
+		}
+		return null;
 	}
 }
