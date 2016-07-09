@@ -8,4 +8,5 @@ public class ItemSet
 	public boolean population;
 	public String entries;
 	public int numEntries;
+	public int numKnownEntries = -1;
 }
