@@ -177,6 +177,13 @@ public class Project
 		return removed;
 	}
 
+
+	/**
+	 * Rename the project.
+	 *
+	 * @param newName the new name of the project
+	 * @return whether the renaming was successful
+	 */
 	public boolean rename(String newName)
 	{
 		File dest = new File(projectDirectory.getParentFile(),newName);
