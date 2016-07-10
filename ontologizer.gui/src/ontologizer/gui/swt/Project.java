@@ -47,7 +47,7 @@ public class Project
 	private ItemSet readAsItemSet(String name)
 	{
 		File f = new File(projectDirectory, name);
-		ItemSet set = new ItemSet();
+		ItemSet set = new ItemSet(this);
 		set.name = name;
 
 		try
