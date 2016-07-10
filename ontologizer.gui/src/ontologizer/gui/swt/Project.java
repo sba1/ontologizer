@@ -152,4 +152,19 @@ public class Project
 		}
 		return null;
 	}
+
+	public boolean rename(String newName)
+	{
+		File dest = new File(projectDirectory.getParentFile(),newName);
+		if (dest.exists())
+			return false;
+
+		if (!projectDirectory.renameTo(dest))
+			return false;
+
+		projectDirectory = dest;
+
+		return true;
+
+	}
 }
