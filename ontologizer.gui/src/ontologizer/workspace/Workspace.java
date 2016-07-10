@@ -1,4 +1,4 @@
-package ontologizer.gui.swt;
+package ontologizer.workspace;
 
 import java.io.File;
 import java.io.FilenameFilter;

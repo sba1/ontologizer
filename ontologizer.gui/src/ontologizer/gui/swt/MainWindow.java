@@ -87,6 +87,8 @@ import ontologizer.statistics.TestCorrectionRegistry;
 import ontologizer.worksets.WorkSet;
 import ontologizer.worksets.WorkSetList;
 import ontologizer.worksets.WorkSetLoadThread;
+import ontologizer.workspace.Project;
+import ontologizer.workspace.ProjectSettings;
 
 class TreeItemData
 {

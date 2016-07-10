@@ -1,4 +1,4 @@
-package ontologizer.gui.swt;
+package ontologizer.workspace;
 
 import java.io.BufferedReader;
 import java.io.File;

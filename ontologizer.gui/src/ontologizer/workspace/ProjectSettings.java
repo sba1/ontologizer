@@ -1,4 +1,4 @@
-package ontologizer.gui.swt;
+package ontologizer.workspace;
 
 import java.util.Properties;
 
@@ -7,7 +7,7 @@ import java.util.Properties;
  *
  * @author Sebastian Bauer
  */
-class ProjectSettings
+public class ProjectSettings
 {
 	public String ontologyFileName;
 	public String annotationsFileName;
