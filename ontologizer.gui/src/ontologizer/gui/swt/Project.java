@@ -153,6 +153,30 @@ public class Project
 		return null;
 	}
 
+	/**
+	 * Remove the given item set permanently.
+	 *
+	 * @param toBeRemoved
+	 * @return whether it was removed or not.
+	 */
+	public boolean remove(ItemSet toBeRemoved)
+	{
+		boolean removed = false;
+		for (ItemSet item : itemSets())
+		{
+			if (item == toBeRemoved)
+			{
+				File f = new File(projectDirectory,item.name);
+				if (!f.delete())
+					break;
+				itemSets.remove(item);
+				removed = true;
+				break;
+			}
+		}
+		return removed;
+	}
+
 	public boolean rename(String newName)
 	{
 		File dest = new File(projectDirectory.getParentFile(),newName);
