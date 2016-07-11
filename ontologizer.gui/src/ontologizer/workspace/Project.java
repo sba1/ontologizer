@@ -177,6 +177,24 @@ public class Project
 		return removed;
 	}
 
+	/**
+	 * Remove the entire project from the workspace.
+	 *
+	 * @return whether successful or not
+	 */
+	public boolean remove()
+	{
+		for (ItemSet sets : itemSets)
+			remove(sets);
+
+		File f = new File(projectDirectory,PROJECT_SETTINGS_NAME);
+		if (f.exists()) f.delete();
+
+		if (!(projectDirectory.delete()))
+			return false;
+
+		return true;
+	}
 
 	/**
 	 * Rename the project.
