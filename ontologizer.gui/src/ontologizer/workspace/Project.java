@@ -216,4 +216,58 @@ public class Project
 		return true;
 
 	}
+
+	/**
+	 * Create a population set if no such population exists.
+	 *
+	 * @return the newly created population or null
+	 */
+	public ItemSet newPopulation()
+	{
+		ItemSet pop = null;
+		File newPopFile = new File(projectDirectory,"Population");
+		if (!newPopFile.exists())
+		{
+			try
+			{
+				newPopFile.createNewFile();
+				pop = readAsItemSet("Population");
+				pop.population = true;
+				itemSets.add(pop);
+			} catch (IOException e1)
+			{
+			}
+		}
+		return pop;
+	}
+
+	/**
+	 * Create a study set.
+	 *
+	 * @return the newly created study set
+	 */
+	public ItemSet newStudySet()
+	{
+		ItemSet study = null;
+		File f;
+		int i = 1;
+		do
+		{
+			String name = "New Study Set";
+			if (i!=1) name += " ("+i+")";
+			f = new File(projectDirectory,name);
+			i++;
+		} while (f.exists());
+
+		File newStudyFile = new File(projectDirectory,f.getName());
+		try
+		{
+			newStudyFile.createNewFile();
+			study = readAsItemSet(newStudyFile.getName());
+			itemSets.add(study);
+		} catch (IOException e1)
+		{
+		}
+		return study;
+	}
 }
