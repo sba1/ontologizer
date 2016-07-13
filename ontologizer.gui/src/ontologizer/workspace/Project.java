@@ -82,7 +82,7 @@ public class Project
 	private void addStudy(String name)
 	{
 		ItemSet set = readAsItemSet(name);
-		set.population = true;
+		set.population = false;
 		itemSets.add(set);
 	}
 
