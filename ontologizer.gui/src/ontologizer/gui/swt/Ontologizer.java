@@ -739,9 +739,7 @@ public class Ontologizer
 	}
 
 	/**
-	 * Returns whether the project name is valid.
-	 *
-	 * @return
+	 * @return whether the project name is valid.
 	 */
 	public static boolean isProjectNameValid(String name)
 	{
