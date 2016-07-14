@@ -8,13 +8,11 @@ package ontologizer.gui.swt;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -23,7 +21,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.InvalidPropertiesFormatException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
@@ -87,21 +84,17 @@ import ontologizer.statistics.TestCorrectionRegistry;
 import ontologizer.worksets.WorkSet;
 import ontologizer.worksets.WorkSetList;
 import ontologizer.worksets.WorkSetLoadThread;
+import ontologizer.workspace.ItemSet;
 import ontologizer.workspace.Project;
 import ontologizer.workspace.ProjectSettings;
 
 class TreeItemData
 {
-	public boolean isPopulation;
-	public boolean isProjectFolder;
-	public boolean isSettings;
-	public String filename;
-	public String entries;
-	public int numEntries;
-	public int numKnownEntries = -1;
-
 	/** The project where this entry belongs to */
 	public Project project;
+
+	/** The possible items associated to the entry */
+	public ItemSet items;
 };
 
 /**
@@ -232,52 +225,16 @@ public class MainWindow extends ApplicationWindow
 	 */
 	public void addProject(File projectDirectory, boolean activate)
 	{
-		String [] names = projectDirectory.list();
-
-		if (names == null)
-		{
-			logger.warning("Listing the contents of " + projectDirectory.getPath() + " failed");
-			return;
-		}
-
-
 		TreeItem projectTreeItem = newProjectItem(projectDirectory,projectDirectory.getName());
+		TreeItemData tid = getTreeItemData(projectTreeItem);
 
-		for (String name : names)
+		for (ItemSet items : tid.project.itemSets())
 		{
-			if (name.equalsIgnoreCase("Population"))
-			{
-				newPopItem(projectTreeItem,name);
-				continue;
-			}
-
-			if (name.equals(PROJECT_SETTINGS_NAME))
-			{
-				Properties prop = new Properties();
-				try
-				{
-					FileInputStream fis = new FileInputStream(new File(projectDirectory,PROJECT_SETTINGS_NAME));
-					prop.loadFromXML(fis);
-					fis.close();
-					TreeItemData tid = getTreeItemData(projectTreeItem);
-					tid.project.settings.fromProperties(prop);
-				} catch (InvalidPropertiesFormatException e)
-				{
-					e.printStackTrace();
-				} catch (FileNotFoundException e)
-				{
-					e.printStackTrace();
-				} catch (IOException e)
-				{
-					e.printStackTrace();
-				}
-				continue;
-			}
-
-			newStudyItem(projectTreeItem, name);
+			System.out.println(items.name);
+			if (items.population) newPopItem(projectTreeItem, items);
+			else newStudyItem(projectTreeItem, items);
 		}
 
-		TreeItemData tid = getTreeItemData(projectTreeItem);
 		projectTreeItem.setExpanded(!tid.project.settings.isClosed);
 
 		if (activate)
@@ -297,7 +254,6 @@ public class MainWindow extends ApplicationWindow
 	private TreeItem newProjectItem(File directory, String name)
 	{
 		TreeItemData newItemData = new TreeItemData();
-		newItemData.isProjectFolder = true;
 		newItemData.project = new Project(directory);
 		applyCurrentProjectSettings(newItemData.project);
 
@@ -325,40 +281,19 @@ public class MainWindow extends ApplicationWindow
 	 * Create a new popitem using the given name and reads in the file
 	 * given by name.
 	 *
-	 * @param directory
-	 * @param name
+	 * @param param
+	 * @param items
 	 * @return
 	 */
-	private TreeItem newPopItem(TreeItem parent, String name)
+	private TreeItem newPopItem(TreeItem parent, ItemSet items)
 	{
 		if (getPopulationItem(parent) != null)
 			return null;
 
 		Project project = getTreeItemData(parent).project;
 		TreeItemData newItemData = new TreeItemData();
-		newItemData.isPopulation = true;
 		newItemData.project = project;
-		newItemData.filename = name;
-		File f = new File(project.projectDirectory,name);
-		try
-		{
-			BufferedReader is;
-			String line;
-			StringBuilder str = new StringBuilder();
-
-			is = new BufferedReader(new FileReader(f));
-			while ((line = is.readLine()) != null)
-			{
-				str.append(line);
-				str.append("\n");
-				newItemData.numEntries++;
-			}
-			is.close();
-
-			newItemData.entries = str.toString();
-		} catch (IOException e)
-		{
-		}
+		newItemData.items = items;
 
 		TreeItem newItem = new TreeItem(parent,0);
 		newItem.setData(newItemData);
@@ -377,33 +312,12 @@ public class MainWindow extends ApplicationWindow
 	 * 				the name of the study set (equals the filename)
 	 * @return
 	 */
-	private TreeItem newStudyItem(TreeItem parent, String name)
+	private TreeItem newStudyItem(TreeItem parent, ItemSet items)
 	{
 		Project project = getTreeItemData(parent).project;
 		TreeItemData newItemData = new TreeItemData();
-		newItemData.isPopulation = false;
 		newItemData.project = project;
-		newItemData.filename = name;
-		File f = new File(project.projectDirectory, name);
-		try
-		{
-			BufferedReader is;
-			String line;
-			StringBuilder str = new StringBuilder();
-
-			is = new BufferedReader(new FileReader(f));
-			while ((line = is.readLine()) != null)
-			{
-				str.append(line);
-				str.append("\n");
-				newItemData.numEntries++;
-			}
-			is.close();
-
-			newItemData.entries = str.toString();
-		} catch (IOException e)
-		{
-		}
+		newItemData.items = items;
 
 		TreeItem newItem = new TreeItem(parent,0);
 		newItem.setData(newItemData);
@@ -425,8 +339,8 @@ public class MainWindow extends ApplicationWindow
 		} else
 		{
 			/* Workaround to ensure that the item is really redrawn */
-			item.setText(tid.filename + " ");
-			item.setText(tid.filename);
+			item.setText(tid.items.name + " ");
+			item.setText(tid.items.name);
 		}
 	}
 
@@ -440,46 +354,13 @@ public class MainWindow extends ApplicationWindow
 	private boolean renameItem(TreeItem item, String name)
 	{
 		TreeItemData tid = getTreeItemData(item);
-		Project project = tid.project;
 
 		if (isTreeItemProject(item))
 		{
-			File dest = new File(project.projectDirectory.getParentFile(),name);
-			if (dest.exists())
-				return false;
-
-			if (!project.projectDirectory.renameTo(dest))
-				return false;
-
-			project.projectDirectory = dest;
-
-			TreeItem [] children = item.getItems();
-			for (int i=0;i<children.length;i++)
-			{
-				TreeItemData tidChild = getTreeItemData(children[i]);
-				tidChild.project.projectDirectory = dest;
-			}
-
+			tid.project.rename(name);
 		}	else
 		{
-			File src = new File(project.projectDirectory,tid.filename);
-			File dest = new File(project.projectDirectory,name);
-
-			if (dest.exists())
-				return false;
-
-			if (!src.renameTo(dest))
-				return false;
-
-			if (tid.filename.equalsIgnoreCase("Population") && !name.equalsIgnoreCase("Population"))
-				tid.isPopulation = false;
-			else
-			{
-				if (!tid.filename.equalsIgnoreCase("Population") && name.equalsIgnoreCase("Population"))
-					tid.isPopulation = true;
-			}
-
-			tid.filename = name;
+			tid.items.rename(name);
 		}
 		updateTextOfItem(item);
 		return true;
@@ -495,22 +376,11 @@ public class MainWindow extends ApplicationWindow
 		TreeItemData tid = getTreeItemData(item);
 		if (isTreeItemProject(item))
 		{
-			TreeItem [] items = item.getItems();
-			for (TreeItem i : items)
-			{
-				if (!removeItem(i))
-					return false;
-			}
-
-			File f = new File(tid.project.projectDirectory,PROJECT_SETTINGS_NAME);
-			if (f.exists()) f.delete();
-
-			if (!(tid.project.projectDirectory.delete()))
+			if (!tid.project.remove())
 				return false;
 		} else
 		{
-			File f = new File(tid.project.projectDirectory,tid.filename);
-			if (!f.delete())
+			if (!(tid.project.remove(tid.items)))
 				return false;
 		}
 		item.dispose();
@@ -543,7 +413,7 @@ public class MainWindow extends ApplicationWindow
 			TreeItemData tid;
 
 			tid = getTreeItemData(currentSelectedItem);
-			if (tid.isProjectFolder)
+			if (isTreeItemProject(currentSelectedItem))
 			{
 				applyCurrentProjectSettings(tid.project);
 				tid.project.settings.isClosed = !currentSelectedItem.getExpanded();
@@ -551,17 +421,17 @@ public class MainWindow extends ApplicationWindow
 				return;
 			}
 
-			tid.entries = setTextArea.getText();
-			tid.numEntries = setTextArea.getNumberOfEntries();
-			tid.numKnownEntries = setTextArea.getNumberOfKnownEntries();
+			tid.items.entries = setTextArea.getText();
+			tid.items.numEntries = setTextArea.getNumberOfEntries();
+			tid.items.numKnownEntries = setTextArea.getNumberOfKnownEntries();
 			updateTextOfItem(currentSelectedItem);
 
 			try
 			{
 				/* TODO: Add an explicit saving mechanism */
-				File out = new File(tid.project.projectDirectory,tid.filename);
+				File out = new File(tid.project.projectDirectory,tid.items.name);
 				BufferedWriter fw = new BufferedWriter(new FileWriter(out));
-				fw.write(tid.entries);
+				fw.write(tid.items.entries);
 				fw.close();
 			} catch (IOException e)
 			{
@@ -578,7 +448,7 @@ public class MainWindow extends ApplicationWindow
 	 */
 	private void storeProjectSettings(TreeItemData tid)
 	{
-		if (!tid.isProjectFolder) return;
+		if (tid.items != null) return;
 
 		Properties prop = tid.project.settings.toProperties();
 		try
@@ -605,7 +475,7 @@ public class MainWindow extends ApplicationWindow
 	private TreeItem getProjectItem(TreeItem item)
 	{
 		TreeItem parent = item;
-		if (!getTreeItemData(parent).isProjectFolder)
+		if (getTreeItemData(parent).items != null)
 			parent = parent.getParentItem();
 		return parent;
 	}
@@ -621,7 +491,7 @@ public class MainWindow extends ApplicationWindow
 		TreeItem [] items = item.getItems();
 		for (int i=0;i<items.length;i++)
 		{
-			if (getTreeItemData(items[i]).isPopulation)
+			if (getTreeItemData(items[i]).items.population)
 				return items[i];
 		}
 		return null;
@@ -724,10 +594,10 @@ public class MainWindow extends ApplicationWindow
 				}
 			} else
 			{
-				String genes = getTreeItemData(currentSelectedItem).entries;
+				String genes = getTreeItemData(currentSelectedItem).items.entries;
 				if (genes == null) genes = "";
 
-				if (getTreeItemData(currentSelectedItem).isPopulation)
+				if (getTreeItemData(currentSelectedItem).items.population)
 					setTextArea.setToolTipText(populationTip);
 				else setTextArea.setToolTipText(studyTip);
 
@@ -910,7 +780,7 @@ public class MainWindow extends ApplicationWindow
 
 			if (pop != null)
 			{
-				String entries = getTreeItemData(pop).entries;
+				String entries = getTreeItemData(pop).items.entries;
 				if (entries == null) entries = "";
 				Set set = new Set();
 				set.name = pop.getText();
@@ -928,10 +798,10 @@ public class MainWindow extends ApplicationWindow
 			TreeItem children[] = project.getItems();
 			for (int i=0;i<children.length;i++)
 			{
-				if (getTreeItemData(children[i]).isPopulation)
+				if (getTreeItemData(children[i]).items.population)
 					continue;
 
-				String entries = getTreeItemData(children[i]).entries;
+				String entries = getTreeItemData(children[i]).items.entries;
 				if (entries == null) entries = "";
 				Set set = new Set();
 				set.name = children[i].getText();
@@ -976,7 +846,12 @@ public class MainWindow extends ApplicationWindow
 	 */
 	private static boolean isTreeItemPopulation(TreeItem pop)
 	{
-		return getTreeItemData(pop).isPopulation;
+		if (isTreeItemProject(pop))
+		{
+			return false;
+		}
+
+		return getTreeItemData(pop).items.population;
 	}
 
 	/**
@@ -988,7 +863,8 @@ public class MainWindow extends ApplicationWindow
 	 */
 	private static boolean isTreeItemProject(TreeItem project)
 	{
-		return getTreeItemData(project).isProjectFolder;
+		TreeItemData tid = getTreeItemData(project);
+		return tid.project != null && tid.items == null;
 	}
 
 	/**
@@ -1714,12 +1590,12 @@ public class MainWindow extends ApplicationWindow
 				 */
 				if (currentSelectedItem != null && currentSelectedItem == treeItemWhenWorkSetIsChanged)
 				{
-					TreeItemData tid = getTreeItemData(currentSelectedItem);
-					if (!tid.isProjectFolder)
+					if (isTreeItemProject(currentSelectedItem))
 					{
-						if (tid.numKnownEntries == -1)
+						TreeItemData tid = getTreeItemData(currentSelectedItem);
+						if (tid.items.numKnownEntries == -1)
 						{
-							tid.numKnownEntries = setTextArea.getNumberOfKnownEntries();
+							tid.items.numKnownEntries = setTextArea.getNumberOfKnownEntries();
 							updateTextOfItem(currentSelectedItem);
 						}
 					}
@@ -1834,8 +1710,9 @@ public class MainWindow extends ApplicationWindow
 		{
 			public void treeExpanded(TreeEvent e)
 			{
-				TreeItemData tid = getTreeItemData((TreeItem) e.item);
-				if (tid != null && tid.isProjectFolder)
+				TreeItem ti = (TreeItem)e.item;
+				TreeItemData tid = getTreeItemData(ti);
+				if (isTreeItemProject(ti))
 				{
 					tid.project.settings.isClosed = false;
 					storeProjectSettings(tid);
@@ -1844,8 +1721,9 @@ public class MainWindow extends ApplicationWindow
 
 			public void treeCollapsed(TreeEvent e)
 			{
+				TreeItem ti = (TreeItem)e.item;
 				TreeItemData tid = getTreeItemData((TreeItem) e.item);
-				if (tid != null && tid.isProjectFolder)
+				if (isTreeItemProject(ti))
 				{
 					tid.project.settings.isClosed = true;
 					storeProjectSettings(tid);
@@ -1858,17 +1736,17 @@ public class MainWindow extends ApplicationWindow
 				TreeItem item = (TreeItem)event.item;
 				TreeItemData tid = getTreeItemData(item);
 
-				if (!tid.isProjectFolder)
+				if (!isTreeItemProject(item))
 				{
 					int itemHeight = workspaceTree.getItemHeight();
 					int x = event.x;
 					int y = event.y + (itemHeight - event.gc.getFontMetrics().getHeight())/2;
 
 					event.gc.setForeground(workspaceTree.getDisplay().getSystemColor(SWT.COLOR_DARK_GRAY));
-					if (tid.numKnownEntries != -1)
+					if (tid.items.numKnownEntries != -1)
 					{
-						event.gc.drawText(tid.numKnownEntries + "/" + tid.numEntries, x + event.width + 5, y, true);
-					} else event.gc.drawText(tid.numEntries + "", x + event.width + 5, y, true);
+						event.gc.drawText(tid.items.numKnownEntries + "/" + tid.items.numEntries, x + event.width + 5, y, true);
+					} else event.gc.drawText(tid.items.numEntries + "", x + event.width + 5, y, true);
 				}
 			}
 		});
@@ -1894,8 +1772,8 @@ public class MainWindow extends ApplicationWindow
 
 				TreeItemData tid = getTreeItemData(item);
 
-				if (tid.isProjectFolder) text.setText(tid.project.projectDirectory.getName());
-				else text.setText(tid.filename);
+				if (isTreeItemProject(item)) text.setText(tid.project.projectDirectory.getName());
+				else text.setText(tid.items.name);
 
 				text.addFocusListener(new FocusAdapter(){
 					public void focusLost(FocusEvent ev)
@@ -2004,21 +1882,13 @@ public class MainWindow extends ApplicationWindow
 
 			/* Find proper parent which must be a project */
 			TreeItem parent = getProjectItem(items[0]);
-			File projectDirectory = getTreeItemProject(parent).projectDirectory;
-
-			File newPopFile = new File(projectDirectory,"Population");
-			if (!newPopFile.exists())
+			ItemSet pop = getTreeItemProject(parent).newPopulation();
+			if (pop != null)
 			{
-				try
-				{
-					newPopFile.createNewFile();
-					TreeItem newPopItem = newPopItem(parent,"Population");
-					workspaceTree.setSelection(new TreeItem[]{newPopItem});
-					parent.setExpanded(true);
-				} catch (IOException e1)
-				{
-					e1.printStackTrace();
-				}
+				TreeItem newPopItem = newPopItem(parent,pop);
+				workspaceTree.setSelection(new TreeItem[]{newPopItem});
+				parent.setExpanded(true);
+
 				updateGenes();
 			}
 		}
@@ -2033,32 +1903,11 @@ public class MainWindow extends ApplicationWindow
 
 			/* Find proper parent which must be a project */
 			TreeItem parent = getProjectItem(items[0]);
+			ItemSet study = getTreeItemProject(parent).newStudySet();
 
-			File projectDirectory = getTreeItemProject(parent).projectDirectory;
-
-			/* Create a new study set, ensure that it doesn't exists before */
-			File f;
-			int i = 1;
-			do
-			{
-				String name = "New Study Set";
-				if (i!=1) name += " ("+i+")";
-				f = new File(projectDirectory,name);
-				i++;
-			} while (f.exists());
-
-			File newStudyFile = new File(projectDirectory,f.getName());
-			try
-			{
-				newStudyFile.createNewFile();
-				TreeItem newStudyItem = newStudyItem(parent,f.getName());
-				workspaceTree.setSelection(new TreeItem[]{newStudyItem});
-				parent.setExpanded(true);
-			} catch (IOException e1)
-			{
-				e1.printStackTrace();
-				f.delete();
-			}
+			TreeItem newStudyItem = newStudyItem(parent,study);
+			workspaceTree.setSelection(new TreeItem[]{newStudyItem});
+			parent.setExpanded(true);
 
 			updateGenes();
 		}
