@@ -230,7 +230,6 @@ public class MainWindow extends ApplicationWindow
 
 		for (ItemSet items : tid.project.itemSets())
 		{
-			System.out.println(items.name);
 			if (items.population) newPopItem(projectTreeItem, items);
 			else newStudyItem(projectTreeItem, items);
 		}
