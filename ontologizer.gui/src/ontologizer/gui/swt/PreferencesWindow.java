@@ -267,8 +267,6 @@ public class PreferencesWindow extends ApplicationWindow
 
 	/**
 	 * Opens the shell window using the current settings.
-	 *
-	 * @return
 	 */
 	public void open()
 	{
@@ -342,9 +340,7 @@ public class PreferencesWindow extends ApplicationWindow
 	}
 
 	/**
-	 * Returns the dot path.
-	 *
-	 * @return
+	 * @return the dot path.
 	 */
 	public String getDOTPath()
 	{
@@ -352,9 +348,7 @@ public class PreferencesWindow extends ApplicationWindow
 	}
 
 	/**
-	 * Returns the number of permutations.
-	 *
-	 * @return
+	 * @return the number of permutations.
 	 */
 	public int getNumberOfPermutations()
 	{
@@ -362,9 +356,7 @@ public class PreferencesWindow extends ApplicationWindow
 	}
 
 	/**
-	 * Returns the proxy port.
-	 *
-	 * @return
+	 * @return the proxy port.
 	 */
 	public int getProxyPort()
 	{
@@ -372,9 +364,7 @@ public class PreferencesWindow extends ApplicationWindow
 	}
 
 	/**
-	 * Returns the proxy host.
-	 *
-	 * @return
+	 * @return the proxy host.
 	 */
 	public String getProxyHost()
 	{
@@ -382,10 +372,8 @@ public class PreferencesWindow extends ApplicationWindow
 	}
 
 	/**
-	 * Returns the wrap column or -1 if this feature should
+	 * @return the wrap column or -1 if this feature should
 	 * be disabled.
-	 *
-	 * @return
 	 */
 	public int getWrapColumn()
 	{
@@ -455,9 +443,7 @@ public class PreferencesWindow extends ApplicationWindow
 	}
 
 	/**
-	 * Returns the number of MCMC steps to be performed.
-	 *
-	 * @return
+	 * @return the number of MCMC steps to be performed.
 	 */
 	public int getNumberOfMCMCSteps()
 	{
