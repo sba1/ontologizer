@@ -126,6 +126,8 @@ public class ProjectSettingsComposite extends Composite
 	{
 		public String name;
 		public String description;
+
+		@SuppressWarnings("unused")
 		public String cl;
 
 		public Evidence(String name, String description, String cl)
@@ -457,9 +459,7 @@ public class ProjectSettingsComposite extends Composite
 	}
 
 	/**
-	 * Returns the mapping file string.
-	 *
-	 * @return
+	 * @return the mapping file string.
 	 */
 	public String getMappingFileString()
 	{
@@ -478,9 +478,7 @@ public class ProjectSettingsComposite extends Composite
 	}
 
 	/**
-	 * Returns the currently selected subset.
-	 *
-	 * @return
+	 * @return the currently selected subset.
 	 */
 	public String getSubsetString()
 	{
@@ -492,8 +490,7 @@ public class ProjectSettingsComposite extends Composite
 	}
 
 	/**
-	 * Returns the currently selected subontology.
-	 * @return
+	 * @return the currently selected subontology.
 	 */
 	public String getSubontologyString()
 	{
@@ -508,9 +505,7 @@ public class ProjectSettingsComposite extends Composite
 	}
 
 	/**
-	 * Returns the association file string.
-	 *
-	 * @return
+	 * @return the association file string.
 	 */
 	public String getAssociationsFileString()
 	{
@@ -662,9 +657,7 @@ public class ProjectSettingsComposite extends Composite
 	}
 
 	/**
-	 * Returns the selected evidences.
-	 *
-	 * @return
+	 * @return the selected evidences.
 	 */
 	public Collection<String> getCheckedEvidences()
 	{
@@ -725,7 +718,7 @@ public class ProjectSettingsComposite extends Composite
 	/**
 	 * Add an action that is invoked when a link was clicked in the info text.
 	 *
-	 * @param act
+	 * @param listener
 	 */
 	public void addInfoTextClickListener(InfoTextClickListener listener)
 	{
