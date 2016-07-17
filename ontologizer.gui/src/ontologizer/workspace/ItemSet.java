@@ -26,7 +26,7 @@ public class ItemSet
 			return false;
 
 		File src = new File(project.projectDirectory,name);
-		File dest = new File(project.projectDirectory,name);
+		File dest = new File(project.projectDirectory,newName);
 
 		if (dest.exists())
 			return false;
