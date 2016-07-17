@@ -284,7 +284,7 @@ public class MainWindow extends ApplicationWindow
 	 *
 	 * @param param
 	 * @param items
-	 * @return
+	 * @return the new population item
 	 */
 	private TreeItem newPopItem(TreeItem parent, ItemSet items)
 	{
