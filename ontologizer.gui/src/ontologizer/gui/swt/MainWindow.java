@@ -269,11 +269,13 @@ public class MainWindow extends ApplicationWindow
 	 */
 	private void applyCurrentProjectSettings(Project project)
 	{
-		project.settings.annotationsFileName = getAssociationsFileString();
-		project.settings.ontologyFileName = getDefinitionFileString();
-		project.settings.mappingFileName = getMappingFileString();
-		project.settings.subontology = getSubontologyString();
-		project.settings.subset = getSubsetString();
+		ProjectSettings settings = project.settings;
+
+		settings.annotationsFileName = getAssociationsFileString();
+		settings.ontologyFileName = getDefinitionFileString();
+		settings.mappingFileName = getMappingFileString();
+		settings.subontology = getSubontologyString();
+		settings.subset = getSubsetString();
 	}
 
 	/**
