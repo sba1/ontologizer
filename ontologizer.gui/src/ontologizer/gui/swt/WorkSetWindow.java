@@ -229,9 +229,7 @@ public class WorkSetWindow extends ApplicationWindow
 	}
 
 	/**
-	 * Return the selected work set.
-	 *
-	 * @return
+	 * @return the selected work set.
 	 */
 	public WorkSet getSelectedWorkSet()
 	{
@@ -248,9 +246,7 @@ public class WorkSetWindow extends ApplicationWindow
 	}
 
 	/**
-	 * Returns the selected address.
-	 *
-	 * @return
+	 * @return the selected address.
 	 */
 	public String getSelectedAddress()
 	{

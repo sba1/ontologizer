@@ -654,9 +654,7 @@ public class ResultWindow extends ApplicationWindow
 	}
 
 	/**
-	 * Returns whether the window is disposed.
-	 *
-	 * @return
+	 * @return whether the window is disposed.
 	 */
 	public boolean isDisposed()
 	{
