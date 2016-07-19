@@ -2,19 +2,10 @@ package ontologizer.benchmark;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Collections;
 
 import ontologizer.GlobalPreferences;
 import ontologizer.association.AssociationContainer;
-import ontologizer.calculation.AbstractGOTermProperties;
-import ontologizer.calculation.EnrichedGOTermsResult;
 import ontologizer.calculation.ProbabilisticCalculation;
-import ontologizer.calculation.b2g.B2GParam;
-import ontologizer.calculation.b2g.Bayes2GOCalculation;
-import ontologizer.calculation.b2g.Bayes2GOGOTermProperties;
-import ontologizer.enumeration.TermEnumerator;
 import ontologizer.ontology.Ontology;
 import ontologizer.parser.AbstractItemParser;
 import ontologizer.parser.IParserCallback;
@@ -34,8 +25,6 @@ public class Single {
 	 */
 	public static void main(String[] args) throws IOException, InterruptedException
 	{
-		int numProcessors = Runtime.getRuntime().availableProcessors();
-
 		GlobalPreferences.setProxyPort(888);
 		GlobalPreferences.setProxyHost("realproxy.charite.de");
 
@@ -67,13 +56,10 @@ public class Single {
 
 		graph.setRelevantSubontology("biological_process");
 
-		TermEnumerator popEnumerator = popSet.enumerateGOTerms(graph, assoc);
-		TermEnumerator studyEnumerator = studySet.enumerateGOTerms(graph, assoc);
-
 		ProbabilisticCalculation propCalc = new ProbabilisticCalculation();
 		propCalc.setDefaultP(0.33);
 		propCalc.setDefaultQ(0.05);
-		EnrichedGOTermsResult result = propCalc.calculateStudySet(graph, assoc, popSet, studySet, new None());
+		propCalc.calculateStudySet(graph, assoc, popSet, studySet, new None());
 	}
 
 }

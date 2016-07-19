@@ -69,7 +69,6 @@ public class Randomize {
 
 		graph.setRelevantSubontology("biological_process");
 
-		TermEnumerator popEnumerator = popSet.enumerateGOTerms(graph, assoc);
 		TermEnumerator studyEnumerator = studySet.enumerateGOTerms(graph, assoc);
 
 		ArrayList<ByteString> studyGenes = new ArrayList<ByteString>(studyEnumerator.getGenes());
