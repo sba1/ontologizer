@@ -52,4 +52,9 @@ public class Workspace
 			projects.add(new Project(new File(defaultDirectory, project)));
 		}
 	}
+
+	public Iterable<Project> projects()
+	{
+		return projects;
+	}
 }
