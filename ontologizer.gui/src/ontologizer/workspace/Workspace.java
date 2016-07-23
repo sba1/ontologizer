@@ -27,6 +27,11 @@ public class Workspace
 		refresh();
 	}
 
+	public File getDefaultDirectory()
+	{
+		return defaultDirectory;
+	}
+
 	private void refresh()
 	{
 		String [] projectNames = defaultDirectory.list(new FilenameFilter()
