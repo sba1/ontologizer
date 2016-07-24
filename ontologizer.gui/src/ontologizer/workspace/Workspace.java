@@ -32,6 +32,19 @@ public class Workspace
 		return defaultDirectory;
 	}
 
+	/**
+	 * Add a new project that is located in the workspace and represent an object of it.
+	 *
+	 * @param projectName the name or folder name of the project relative to the default directory.
+	 * @return the project
+	 */
+	public Project addProject(String projectName)
+	{
+		Project project = new Project(new File(defaultDirectory, projectName));
+		projects.add(project);
+		return project;
+	}
+
 	private void refresh()
 	{
 		String [] projectNames = defaultDirectory.list(new FilenameFilter()
@@ -49,10 +62,9 @@ public class Workspace
 			if (project.equals(".cache"))
 				continue;
 
-			projects.add(new Project(new File(defaultDirectory, project)));
+			addProject(project);
 		}
 	}
-
 	public Iterable<Project> projects()
 	{
 		return projects;
