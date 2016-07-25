@@ -14,10 +14,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -87,6 +85,7 @@ import ontologizer.worksets.WorkSetLoadThread;
 import ontologizer.workspace.ItemSet;
 import ontologizer.workspace.Project;
 import ontologizer.workspace.ProjectSettings;
+import ontologizer.workspace.Workspace;
 
 class TreeItemData
 {
@@ -113,7 +112,8 @@ public class MainWindow extends ApplicationWindow
 	public static final String PROJECT_SETTINGS_NAME = ".project";
 
 	/* Manually added attributes */
-	private File workspaceDirectory;
+	private Workspace workspace;
+
 	private TreeItem currentSelectedItem = null;
 	private String currentImportFileName = null;
 	private String currentExportFileName = null;
@@ -178,54 +178,45 @@ public class MainWindow extends ApplicationWindow
 	/**
 	 * Sets the workspace to the given file.
 	 *
-	 * @param newWorkspaceDirectory
-	 * 				must point to a directory.
+	 * @param workspace the workspace to set.
 	 */
-	public void setWorkspace(File newWorkspaceDirectory)
+	public void setWorkspace(Workspace workspace)
 	{
-		if (!newWorkspaceDirectory.isDirectory())
-			throw new IllegalArgumentException();
+		this.workspace = workspace;
 
-		workspaceDirectory = newWorkspaceDirectory;
-
-		String [] projects = newWorkspaceDirectory.list(new FilenameFilter()
+		for (Project project : workspace.projects())
 		{
-			public boolean accept(File dir, String name)
-			{
-				if (name.startsWith(".")) return false;
-				return true;
-			}
-		});
-		Arrays.sort(projects,String.CASE_INSENSITIVE_ORDER);
-
-		for (String project : projects)
-		{
-			if (project.equals(".cache"))
-				continue;
-
-			addProject(new File(newWorkspaceDirectory,project));
+			addProject(project);
 		}
 	}
 
 	/**
-	 * Adds a new project.
-	 *
-	 * @param projectDirectory
+	 * @return the workspace.
 	 */
-	public void addProject(File projectDirectory)
+	public Workspace getWorkspace()
 	{
-		addProject(projectDirectory, false);
+		return workspace;
 	}
 
 	/**
-	 * Adds a new project.
+	 * Adds the given project to the ui.
 	 *
-	 * @param projectDirectory
-	 * @param activate indicate whether the project should be active
+	 * @param project the project to be added
 	 */
-	public void addProject(File projectDirectory, boolean activate)
+	public void addProject(Project project)
 	{
-		TreeItem projectTreeItem = newProjectItem(projectDirectory,projectDirectory.getName());
+		addProject(project, false);
+	}
+
+	/**
+	 * Adds the given project to the ui.
+	 *
+	 * @param project the project to be added
+	 * @param activate whether the project shall be activated or not
+	 */
+	public void addProject(Project project, boolean activate)
+	{
+		TreeItem projectTreeItem = newProjectItem(project);
 		TreeItemData tid = getTreeItemData(projectTreeItem);
 
 		for (ItemSet items : tid.project.itemSets())
@@ -241,20 +232,17 @@ public class MainWindow extends ApplicationWindow
 			workspaceTree.setSelection(projectTreeItem);
 			updateGenes();
 		}
+
 	}
 
+
 	/**
-	 * Create a new project item using the given name.
-	 *
-	 * @param directory
-	 * @param name
-	 * @return
+	 * Create a new project item for the given project.
 	 */
-	private TreeItem newProjectItem(File directory, String name)
+	private TreeItem newProjectItem(Project project)
 	{
 		TreeItemData newItemData = new TreeItemData();
-		newItemData.project = new Project(directory);
-		applyCurrentProjectSettings(newItemData.project);
+		newItemData.project = project;
 
 		TreeItem newItem = new TreeItem(workspaceTree,0);
 		newItem.setData(newItemData);
@@ -1231,7 +1219,7 @@ public class MainWindow extends ApplicationWindow
 						{
 							ZipEntry target = entries.nextElement();
 							String targetName = target.getName();
-							File f = new File(workspaceDirectory.getAbsolutePath(),target.getName());
+							File f = new File(workspace.getDefaultDirectory().getAbsolutePath(),target.getName());
 
 							if (target.isDirectory() && projectName == null)
 								projectName = target.getName().replace("/","");
@@ -1261,13 +1249,14 @@ public class MainWindow extends ApplicationWindow
 										continue;
 								}
 							}
-							saveEntry(zipFile,target,workspaceDirectory.getAbsolutePath());
+							saveEntry(zipFile,target,workspace.getDefaultDirectory().getAbsolutePath());
 						}
 
 						/* Finally, add the new project */
 						if (!projectExisted && projectName != null)
 						{
-							addProject(new File(workspaceDirectory,projectName));
+							Project project = workspace.addProject(projectName);
+							addProject(project);
 						}
 						currentImportFileName = zipName;
 					} catch (IOException e1)

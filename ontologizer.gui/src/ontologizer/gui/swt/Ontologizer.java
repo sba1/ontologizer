@@ -51,6 +51,7 @@ import ontologizer.set.StudySetList;
 import ontologizer.statistics.TestCorrectionRegistry;
 import ontologizer.worksets.WorkSet;
 import ontologizer.worksets.WorkSetList;
+import ontologizer.workspace.Workspace;
 import tools.Sleak;
 
 /**
@@ -542,7 +543,7 @@ public class Ontologizer
 			workspace.mkdirs();
 		logger.info("Workspace directory is \"" + workspace.getAbsolutePath() + "\"");
 
-		main.setWorkspace(workspace);
+		main.setWorkspace(new Workspace(workspace));
 		main.updateWorkSetList(workSetList);
 
 		/* Prepare the file cache */
@@ -785,7 +786,7 @@ public class Ontologizer
 
 	public static void newProject(File project)
 	{
-		main.addProject(project, true);
+		main.addProject(main.getWorkspace().addProject(project.getName()), true);
 	}
 
 	/************************************************************************/
