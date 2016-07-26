@@ -113,6 +113,9 @@ public class MainWindow extends ApplicationWindow
 	/* Manually added attributes */
 	private Workspace workspace;
 
+	/** The currently selected workset */
+	private WorkSet currentWorkSet;
+
 	private TreeItem currentSelectedItem = null;
 	private String currentImportFileName = null;
 	private String currentExportFileName = null;
@@ -484,8 +487,6 @@ public class MainWindow extends ApplicationWindow
 		}
 		return null;
 	}
-
-	private static WorkSet currentWorkSet;
 
 	/**
 	 * Update the setTextArea to the genes of the current
