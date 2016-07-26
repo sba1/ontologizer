@@ -10,7 +10,6 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
@@ -27,7 +26,6 @@ import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
-import java.util.zip.ZipOutputStream;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -79,6 +77,7 @@ import ontologizer.ontology.Ontology;
 import ontologizer.ontology.Subset;
 import ontologizer.ontology.Term;
 import ontologizer.statistics.TestCorrectionRegistry;
+import ontologizer.util.ZipFolder;
 import ontologizer.worksets.WorkSet;
 import ontologizer.worksets.WorkSetList;
 import ontologizer.worksets.WorkSetLoadThread;
@@ -1968,35 +1967,6 @@ public class MainWindow extends ApplicationWindow
 	 */
 	private void exportProject(File projectDirectory, String archiveName) throws FileNotFoundException, IOException
 	{
-		/* Write out a zip archive containing all the data of the project */
-		String projectName = projectDirectory.getName();
-		ZipOutputStream zip = new ZipOutputStream(new FileOutputStream(archiveName));
-		ZipEntry entry = new ZipEntry(projectName + "/");
-		zip.putNextEntry(entry);
-		zip.closeEntry();
-
-		byte [] buffer = new byte[4096];
-
-		String [] names = projectDirectory.list();
-		for (String name : names)
-		{
-			File f = new File(projectDirectory,name);
-			FileInputStream in = new FileInputStream(f);
-
-			try
-			{
-				/* Add zip entry to the output stream */
-				zip.putNextEntry(new ZipEntry(projectName + "/" + name));
-				int len;
-				while ((len = in.read(buffer)) > 0)
-					zip.write(buffer, 0, len);
-				zip.closeEntry();
-			} finally
-			{
-				in.close();
-			}
-		}
-
-		zip.close();
+		ZipFolder.zip(projectDirectory, archiveName);
 	}
 }
