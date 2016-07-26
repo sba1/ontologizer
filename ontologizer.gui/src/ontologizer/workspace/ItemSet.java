@@ -5,7 +5,7 @@ import java.io.File;
 /**
  * Describes a set of item.
  */
-public class ItemSet
+public class ItemSet implements IResource
 {
 	private Project project;
 

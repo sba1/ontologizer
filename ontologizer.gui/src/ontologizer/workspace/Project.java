@@ -17,7 +17,7 @@ import java.util.logging.Logger;
  *
  * @author Sebastian Bauer
  */
-public class Project
+public class Project implements IResource
 {
 	/** The logger */
 	private static Logger logger = Logger.getLogger(Project.class.getCanonicalName());

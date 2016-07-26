@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class Workspace
+public class Workspace implements IResource
 {
 	private File defaultDirectory;
 
