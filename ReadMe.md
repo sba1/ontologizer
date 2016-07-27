@@ -23,8 +23,9 @@ $ cd ontologizer.parent
 $ mvn package
 ```
 
-Note that when using Java8 this may break currently, due to bugs in the Javadocs. Add
-```-Dmaven.javadoc.skip=true``` to the previous command if you encounter this problem.
+When the build breaks due to bugs in Javadocs, add ```-Dmaven.javadoc.skip=true``` to the
+previous command and file an Issue. Similiary, if tests break the build you can add
+```-DskipTests``` to skip the execution of the tests.
 
 If successful, the command line version can be found in ```ontologizer.cmdline``` and the
 UI version in the ```ontologizer.gui``` modules in the respective ```target``` folders.
