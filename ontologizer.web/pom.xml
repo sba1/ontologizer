@@ -101,7 +101,7 @@
 							<targetDirectory>${project.build.directory}/generated/js/teavm</targetDirectory>
 
 							<!-- Main class, containing static void main(String[]) -->
-							<mainClass>ontologizer.OntologizerClient</mainClass>
+							<mainClass>ontologizer.OntologizerWorkerClient</mainClass>
 
 							<!-- How to attach runtime.js. Possible values are: SEPARATE, MERGED 
 								and NONE -->
@@ -109,7 +109,7 @@
 
 							<!-- Whether TeaVM should produce minified JavaScript. Can reduce 
 								JavaScript file size more than two times -->
-							<minifying>true</minifying>
+							<minifying>false</minifying>
 
 							<!-- Whether TeaVM should produce debug information for its built-in 
 								debugger -->
