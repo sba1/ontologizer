@@ -2,7 +2,8 @@
  * The Ontologizer Worker
  */
 
-window = new Object()
+/* The TeaVM runtime refers to the global browser context sometimes */
+window = self
 
 importScripts('teavm/runtime.js', 'teavm/classes.js');
 
