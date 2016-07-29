@@ -8,7 +8,6 @@ import org.teavm.jso.JSBody;
 import org.teavm.jso.JSIndexer;
 import org.teavm.jso.JSObject;
 import org.teavm.jso.JSProperty;
-import org.teavm.jso.ajax.XMLHttpRequest;
 import org.teavm.jso.browser.Window;
 import org.teavm.jso.dom.html.HTMLBodyElement;
 import org.teavm.jso.dom.html.HTMLButtonElement;
@@ -97,29 +96,6 @@ abstract class HTMLBootstrapTableElement implements HTMLElement
 
 	@JSBody(script="$(obj).bootstrapTable('removeAll')", params = { "obj" })
 	private static native void removeAll_(HTMLBootstrapTableElement obj);
-}
-
-abstract class ArrayBufferHttpRequest extends XMLHttpRequest
-{
-	/**
-	 * Return the response as a byte array.
-	 *
-	 * @return the byte array of the result
-	 */
-	public byte [] getResponseBytes()
-	{
-		return getResponseBytes_(this);
-	}
-
-	@JSBody(script="return new Int8Array(request.response)", params={"request"})
-	private static native byte [] getResponseBytes_(ArrayBufferHttpRequest request);
-
-	public static ArrayBufferHttpRequest create()
-	{
-		XMLHttpRequest req = XMLHttpRequest.create();
-		req.setResponseType("arraybuffer");
-		return req.cast();
-	}
 }
 
 /**
