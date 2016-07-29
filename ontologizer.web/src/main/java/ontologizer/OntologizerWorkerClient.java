@@ -1,6 +1,5 @@
 package ontologizer;
 
-
 /**
  * Main class of the Ontologizer Web Worker.
  *
@@ -10,6 +9,8 @@ public class OntologizerWorkerClient
 {
 	public static void main(String[] args)
 	{
-		System.out.println("Inside Java Worker!");
+		Worker.current().listenMessage((evt)->{
+			System.out.println("Message from main: " + evt.getDataAsString());
+		});
 	}
 }

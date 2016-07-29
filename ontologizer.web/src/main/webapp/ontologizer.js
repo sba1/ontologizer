@@ -4,5 +4,5 @@
 
 function main() {
 	var worker = new Worker('ontologizer-worker.js');
-	worker.postMessage('Start');
+	worker.postMessage('Hello, worker!');
 }
