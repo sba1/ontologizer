@@ -148,15 +148,6 @@ public class OntologizerClient
 		studySetText.setNodeValue(lines.length + " items");
 	}
 
-	/**
-	 * Return the result of an http request as a byte array.
-	 *
-	 * @param request
-	 * @return the byte array of the result
-	 */
-	@JSBody(script="return new Int8Array(request.response)", params={"request"})
-	private static native byte [] getByteResult(final XMLHttpRequest request);
-
 	public static void main(String[] args) throws IOException, OBOParserException
 	{
 		/* Title */
@@ -255,7 +246,7 @@ public class OntologizerClient
 				assocRequest.open("GET", "gene_association.sgd.gz");
 				assocRequest.onComplete(() ->
 				{
-					byte[] assocBuf = getByteResult(assocRequest);
+					byte[] assocBuf = Utils.getByteResult(assocRequest);
 					try
 					{
 						AssociationParser ap = new AssociationParser(new ByteArrayParserInput(assocBuf), goTerms);
