@@ -16,13 +16,10 @@ public class OntologizerWorkerClient
 	public static void main(String[] args)
 	{
 		Worker.current().listenMessage((evt)->{
-			System.out.println("Message from main: " + evt.getDataAsString());
-
 			DatafilesLoader loader = new DatafilesLoader();
 			loader.load( () -> {
 				ontology = loader.getOntology();
 				associations = loader.getAnnotation();
-				System.out.println(ontology.getNumberOfTerms());
 			});
 		});
 	}
