@@ -20,6 +20,8 @@ public class OntologizerWorkerClient
 			loader.load( () -> {
 				ontology = loader.getOntology();
 				associations = loader.getAnnotation();
+
+				Worker.current().postMessage("Data loaded!");
 			});
 		});
 	}

@@ -15,4 +15,6 @@ public abstract class Worker implements JSObject, EventTarget
 	{
 		addEventListener("message", listener);
 	}
+
+	public abstract void postMessage(String str);
 }
