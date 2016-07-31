@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import ontologizer.association.AssociationContainer;
 import ontologizer.association.AssociationParser;
+import ontologizer.association.IAssociationParserProgress;
 import ontologizer.ontology.IOBOParserProgress;
 import ontologizer.ontology.OBOParser;
 import ontologizer.ontology.OBOParserException;
@@ -20,7 +21,12 @@ public class DatafilesLoader
 		public void update(int current, int max, int terms);
 	}
 
-	public void load(Runnable done, final OBOProgress oboProgess)
+	public static interface AssociationProgess
+	{
+		public void update(int current, int max);
+	}
+
+	public void load(Runnable done, final OBOProgress oboProgess, final AssociationProgess associationProgess)
 	{
 		/* Load obo file */
 		final ArrayBufferHttpRequest oboRequest = ArrayBufferHttpRequest.create();
@@ -60,7 +66,23 @@ public class DatafilesLoader
 					byte[] assocBuf = Utils.getByteResult(assocRequest);
 					try
 					{
-						AssociationParser ap = new AssociationParser(new ByteArrayParserInput(assocBuf), goTerms);
+						AssociationParser ap = new AssociationParser(new ByteArrayParserInput(assocBuf), goTerms, null, new IAssociationParserProgress()
+						{
+							private int max;
+
+							@Override
+							public void update(int current)
+							{
+								associationProgess.update(current, max);
+							}
+
+							@Override
+							public void init(int max)
+							{
+								this.max = max;
+								associationProgess.update(0, max);
+							}
+						});
 						annotation = new AssociationContainer(ap.getAssociations(), ap.getSynonym2gene(), ap.getDbObject2gene());
 
 						done.run();

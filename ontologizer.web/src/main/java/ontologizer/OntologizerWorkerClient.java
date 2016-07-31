@@ -27,6 +27,10 @@ public class OntologizerWorkerClient
 			(int current, int max, int terms) ->
 			{
 				System.out.println(current + " / " + max);
+			},
+			(int current, int max) ->
+			{
+				System.out.println(current + " / " + max);
 			});
 		});
 	}
