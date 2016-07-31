@@ -24,15 +24,22 @@ public class OntologizerWorkerClient
 				ontology = loader.getOntology();
 				associations = loader.getAnnotation();
 
-				Worker.current().postMessage(WorkerMessage.createWorkerMessage(ProgressMessage.class));
+				ProgressMessage msg = WorkerMessage.createWorkerMessage(ProgressMessage.class);
+				Worker.current().postMessage(msg);
 			},
 			(int current, int max, int terms) ->
 			{
-				System.out.println(current + " / " + max);
+				ProgressMessage msg = WorkerMessage.createWorkerMessage(ProgressMessage.class);
+				msg.setCurrent(current);
+				msg.setMax(max);
+				Worker.current().postMessage(msg);
 			},
 			(int current, int max) ->
 			{
-				System.out.println(current + " / " + max);
+				ProgressMessage msg = WorkerMessage.createWorkerMessage(ProgressMessage.class);
+				msg.setCurrent(current);
+				msg.setMax(max);
+				Worker.current().postMessage(msg);
 			});
 		});
 	}
