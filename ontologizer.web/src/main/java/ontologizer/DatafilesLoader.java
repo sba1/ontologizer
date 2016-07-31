@@ -56,7 +56,6 @@ public class DatafilesLoader
 				});
 				final TermContainer goTerms = new TermContainer(oboParser.getTermMap(), oboParser.getFormatVersion(), oboParser.getDate());
 				ontology = Ontology.create(goTerms);
-				System.out.println(ontology.getNumberOfTerms() + " terms");
 
 				/* Load associations */
 				final ArrayBufferHttpRequest assocRequest = ArrayBufferHttpRequest.create();
