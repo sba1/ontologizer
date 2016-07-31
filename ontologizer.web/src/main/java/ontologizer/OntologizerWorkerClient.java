@@ -10,13 +10,15 @@ import ontologizer.ontology.Ontology;
  */
 public class OntologizerWorkerClient
 {
+	public static DatafilesLoader loader;
 	public static Ontology ontology;
 	public static AssociationContainer associations;
 
 	public static void main(String[] args)
 	{
+		loader = new DatafilesLoader();
+
 		Worker.current().listenMessage((evt)->{
-			DatafilesLoader loader = new DatafilesLoader();
 			loader.load( () ->
 			{
 				ontology = loader.getOntology();
