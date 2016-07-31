@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import ontologizer.association.AssociationContainer;
 import ontologizer.association.AssociationParser;
+import ontologizer.ontology.IOBOParserProgress;
 import ontologizer.ontology.OBOParser;
 import ontologizer.ontology.OBOParserException;
 import ontologizer.ontology.Ontology;
@@ -14,7 +15,12 @@ public class DatafilesLoader
 	private Ontology ontology;
 	private AssociationContainer annotation;
 
-	public void load(Runnable done)
+	public static interface OBOProgress
+	{
+		public void update(int current, int max, int terms);
+	}
+
+	public void load(Runnable done, final OBOProgress oboProgess)
 	{
 		/* Load obo file */
 		final ArrayBufferHttpRequest oboRequest = ArrayBufferHttpRequest.create();
@@ -24,7 +30,24 @@ public class DatafilesLoader
 			OBOParser oboParser = new OBOParser(new ByteArrayParserInput(oboRequest.getResponseBytes()));
 			try
 			{
-				oboParser.doParse();
+				oboParser.doParse(new IOBOParserProgress()
+				{
+					private int max;
+
+					@Override
+					public void init(int max)
+					{
+						this.max = max;
+
+						oboProgess.update(0, max, 0);
+					}
+
+					@Override
+					public void update(int current, int terms)
+					{
+						oboProgess.update(current,  max, terms);
+					}
+				});
 				final TermContainer goTerms = new TermContainer(oboParser.getTermMap(), oboParser.getFormatVersion(), oboParser.getDate());
 				ontology = Ontology.create(goTerms);
 				System.out.println(ontology.getNumberOfTerms() + " terms");

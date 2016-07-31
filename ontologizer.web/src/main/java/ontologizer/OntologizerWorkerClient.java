@@ -17,11 +17,16 @@ public class OntologizerWorkerClient
 	{
 		Worker.current().listenMessage((evt)->{
 			DatafilesLoader loader = new DatafilesLoader();
-			loader.load( () -> {
+			loader.load( () ->
+			{
 				ontology = loader.getOntology();
 				associations = loader.getAnnotation();
 
-				Worker.current().postMessage("Data loaded!");
+				Worker.current().postMessage(WorkerMessage.createWorkerMessage(ProgressMessage.class));
+			},
+			(int current, int max, int terms) ->
+			{
+				System.out.println(current + " / " + max);
 			});
 		});
 	}
