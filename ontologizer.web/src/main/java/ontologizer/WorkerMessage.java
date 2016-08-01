@@ -2,6 +2,7 @@ package ontologizer;
 
 import org.teavm.jso.JSBody;
 import org.teavm.jso.JSObject;
+import org.teavm.jso.JSProperty;
 
 /**
  * The type used for messages between worker and main and vice versa.
@@ -12,6 +13,9 @@ public abstract class WorkerMessage implements JSObject
 {
 	@JSBody(script="return {type: type}", params = {"type"})
 	private static native WorkerMessage createWorkerMessage(String type);
+
+	@JSProperty
+	public abstract String getType();
 
 	/**
 	 * Create a worker message

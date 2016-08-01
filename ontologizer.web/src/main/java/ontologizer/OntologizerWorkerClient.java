@@ -18,7 +18,8 @@ public class OntologizerWorkerClient
 	{
 		loader = new DatafilesLoader();
 
-		Worker.current().listenMessage((evt)->{
+		Worker.current().listenMessage(WorkerMessage.class, (WorkerMessage wm) ->
+		{
 			loader.load( () ->
 			{
 				ontology = loader.getOntology();
