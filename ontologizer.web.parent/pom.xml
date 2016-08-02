@@ -10,6 +10,12 @@
 	<artifactId>ontologizer.web.parent</artifactId>
 	<packaging>pom</packaging>
 
+	<properties>
+		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
+		<teavm.version>0.4.3</teavm.version>
+		<java.version>1.8</java.version>
+	</properties>
+
 	<modules>
 		<module>../ontologizer.web</module>
 	</modules>

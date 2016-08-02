@@ -12,12 +12,6 @@
 		<relativePath>../ontologizer.web.parent</relativePath>
 	</parent>
 
-	<properties>
-		<project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
-		<teavm.version>0.4.3</teavm.version>
-		<java.version>1.8</java.version>
-	</properties>
-
 	<build>
 		<plugins>
 			<!-- Configure Java compiler to use Java 8 syntax -->
