@@ -7,9 +7,9 @@
 
 	<parent>
 		<groupId>ontologizer</groupId>
-		<artifactId>ontologizer.parent</artifactId>
+		<artifactId>ontologizer.web.parent</artifactId>
 		<version>0.0.3-SNAPSHOT</version>
-		<relativePath>../ontologizer.parent</relativePath>
+		<relativePath>../ontologizer.web.parent</relativePath>
 	</parent>
 
 	<properties>

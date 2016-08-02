@@ -70,7 +70,7 @@
     <profile>
      <id>Web</id>
      <modules>
-      <module>../ontologizer.web</module>
+      <module>../ontologizer.web.parent</module>
      </modules>
     </profile>
    </profiles>
