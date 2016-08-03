@@ -1,0 +1,33 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<artifactId>ontologizer.web.common</artifactId>
+	<packaging>jar</packaging>
+
+	<parent>
+		<groupId>ontologizer</groupId>
+		<artifactId>ontologizer.web.parent</artifactId>
+		<version>0.0.3-SNAPSHOT</version>
+		<relativePath>../ontologizer.web.parent</relativePath>
+	</parent>
+
+	<dependencies>
+		<!-- Emulator of Java class library for TeaVM -->
+		<dependency>
+			<groupId>org.teavm</groupId>
+			<artifactId>teavm-classlib</artifactId>
+			<version>${teavm.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- JavaScriptObjects (JSO) - a JavaScript binding for TeaVM -->
+		<dependency>
+			<groupId>org.teavm</groupId>
+			<artifactId>teavm-jso</artifactId>
+			<version>${teavm.version}</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+
+</project>
