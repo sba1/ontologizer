@@ -19,4 +19,19 @@
 	<modules>
 		<module>../ontologizer.web</module>
 	</modules>
+
+	<build>
+		<plugins>
+			<!-- Configure Java compiler to use Java 8 syntax -->
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
 </project>
