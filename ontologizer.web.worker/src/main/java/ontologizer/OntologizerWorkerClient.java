@@ -18,7 +18,7 @@ public class OntologizerWorkerClient
 	{
 		loader = new DatafilesLoader();
 
-		Worker.current().listenMessage(WorkerMessage.class, (WorkerMessage wm) ->
+		Worker.current().listenMessage(StartupMessage.class, (StartupMessage sm) ->
 		{
 			loader.load( () ->
 			{
