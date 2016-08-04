@@ -11,6 +11,9 @@ public abstract class Worker implements JSObject, EventTarget
 	@JSBody(script="return worker", params = {})
 	public static native Worker current();
 
+	@JSBody(script="return new Worker(name);", params={"name"})
+	public static native Worker create(String name);
+
 	public void listenMessage(EventListener<MessageEvent> listener)
 	{
 		addEventListener("message", listener);
