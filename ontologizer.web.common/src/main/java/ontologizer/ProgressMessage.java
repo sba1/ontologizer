@@ -8,7 +8,7 @@ public abstract class ProgressMessage extends WorkerMessage
 	public abstract void setCurrent(int current);
 
 	@JSProperty
-	public abstract void getCurrent();
+	public abstract int getCurrent();
 
 	@JSProperty
 	public abstract void setMax(int max);
