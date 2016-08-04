@@ -8,7 +8,7 @@ window = self
 /* We are using worker to access the worker */
 worker = self
 
-importScripts('teavm/runtime.js', 'teavm/classes.js');
+importScripts('worker/runtime.js', 'worker/classes.js');
 
 console.log("Script Worker!");
 

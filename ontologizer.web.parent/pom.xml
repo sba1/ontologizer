@@ -18,6 +18,7 @@
 
 	<modules>
 		<module>../ontologizer.web.common</module>
+		<module>../ontologizer.web.worker</module>
 		<module>../ontologizer.web</module>
 	</modules>
 
