@@ -7,7 +7,7 @@ package ontologizer;
  *
  * @param <T> type of the worker message that will be handled.
  */
-public interface WorkerMessageReceiver<T extends WorkerMessage>
+public interface WorkerMessageHandler<T extends WorkerMessage>
 {
-	void receive(T msg);
+	void handle(T msg);
 }

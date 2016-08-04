@@ -25,13 +25,13 @@ public abstract class Worker implements JSObject, EventTarget
 	 * @param cls
 	 * @param receiver
 	 */
-	public <T extends WorkerMessage> void listenMessage(Class<T> cls, WorkerMessageReceiver<T> receiver)
+	public <T extends WorkerMessage> void listenMessage(Class<T> cls, WorkerMessageHandler<T> receiver)
 	{
 		listenMessage((ev)->{
 			T wm = ev.getData().cast();
 			if (wm.getType().equals(cls.getName()))
 			{
-				receiver.receive(wm);
+				receiver.handle(wm);
 			}
 		});
 	}
