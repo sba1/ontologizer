@@ -201,7 +201,23 @@ public class OntologizerClient
 		});
 		input.appendChild(ontologizeButton);
 
+		final HTMLElement progressElement = document.getElementById("progress");
+		final boolean hiddenRemoved [] = new boolean[1];
+		final HTMLElement progressInnerElement = progressElement.getChildNodes().get(1).cast();
+
 		Worker worker = Worker.create("ontologizer-worker.js");
 		worker.postMessage(WorkerMessage.createWorkerMessage(StartupMessage.class));
+
+		worker.listenMessage(ProgressMessage.class, (ProgressMessage pm) ->
+		{
+			if (!hiddenRemoved[0])
+			{
+				progressElement.removeAttribute("hidden");
+				hiddenRemoved[0] = true;
+			}
+
+			int percent = (int)Math.floor(pm.getCurrent() * 100.0 / pm.getMax());
+			progressInnerElement.setAttribute("style", "width: " + percent + "%;" );
+		});
 	}
 }
