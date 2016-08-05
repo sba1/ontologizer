@@ -5,6 +5,12 @@ import org.teavm.jso.JSProperty;
 public abstract class ProgressMessage extends WorkerMessage
 {
 	@JSProperty
+	public abstract void setTitle(String title);
+
+	@JSProperty
+	public abstract String getTitle(String title);
+
+	@JSProperty
 	public abstract void setCurrent(int current);
 
 	@JSProperty
