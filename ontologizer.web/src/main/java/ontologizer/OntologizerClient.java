@@ -9,7 +9,6 @@ import org.teavm.jso.dom.html.HTMLBodyElement;
 import org.teavm.jso.dom.html.HTMLButtonElement;
 import org.teavm.jso.dom.html.HTMLDocument;
 import org.teavm.jso.dom.html.HTMLElement;
-import org.teavm.jso.dom.html.HTMLHeadElement;
 import org.teavm.jso.dom.xml.Text;
 
 import ontologizer.association.AssociationContainer;
@@ -51,11 +50,7 @@ public class OntologizerClient
 
 	public static void main(String[] args) throws IOException, OBOParserException
 	{
-		/* Title */
-		HTMLHeadElement head = document.createElement("h1").cast();
-		head.setInnerHTML("Ontologizer");
 		HTMLBodyElement body = document.getBody();
-		body.appendChild(head);
 
 		/* Study set text area */
 		final HTMLTextAreaElement studySet = document.createElement("textarea").cast();
