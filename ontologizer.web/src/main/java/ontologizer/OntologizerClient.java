@@ -1,25 +1,12 @@
 package ontologizer;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Comparator;
 
 import org.teavm.jso.browser.Window;
 import org.teavm.jso.dom.html.HTMLBodyElement;
 import org.teavm.jso.dom.html.HTMLButtonElement;
 import org.teavm.jso.dom.html.HTMLDocument;
 import org.teavm.jso.dom.xml.Text;
-
-import ontologizer.association.AssociationContainer;
-import ontologizer.calculation.AbstractGOTermProperties;
-import ontologizer.calculation.EnrichedGOTermsResult;
-import ontologizer.calculation.TermForTermCalculation;
-import ontologizer.ontology.OBOParserException;
-import ontologizer.ontology.Ontology;
-import ontologizer.set.PopulationSet;
-import ontologizer.set.StudySet;
-import ontologizer.statistics.Bonferroni;
-import ontologizer.types.ByteString;
 
 /**
  * Main class of the Ontologizer Web client.
@@ -38,16 +25,13 @@ public class OntologizerClient
 	private static HTMLButtonElement allGenesButton;
 	private static HTMLBootstrapTableElement resultsTable;
 
-	private static Ontology ontology;
-	private static AssociationContainer annotation;
-
 	public static void studySetChanged(String studySet)
 	{
 		String [] lines = studySet.split("\n");
 		studySetText.setNodeValue(lines.length + " items");
 	}
 
-	public static void main(String[] args) throws IOException, OBOParserException
+	public static void main(String[] args) throws IOException
 	{
 		final Worker worker = Worker.create("ontologizer-worker.js");
 
@@ -71,45 +55,10 @@ public class OntologizerClient
 		ontologizeButton.setType("button");
 		ontologizeButton.listenClick(ev ->
 		{
-			if (annotation == null) return;
-
-			TermForTermCalculation calculation = new TermForTermCalculation();
-			PopulationSet population = new PopulationSet();
-			population.addGenes(annotation.getAllAnnotatedGenes());
-			StudySet study = new StudySet();
-			for (String s : studySet.getValue().split("\n"))
-				study.addGene(new ByteString(s), "");
-			EnrichedGOTermsResult result = calculation.calculateStudySet(ontology, annotation, population, study, new Bonferroni());
-			System.out.println(result.getSize() + " terms");
-
-			int i = 0;
-			AbstractGOTermProperties [] results = new AbstractGOTermProperties[result.getSize()];
-			for (AbstractGOTermProperties p : result)
-				results[i++] = p;
-			Arrays.sort(results, Comparator.comparingDouble(p -> p.p));
-
-			if (resultsTable == null)
-			{
-				Column idColumn = Column.createColumn(COL_ID, "GO ID").cast();
-				Column nameColumn = Column.createColumn(COL_NAME, "Name").cast();
-				Column pvalColumn = Column.createColumn(COL_PVAL, "P value").cast();
-
-				resultsTable = document.createElement("table").cast();
-				resultsTable.bootstrapTable(idColumn,nameColumn,pvalColumn);
-				resultsTable.hideLoading();
-				body.appendChild(resultsTable);
-			}
-
-			i = 0;
-			for (AbstractGOTermProperties p : results)
-			{
-				if (i++ > 30) break;
-
-				resultsTable.append(Row.createRow().
-						setColumn(COL_ID, p.goTerm.getIDAsString()).
-						setColumn(COL_NAME, p.goTerm.getName()).
-						setColumn(COL_PVAL, p.p_adjusted + ""));
-			}
+			String [] items = studySet.getValue().split("\n");
+			OntologizeMessage om = WorkerMessage.createWorkerMessage(OntologizeMessage.class);
+			om.setItems(items);
+			worker.postMessage(om);
 		});
 
 		final ProgressElement progressElement = document.getElementById("progress").cast();
