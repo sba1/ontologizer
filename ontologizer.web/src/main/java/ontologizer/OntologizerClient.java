@@ -49,6 +49,8 @@ public class OntologizerClient
 
 	public static void main(String[] args) throws IOException, OBOParserException
 	{
+		final Worker worker = Worker.create("ontologizer-worker.js");
+
 		HTMLBodyElement body = document.getBody();
 
 		/* Study set text area */
@@ -62,15 +64,8 @@ public class OntologizerClient
 		allGenesButton = document.getElementById("allgenes").cast();
 		allGenesButton.listenClick(ev ->
 		{
-			if (annotation == null) return;
-
-			StringBuilder allGenes = new StringBuilder();
-			for (ByteString gene : annotation.getAllAnnotatedGenes())
-			{
-				allGenes.append(gene.toString());
-				allGenes.append("\n");
-			}
-			studySet.setInnerHTML(allGenes.toString());
+			GetAllGenesMessage gm = WorkerMessage.createWorkerMessage(GetAllGenesMessage.class);
+			worker.postMessage(gm);
 		});
 		HTMLButtonElement ontologizeButton = document.getElementById("ontologize").cast();
 		ontologizeButton.setType("button");
@@ -120,7 +115,6 @@ public class OntologizerClient
 		final ProgressElement progressElement = document.getElementById("progress").cast();
 		final boolean hiddenRemoved [] = new boolean[1];
 
-		Worker worker = Worker.create("ontologizer-worker.js");
 		worker.postMessage(WorkerMessage.createWorkerMessage(StartupMessage.class));
 
 		worker.listenMessage(ProgressMessage.class, (ProgressMessage pm) ->
@@ -133,6 +127,11 @@ public class OntologizerClient
 
 			int percent = (int)Math.floor(pm.getCurrent() * 100.0 / pm.getMax());
 			progressElement.setPercentage(percent);
+		});
+
+		worker.listenMessage(AllGenesMessage.class, (AllGenesMessage am) ->
+		{
+			studySet.setInnerHTML(am.getItems());
 		});
 	}
 }

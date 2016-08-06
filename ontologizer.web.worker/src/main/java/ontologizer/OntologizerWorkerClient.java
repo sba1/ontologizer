@@ -50,6 +50,22 @@ public class OntologizerWorkerClient
 			});
 		});
 
+		Worker.current().listenMessage(GetAllGenesMessage.class, (GetAllGenesMessage gm) ->
+		{
+			if (ontology == null || associations == null)
+				return;
+
+			StringBuilder allGenes = new StringBuilder();
+			for (ByteString gene : associations.getAllAnnotatedGenes())
+			{
+				allGenes.append(gene.toString());
+				allGenes.append("\n");
+			}
+			AllGenesMessage am = WorkerMessage.createWorkerMessage(AllGenesMessage.class);
+			am.setItems(allGenes.toString());
+			Worker.current().postMessage(am);
+		});
+
 		Worker.current().listenMessage(OntologizeMessage.class, (OntologizeMessage om) ->
 		{
 			TermForTermCalculation calculation = new TermForTermCalculation();
