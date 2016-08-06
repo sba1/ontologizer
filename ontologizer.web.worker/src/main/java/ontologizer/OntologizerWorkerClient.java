@@ -77,6 +77,9 @@ public class OntologizerWorkerClient
 			EnrichedGOTermsResult result = calculation.calculateStudySet(ontology, associations, population, study, new Bonferroni());
 
 			System.out.println(result.getSize() + " terms");
+
+			OntologizeDoneMessage odm = WorkerMessage.createWorkerMessage(OntologizeDoneMessage.class);
+			Worker.current().postMessage(odm);
 		});
 	}
 }
