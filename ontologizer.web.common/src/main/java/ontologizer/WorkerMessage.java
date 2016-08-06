@@ -11,11 +11,16 @@ import org.teavm.jso.JSProperty;
  */
 public abstract class WorkerMessage implements JSObject
 {
-	@JSBody(script="return {type: type}", params = {"type"})
-	private static native WorkerMessage createWorkerMessage(String type);
+	@JSBody(script="return {type: type, id: id}", params = {"type", "id"})
+	private static native WorkerMessage createWorkerMessage(String type, int id);
 
 	@JSProperty
 	public abstract String getType();
+
+	@JSProperty
+	public abstract int getId();
+
+	private static int currentId = 0;
 
 	/**
 	 * Create a worker message
@@ -24,6 +29,6 @@ public abstract class WorkerMessage implements JSObject
 	 * @return the newly created worker message.
 	 */
 	public static <T extends WorkerMessage> T createWorkerMessage(Class<T> cl) {
-		return createWorkerMessage(cl.getName()).cast();
+		return createWorkerMessage(cl.getName(), currentId++).cast();
 	}
 }
