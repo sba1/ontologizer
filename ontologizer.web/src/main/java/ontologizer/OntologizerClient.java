@@ -8,7 +8,6 @@ import org.teavm.jso.browser.Window;
 import org.teavm.jso.dom.html.HTMLBodyElement;
 import org.teavm.jso.dom.html.HTMLButtonElement;
 import org.teavm.jso.dom.html.HTMLDocument;
-import org.teavm.jso.dom.html.HTMLElement;
 import org.teavm.jso.dom.xml.Text;
 
 import ontologizer.association.AssociationContainer;
@@ -53,18 +52,14 @@ public class OntologizerClient
 		HTMLBodyElement body = document.getBody();
 
 		/* Study set text area */
-		final HTMLTextAreaElement studySet = document.createElement("textarea").cast();
-		body.appendChild(studySet);
-		studySet.appendChild(document.createTextNode("text"));
+		final HTMLTextAreaElement studySet = document.getElementById("settextarea").cast();
 
 		studySet.listenKeyPress(evt -> studySetChanged(studySet.getValue()));
 
 		studySetText = document.createTextNode("");
 		body.appendChild(studySetText);
-		HTMLElement input = document.createElement("form").cast();
-		body.appendChild(input);
-		allGenesButton = document.createElement("button").withText("All Genes").cast();
-		allGenesButton.setType("button");
+
+		allGenesButton = document.getElementById("allgenes").cast();
 		allGenesButton.listenClick(ev ->
 		{
 			if (annotation == null) return;
@@ -77,8 +72,7 @@ public class OntologizerClient
 			}
 			studySet.setInnerHTML(allGenes.toString());
 		});
-		input.appendChild(allGenesButton);
-		HTMLButtonElement ontologizeButton = document.createElement("button").withText("Ontologize").cast();
+		HTMLButtonElement ontologizeButton = document.getElementById("ontologize").cast();
 		ontologizeButton.setType("button");
 		ontologizeButton.listenClick(ev ->
 		{
@@ -122,7 +116,6 @@ public class OntologizerClient
 						setColumn(COL_PVAL, p.p_adjusted + ""));
 			}
 		});
-		input.appendChild(ontologizeButton);
 
 		final ProgressElement progressElement = document.getElementById("progress").cast();
 		final boolean hiddenRemoved [] = new boolean[1];
