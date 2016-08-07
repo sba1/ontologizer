@@ -3,6 +3,7 @@ package ontologizer;
 import java.io.IOException;
 
 import org.teavm.jso.browser.Window;
+import org.teavm.jso.core.JSNumber;
 import org.teavm.jso.dom.html.HTMLBodyElement;
 import org.teavm.jso.dom.html.HTMLButtonElement;
 import org.teavm.jso.dom.html.HTMLDocument;
@@ -81,6 +82,15 @@ public class OntologizerClient
 		worker.listenMessage(AllGenesMessage.class, (AllGenesMessage am) ->
 		{
 			studySet.setInnerHTML(am.getItems());
+		});
+
+		worker.listenMessage(OntologizeDoneMessage.class, (OntologizeDoneMessage odm) ->
+		{
+			GetNumberOfResultsMessage rm = WorkerMessage.createWorkerMessage(GetNumberOfResultsMessage.class);
+			worker.postMessage(GetNumberOfResultsMessage.class, rm, (JSNumber num) ->
+			{
+				System.out.println("Main: " + num.intValue());
+			});
 		});
 	}
 }

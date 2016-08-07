@@ -36,7 +36,36 @@ public abstract class Worker implements JSObject, EventTarget
 		});
 	}
 
+	public <R extends JSObject,T extends ReplyableWorkerMessage<R>> void listenMessage2(Class<T> cls, WorkerMessageHandlerWithResult<R, T> receiver)
+	{
+		listenMessage((ev)->{
+			T wm = ev.getData().cast();
+			if (wm.getType().equals(cls.getName()))
+			{
+				R result = receiver.handle(wm);
+				wm.setResult(result);
+				System.out.println("Post message: " + wm.getType());
+				postMessage(wm);
+			}
+		});
+	}
+
 	public abstract void postMessage(String str);
 
 	public abstract void postMessage(JSObject obj);
+
+	public <R extends JSObject, T extends ReplyableWorkerMessage<R>> void postMessage(Class<T> cl, T message, final IWhenDone<R> whenDone)
+	{
+		/* FIXME: Once replied, we should remove that listener again (or use manage it
+		 * on our own)
+		 */
+		listenMessage(cl, (T m) ->
+		{
+			if (m.getId() == message.getId())
+			{
+				whenDone.done(m.getResult());
+			}
+		});
+		postMessage(message);
+	}
 }

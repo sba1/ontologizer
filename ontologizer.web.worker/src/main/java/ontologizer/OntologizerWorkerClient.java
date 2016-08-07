@@ -1,5 +1,7 @@
 package ontologizer;
 
+import org.teavm.jso.core.JSNumber;
+
 import ontologizer.association.AssociationContainer;
 import ontologizer.calculation.EnrichedGOTermsResult;
 import ontologizer.calculation.TermForTermCalculation;
@@ -19,6 +21,7 @@ public class OntologizerWorkerClient
 	public static DatafilesLoader loader;
 	public static Ontology ontology;
 	public static AssociationContainer associations;
+	public static EnrichedGOTermsResult result;
 
 	public static void main(String[] args)
 	{
@@ -74,12 +77,17 @@ public class OntologizerWorkerClient
 			StudySet study = new StudySet();
 			for (String s : om.getItems())
 				study.addGene(new ByteString(s), "");
-			EnrichedGOTermsResult result = calculation.calculateStudySet(ontology, associations, population, study, new Bonferroni());
+			result = calculation.calculateStudySet(ontology, associations, population, study, new Bonferroni());
 
 			System.out.println(result.getSize() + " terms");
 
 			OntologizeDoneMessage odm = WorkerMessage.createWorkerMessage(OntologizeDoneMessage.class);
 			Worker.current().postMessage(odm);
+		});
+
+		Worker.current().listenMessage2(GetNumberOfResultsMessage.class, (GetNumberOfResultsMessage gm) ->
+		{
+			return JSNumber.valueOf(result==null?0:result.getSize());
 		});
 	}
 }
