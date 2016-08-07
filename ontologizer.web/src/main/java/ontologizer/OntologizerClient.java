@@ -64,7 +64,7 @@ public class OntologizerClient
 		final ProgressElement progressElement = document.getElementById("progress").cast();
 		final boolean hiddenRemoved [] = new boolean[1];
 
-		worker.postMessage(WorkerMessage.createWorkerMessage(StartupMessage.class));
+		worker.postMessage(WorkerMessage.createWorkerMessage(LoadDataMessage.class));
 
 		worker.listenMessage(ProgressMessage.class, (ProgressMessage pm) ->
 		{
