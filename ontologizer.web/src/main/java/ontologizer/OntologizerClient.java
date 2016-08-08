@@ -98,10 +98,22 @@ public class OntologizerClient
 				body.appendChild(resultsTable);
 			}
 
-			GetNumberOfResultsMessage rm = WorkerMessage.createWorkerMessage(GetNumberOfResultsMessage.class);
-			worker.postMessage(GetNumberOfResultsMessage.class, rm, (JSNumber num) ->
+			GetNumberOfResultsMessage rnrm = WorkerMessage.createWorkerMessage(GetNumberOfResultsMessage.class);
+			worker.postMessage(GetNumberOfResultsMessage.class, rnrm, (JSNumber num) ->
 			{
-				System.out.println("Main: " + num.intValue());
+				int numberOfTerms = num.intValue();
+				for (int i=0; i < Math.min(30, numberOfTerms); i++)
+				{
+					GetResultMessage rm = WorkerMessage.createWorkerMessage(GetResultMessage.class);
+					rm.setRank(i);
+					worker.postMessage(GetResultMessage.class, rm, result ->
+					{
+						resultsTable.append(Row.createRow().
+								setColumn(COL_ID, result.getID()).
+								setColumn(COL_NAME, result.getName()).
+								setColumn(COL_PVAL, result.getAdjP() + ""));
+					});
+				}
 			});
 		});
 	}

@@ -98,5 +98,15 @@ public class OntologizerWorkerClient
 		{
 			return JSNumber.valueOf(result==null?0:result.getSize());
 		});
+
+		Worker.current().listenMessage2(GetResultMessage.class, gm ->
+		{
+			ResultEntry re = ResultEntry.createResultEntry();
+			AbstractGOTermProperties prop = props[gm.getRank()];
+			re.setName(prop.goTerm.getName());
+			re.setID(prop.goTerm.getIDAsString());
+			re.setAdjP(prop.p_adjusted);
+			return re;
+		});
 	}
 }
