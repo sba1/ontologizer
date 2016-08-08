@@ -57,8 +57,6 @@ public abstract class Worker implements JSObject, EventTarget
 		});
 	}
 
-	public abstract void postMessage(String str);
-
 	public abstract void postMessage(JSObject obj);
 
 	public <R extends JSObject, T extends ReplyableWorkerMessage<R>> void postMessage(Class<T> cl, T message, final IWhenDone<R> whenDone)
