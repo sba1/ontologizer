@@ -90,8 +90,7 @@ public class OntologizerWorkerClient
 				props[i++] = p;
 			Arrays.sort(props, Comparator.comparingDouble(p -> p.p));
 
-			OntologizeDoneMessage odm = WorkerMessage.createWorkerMessage(OntologizeDoneMessage.class);
-			Worker.current().postMessage(odm);
+			Worker.current().postSimpleMessage(OntologizeDoneMessage.class);
 		});
 
 		/* Messages that expect replies */
