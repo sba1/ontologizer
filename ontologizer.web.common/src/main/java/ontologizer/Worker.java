@@ -1,5 +1,8 @@
 package ontologizer;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.teavm.jso.JSBody;
 import org.teavm.jso.JSObject;
 import org.teavm.jso.dom.events.EventListener;
@@ -118,16 +121,18 @@ public abstract class Worker implements JSObject, EventTarget
 	 */
 	public <R extends JSObject, T extends ReplyableWorkerMessage<R>> void postMessage(Class<T> cl, T message, final IWhenDone<R> whenDone)
 	{
-		/* FIXME: Once replied, we should remove that listener again (or use manage it
-		 * on our own)
-		 */
-		listenMessage(cl, (T m) ->
+		final List<EventListener<MessageEvent>> events = new ArrayList<>(1);
+
+		events.add(createMessageEventListener(cl, (T m) ->
 		{
 			if (m.getId() == message.getId())
 			{
 				whenDone.done(m.getResult());
+				unlistenMessage(events.get(0));
 			}
-		});
+		}));
+
+		listenMessage(events.get(0));
 		postMessage(message);
 	}
 }
