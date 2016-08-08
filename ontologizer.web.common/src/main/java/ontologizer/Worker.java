@@ -111,6 +111,14 @@ public abstract class Worker implements JSObject, EventTarget
 	public abstract void postMessage(JSObject obj);
 
 	/**
+	 * Post a message without any additional arguments.
+	 */
+	public <T extends WorkerMessage> void postSimpleMessage(Class<T> cl)
+	{
+		postMessage(WorkerMessage.createWorkerMessage(cl));
+	}
+
+	/**
 	 * Post a replyable message to the worker. A replyable message is a message that is replied by the
 	 * worker with an additional result.
 	 *
