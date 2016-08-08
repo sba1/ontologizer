@@ -60,6 +60,17 @@ public class OntologizerClient
 			OntologizeMessage om = WorkerMessage.createWorkerMessage(OntologizeMessage.class);
 			om.setItems(items);
 			worker.postMessage(om);
+
+			if (resultsTable == null)
+			{
+				Column idColumn = Column.createColumn(COL_ID, "GO ID").cast();
+				Column nameColumn = Column.createColumn(COL_NAME, "Name").cast();
+				Column pvalColumn = Column.createColumn(COL_PVAL, "P value").cast();
+
+				resultsTable = document.createElement("table").cast();
+				resultsTable.bootstrapTable(idColumn,nameColumn,pvalColumn);
+				body.appendChild(resultsTable);
+			}
 		});
 
 		final ProgressElement progressElement = document.getElementById("progress").cast();
@@ -86,18 +97,6 @@ public class OntologizerClient
 
 		worker.listenMessage(OntologizeDoneMessage.class, (OntologizeDoneMessage odm) ->
 		{
-			if (resultsTable == null)
-			{
-				Column idColumn = Column.createColumn(COL_ID, "GO ID").cast();
-				Column nameColumn = Column.createColumn(COL_NAME, "Name").cast();
-				Column pvalColumn = Column.createColumn(COL_PVAL, "P value").cast();
-
-				resultsTable = document.createElement("table").cast();
-				resultsTable.bootstrapTable(idColumn,nameColumn,pvalColumn);
-				resultsTable.hideLoading();
-				body.appendChild(resultsTable);
-			}
-
 			GetNumberOfResultsMessage rnrm = WorkerMessage.createWorkerMessage(GetNumberOfResultsMessage.class);
 			worker.postMessage(GetNumberOfResultsMessage.class, rnrm, (JSNumber num) ->
 			{
@@ -114,6 +113,8 @@ public class OntologizerClient
 								setColumn(COL_PVAL, result.getAdjP() + ""));
 					});
 				}
+
+				resultsTable.hideLoading();
 			});
 		});
 	}
