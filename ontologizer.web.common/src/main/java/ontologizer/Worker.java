@@ -52,7 +52,6 @@ public abstract class Worker implements JSObject, EventTarget
 			{
 				R result = receiver.handle(wm);
 				wm.setResult(result);
-				System.out.println("Post message: " + wm.getType());
 				postMessage(wm);
 			}
 		});
