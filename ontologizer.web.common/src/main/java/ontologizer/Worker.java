@@ -48,20 +48,34 @@ public abstract class Worker implements JSObject, EventTarget
 	}
 
 	/**
-	 * Listen on a particular worker message.
+	 * Create a message event listener with the given handler.
 	 *
-	 * @param cl the class of the worker message to listen.
-	 * @param receiver the handler of the worker message of the given class.
+	 * @param cl the class of the worker message to create..
+	 * @param handler the handler of the worker message of the given class.
+	 * @return the listener suitable for {@link #listenMessage(EventListener)}
+	 *  and {@link #unlistenMessage(EventListener)}
 	 */
-	public <T extends WorkerMessage> void listenMessage(Class<T> cl, WorkerMessageHandler<T> receiver)
+	public <T extends WorkerMessage> EventListener<MessageEvent> createMessageEventListener(Class<T> cl, WorkerMessageHandler<T> handler)
 	{
-		listenMessage((ev)->{
+		return (ev) ->
+		{
 			T wm = ev.getData().cast();
 			if (wm.getType().equals(cl.getName()))
 			{
-				receiver.handle(wm);
+				handler.handle(wm);
 			}
-		});
+		};
+	}
+
+	/**
+	 * Listen on a particular worker message.
+	 *
+	 * @param cl the class of the worker message to listen.
+	 * @param handler the handler of the worker message of the given class.
+	 */
+	public <T extends WorkerMessage> void listenMessage(Class<T> cl, WorkerMessageHandler<T> handler)
+	{
+		listenMessage(createMessageEventListener(cl, handler));
 	}
 
 	/**
