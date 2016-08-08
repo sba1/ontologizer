@@ -94,6 +94,8 @@ public class OntologizerWorkerClient
 			Worker.current().postMessage(odm);
 		});
 
+		/* Messages that expect replies */
+
 		Worker.current().listenMessage2(GetNumberOfResultsMessage.class, (GetNumberOfResultsMessage gm) ->
 		{
 			return JSNumber.valueOf(result==null?0:result.getSize());
