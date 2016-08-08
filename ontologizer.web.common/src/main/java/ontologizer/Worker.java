@@ -27,9 +27,24 @@ public abstract class Worker implements JSObject, EventTarget
 	@JSBody(script="return new Worker(name);", params={"name"})
 	public static native Worker create(String name);
 
+	/**
+	 * Enqueues a new (worker) message listener.
+	 *
+	 * @param listener the listener to be enqueued.
+	 */
 	private void listenMessage(EventListener<MessageEvent> listener)
 	{
 		addEventListener("message", listener);
+	}
+
+	/**
+	 * Dequeues the given worker message listener.
+	 *
+	 * @param listener listener to be dequeued.
+	 */
+	public void unlistenMessage(EventListener<MessageEvent> listener)
+	{
+		removeEventListener("message", listener);
 	}
 
 	/**
