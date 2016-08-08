@@ -86,6 +86,18 @@ public class OntologizerClient
 
 		worker.listenMessage(OntologizeDoneMessage.class, (OntologizeDoneMessage odm) ->
 		{
+			if (resultsTable == null)
+			{
+				Column idColumn = Column.createColumn(COL_ID, "GO ID").cast();
+				Column nameColumn = Column.createColumn(COL_NAME, "Name").cast();
+				Column pvalColumn = Column.createColumn(COL_PVAL, "P value").cast();
+
+				resultsTable = document.createElement("table").cast();
+				resultsTable.bootstrapTable(idColumn,nameColumn,pvalColumn);
+				resultsTable.hideLoading();
+				body.appendChild(resultsTable);
+			}
+
 			GetNumberOfResultsMessage rm = WorkerMessage.createWorkerMessage(GetNumberOfResultsMessage.class);
 			worker.postMessage(GetNumberOfResultsMessage.class, rm, (JSNumber num) ->
 			{
