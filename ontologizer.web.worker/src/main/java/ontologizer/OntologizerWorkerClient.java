@@ -1,8 +1,12 @@
 package ontologizer;
 
+import java.util.Arrays;
+import java.util.Comparator;
+
 import org.teavm.jso.core.JSNumber;
 
 import ontologizer.association.AssociationContainer;
+import ontologizer.calculation.AbstractGOTermProperties;
 import ontologizer.calculation.EnrichedGOTermsResult;
 import ontologizer.calculation.TermForTermCalculation;
 import ontologizer.ontology.Ontology;
@@ -22,6 +26,7 @@ public class OntologizerWorkerClient
 	public static Ontology ontology;
 	public static AssociationContainer associations;
 	public static EnrichedGOTermsResult result;
+	public static AbstractGOTermProperties [] props;
 
 	public static void main(String[] args)
 	{
@@ -79,7 +84,11 @@ public class OntologizerWorkerClient
 				study.addGene(new ByteString(s), "");
 			result = calculation.calculateStudySet(ontology, associations, population, study, new Bonferroni());
 
-			System.out.println(result.getSize() + " terms");
+			props = new AbstractGOTermProperties[result.getSize()];
+			int i = 0;
+			for (AbstractGOTermProperties p : result)
+				props[i++] = p;
+			Arrays.sort(props, Comparator.comparingDouble(p -> p.p));
 
 			OntologizeDoneMessage odm = WorkerMessage.createWorkerMessage(OntologizeDoneMessage.class);
 			Worker.current().postMessage(odm);
