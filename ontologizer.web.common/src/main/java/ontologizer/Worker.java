@@ -22,25 +22,33 @@ public abstract class Worker implements JSObject, EventTarget
 	/**
 	 * Listen on a particular worker message.
 	 *
-	 * @param cls
-	 * @param receiver
+	 * @param cl the class of the worker message to listen.
+	 * @param receiver the handler of the worker message of the given class.
 	 */
-	public <T extends WorkerMessage> void listenMessage(Class<T> cls, WorkerMessageHandler<T> receiver)
+	public <T extends WorkerMessage> void listenMessage(Class<T> cl, WorkerMessageHandler<T> receiver)
 	{
 		listenMessage((ev)->{
 			T wm = ev.getData().cast();
-			if (wm.getType().equals(cls.getName()))
+			if (wm.getType().equals(cl.getName()))
 			{
 				receiver.handle(wm);
 			}
 		});
 	}
 
-	public <R extends JSObject,T extends ReplyableWorkerMessage<R>> void listenMessage2(Class<T> cls, WorkerMessageHandlerWithResult<R, T> receiver)
+	/**
+	 * Listen on a particular replyable worker message.
+	 *
+	 * @param cl the class of the worker message to listen.
+	 * @param receiver the handler of the worker message of the given class.
+	 *  The result of it is replied together with the original message to the
+	 *  originator.
+	 */
+	public <R extends JSObject,T extends ReplyableWorkerMessage<R>> void listenMessage2(Class<T> cl, WorkerMessageHandlerWithResult<R, T> receiver)
 	{
 		listenMessage((ev)->{
 			T wm = ev.getData().cast();
-			if (wm.getType().equals(cls.getName()))
+			if (wm.getType().equals(cl.getName()))
 			{
 				R result = receiver.handle(wm);
 				wm.setResult(result);
