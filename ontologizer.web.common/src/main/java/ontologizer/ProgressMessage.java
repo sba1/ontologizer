@@ -21,4 +21,27 @@ public abstract class ProgressMessage extends WorkerMessage
 
 	@JSProperty
 	public abstract int getMax();
+
+	public ProgressMessage withTitle(String title)
+	{
+		setTitle(title);
+		return this;
+	}
+
+	public ProgressMessage withCurrent(int current)
+	{
+		setCurrent(current);
+		return this;
+	}
+
+	public ProgressMessage withMax(int max)
+	{
+		setMax(max);
+		return this;
+	}
+
+	public static ProgressMessage createProgressMessage()
+	{
+		return WorkerMessage.createWorkerMessage(ProgressMessage.class);
+	}
 }
