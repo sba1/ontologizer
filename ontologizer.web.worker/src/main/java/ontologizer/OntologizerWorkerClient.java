@@ -1,5 +1,8 @@
 package ontologizer;
 
+import static ontologizer.ProgressMessage.createProgressMessage;
+import static ontologizer.WorkerMessage.createWorkerMessage;
+
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -39,23 +42,16 @@ public class OntologizerWorkerClient
 				ontology = loader.getOntology();
 				associations = loader.getAnnotation();
 
-				ProgressMessage msg = WorkerMessage.createWorkerMessage(ProgressMessage.class);
-				Worker.current().postMessage(msg);
+				createProgressMessage().post(Worker.current());
 			},
+			/* OBO Progress */
 			(int current, int max, int terms) ->
-			{
-				ProgressMessage msg = WorkerMessage.createWorkerMessage(ProgressMessage.class);
-				msg.setCurrent(current);
-				msg.setMax(max);
-				Worker.current().postMessage(msg);
-			},
+				createProgressMessage().withCurrent(current).withMax(max).post(Worker.current())
+			,
+			/* Association Progress */
 			(int current, int max) ->
-			{
-				ProgressMessage msg = WorkerMessage.createWorkerMessage(ProgressMessage.class);
-				msg.setCurrent(current);
-				msg.setMax(max);
-				Worker.current().postMessage(msg);
-			});
+				createProgressMessage().withCurrent(current).withMax(max).post(Worker.current())
+			);
 		});
 
 		Worker.current().listenMessage(GetAllGenesMessage.class, (GetAllGenesMessage gm) ->
@@ -69,7 +65,7 @@ public class OntologizerWorkerClient
 				allGenes.append(gene.toString());
 				allGenes.append("\n");
 			}
-			AllGenesMessage am = WorkerMessage.createWorkerMessage(AllGenesMessage.class);
+			AllGenesMessage am = createWorkerMessage(AllGenesMessage.class);
 			am.setItems(allGenes.toString());
 			Worker.current().postMessage(am);
 		});
