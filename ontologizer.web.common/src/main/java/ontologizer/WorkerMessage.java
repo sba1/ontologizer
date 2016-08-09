@@ -31,4 +31,9 @@ public abstract class WorkerMessage implements JSObject
 	public static <T extends WorkerMessage> T createWorkerMessage(Class<T> cl) {
 		return createWorkerMessage(cl.getName(), currentId++).cast();
 	}
+
+	public void post(Worker worker)
+	{
+		worker.postMessage(this);
+	}
 }
