@@ -5,20 +5,34 @@
     <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
     <script type="text/javascript" charset="utf-8" src="teavm/runtime.js"></script>
     <script type="text/javascript" charset="utf-8" src="teavm/classes.js"></script>
-    <script type="text/javascript" charset="utf-8" src="jquery/1.11.1/jquery.min.js"></script>
-    <script type="text/javascript" charset="utf-8" src="bootstrap/3.3.6/js/bootstrap.js"></script>
-    <script type="text/javascript" charset="utf-8" src="bootstrap-table/1.9.1/dist/bootstrap-table.min.js"></script>
-    <link href="bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="pure/0.6.0/pure-min.css" />
+    <link rel="stylesheet" href="pure/0.6.0/grids-responsive-min.css" />
   </head>
   <body onload="main()">
     <h1>WebOntologizer</h1>
 
-    <textarea id="settextarea"></textarea>
-
-    <form>
-        <button type="button" id="allgenes" class="btn btn-default">All Genes</button>
-        <button type="button" id="ontologize" class="btn btn-default">Ontologize</button>
-    </form>
+    <div class="pure-g">
+        <div class="pure-u-1 pure-u-md-1-3">
+            <textarea id="settextarea" style="width: 100%"></textarea>
+            <form>
+                <button type="button" id="allgenes" class="pure-button">All Genes</button>
+                <button type="button" id="ontologize" class="pure-button">Ontologize</button>
+            </form>
+        </div>
+        <div class="pure-u-1 pure-u-md-2-3">
+            <table class="pure-table-striped" id="results">
+                <thead>
+                    <tr>
+                        <th>GO ID</th>
+                        <th>Name</th>
+                        <th>P value</th>
+                    </tr>
+                </thead>
+                <tbody id="resultsbody">
+                </tbody>
+            </table>
+        </div>
+    </div>
 
     <div class="progress" hidden="true" id="progress">
       <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;">

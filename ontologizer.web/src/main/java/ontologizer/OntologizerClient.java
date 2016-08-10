@@ -7,6 +7,8 @@ import org.teavm.jso.core.JSNumber;
 import org.teavm.jso.dom.html.HTMLBodyElement;
 import org.teavm.jso.dom.html.HTMLButtonElement;
 import org.teavm.jso.dom.html.HTMLDocument;
+import org.teavm.jso.dom.html.HTMLElement;
+import org.teavm.jso.dom.xml.Node;
 import org.teavm.jso.dom.xml.Text;
 
 /**
@@ -16,20 +18,26 @@ import org.teavm.jso.dom.xml.Text;
  */
 public class OntologizerClient
 {
-	private static final String COL_ID = "id";
-	private static final String COL_NAME = "name";
-	private static final String COL_PVAL = "pval";
-
 	private static HTMLDocument document = Window.current().getDocument();
 
 	private static Text studySetText;
 	private static HTMLButtonElement allGenesButton;
-	private static HTMLBootstrapTableElement resultsTable;
+	private static HTMLElement resultsTable;
+	private static HTMLElement resultsBody;
 
 	public static void studySetChanged(String studySet)
 	{
 		String [] lines = studySet.split("\n");
 		studySetText.setNodeValue(lines.length + " items");
+	}
+
+	public static HTMLElement createCell(Node tr, String text)
+	{
+		return document.createElement("td", td ->
+		{
+			td.appendChild(document.createTextNode(text));
+			tr.appendChild(td);
+		});
 	}
 
 	public static void main(String[] args) throws IOException
@@ -63,13 +71,8 @@ public class OntologizerClient
 
 			if (resultsTable == null)
 			{
-				Column idColumn = Column.createColumn(COL_ID, "GO ID").cast();
-				Column nameColumn = Column.createColumn(COL_NAME, "Name").cast();
-				Column pvalColumn = Column.createColumn(COL_PVAL, "P value").cast();
-
-				resultsTable = document.createElement("table").cast();
-				resultsTable.bootstrapTable(idColumn,nameColumn,pvalColumn);
-				body.appendChild(resultsTable);
+				resultsTable = document.getElementById("results");
+				resultsBody = document.getElementById("resultsbody");
 			}
 		});
 
@@ -101,20 +104,22 @@ public class OntologizerClient
 			worker.postMessage(GetNumberOfResultsMessage.class, rnrm, (JSNumber num) ->
 			{
 				int numberOfTerms = num.intValue();
+				resultsBody.clear();
 				for (int i=0; i < Math.min(30, numberOfTerms); i++)
 				{
 					GetResultMessage rm = WorkerMessage.createWorkerMessage(GetResultMessage.class);
 					rm.setRank(i);
 					worker.postMessage(GetResultMessage.class, rm, result ->
 					{
-						resultsTable.append(Row.createRow().
-								setColumn(COL_ID, result.getID()).
-								setColumn(COL_NAME, result.getName()).
-								setColumn(COL_PVAL, result.getAdjP() + ""));
+						document.createElement("tr", tr ->
+						{
+							createCell(tr, result.getID());
+							createCell(tr, result.getName());
+							createCell(tr, result.getAdjP() + "");
+							resultsBody.appendChild(tr);
+						});
 					});
 				}
-
-				resultsTable.hideLoading();
 			});
 		});
 	}
