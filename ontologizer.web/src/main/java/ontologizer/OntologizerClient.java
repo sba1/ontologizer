@@ -90,7 +90,14 @@ public class OntologizerClient
 			}
 
 			int percent = (int)Math.floor(pm.getCurrent() * 100.0 / pm.getMax());
-			progressElement.setPercentage(percent);
+			String title = pm.getTitle();
+			if (title != null && title.length() > 0)
+			{
+				progressElement.setLabel(title, percent);
+			} else
+			{
+				progressElement.setPercentage(percent);
+			}
 		});
 
 		worker.listenMessage(AllGenesMessage.class, (AllGenesMessage am) ->

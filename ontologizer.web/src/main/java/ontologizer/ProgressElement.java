@@ -11,10 +11,21 @@ public interface ProgressElement extends HTMLElement
 {
 	default void setPercentage(int percent)
 	{
+		setLabel(percent + "%");
+	}
+
+	default void setLabel(String label, int percent)
+	{
 		HTMLElement inner = getChildNodes().get(1).cast();
 		inner.setAttribute("style", "width: " + percent + "%;" );
 		inner.setAttribute("aria-value", percent + "");
+
+		setLabel(label + " (" + percent + "%)");
+	}
+
+	default void setLabel(String label)
+	{
 		HTMLElement span = getChildNodes().get(3).cast();
-		span.setInnerHTML(percent + "%");
+		span.setInnerHTML(label);
 	}
 }

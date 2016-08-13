@@ -46,11 +46,11 @@ public class OntologizerWorkerClient
 			},
 			/* OBO Progress */
 			(int current, int max, int terms) ->
-				createProgressMessage().withCurrent(current).withMax(max).post(Worker.current())
+				createProgressMessage().withTitle("Loading Ontology").withCurrent(current).withMax(max).post(Worker.current())
 			,
 			/* Association Progress */
 			(int current, int max) ->
-				createProgressMessage().withCurrent(current).withMax(max).post(Worker.current())
+				createProgressMessage().withTitle("Loading Annotations").withCurrent(current).withMax(max).post(Worker.current())
 			);
 		});
 

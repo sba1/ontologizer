@@ -8,7 +8,7 @@ public abstract class ProgressMessage extends WorkerMessage
 	public abstract void setTitle(String title);
 
 	@JSProperty
-	public abstract String getTitle(String title);
+	public abstract String getTitle();
 
 	@JSProperty
 	public abstract void setCurrent(int current);
@@ -42,6 +42,8 @@ public abstract class ProgressMessage extends WorkerMessage
 
 	public static ProgressMessage createProgressMessage()
 	{
-		return WorkerMessage.createWorkerMessage(ProgressMessage.class);
+		ProgressMessage pm = WorkerMessage.createWorkerMessage(ProgressMessage.class);
+		pm.setTitle("");
+		return pm;
 	}
 }
