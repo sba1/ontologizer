@@ -40,6 +40,15 @@ public class OntologizerClient
 		});
 	}
 
+	public static void addOption(HTMLElement parent, String text)
+	{
+		document.createElement("option", option ->
+		{
+			option.appendChild(document.createTextNode(text));
+			parent.appendChild(option);
+		});
+	}
+
 	public static void main(String[] args) throws IOException
 	{
 		final Worker worker = Worker.create("ontologizer-worker.js");
@@ -53,6 +62,9 @@ public class OntologizerClient
 
 		studySetText = document.createTextNode("");
 		body.appendChild(studySetText);
+
+		HTMLElement speciesElement = document.getElementById("species");
+		addOption(speciesElement, "Yeast");
 
 		allGenesButton = document.getElementById("allgenes").cast();
 		allGenesButton.listenClick(ev ->
