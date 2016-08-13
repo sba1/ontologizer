@@ -1,4 +1,4 @@
-package sonumina.math.changelog;
+package sonumina.util.changelog;
 
 import static org.junit.Assert.assertEquals;
 
