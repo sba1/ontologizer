@@ -7,7 +7,7 @@
     </description>
 
 	<!-- Target for building the version containing class. Requires svn command. -->
-	<target name="version">
+	<target name="pre-version">
 
 		<exec executable="git" outputproperty="git.count">
 			<arg value="rev-list" />
@@ -18,8 +18,8 @@
 		<tstamp>
 		    <format property="DATE" pattern="yyyyMMdd" locale="ENGLISH, GERMANY"/>
 		</tstamp>
-		
-		<echo file="${basedir}/target/generated-sources/ontologizer/BuildInfoData.java">
+
+		<echo file="${basedir}/target/generated-sources/ontologizer/BuildInfoData.java-tmp">
 package ontologizer;
 
 public class BuildInfoData {
@@ -27,7 +27,13 @@ public class BuildInfoData {
 	public static final String date ="${DATE}";
 }
 		</echo>
+		<condition property="buildinfo-matches">
+			<filesmatch file1="${basedir}/target/generated-sources/ontologizer/BuildInfoData.java-tmp" file2="${basedir}/target/generated-sources/ontologizer/BuildInfoData.java"/>
+		</condition>
+	</target>
 
+	<target name="version" depends="pre-version" unless="buildinfo-matches">
+		<copy file="${basedir}/target/generated-sources/ontologizer/BuildInfoData.java-tmp" tofile="${basedir}/target/generated-sources/ontologizer/BuildInfoData.java"/>
 	</target>
 
 	<!-- INITIALIZE BUILD -->
