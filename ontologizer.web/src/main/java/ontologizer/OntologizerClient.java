@@ -13,6 +13,8 @@ import org.teavm.jso.dom.html.HTMLElement;
 import org.teavm.jso.dom.xml.Node;
 import org.teavm.jso.dom.xml.Text;
 
+import static ontologizer.LoadDataMessage.createLoadDataMessage;
+
 /**
  * Main class of the Ontologizer Web client.
  *
@@ -103,7 +105,7 @@ public class OntologizerClient
 		final ProgressElement progressElement = document.getElementById("progress").cast();
 		final boolean hiddenRemoved [] = new boolean[1];
 
-		worker.postMessage(WorkerMessage.createWorkerMessage(LoadDataMessage.class));
+		worker.postMessage(createLoadDataMessage(speciesMap.get("Yeast")));
 
 		worker.listenMessage(ProgressMessage.class, (ProgressMessage pm) ->
 		{

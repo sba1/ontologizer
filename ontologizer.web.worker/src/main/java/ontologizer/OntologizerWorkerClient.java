@@ -33,10 +33,10 @@ public class OntologizerWorkerClient
 
 	public static void main(String[] args)
 	{
-		loader = new DatafilesLoader();
-
-		Worker.current().listenMessage(LoadDataMessage.class, (LoadDataMessage sm) ->
+		Worker.current().listenMessage(LoadDataMessage.class, ldm ->
 		{
+			loader = new DatafilesLoader(ldm.getAssociationFilename());
+
 			loader.load( () ->
 			{
 				ontology = loader.getOntology();

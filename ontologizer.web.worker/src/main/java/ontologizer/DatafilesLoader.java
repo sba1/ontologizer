@@ -13,6 +13,8 @@ import ontologizer.ontology.TermContainer;
 
 public class DatafilesLoader
 {
+	private String associationFilename;
+
 	private Ontology ontology;
 	private AssociationContainer annotation;
 
@@ -24,6 +26,11 @@ public class DatafilesLoader
 	public static interface AssociationProgess
 	{
 		public void update(int current, int max);
+	}
+
+	public DatafilesLoader(String associationFilename)
+	{
+		this.associationFilename = associationFilename;
 	}
 
 	public void load(Runnable done, final OBOProgress oboProgess, final AssociationProgess associationProgess)
@@ -59,7 +66,7 @@ public class DatafilesLoader
 
 				/* Load associations */
 				final ArrayBufferHttpRequest assocRequest = ArrayBufferHttpRequest.create();
-				assocRequest.open("GET", "gene_association.sgd.gz");
+				assocRequest.open("GET", associationFilename);
 				assocRequest.onComplete(() ->
 				{
 					byte[] assocBuf = Utils.getByteResult(assocRequest);
