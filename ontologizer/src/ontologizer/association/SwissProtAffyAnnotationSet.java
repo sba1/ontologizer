@@ -22,7 +22,7 @@ public class SwissProtAffyAnnotationSet implements Iterable<SwissProtAffyAnnotat
 	}
 
 	/**
-	 * Add a new swissprot id -> affyID -> goID mappping.
+	 * Add a new swissprot id -&gt; affyID -&gt; goID mappping.
 	 *
 	 * @param swissProtID
 	 * @param affyID
