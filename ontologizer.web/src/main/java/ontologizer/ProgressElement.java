@@ -11,7 +11,7 @@ public interface ProgressElement extends HTMLElement
 {
 	default void setPercentage(int percent)
 	{
-		setLabel(percent + "%");
+		setLabel("", percent);
 	}
 
 	default void setLabel(String label, int percent)
@@ -20,7 +20,13 @@ public interface ProgressElement extends HTMLElement
 		inner.setAttribute("style", "width: " + percent + "%;" );
 		inner.setAttribute("aria-value", percent + "");
 
-		setLabel(label + " (" + percent + "%)");
+		if (label == null || label.length() == 0)
+		{
+			setLabel(percent + "%");
+		} else
+		{
+			setLabel(label + " (" + percent + "%)");
+		}
 	}
 
 	default void setLabel(String label)
