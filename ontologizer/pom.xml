@@ -39,6 +39,7 @@
 							<sources>
 								<source>src.grappa</source>
 								<source>src.grappa.layout</source>
+								<source>${project.build.directory}/generated-sources</source>
 							</sources>
 						</configuration>
 					</execution>

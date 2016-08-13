@@ -19,7 +19,7 @@
 		    <format property="DATE" pattern="yyyyMMdd" locale="ENGLISH, GERMANY"/>
 		</tstamp>
 		
-		<echo file="${basedir}/src/ontologizer/BuildInfoData.java">
+		<echo file="${basedir}/target/generated-sources/ontologizer/BuildInfoData.java">
 package ontologizer;
 
 public class BuildInfoData {
