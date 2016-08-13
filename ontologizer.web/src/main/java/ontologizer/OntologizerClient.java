@@ -1,6 +1,8 @@
 package ontologizer;
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.teavm.jso.browser.Window;
 import org.teavm.jso.core.JSNumber;
@@ -24,6 +26,8 @@ public class OntologizerClient
 	private static HTMLButtonElement allGenesButton;
 	private static HTMLElement resultsTable;
 	private static HTMLElement resultsBody;
+
+	private static Map<String,String> speciesMap = new TreeMap<>();
 
 	public static void studySetChanged(String studySet)
 	{
@@ -63,8 +67,16 @@ public class OntologizerClient
 		studySetText = document.createTextNode("");
 		body.appendChild(studySetText);
 
+		speciesMap.put("Yeast", "gene_association.sgd.gz");
+		speciesMap.put("Zebrafish", "gene_association.zfin.gz");
+		speciesMap.put("Mouse", "gene_association.mgi.gz");
+		speciesMap.put("C. elegans", "gene_association.wb.gz");
+		speciesMap.put("Fruit fly", "gene_association.fb.gz");
+		speciesMap.put("Human", "goa_human.gaf.gz");
+
 		HTMLElement speciesElement = document.getElementById("species");
-		addOption(speciesElement, "Yeast");
+		for (String sp : speciesMap.keySet())
+			addOption(speciesElement, sp);
 
 		allGenesButton = document.getElementById("allgenes").cast();
 		allGenesButton.listenClick(ev ->
