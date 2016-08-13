@@ -10,13 +10,13 @@ import ontologizer.types.ByteString;
 /**
  * Set containing all swiss prot ids linked to affy ids and annotaions.
  *
- * @author sba
+ * @author Sebastian Bauer
  */
-class SwissProtAffyAnnotaionSet implements Iterable<SwissProtAffyAnnotation>
+public class SwissProtAffyAnnotationSet implements Iterable<SwissProtAffyAnnotation>
 {
 	private HashMap<ByteString,SwissProtAffyAnnotation> map;
 
-	public SwissProtAffyAnnotaionSet()
+	public SwissProtAffyAnnotationSet()
 	{
 		map = new HashMap<ByteString,SwissProtAffyAnnotation>();
 	}
