@@ -397,7 +397,7 @@ public class AssociationParser
 
 		if (!headerFailure)
 		{
-			SwissProtAffyAnnotaionSet annotationSet = new SwissProtAffyAnnotaionSet();
+			SwissProtAffyAnnotationSet annotationSet = new SwissProtAffyAnnotationSet();
 
 			/* Header is fine */
 			while ((line = in.readLine()) != null)
