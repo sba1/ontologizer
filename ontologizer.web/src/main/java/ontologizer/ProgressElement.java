@@ -13,5 +13,8 @@ public interface ProgressElement extends HTMLElement
 	{
 		HTMLElement inner = getChildNodes().get(1).cast();
 		inner.setAttribute("style", "width: " + percent + "%;" );
+		inner.setAttribute("aria-value", percent + "");
+		HTMLElement span = getChildNodes().get(3).cast();
+		span.setInnerHTML(percent + "%");
 	}
 }
