@@ -34,7 +34,7 @@ public class DatafilesLoader
 		this.associationFilename = associationFilename;
 	}
 
-	private void loadObo(final OBOProgress oboProgess, ByteArrayParserInput input)
+	private void parseObo(final OBOProgress oboProgess, ByteArrayParserInput input)
 	{
 		OBOParser oboParser = new OBOParser(input);
 		try
@@ -72,7 +72,7 @@ public class DatafilesLoader
 		oboRequest.open("GET", "gene_ontology.1_2.obo.gz");
 		oboRequest.onComplete(() ->
 		{
-			loadObo(oboProgess, new ByteArrayParserInput(oboRequest.getResponseBytes()));
+			parseObo(oboProgess, new ByteArrayParserInput(oboRequest.getResponseBytes()));
 
 			/* Load associations */
 			final ArrayBufferHttpRequest assocRequest = ArrayBufferHttpRequest.create();
