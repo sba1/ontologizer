@@ -15,6 +15,7 @@ public class DatafilesLoader
 {
 	private String associationFilename;
 
+	private TermContainer terms;
 	private Ontology ontology;
 	private AssociationContainer annotation;
 
@@ -33,6 +34,37 @@ public class DatafilesLoader
 		this.associationFilename = associationFilename;
 	}
 
+	private void loadObo(final OBOProgress oboProgess, ByteArrayParserInput input)
+	{
+		OBOParser oboParser = new OBOParser(input);
+		try
+		{
+			oboParser.doParse(new IOBOParserProgress()
+			{
+				private int max;
+
+				@Override
+				public void init(int max)
+				{
+					this.max = max;
+
+					oboProgess.update(0, max, 0);
+				}
+
+				@Override
+				public void update(int current, int terms)
+				{
+					oboProgess.update(current, max, terms);
+				}
+			});
+			terms = new TermContainer(oboParser.getTermMap(), oboParser.getFormatVersion(), oboParser.getDate());
+			ontology = Ontology.create(terms);
+		} catch (IOException | OBOParserException e)
+		{
+			e.printStackTrace();
+		}
+	}
+
 	public void load(Runnable done, final OBOProgress oboProgess, final AssociationProgess associationProgess)
 	{
 		/* Load obo file */
@@ -40,39 +72,18 @@ public class DatafilesLoader
 		oboRequest.open("GET", "gene_ontology.1_2.obo.gz");
 		oboRequest.onComplete(() ->
 		{
-			OBOParser oboParser = new OBOParser(new ByteArrayParserInput(oboRequest.getResponseBytes()));
-			try
+			loadObo(oboProgess, new ByteArrayParserInput(oboRequest.getResponseBytes()));
+
+			/* Load associations */
+			final ArrayBufferHttpRequest assocRequest = ArrayBufferHttpRequest.create();
+			assocRequest.open("GET", associationFilename);
+			assocRequest.onComplete(() ->
 			{
-				oboParser.doParse(new IOBOParserProgress()
+				byte[] assocBuf = Utils.getByteResult(assocRequest);
+				try
 				{
-					private int max;
-
-					@Override
-					public void init(int max)
-					{
-						this.max = max;
-
-						oboProgess.update(0, max, 0);
-					}
-
-					@Override
-					public void update(int current, int terms)
-					{
-						oboProgess.update(current,  max, terms);
-					}
-				});
-				final TermContainer goTerms = new TermContainer(oboParser.getTermMap(), oboParser.getFormatVersion(), oboParser.getDate());
-				ontology = Ontology.create(goTerms);
-
-				/* Load associations */
-				final ArrayBufferHttpRequest assocRequest = ArrayBufferHttpRequest.create();
-				assocRequest.open("GET", associationFilename);
-				assocRequest.onComplete(() ->
-				{
-					byte[] assocBuf = Utils.getByteResult(assocRequest);
-					try
-					{
-						AssociationParser ap = new AssociationParser(new ByteArrayParserInput(assocBuf), goTerms, null, new IAssociationParserProgress()
+					AssociationParser ap = new AssociationParser(new ByteArrayParserInput(assocBuf), terms, null,
+						new IAssociationParserProgress()
 						{
 							private int max;
 
@@ -89,19 +100,15 @@ public class DatafilesLoader
 								associationProgess.update(0, max);
 							}
 						});
-						annotation = new AssociationContainer(ap.getAssociations(), ap.getSynonym2gene(), ap.getDbObject2gene());
+					annotation = new AssociationContainer(ap.getAssociations(), ap.getSynonym2gene(), ap.getDbObject2gene());
 
-						done.run();
-					} catch (Exception e)
-					{
-						e.printStackTrace();
-					}
-				});
-				assocRequest.send();
-			} catch (IOException | OBOParserException e)
-			{
-				e.printStackTrace();
-			}
+					done.run();
+				} catch (Exception e)
+				{
+					e.printStackTrace();
+				}
+			});
+			assocRequest.send();
 		});
 		oboRequest.send();
 	}
