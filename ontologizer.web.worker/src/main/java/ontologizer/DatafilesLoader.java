@@ -92,8 +92,6 @@ public class DatafilesLoader
 						annotation = new AssociationContainer(ap.getAssociations(), ap.getSynonym2gene(), ap.getDbObject2gene());
 
 						done.run();
-
-						System.out.println(annotation.getAllAnnotatedGenes().size() + " annotated genes");
 					} catch (Exception e)
 					{
 						e.printStackTrace();
