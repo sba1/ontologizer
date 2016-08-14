@@ -29,8 +29,10 @@ public class OntologizerClient
 	private static HTMLButtonElement allGenesButton;
 	private static HTMLElement resultsTable;
 	private static HTMLElement resultsBody;
+	private static HTMLSelectElement speciesElement;
 
 	private static SortedMap<String,String> speciesMap = new TreeMap<>();
+	private static String [] species;
 
 	public static void studySetChanged(String studySet)
 	{
@@ -56,6 +58,18 @@ public class OntologizerClient
 		});
 	}
 
+	/**
+	 * Issue a message to the worker for loading the data files
+	 * for the currently selected species.
+	 *
+	 * @param worker the worker to which the message is posted.
+	 */
+	private static void loadDataForCurrentSpecies(Worker worker)
+	{
+		String sp = species[speciesElement.getSelectedIndex()];
+		worker.postMessage(createLoadDataMessage(speciesMap.get(sp)));
+	}
+
 	public static void main(String[] args) throws IOException
 	{
 		final Worker worker = Worker.create("ontologizer-worker.js");
@@ -76,18 +90,12 @@ public class OntologizerClient
 		speciesMap.put("C. elegans", "gene_association.wb.gz");
 		speciesMap.put("Fruit fly", "gene_association.fb.gz");
 		speciesMap.put("Human", "goa_human.gaf.gz");
-
-		final String [] species = speciesMap.keySet().toArray(new String[speciesMap.size()]);
-
-		HTMLSelectElement speciesElement = document.getElementById("species").cast();
+		species = speciesMap.keySet().toArray(new String[speciesMap.size()]);
+		speciesElement = document.getElementById("species").cast();
 		for (String sp : species)
 			addOption(speciesElement, sp);
+		speciesElement.addEventListener("change", ev -> loadDataForCurrentSpecies(worker) );
 
-		speciesElement.addEventListener("change", ev ->
-		{
-			String sp = species[speciesElement.getSelectedIndex()];
-			worker.postMessage(createLoadDataMessage(speciesMap.get(sp)));
-		});
 		allGenesButton = document.getElementById("allgenes").cast();
 		allGenesButton.listenClick(ev ->
 		{
