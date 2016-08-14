@@ -34,7 +34,7 @@ public class DatafilesLoader
 		this.associationFilename = associationFilename;
 	}
 
-	private void parseObo(final OBOProgress oboProgess, ByteArrayParserInput input)
+	private void parseObo(final OBOProgress oboProgress, ByteArrayParserInput input)
 	{
 		OBOParser oboParser = new OBOParser(input);
 		try
@@ -48,13 +48,13 @@ public class DatafilesLoader
 				{
 					this.max = max;
 
-					oboProgess.update(0, max, 0);
+					oboProgress.update(0, max, 0);
 				}
 
 				@Override
 				public void update(int current, int terms)
 				{
-					oboProgess.update(current, max, terms);
+					oboProgress.update(current, max, terms);
 				}
 			});
 			terms = new TermContainer(oboParser.getTermMap(), oboParser.getFormatVersion(), oboParser.getDate());
