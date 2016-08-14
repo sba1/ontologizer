@@ -65,6 +65,13 @@ public class DatafilesLoader
 		}
 	}
 
+	/**
+	 * Parse the given input as association file (usually in GAF).
+	 *
+	 * @param associationProgess progress interface
+	 * @param input the input to be parsed
+	 * @return true if successful, otherwise false (e.g., if no ontology is available)
+	 */
 	private boolean parseAssoc(final AssociationProgess associationProgess, ByteArrayParserInput input)
 	{
 		if (terms == null || ontology == null)
