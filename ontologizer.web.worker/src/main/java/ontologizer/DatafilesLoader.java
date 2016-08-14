@@ -65,6 +65,43 @@ public class DatafilesLoader
 		}
 	}
 
+	private boolean parseAssoc(final AssociationProgess associationProgess, ByteArrayParserInput input)
+	{
+		if (terms == null || ontology == null)
+		{
+			return false;
+		}
+
+		try
+		{
+			AssociationParser ap = new AssociationParser(input, terms, null,
+				new IAssociationParserProgress()
+				{
+					private int max;
+
+					@Override
+					public void update(int current)
+					{
+						associationProgess.update(current, max);
+					}
+
+					@Override
+					public void init(int max)
+					{
+						this.max = max;
+						associationProgess.update(0, max);
+					}
+				});
+			annotation = new AssociationContainer(ap.getAssociations(), ap.getSynonym2gene(), ap.getDbObject2gene());
+
+			return true;
+		} catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+		return false;
+	}
+
 	public void load(Runnable done, final OBOProgress oboProgess, final AssociationProgess associationProgess)
 	{
 		/* Load obo file */
@@ -79,34 +116,9 @@ public class DatafilesLoader
 			assocRequest.open("GET", associationFilename);
 			assocRequest.onComplete(() ->
 			{
-				byte[] assocBuf = Utils.getByteResult(assocRequest);
-				try
-				{
-					AssociationParser ap = new AssociationParser(new ByteArrayParserInput(assocBuf), terms, null,
-						new IAssociationParserProgress()
-						{
-							private int max;
+				parseAssoc(associationProgess, new ByteArrayParserInput(assocRequest.getResponseBytes()));
 
-							@Override
-							public void update(int current)
-							{
-								associationProgess.update(current, max);
-							}
-
-							@Override
-							public void init(int max)
-							{
-								this.max = max;
-								associationProgess.update(0, max);
-							}
-						});
-					annotation = new AssociationContainer(ap.getAssociations(), ap.getSynonym2gene(), ap.getDbObject2gene());
-
-					done.run();
-				} catch (Exception e)
-				{
-					e.printStackTrace();
-				}
+				done.run();
 			});
 			assocRequest.send();
 		});
