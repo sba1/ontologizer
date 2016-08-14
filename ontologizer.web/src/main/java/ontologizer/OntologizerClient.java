@@ -2,6 +2,7 @@ package ontologizer;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.teavm.jso.browser.Window;
@@ -10,6 +11,7 @@ import org.teavm.jso.dom.html.HTMLBodyElement;
 import org.teavm.jso.dom.html.HTMLButtonElement;
 import org.teavm.jso.dom.html.HTMLDocument;
 import org.teavm.jso.dom.html.HTMLElement;
+import org.teavm.jso.dom.html.HTMLSelectElement;
 import org.teavm.jso.dom.xml.Node;
 import org.teavm.jso.dom.xml.Text;
 
@@ -29,7 +31,7 @@ public class OntologizerClient
 	private static HTMLElement resultsTable;
 	private static HTMLElement resultsBody;
 
-	private static Map<String,String> speciesMap = new TreeMap<>();
+	private static SortedMap<String,String> speciesMap = new TreeMap<>();
 
 	public static void studySetChanged(String studySet)
 	{
@@ -76,10 +78,17 @@ public class OntologizerClient
 		speciesMap.put("Fruit fly", "gene_association.fb.gz");
 		speciesMap.put("Human", "goa_human.gaf.gz");
 
-		HTMLElement speciesElement = document.getElementById("species");
-		for (String sp : speciesMap.keySet())
+		final String [] species = speciesMap.keySet().toArray(new String[speciesMap.size()]);
+
+		HTMLSelectElement speciesElement = document.getElementById("species").cast();
+		for (String sp : species)
 			addOption(speciesElement, sp);
 
+		speciesElement.addEventListener("change", ev ->
+		{
+			String sp = species[speciesElement.getSelectedIndex()];
+			worker.postMessage(createLoadDataMessage(speciesMap.get(sp)));
+		});
 		allGenesButton = document.getElementById("allgenes").cast();
 		allGenesButton.listenClick(ev ->
 		{
