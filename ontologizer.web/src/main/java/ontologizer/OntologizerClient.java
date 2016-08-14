@@ -1,7 +1,8 @@
 package ontologizer;
 
+import static ontologizer.LoadDataMessage.createLoadDataMessage;
+
 import java.io.IOException;
-import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -14,8 +15,6 @@ import org.teavm.jso.dom.html.HTMLElement;
 import org.teavm.jso.dom.html.HTMLSelectElement;
 import org.teavm.jso.dom.xml.Node;
 import org.teavm.jso.dom.xml.Text;
-
-import static ontologizer.LoadDataMessage.createLoadDataMessage;
 
 /**
  * Main class of the Ontologizer Web client.
