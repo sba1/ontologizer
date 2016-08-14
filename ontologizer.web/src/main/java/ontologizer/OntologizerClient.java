@@ -121,7 +121,7 @@ public class OntologizerClient
 		final ProgressElement progressElement = document.getElementById("progress").cast();
 		final boolean hiddenRemoved [] = new boolean[1];
 
-		worker.postMessage(createLoadDataMessage(speciesMap.get("Yeast")));
+		loadDataForCurrentSpecies(worker);
 
 		worker.listenMessage(ProgressMessage.class, (ProgressMessage pm) ->
 		{
