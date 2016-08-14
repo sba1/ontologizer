@@ -1,6 +1,7 @@
 package ontologizer;
 
 import static ontologizer.LoadDataMessage.createLoadDataMessage;
+import static ontologizer.WorkerMessage.createWorkerMessage;
 
 import java.io.IOException;
 import java.util.SortedMap;
@@ -99,7 +100,7 @@ public class OntologizerClient
 		allGenesButton = document.getElementById("allgenes").cast();
 		allGenesButton.listenClick(ev ->
 		{
-			GetAllGenesMessage gm = WorkerMessage.createWorkerMessage(GetAllGenesMessage.class);
+			GetAllGenesMessage gm = createWorkerMessage(GetAllGenesMessage.class);
 			worker.postMessage(gm);
 		});
 		HTMLButtonElement ontologizeButton = document.getElementById("ontologize").cast();
@@ -107,7 +108,7 @@ public class OntologizerClient
 		ontologizeButton.listenClick(ev ->
 		{
 			String [] items = studySet.getValue().split("\n");
-			OntologizeMessage om = WorkerMessage.createWorkerMessage(OntologizeMessage.class);
+			OntologizeMessage om = createWorkerMessage(OntologizeMessage.class);
 			om.setItems(items);
 			worker.postMessage(om);
 
@@ -149,14 +150,14 @@ public class OntologizerClient
 
 		worker.listenMessage(OntologizeDoneMessage.class, (OntologizeDoneMessage odm) ->
 		{
-			GetNumberOfResultsMessage rnrm = WorkerMessage.createWorkerMessage(GetNumberOfResultsMessage.class);
+			GetNumberOfResultsMessage rnrm = createWorkerMessage(GetNumberOfResultsMessage.class);
 			worker.postMessage(GetNumberOfResultsMessage.class, rnrm, (JSNumber num) ->
 			{
 				int numberOfTerms = num.intValue();
 				resultsBody.clear();
 				for (int i=0; i < Math.min(30, numberOfTerms); i++)
 				{
-					GetResultMessage rm = WorkerMessage.createWorkerMessage(GetResultMessage.class);
+					GetResultMessage rm = createWorkerMessage(GetResultMessage.class);
 					rm.setRank(i);
 					worker.postMessage(GetResultMessage.class, rm, result ->
 					{
