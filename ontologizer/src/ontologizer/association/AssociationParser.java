@@ -44,6 +44,13 @@ public class AssociationParser
 		AFFYMETRIX
 	};
 
+	private IParserInput input;
+	private TermMap terms;
+	private HashSet<ByteString> names;
+	private Collection<String> evidences;
+	private IAssociationParserProgress progress;
+	private boolean iterative;
+
 	/** Mapping from gene (or gene product) names to Association objects */
 	private ArrayList<Association> associations;
 
@@ -118,16 +125,63 @@ public class AssociationParser
 	 * @param terms the container of the GO terms
 	 * @param names list of genes from which the associations should be gathered.
 	 *        If null all associations are taken,
-	 * @param evidences keep only the annotation whose evidence match the given ones. If null, all annotations are used.
-	 *        Note that this field is currently used when the filenames referes to a GAF file.
 	 * @param progress
 	 * @throws IOException
 	 */
 	public AssociationParser(IParserInput input, TermMap terms, HashSet<ByteString> names, Collection<String> evidences, IAssociationParserProgress progress) throws IOException
 	{
+		this(input,terms,names,evidences,progress,false);
+	}
+
+	/**
+	 * Construct the association parser object. The given file name will
+	 * parsed.
+	 *
+	 * @param input specifies wrapping input that contains association of genes to GO terms.
+	 * @param terms the container of the GO terms
+	 * @param names list of genes from which the associations should be gathered.
+	 *        If null all associations are taken,
+	 * @param evidences keep only the annotation whose evidence match the given ones. If null, all annotations are used.
+	 *        Note that this field is currently used when the filenames referes to a GAF file.
+	 * @param progress
+	 * @param iterative set to true if no actual parsing should be done in the constructor.
+	 * @throws IOException
+	 */
+	public AssociationParser(IParserInput input, TermMap terms, HashSet<ByteString> names, Collection<String> evidences, IAssociationParserProgress progress, boolean iterative) throws IOException
+	{
+		this.input = input;
+		this.terms = terms;
+		this.names = names;
+		this.evidences = evidences;
+		this.progress = progress;
+		this.iterative = iterative;
+
 		associations = new ArrayList<Association>();
 		synonym2gene = new HashMap<ByteString, ByteString>();
 		dbObjectID2gene = new HashMap<ByteString, ByteString>();
+
+		if (iterative)
+		{
+			return;
+		}
+
+		parse();
+	}
+
+	/**
+	 * Start or continue to parse the associations. This needs only to be called when the
+	 * parser was created with the iterative flag set to true.
+	 *
+	 * @return true if parsing is completed. Otherwise, false is returned in which
+	 *  case you must call parse() again.
+	 * @throws IOException
+	 */
+	public boolean parse() throws IOException
+	{
+		if (!iterative)
+		{
+			return true;
+		}
 
 		if (input.getFilename().endsWith(".ids"))
 		{
@@ -154,7 +208,7 @@ public class AssociationParser
 			abls.scan();
 
 			if (lines.size() == 0)
-				return;
+				return true;
 
 			byte [] head = merge(lines.get(0), abls.availableBuffer());
 
@@ -168,6 +222,7 @@ public class AssociationParser
 				fileType = Type.GAF;
 			}
 		}
+		return true;
 	}
 
 	/**
