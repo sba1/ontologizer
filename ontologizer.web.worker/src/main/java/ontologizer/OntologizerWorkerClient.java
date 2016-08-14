@@ -42,7 +42,7 @@ public class OntologizerWorkerClient
 				ontology = loader.getOntology();
 				associations = loader.getAnnotation();
 
-				createProgressMessage().post(Worker.current());
+				createWorkerMessage(HideProgressMessage.class).post(Worker.current());
 			},
 			/* OBO Progress */
 			(int current, int max, int terms) ->

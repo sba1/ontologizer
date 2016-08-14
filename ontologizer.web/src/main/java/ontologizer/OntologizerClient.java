@@ -143,6 +143,15 @@ public class OntologizerClient
 			}
 		});
 
+		worker.listenMessage(HideProgressMessage.class, hpm ->
+		{
+			if (hiddenRemoved[0])
+			{
+				progressElement.setAttribute("hidden", "true");
+				hiddenRemoved[0] = false;
+			}
+		});
+
 		worker.listenMessage(AllGenesMessage.class, (AllGenesMessage am) ->
 		{
 			studySet.setInnerHTML(am.getItems());
