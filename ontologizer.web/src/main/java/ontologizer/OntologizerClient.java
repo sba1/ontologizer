@@ -33,13 +33,21 @@ public class OntologizerClient
 	private static HTMLSelectElement speciesElement;
 	private static HTMLTextAreaElement studySet;
 
+	/** Maps human readable species names to association filenames */
 	private static SortedMap<String,String> speciesMap = new TreeMap<>();
+
+	/** Array of species as human readable names */
 	private static String [] species;
+
+	/** Species that has been selected last. Uses to see if new data files need to be loaded */
+	private static String lastSelectedSpecies;
 
 	private static Worker worker;
 
 	public static void studySetChanged(String studySet)
 	{
+		loadDataForCurrentSpecies();
+
 		String [] lines = studySet.split("\n");
 		studySetText.setNodeValue(lines.length + " items");
 	}
@@ -70,10 +78,17 @@ public class OntologizerClient
 	 */
 	private static void loadDataForCurrentSpecies()
 	{
+		String sp = species[speciesElement.getSelectedIndex()];
+
+		/* Don't load anything if species matches */
+		if (lastSelectedSpecies != null && sp.contentEquals(lastSelectedSpecies))
+			return;
+
 		initWorker();
 
-		String sp = species[speciesElement.getSelectedIndex()];
 		worker.postMessage(createLoadDataMessage(speciesMap.get(sp)));
+
+		lastSelectedSpecies = sp;
 	}
 
 	/**
@@ -177,6 +192,7 @@ public class OntologizerClient
 		allGenesButton = document.getElementById("allgenes").cast();
 		allGenesButton.listenClick(ev ->
 		{
+			loadDataForCurrentSpecies();
 			GetAllGenesMessage gm = createWorkerMessage(GetAllGenesMessage.class);
 			worker.postMessage(gm);
 		});
@@ -184,6 +200,8 @@ public class OntologizerClient
 		ontologizeButton.setType("button");
 		ontologizeButton.listenClick(ev ->
 		{
+			loadDataForCurrentSpecies();
+
 			String [] items = studySet.getValue().split("\n");
 			OntologizeMessage om = createWorkerMessage(OntologizeMessage.class);
 			om.setItems(items);
@@ -195,8 +213,5 @@ public class OntologizerClient
 				resultsBody = document.getElementById("resultsbody");
 			}
 		});
-
-		loadDataForCurrentSpecies();
-
 	}
 }
