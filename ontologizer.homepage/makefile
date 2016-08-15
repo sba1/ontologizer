@@ -42,13 +42,16 @@ check-clean-checkout:
 #
 .PHONY: copy-static
 copy-static: # check-clean-checkout
+	cd ../ontologizer.parent && mvn clean && mvn -P Web clean
 	cd ../ontologizer.parent && mvn package
-	rm -Rf static/webstart static/cmdline static/gui
-	mkdir -p static/webstart static/cmdline static/gui
+	cd ../ontologizer.parent && mvn -P Web -DskipSource -DskipTests package -Dmaven.javadoc.skip=true -pl ontologizer:ontologizer.web -Dteavm.debug=false -am
+	rm -Rf static/webstart static/cmdline static/gui static/web
+	mkdir -p static/webstart static/cmdline static/gui static/web
 	cp -p ../ontologizer.gui/ontologizer.jnlp static/webstart
 	cp -p ../ontologizer.gui/target/ontologizer.gui-$(VERSION).jar static/webstart/ontologizer-gui.jar
 	cp -p ../ontologizer.gui/target/ontologizer.gui-$(VERSION)-jar-with-dependencies.jar static/gui/OntologizerGui.jar
 	cp -p ../ontologizer/target/ontologizer-$(VERSION).jar static/webstart/ontologizer.jar
+	cp -Rp ../ontologizer.web/target/ontologizer.web-$(VERSION)/* static/web/
 	rsync -avm --exclude='*-sources.jar' --include='*.jar' -f 'hide,! */' ../ontologizer/local-maven-repo static/webstart/
 	cp -p ../ontologizer.cmdline/target/ontologizer.cmdline-$(VERSION)-jar-with-dependencies.jar static/cmdline/Ontologizer.jar
 	find static/webstart | grep .jar$ | xargs -n 1 -I'{}' jarsigner -keystore $(KEYSTORE_FILE) -storepass:env $(KEYSTORE_PASSWORD_ENV) '{}' $(KEYSTORE_ALIAS)

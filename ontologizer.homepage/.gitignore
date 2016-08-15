@@ -3,6 +3,7 @@
 /static/webstart
 /static/gui
 /static/cmdline
+/static/web
 /makefile.settings
 /ontologizer-mvn
 /ontologizer-pages
