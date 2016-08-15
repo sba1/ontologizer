@@ -50,6 +50,7 @@ public class AssociationParser
 	private Collection<String> evidences;
 	private IAssociationParserProgress progress;
 	private boolean iterative;
+	private boolean parsingFinished;
 
 	/** Mapping from gene (or gene product) names to Association objects */
 	private ArrayList<Association> associations;
@@ -178,7 +179,7 @@ public class AssociationParser
 	 */
 	public boolean parse() throws IOException
 	{
-		if (!iterative)
+		if (parsingFinished)
 		{
 			return true;
 		}
@@ -222,6 +223,7 @@ public class AssociationParser
 				fileType = Type.GAF;
 			}
 		}
+		parsingFinished = true;
 		return true;
 	}
 
