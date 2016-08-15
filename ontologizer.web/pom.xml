@@ -20,6 +20,19 @@
 				<artifactId>download-maven-plugin</artifactId>
 				<version>1.3.0</version>
 				<executions>
+
+					<execution>
+						<id>download-go-basic</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>wget</goal>
+						</goals>
+						<configuration>
+							<url>http://purl.obolibrary.org/obo/go/go-basic.obo</url>
+							<outputDirectory>${project.build.directory}/data</outputDirectory>
+						</configuration>
+					</execution>
+
 					<execution>
 						<id>download-zfin</id>
 						<phase>prepare-package</phase>

@@ -113,7 +113,7 @@ public class DatafilesLoader
 	{
 		/* Load obo file */
 		final ArrayBufferHttpRequest oboRequest = ArrayBufferHttpRequest.create();
-		oboRequest.open("GET", "gene_ontology.1_2.obo.gz");
+		oboRequest.open("GET", "go-basic.obo");
 		oboRequest.onComplete(() ->
 		{
 			parseObo(oboProgess, new ByteArrayParserInput(oboRequest.getResponseBytes()));
