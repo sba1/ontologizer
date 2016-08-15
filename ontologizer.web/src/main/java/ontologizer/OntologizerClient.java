@@ -31,9 +31,12 @@ public class OntologizerClient
 	private static HTMLElement resultsTable;
 	private static HTMLElement resultsBody;
 	private static HTMLSelectElement speciesElement;
+	private static HTMLTextAreaElement studySet;
 
 	private static SortedMap<String,String> speciesMap = new TreeMap<>();
 	private static String [] species;
+
+	private static Worker worker;
 
 	public static void studySetChanged(String studySet)
 	{
@@ -71,58 +74,19 @@ public class OntologizerClient
 		worker.postMessage(createLoadDataMessage(speciesMap.get(sp)));
 	}
 
-	public static void main(String[] args) throws IOException
+	/**
+	 * Initialize the worker.
+	 */
+	private static void initWorker()
 	{
-		final Worker worker = Worker.create("ontologizer-worker.js");
-
-		HTMLBodyElement body = document.getBody();
-
-		/* Study set text area */
-		final HTMLTextAreaElement studySet = document.getElementById("settextarea").cast();
-
-		studySet.listenKeyPress(evt -> studySetChanged(studySet.getValue()));
-
-		studySetText = document.createTextNode("");
-		body.appendChild(studySetText);
-
-		speciesMap.put("Yeast", "gene_association.sgd.gz");
-		speciesMap.put("Zebrafish", "gene_association.zfin.gz");
-		speciesMap.put("Mouse", "gene_association.mgi.gz");
-		speciesMap.put("C. elegans", "gene_association.wb.gz");
-		speciesMap.put("Fruit fly", "gene_association.fb.gz");
-		speciesMap.put("Human", "goa_human.gaf.gz");
-		species = speciesMap.keySet().toArray(new String[speciesMap.size()]);
-		speciesElement = document.getElementById("species").cast();
-		for (String sp : species)
-			addOption(speciesElement, sp);
-		speciesElement.addEventListener("change", ev -> loadDataForCurrentSpecies(worker) );
-
-		allGenesButton = document.getElementById("allgenes").cast();
-		allGenesButton.listenClick(ev ->
+		if (worker != null)
 		{
-			GetAllGenesMessage gm = createWorkerMessage(GetAllGenesMessage.class);
-			worker.postMessage(gm);
-		});
-		HTMLButtonElement ontologizeButton = document.getElementById("ontologize").cast();
-		ontologizeButton.setType("button");
-		ontologizeButton.listenClick(ev ->
-		{
-			String [] items = studySet.getValue().split("\n");
-			OntologizeMessage om = createWorkerMessage(OntologizeMessage.class);
-			om.setItems(items);
-			worker.postMessage(om);
-
-			if (resultsTable == null)
-			{
-				resultsTable = document.getElementById("results");
-				resultsBody = document.getElementById("resultsbody");
-			}
-		});
+			worker.terminate();
+		}
+		worker = Worker.create("ontologizer-worker.js");
 
 		final ProgressElement progressElement = document.getElementById("progress").cast();
 		final boolean hiddenRemoved [] = new boolean[1];
-
-		loadDataForCurrentSpecies(worker);
 
 		worker.listenMessage(ProgressMessage.class, (ProgressMessage pm) ->
 		{
@@ -181,5 +145,57 @@ public class OntologizerClient
 				}
 			});
 		});
+}
+
+	public static void main(String[] args) throws IOException
+	{
+		HTMLBodyElement body = document.getBody();
+
+		initWorker();
+
+		/* Study set text area */
+		studySet = document.getElementById("settextarea").cast();
+
+		studySet.listenKeyPress(evt -> studySetChanged(studySet.getValue()));
+
+		studySetText = document.createTextNode("");
+		body.appendChild(studySetText);
+
+		speciesMap.put("Yeast", "gene_association.sgd.gz");
+		speciesMap.put("Zebrafish", "gene_association.zfin.gz");
+		speciesMap.put("Mouse", "gene_association.mgi.gz");
+		speciesMap.put("C. elegans", "gene_association.wb.gz");
+		speciesMap.put("Fruit fly", "gene_association.fb.gz");
+		speciesMap.put("Human", "goa_human.gaf.gz");
+		species = speciesMap.keySet().toArray(new String[speciesMap.size()]);
+		speciesElement = document.getElementById("species").cast();
+		for (String sp : species)
+			addOption(speciesElement, sp);
+		speciesElement.addEventListener("change", ev -> loadDataForCurrentSpecies(worker) );
+
+		allGenesButton = document.getElementById("allgenes").cast();
+		allGenesButton.listenClick(ev ->
+		{
+			GetAllGenesMessage gm = createWorkerMessage(GetAllGenesMessage.class);
+			worker.postMessage(gm);
+		});
+		HTMLButtonElement ontologizeButton = document.getElementById("ontologize").cast();
+		ontologizeButton.setType("button");
+		ontologizeButton.listenClick(ev ->
+		{
+			String [] items = studySet.getValue().split("\n");
+			OntologizeMessage om = createWorkerMessage(OntologizeMessage.class);
+			om.setItems(items);
+			worker.postMessage(om);
+
+			if (resultsTable == null)
+			{
+				resultsTable = document.getElementById("results");
+				resultsBody = document.getElementById("resultsbody");
+			}
+		});
+
+		loadDataForCurrentSpecies(worker);
+
 	}
 }
