@@ -184,6 +184,8 @@ public class AssociationParser
 			return true;
 		}
 
+		long startMillis = System.currentTimeMillis();
+
 		if (input.getFilename().endsWith(".ids"))
 		{
 			importIDSAssociation(input,terms,progress);
@@ -223,6 +225,10 @@ public class AssociationParser
 				fileType = Type.GAF;
 			}
 		}
+
+		long durationMillis = System.currentTimeMillis() - startMillis;
+		logger.log(Level.INFO, "Parsed annotations in " + durationMillis + " ms");
+
 		parsingFinished = true;
 		return true;
 	}
