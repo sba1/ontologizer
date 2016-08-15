@@ -31,6 +31,12 @@ public abstract class Worker implements JSObject, EventTarget
 	public static native Worker create(String name);
 
 	/**
+	 * Terminate the worker. It is no longer accessible after calling
+	 * this.
+	 */
+	public abstract void terminate();
+
+	/**
 	 * Enqueues a new (worker) message listener.
 	 *
 	 * @param listener the listener to be enqueued.
