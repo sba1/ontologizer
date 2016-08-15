@@ -157,14 +157,14 @@
 
 							<!-- Whether TeaVM should produce debug information for its built-in 
 								debugger -->
-							<debugInformationGenerated>true</debugInformationGenerated>
+							<debugInformationGenerated>${teavm.debug}</debugInformationGenerated>
 
 							<!-- Whether TeaVM should produce source maps file -->
-							<sourceMapsGenerated>true</sourceMapsGenerated>
+							<sourceMapsGenerated>${teavm.debug}</sourceMapsGenerated>
 
 							<!-- Whether TeaVM should also put source files into output directory, 
 								for compatibility with source maps -->
-							<sourceFilesCopied>true</sourceFilesCopied>
+							<sourceFilesCopied>${teavm.debug}</sourceFilesCopied>
 						</configuration>
 					</execution>
 				</executions>
