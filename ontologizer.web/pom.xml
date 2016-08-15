@@ -121,9 +121,6 @@
 							<directory>${project.build.directory}/../../ontologizer.web.worker/target/generated/js</directory>
 						</resource>
 						<resource>
-							<directory>${project.build.directory}/dependency/META-INF/resources/webjars</directory>
-						</resource>
-						<resource>
 							<directory>${project.build.directory}/data</directory>
 						</resource>
 					</webResources>
