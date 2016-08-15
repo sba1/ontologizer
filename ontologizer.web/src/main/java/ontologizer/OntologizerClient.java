@@ -68,8 +68,10 @@ public class OntologizerClient
 	 *
 	 * @param worker the worker to which the message is posted.
 	 */
-	private static void loadDataForCurrentSpecies(Worker worker)
+	private static void loadDataForCurrentSpecies()
 	{
+		initWorker();
+
 		String sp = species[speciesElement.getSelectedIndex()];
 		worker.postMessage(createLoadDataMessage(speciesMap.get(sp)));
 	}
@@ -145,13 +147,11 @@ public class OntologizerClient
 				}
 			});
 		});
-}
+	}
 
 	public static void main(String[] args) throws IOException
 	{
 		HTMLBodyElement body = document.getBody();
-
-		initWorker();
 
 		/* Study set text area */
 		studySet = document.getElementById("settextarea").cast();
@@ -171,7 +171,8 @@ public class OntologizerClient
 		speciesElement = document.getElementById("species").cast();
 		for (String sp : species)
 			addOption(speciesElement, sp);
-		speciesElement.addEventListener("change", ev -> loadDataForCurrentSpecies(worker) );
+
+		speciesElement.addEventListener("change", ev -> loadDataForCurrentSpecies() );
 
 		allGenesButton = document.getElementById("allgenes").cast();
 		allGenesButton.listenClick(ev ->
@@ -195,7 +196,7 @@ public class OntologizerClient
 			}
 		});
 
-		loadDataForCurrentSpecies(worker);
+		loadDataForCurrentSpecies();
 
 	}
 }
