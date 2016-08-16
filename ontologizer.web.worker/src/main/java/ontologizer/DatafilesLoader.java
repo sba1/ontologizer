@@ -112,15 +112,14 @@ public class DatafilesLoader
 	public void load(Runnable done, final OBOProgress oboProgess, final AssociationProgess associationProgess)
 	{
 		/* Load obo file */
-		final ArrayBufferHttpRequest oboRequest = ArrayBufferHttpRequest.create();
-		oboRequest.open("GET", "go-basic.obo,gz");
+		final String oboName = "go-basic.obo.gz";
+		final ArrayBufferHttpRequest oboRequest = ArrayBufferHttpRequest.create("GET",oboName);
 		oboRequest.onComplete(() ->
 		{
 			parseObo(oboProgess, new ByteArrayParserInput(oboRequest.getResponseBytes()));
 
 			/* Load associations */
-			final ArrayBufferHttpRequest assocRequest = ArrayBufferHttpRequest.create();
-			assocRequest.open("GET", associationFilename);
+			final ArrayBufferHttpRequest assocRequest = ArrayBufferHttpRequest.create("GET", associationFilename);
 			assocRequest.onComplete(() ->
 			{
 				parseAssoc(associationProgess, new ByteArrayParserInput(assocRequest.getResponseBytes()));

@@ -19,9 +19,10 @@ public abstract class ArrayBufferHttpRequest extends XMLHttpRequest implements E
 	@JSBody(script="return new Int8Array(request.response)", params={"request"})
 	private static native byte [] getResponseBytes_(ArrayBufferHttpRequest request);
 
-	public static ArrayBufferHttpRequest create()
+	public static ArrayBufferHttpRequest create(String method, String url)
 	{
 		XMLHttpRequest req = XMLHttpRequest.create();
+		req.open(method, url);
 		req.setResponseType("arraybuffer");
 		return req.cast();
 	}
