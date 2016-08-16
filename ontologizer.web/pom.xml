@@ -123,8 +123,10 @@
 							<executable>gzip</executable>
 							<workingDirectory>${project.build.directory}/data</workingDirectory>
 							<arguments>
+								<argument>-c</argument>
 								<argument>go-basic.obo</argument>
 							</arguments>
+							<outputFile>go-basic.obo.gz</outputFile>
 						</configuration>
 					</execution>
 				</executions>
