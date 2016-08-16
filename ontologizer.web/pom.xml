@@ -126,7 +126,7 @@
 								<argument>-c</argument>
 								<argument>go-basic.obo</argument>
 							</arguments>
-							<outputFile>go-basic.obo.gz</outputFile>
+							<outputFile>${project.build.directory}/data/go-basic.obo.gz</outputFile>
 						</configuration>
 					</execution>
 				</executions>
