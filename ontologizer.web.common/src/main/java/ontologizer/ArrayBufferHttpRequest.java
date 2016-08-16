@@ -2,8 +2,9 @@ package ontologizer;
 
 import org.teavm.jso.JSBody;
 import org.teavm.jso.ajax.XMLHttpRequest;
+import org.teavm.jso.dom.events.EventTarget;
 
-public abstract class ArrayBufferHttpRequest extends XMLHttpRequest
+public abstract class ArrayBufferHttpRequest extends XMLHttpRequest implements EventTarget
 {
 	/**
 	 * Return the response as a byte array.
