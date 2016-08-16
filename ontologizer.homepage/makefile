@@ -52,6 +52,7 @@ copy-static: # check-clean-checkout
 	cp -p ../ontologizer.gui/target/ontologizer.gui-$(VERSION)-jar-with-dependencies.jar static/gui/OntologizerGui.jar
 	cp -p ../ontologizer/target/ontologizer-$(VERSION).jar static/webstart/ontologizer.jar
 	cp -Rp ../ontologizer.web/target/ontologizer.web-$(VERSION)/* static/web/
+	rm static/web/go-basic.obo
 	rsync -avm --exclude='*-sources.jar' --include='*.jar' -f 'hide,! */' ../ontologizer/local-maven-repo static/webstart/
 	cp -p ../ontologizer.cmdline/target/ontologizer.cmdline-$(VERSION)-jar-with-dependencies.jar static/cmdline/Ontologizer.jar
 	find static/webstart | grep .jar$ | xargs -n 1 -I'{}' jarsigner -keystore $(KEYSTORE_FILE) -storepass:env $(KEYSTORE_PASSWORD_ENV) '{}' $(KEYSTORE_ALIAS)
