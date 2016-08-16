@@ -2,6 +2,8 @@ package ontologizer;
 
 import java.io.IOException;
 
+import org.teavm.jso.dom.events.EventListener;
+
 import ontologizer.association.AssociationContainer;
 import ontologizer.association.AssociationParser;
 import ontologizer.association.IAssociationParserProgress;
@@ -18,6 +20,11 @@ public class DatafilesLoader
 	private TermContainer terms;
 	private Ontology ontology;
 	private AssociationContainer annotation;
+
+	public static interface DownloadProgress
+	{
+		public void update(int current, int max, String title);
+	}
 
 	public static interface OBOProgress
 	{
@@ -109,17 +116,43 @@ public class DatafilesLoader
 		return false;
 	}
 
-	public void load(Runnable done, final OBOProgress oboProgess, final AssociationProgess associationProgess)
+	class ProgressForwarder implements EventListener<ProgressEvent>
+	{
+		private DownloadProgress downloadProgress;
+		private String name;
+
+		public ProgressForwarder(DownloadProgress progress, String name)
+		{
+			this.downloadProgress = progress;
+			this.name = name;
+		}
+
+		@Override
+		public void handleEvent(ProgressEvent ev)
+		{
+			if (ev.isLengthComputable())
+			{
+				downloadProgress.update(ev.getLoaded(), ev.getTotal(), name);
+			} else
+			{
+				downloadProgress.update(0, 1, name);
+			}
+		}
+	}
+
+	public void load(Runnable done, final DownloadProgress downloadProgress, final OBOProgress oboProgess, final AssociationProgess associationProgess)
 	{
 		/* Load obo file */
 		final String oboName = "go-basic.obo.gz";
 		final ArrayBufferHttpRequest oboRequest = ArrayBufferHttpRequest.create("GET",oboName);
+		oboRequest.addEventListener("progress", new ProgressForwarder(downloadProgress, oboName));
 		oboRequest.onComplete(() ->
 		{
 			parseObo(oboProgess, new ByteArrayParserInput(oboRequest.getResponseBytes()));
 
 			/* Load associations */
 			final ArrayBufferHttpRequest assocRequest = ArrayBufferHttpRequest.create("GET", associationFilename);
+			assocRequest.addEventListener("progress", new ProgressForwarder(downloadProgress, associationFilename));
 			assocRequest.onComplete(() ->
 			{
 				parseAssoc(associationProgess, new ByteArrayParserInput(assocRequest.getResponseBytes()));

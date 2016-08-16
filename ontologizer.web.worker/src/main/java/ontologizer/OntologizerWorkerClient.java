@@ -44,13 +44,17 @@ public class OntologizerWorkerClient
 
 				createWorkerMessage(HideProgressMessage.class).post(Worker.current());
 			},
+			/* Download Progress */
+			(int current, int max, String name) ->
+				createProgressMessage().withTitle("Downloading " + name).withCurrent(current).withMax(max).post(Worker.current())
+			,
 			/* OBO Progress */
 			(int current, int max, int terms) ->
-				createProgressMessage().withTitle("Loading Ontology").withCurrent(current).withMax(max).post(Worker.current())
+				createProgressMessage().withTitle("Parsing Ontology").withCurrent(current).withMax(max).post(Worker.current())
 			,
 			/* Association Progress */
 			(int current, int max) ->
-				createProgressMessage().withTitle("Loading Annotations").withCurrent(current).withMax(max).post(Worker.current())
+				createProgressMessage().withTitle("Parsing Annotations").withCurrent(current).withMax(max).post(Worker.current())
 			);
 		});
 
