@@ -113,7 +113,7 @@ public class DatafilesLoader
 	{
 		/* Load obo file */
 		final ArrayBufferHttpRequest oboRequest = ArrayBufferHttpRequest.create();
-		oboRequest.open("GET", "go-basic.obo");
+		oboRequest.open("GET", "go-basic.obo,gz");
 		oboRequest.onComplete(() ->
 		{
 			parseObo(oboProgess, new ByteArrayParserInput(oboRequest.getResponseBytes()));
