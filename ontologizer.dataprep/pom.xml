@@ -18,13 +18,13 @@
 
   <build>
     <plugins>
-      <!-- Configure Java compiler to use Java 8 syntax -->
+      <!-- Configure Java compiler to use Java 7 syntax -->
       <plugin>
       <artifactId>maven-compiler-plugin</artifactId>
       <version>3.5</version>
       <configuration>
-        <source>1.8</source>
-        <target>1.8</target>
+        <source>1.7</source>
+        <target>1.7</target>
       </configuration>
     </plugin>
 
