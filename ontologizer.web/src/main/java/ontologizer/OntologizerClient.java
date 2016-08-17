@@ -176,6 +176,8 @@ public class OntologizerClient
 		studySetText = document.createTextNode("");
 		body.appendChild(studySetText);
 
+		ACE.edit("items");
+
 		speciesMap.put("Yeast", "gene_association.sgd.gz");
 		speciesMap.put("Zebrafish", "gene_association.zfin.gz");
 		speciesMap.put("Mouse", "gene_association.mgi.gz");
