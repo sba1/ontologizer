@@ -31,7 +31,7 @@ public class OntologizerClient
 	private static HTMLElement resultsTable;
 	private static HTMLElement resultsBody;
 	private static HTMLSelectElement speciesElement;
-	private static HTMLTextAreaElement studySet;
+	private static ACE ace;
 
 	/** Maps human readable species names to association filenames */
 	private static SortedMap<String,String> speciesMap = new TreeMap<>();
@@ -135,7 +135,7 @@ public class OntologizerClient
 
 		worker.listenMessage(AllGenesMessage.class, (AllGenesMessage am) ->
 		{
-			studySet.setInnerHTML(am.getItems());
+			ace.setValue(am.getItems());
 		});
 
 		worker.listenMessage(OntologizeDoneMessage.class, (OntologizeDoneMessage odm) ->
@@ -168,15 +168,10 @@ public class OntologizerClient
 	{
 		HTMLBodyElement body = document.getBody();
 
-		/* Study set text area */
-		studySet = document.getElementById("settextarea").cast();
-
-		studySet.listenKeyPress(evt -> studySetChanged(studySet.getValue()));
-
 		studySetText = document.createTextNode("");
 		body.appendChild(studySetText);
 
-		ACE.edit("items");
+		ace = ACE.edit("items");
 
 		speciesMap.put("Yeast", "gene_association.sgd.gz");
 		speciesMap.put("Zebrafish", "gene_association.zfin.gz");
@@ -204,7 +199,7 @@ public class OntologizerClient
 		{
 			loadDataForCurrentSpecies();
 
-			String [] items = studySet.getValue().split("\n");
+			String [] items = ace.getValue().split("\n");
 			OntologizeMessage om = createWorkerMessage(OntologizeMessage.class);
 			om.setItems(items);
 			worker.postMessage(om);
