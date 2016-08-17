@@ -227,6 +227,10 @@ public class AssociationParser
 		}
 
 		long durationMillis = System.currentTimeMillis() - startMillis;
+		if (durationMillis == 0)
+		{
+			durationMillis = 1;
+		}
 		logger.log(Level.INFO, "Parsed annotations in " + durationMillis + " ms" + " (" + (associations.size() * 1000 / durationMillis) + " per second)");
 
 		parsingFinished = true;
