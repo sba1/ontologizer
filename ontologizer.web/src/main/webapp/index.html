@@ -30,8 +30,8 @@
     }
     </style>
   </head>
-  <body onload="main()">
-    <div class="pure-g">
+  <body onload="main()" style="display: flex; flex-direction: column; height: 100vh">
+    <div class="pure-g" style="display: flex; box-sizing: border-box; flex-grow: 1">
         <div class="pure-u-1 pure-u-md-7-24" style="display: flex; flex-direction: column; height: 300px;">
             <select name="species" id="species" style="margin-bottom: 0.5em;"></select>
             <div id="items" style="width: 100%; box-sizing: border-box; flex-grow: 1;"></div>
@@ -40,7 +40,7 @@
                 <button type="button" id="ontologize" class="pure-button">Ontologize</button>
             </form>
         </div>
-        <div class="pure-u-1 pure-u-md-17-24 padded-md" style="height: 99vh; overflow: auto; box-sizing: border-box">
+        <div class="pure-u-1 pure-u-md-17-24 padded-md" style="height: 100%; overflow: auto; box-sizing: border-box">
             <table class="pure-table pure-table-striped results-table" id="results">
                 <thead>
                     <tr>
@@ -55,7 +55,7 @@
         </div>
     </div>
 
-    <div class="progress" hidden="true" id="progress" style="position: relative; padding-top: 0.5em">
+    <div class="progress"  id="progress" style="position: relative; padding-top: 0.5em">
       <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;">
       </div>
       <span class="sr-only" style="position: absolute; top: 0.5em; z-index: 1; text-align: center; width: 100%">60% Complete</span>
