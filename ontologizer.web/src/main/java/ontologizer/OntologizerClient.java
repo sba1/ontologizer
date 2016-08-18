@@ -166,6 +166,8 @@ public class OntologizerClient
 
 	public static void main(String[] args) throws IOException
 	{
+		ACE.require("ace/ext/language_tools");
+
 		HTMLBodyElement body = document.getBody();
 
 		studySetText = document.createTextNode("");

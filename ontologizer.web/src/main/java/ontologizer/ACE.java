@@ -8,6 +8,10 @@ interface EditSession extends JSObject
 {
 }
 
+interface LangTools extends JSObject
+{
+}
+
 /**
  * Simple ACE type.
  *
@@ -17,6 +21,14 @@ public abstract class ACE implements JSObject
 {
 	@JSBody(script="return ace.edit(id);", params = { "id" })
 	public static native ACE edit(String id);
+
+	@JSBody(script="return ace.require(req);", params = { "req" })
+	public static native JSObject require(String req);
+
+	public static LangTools requireLangTools()
+	{
+		return require("ace/ext/language_tools").cast();
+	}
 
 	public abstract String getValue();
 
