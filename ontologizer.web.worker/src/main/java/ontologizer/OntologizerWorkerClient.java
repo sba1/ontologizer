@@ -76,13 +76,20 @@ public class OntologizerWorkerClient
 
 		Worker.current().listenMessage(OntologizeMessage.class, (OntologizeMessage om) ->
 		{
+			createProgressMessage().withTitle("Ontologizing").withCurrent(0).withMax(3).post(Worker.current());
+
 			TermForTermCalculation calculation = new TermForTermCalculation();
 			PopulationSet population = new PopulationSet();
 			population.addGenes(associations.getAllAnnotatedGenes());
 			StudySet study = new StudySet();
 			for (String s : om.getItems())
 				study.addGene(new ByteString(s), "");
+
+			createProgressMessage().withTitle("Ontologizing").withCurrent(1).withMax(3).post(Worker.current());
+
 			result = calculation.calculateStudySet(ontology, associations, population, study, new Bonferroni());
+
+			createProgressMessage().withTitle("Ontologizing").withCurrent(2).withMax(3).post(Worker.current());
 
 			props = new AbstractGOTermProperties[result.getSize()];
 			int i = 0;
@@ -90,6 +97,9 @@ public class OntologizerWorkerClient
 				props[i++] = p;
 			Arrays.sort(props, Comparator.comparingDouble(p -> p.p));
 
+			createProgressMessage().withTitle("Ontologizing").withCurrent(3).withMax(3).post(Worker.current());
+
+			Worker.current().postSimpleMessage(HideProgressMessage.class);
 			Worker.current().postSimpleMessage(OntologizeDoneMessage.class);
 		});
 
