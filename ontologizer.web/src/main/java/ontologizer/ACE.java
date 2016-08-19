@@ -12,6 +12,12 @@ interface LangTools extends JSObject
 {
 }
 
+abstract class EditorOptions implements JSObject
+{
+	@JSProperty
+	public abstract void setEnableBasicAutocompletion(boolean enableBasicAutocompletion);
+}
+
 /**
  * Simple ACE type.
  *
@@ -33,6 +39,8 @@ public abstract class ACE implements JSObject
 	public abstract String getValue();
 
 	public abstract void setValue(String text);
+
+	public abstract void setOptions(EditorOptions options);
 
 	@JSProperty
 	public abstract EditSession getSession();
