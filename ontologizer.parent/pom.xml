@@ -46,6 +46,7 @@
      </activation>
      <modules>
       <module>../ontologizer.changelog</module>
+      <module>../ontologizer.grappa</module>
       <module>../ontologizer.svd</module>
       <module>../ontologizer.tests</module>
       <module>../ontologizer.gui</module>
