@@ -14,6 +14,9 @@ interface LangTools extends JSObject
 
 abstract class EditorOptions implements JSObject
 {
+	@JSBody(params = {}, script = "return {};")
+	public static native EditorOptions createEditorOptions();
+
 	@JSProperty
 	public abstract void setEnableBasicAutocompletion(boolean enableBasicAutocompletion);
 }

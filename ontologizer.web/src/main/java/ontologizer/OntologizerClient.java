@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import org.teavm.jso.JSObject;
 import org.teavm.jso.browser.Window;
 import org.teavm.jso.core.JSNumber;
 import org.teavm.jso.dom.html.HTMLBodyElement;
@@ -174,6 +175,9 @@ public class OntologizerClient
 		body.appendChild(studySetText);
 
 		ace = ACE.edit("items");
+		EditorOptions editorOptions = EditorOptions.createEditorOptions();
+		editorOptions.setEnableBasicAutocompletion(true);
+		ace.setOptions(editorOptions);
 
 		speciesMap.put("Yeast", "gene_association.sgd.gz");
 		speciesMap.put("Zebrafish", "gene_association.zfin.gz");
