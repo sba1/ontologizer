@@ -5,6 +5,11 @@ import org.teavm.jso.JSProperty;
 import org.teavm.jso.core.JSArray;
 import org.teavm.jso.core.JSString;
 
+/**
+ * Represents the results of the auto complete suggestion request.
+ *
+ * @author Sebastian Bauer
+ */
 public abstract class AutoCompleteResults implements JSObject
 {
 	@JSProperty
