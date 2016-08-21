@@ -94,8 +94,8 @@ public final class ByteString
 		{
 			char c = string.charAt(i);
 
-			if ((byte)string.charAt(i) != bytes[i])
-				if (Character.toLowerCase(c) != Character.toLowerCase(bytes[i]))
+			if ((byte)c != bytes[i])
+				if (Character.toLowerCase(c) != Character.toLowerCase(bytes[i] & 0xff))
 					return false;
 		}
 		return true;
