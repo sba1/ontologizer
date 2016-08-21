@@ -85,6 +85,22 @@ public final class ByteString
 		return true;
 	}
 
+	public boolean startsWithIgnoreCase(String string)
+	{
+		int l = string.length();
+		if (bytes.length < l)
+			return false;
+		for (int i = 0; i < l; i++)
+		{
+			char c = string.charAt(i);
+
+			if ((byte)string.charAt(i) != bytes[i])
+				if (Character.toLowerCase(c) != Character.toLowerCase(bytes[i]))
+					return false;
+		}
+		return true;
+	}
+
 	/**
 	 * Return the specified substring.
 	 *
