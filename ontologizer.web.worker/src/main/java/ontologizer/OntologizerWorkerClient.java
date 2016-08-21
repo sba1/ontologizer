@@ -3,10 +3,13 @@ package ontologizer;
 import static ontologizer.ProgressMessage.createProgressMessage;
 import static ontologizer.WorkerMessage.createWorkerMessage;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 
+import org.teavm.jso.core.JSArray;
 import org.teavm.jso.core.JSNumber;
+import org.teavm.jso.core.JSString;
 
 import ontologizer.association.AssociationContainer;
 import ontologizer.calculation.AbstractGOTermProperties;
@@ -118,6 +121,34 @@ public class OntologizerWorkerClient
 			re.setID(prop.goTerm.getIDAsString());
 			re.setAdjP(prop.p_adjusted);
 			return re;
+		});
+
+		Worker.current().listenMessage2(AutoCompleteMessage.class, acm -> {
+			AutoCompleteResults acr = Utils.createObject();
+			ArrayList<ByteString> resultList = new ArrayList<>();
+
+			if (associations != null)
+			{
+				String prefix = acm.getPrefix();
+				for (ByteString item : associations.getAllAnnotatedGenes())
+				{
+					if (item.startsWith(prefix))
+					{
+						resultList.add(item);
+					}
+				}
+			}
+			JSArray<JSString> results = JSArray.create(resultList.size());
+			if (resultList.size() > 0)
+			{
+				for (int i=0; i < resultList.size(); i++)
+				{
+					results.set(i, JSString.valueOf(resultList.get(i).toString()));
+				}
+			}
+
+			acr.setResults(results);
+			return acr;
 		});
 	}
 }

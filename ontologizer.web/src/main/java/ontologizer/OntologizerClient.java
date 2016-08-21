@@ -7,9 +7,10 @@ import java.io.IOException;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.teavm.jso.JSObject;
 import org.teavm.jso.browser.Window;
+import org.teavm.jso.core.JSArray;
 import org.teavm.jso.core.JSNumber;
+import org.teavm.jso.core.JSString;
 import org.teavm.jso.dom.html.HTMLBodyElement;
 import org.teavm.jso.dom.html.HTMLButtonElement;
 import org.teavm.jso.dom.html.HTMLDocument;
@@ -167,8 +168,30 @@ public class OntologizerClient
 
 	public static void main(String[] args) throws IOException
 	{
-		ACE.require("ace/ext/language_tools");
+		LangTools langTools = ACE.requireLangTools();
 
+		EditorCompleter completer = EditorCompleter.createEditorCompleter();
+		completer.setCompletionHandler((ACE editor, EditSession session, int pos, JSString prefix, EditorCompletionCallback callback) ->
+		{
+			AutoCompleteMessage acm = WorkerMessage.createWorkerMessage(AutoCompleteMessage.class);
+			acm.setPrefix(prefix.stringValue());
+
+			loadDataForCurrentSpecies();
+
+			worker.postMessage(AutoCompleteMessage.class, acm, r -> {
+				int l = r.getResults().getLength();
+				JSArray<EditorCompletionEntry> results = JSArray.create(l);
+				for (int i=0; i < l; i++)
+				{
+					EditorCompletionEntry entry = EditorCompletionEntry.createEditorCompletionEntry("name", r.getResults().get(i).stringValue(), 0, "items");
+					results.set(i, entry);
+				}
+				callback.results(0, results);
+			});
+
+		});
+
+		langTools.addCompleter(completer);
 		HTMLBodyElement body = document.getBody();
 
 		studySetText = document.createTextNode("");
