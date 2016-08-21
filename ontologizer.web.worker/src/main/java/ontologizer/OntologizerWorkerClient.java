@@ -125,16 +125,16 @@ public class OntologizerWorkerClient
 
 		Worker.current().listenMessage2(AutoCompleteMessage.class, acm -> {
 			AutoCompleteResults acr = Utils.createObject();
-			ArrayList<ByteString> resultList = new ArrayList<>();
+			ArrayList<String> resultList = new ArrayList<>();
 
 			if (associations != null)
 			{
 				String prefix = acm.getPrefix();
 				for (ByteString item : associations.getAllAnnotatedGenes())
 				{
-					if (item.startsWith(prefix))
+					if (item.startsWithIgnoreCase(prefix))
 					{
-						resultList.add(item);
+						resultList.add(item.toString());
 					}
 				}
 			}
@@ -143,8 +143,9 @@ public class OntologizerWorkerClient
 			{
 				for (int i=0; i < resultList.size(); i++)
 				{
-					results.set(i, JSString.valueOf(resultList.get(i).toString()));
+					results.set(i, JSString.valueOf(resultList.get(i)));
 				}
+				results.sort();
 			}
 
 			acr.setResults(results);
