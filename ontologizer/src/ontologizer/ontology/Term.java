@@ -42,7 +42,7 @@ public class Term implements ITerm
 	private TermID[] equivalents;
 
 	/** The synonyms of this term, as read from the obo file. */
-	private String[] synonyms;
+	private ByteString[] synonyms;
 
 	/** The intersections tags of this term, as read from the obo file. */
 	private String[] intersections;
@@ -350,15 +350,15 @@ public class Term implements ITerm
 		return subsets;
 	}
 
-	public void setSynonyms(ArrayList<String> currentSynonyms) {
+	public void setSynonyms(ArrayList<ByteString> currentSynonyms) {
 
 		if (currentSynonyms.size() > 0) {
-			synonyms = new String[currentSynonyms.size()];
+			synonyms = new ByteString[currentSynonyms.size()];
 			currentSynonyms.toArray(synonyms);
 		}
 	}
 
-	public String[] getSynonyms() {
+	public ByteString[] getSynonyms() {
 		return synonyms;
 	}
 

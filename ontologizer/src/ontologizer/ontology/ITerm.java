@@ -1,5 +1,7 @@
 package ontologizer.ontology;
 
+import ontologizer.types.ByteString;
+
 /**
  * The read-only interface for terms.
  *
@@ -70,7 +72,7 @@ public interface ITerm
 	 *
 	 * @return the synonyms.
 	 */
-	public String[] getSynonyms();
+	public ByteString[] getSynonyms();
 
 	/**
 	 * Returns the associated xrefs

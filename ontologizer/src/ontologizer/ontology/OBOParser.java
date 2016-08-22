@@ -152,7 +152,7 @@ public class OBOParser
 	private ArrayList<TermID> currentEquivalents = new ArrayList<TermID>();
 
 	/** Synonyms, if any, for the Term currently being parsed */
-	private ArrayList<String> currentSynonyms = new ArrayList<String>();
+	private ArrayList<ByteString> currentSynonyms = new ArrayList<ByteString>();
 
 	/** Intersections, if any, for the Term currently being parsed */
 	private ArrayList<String> currentIntersections = new ArrayList<String>();
@@ -906,7 +906,7 @@ public class OBOParser
 					int synonymEnd = findUnescaped(buf, synonymStart, valueStart + valueLen - synonymStart, '\"');
 					if (synonymEnd == -1) return;
 
-					currentSynonyms.add(new String(buf,synonymStart,synonymEnd-synonymStart));
+					currentSynonyms.add(new ByteString(buf,synonymStart,synonymEnd));
 				}
 			}
 
