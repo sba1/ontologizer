@@ -25,7 +25,7 @@ public class TermContainer extends TermMap implements Iterable<Term>
 	/** Date of the OBO file */
 	private String date;
 
-	public TermContainer(Set<Term> terms, String format, String datum)
+	public TermContainer(Iterable<Term> terms, String format, String datum)
 	{
 		super(terms);
 
