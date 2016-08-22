@@ -22,6 +22,7 @@ import ontologizer.ontology.Subset;
 import ontologizer.ontology.Term;
 import ontologizer.ontology.TermContainer;
 import ontologizer.ontology.TermID;
+import ontologizer.types.ByteString;
 import ontologizer.ontology.Ontology.GOLevels;
 import ontologizer.ontology.Ontology.IVisitingGOVertex;
 
@@ -185,8 +186,8 @@ public class OntologyTest
 		assertEquals("biological_process", biologicalProcess.getRootTerm().getName());
 
 		Namespace n = biologicalProcess.getRootTerm().getNamespace();
-		String nn = n.getName();
-		assertEquals("biological_process", nn);
+		ByteString nn = n.getName();
+		assertEquals("biological_process", nn.toString());
 
 		for (Term t : biologicalProcess)
 			assertEquals(nn, t.getNamespace().getName());

@@ -122,7 +122,7 @@ public class OBOParser
 	private ReferencePool<TermID> termIDPool = new ReferencePool<TermID>();
 
 	/** All parsed namespaces */
-	private HashMap<String,Namespace> namespaces = new HashMap<String,Namespace>();
+	private HashMap<ByteString,Namespace> namespaces = new HashMap<ByteString,Namespace>();
 
 	/** The Stanza currently being processed */
 	private Stanza currentStanza;
@@ -936,7 +936,7 @@ public class OBOParser
 
 			private void parse_namespace(byte[] buf, int valueStart, int valueLen)
 			{
-				String newNamespace = new String(buf,valueStart, valueLen);
+				ByteString newNamespace = new ByteString(buf, valueStart, valueStart + valueLen);
 				Namespace namespace = namespaces.get(newNamespace);
 				if (namespace == null)
 				{

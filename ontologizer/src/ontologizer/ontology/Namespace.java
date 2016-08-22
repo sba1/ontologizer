@@ -8,6 +8,8 @@ package ontologizer.ontology;
 
 import java.util.HashMap;
 
+import ontologizer.types.ByteString;
+
 /**
  * A basic class representing a name space.
  *
@@ -26,9 +28,9 @@ public class Namespace
 	static private HashMap<Namespace,NamespaceEnum> namespaceMap = new HashMap<Namespace,NamespaceEnum>();
 	static
 	{
-		namespaceMap.put(new Namespace("biological_process"), NamespaceEnum.BIOLOGICAL_PROCESS);
-		namespaceMap.put(new Namespace("molecular_function"), NamespaceEnum.MOLECULAR_FUNCTION);
-		namespaceMap.put(new Namespace("cellular_component"), NamespaceEnum.CELLULAR_COMPONENT);
+		namespaceMap.put(new Namespace(new ByteString("biological_process")), NamespaceEnum.BIOLOGICAL_PROCESS);
+		namespaceMap.put(new Namespace(new ByteString("molecular_function")), NamespaceEnum.MOLECULAR_FUNCTION);
+		namespaceMap.put(new Namespace(new ByteString("cellular_component")), NamespaceEnum.CELLULAR_COMPONENT);
 	};
 	static public NamespaceEnum getNamespaceEnum(Namespace namespace)
 	{
@@ -38,16 +40,21 @@ public class Namespace
 	}
 
 	/** The global unknown namespace */
-	public static Namespace UNKOWN_NAMESPACE = new Namespace("unknown");
+	public static Namespace UNKOWN_NAMESPACE = new Namespace(new ByteString("unknown"));
 
-	private String name;
+	private ByteString name;
 
 	public Namespace(String newName)
+	{
+		this.name = new ByteString(newName);
+	}
+
+	public Namespace(ByteString newName)
 	{
 		this.name = newName;
 	}
 
-	public String getName()
+	public ByteString getName()
 	{
 		return name;
 	}
@@ -59,7 +66,7 @@ public class Namespace
 	 */
 	public String getAbbreviatedName()
 	{
-		return Character.toUpperCase(name.charAt(0)) + "";
+		return Character.toUpperCase(name.toString().charAt(0)) + "";
 	}
 
 	@Override
