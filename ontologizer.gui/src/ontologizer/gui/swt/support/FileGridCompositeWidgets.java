@@ -152,9 +152,7 @@ public class FileGridCompositeWidgets
 	}
 
 	/**
-	 * Returns the current path.
-	 *
-	 * @return
+	 * @return the currently chosen path.
 	 */
 	public String getPath()
 	{

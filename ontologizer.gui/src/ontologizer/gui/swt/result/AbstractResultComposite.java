@@ -183,9 +183,7 @@ public abstract class AbstractResultComposite extends Composite
 	}
 
 	/**
-	 * Returns the emanating term (which may be null).
-	 *
-	 * @return
+	 * @return the emanating term (which may be null).
 	 */
 	public Term getEmanatingTerm()
 	{

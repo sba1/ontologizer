@@ -82,9 +82,7 @@ public abstract class FolderComposite extends Composite
 	protected abstract Composite createContents(Composite parent);
 
 	/**
-	 * Returns the composite in which the actual contents should be placed.
-	 *
-	 * @return
+	 * @return the composite in which the actual contents should be placed.
 	 */
 	public Composite getContents()
 	{

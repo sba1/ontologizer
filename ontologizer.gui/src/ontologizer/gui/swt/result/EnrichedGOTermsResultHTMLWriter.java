@@ -86,9 +86,11 @@ public class EnrichedGOTermsResultHTMLWriter
 	}
 
 	/**
-	 * @param htmlFile
-	 * @param dotFile
-	 * @param pngFile
+	 * Write the result into the given fields.
+	 *
+	 * @param result the result about to be written.
+	 * @param htmlFile the destination html file
+	 * @param dotFile the destination png file.
 	 */
 	public static void write(EnrichedGOTermsResult result, File htmlFile, File dotFile)
 	{
