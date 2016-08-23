@@ -127,6 +127,28 @@ public final class Util
         return 10;
     }
 
+    private static byte [] digits = new byte[]{'0','1','2','3','4','5','6','7','8','9'};
+
+    /**
+     * Converts the given positive integer value to a byte representation.
+     *
+     * @param value the value to be converted
+     * @param dest the destination array
+     * @param offset the start offset within the destination array.
+     */
+    public static void intToByteArray(int value, byte [] dest, int offset)
+    {
+        if (value < 0) throw new IllegalArgumentException();
+
+        int current = offset + lengthOf(value);
+
+        while (value > 0)
+        {
+            dest[--current] = digits[value % 10];
+            value = value / 10;
+        }
+    }
+
 	/**
 	 * For debugging only.
 	 *
