@@ -3,6 +3,7 @@ package ontologizer.ontology;
 import java.util.HashMap;
 
 import ontologizer.types.ByteString;
+import ontologizer.util.Util;
 
 /**
  * This is a simple wrapper class for representing a term identifier such
@@ -221,6 +222,30 @@ public class TermID
 		 * Disabled as TeaVM's class lib doesn't support it for now.
 		 */
 		/*return String.format("%s:%07d", prefix.toString(), id);*/
+	}
+
+	/**
+	 * @return the ByteString representation of this term ID.
+	 */
+	public ByteString toByteString()
+	{
+		ByteString prefixByteString = prefix.getByteString();
+		int pl = prefixByteString.length();
+		int idlen = Util.lengthOf(id);
+		byte [] idBytes = new byte[pl + 1 + Math.max(7,idlen)];
+		prefixByteString.copyTo(0, pl, idBytes, 0);
+		idBytes[pl] = ':';
+		if (idlen < 7)
+		{
+			/* Gap with 0, if needed */
+			for (int i=0;i<7-idlen;i++)
+			{
+				idBytes[i+pl+1] = '0';
+			}
+			pl += 7 - idlen;
+		}
+		Util.intToByteArray(id, idBytes, pl + 1);
+		return new ByteString(idBytes);
 	}
 
 	@Override

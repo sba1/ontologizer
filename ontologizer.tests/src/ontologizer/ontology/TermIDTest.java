@@ -6,6 +6,7 @@ import org.junit.Test;
 import ontologizer.ontology.Prefix;
 import ontologizer.ontology.PrefixPool;
 import ontologizer.ontology.TermID;
+import ontologizer.types.ByteString;
 
 
 public class TermIDTest
@@ -51,5 +52,16 @@ public class TermIDTest
 		TermID tid = new TermID("HPO:0000100",pool);
 		TermID tid2 = new TermID("HPO:0001001",pool);
 		Assert.assertSame(tid.getPrefix(), tid2.getPrefix());
+	}
+
+	@Test
+	public void testToByteString()
+	{
+		TermID gid = new TermID("GO:0120211");
+		Assert.assertEquals(new ByteString("GO:0120211"), gid.toByteString());
+
+		TermID hid = new TermID("HPO:0000001");
+		Assert.assertEquals(new ByteString("HPO:0000001"), hid.toByteString());
+
 	}
 }
