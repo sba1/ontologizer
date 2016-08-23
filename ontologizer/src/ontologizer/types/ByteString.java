@@ -325,4 +325,10 @@ public final class ByteString
 	{
 		return parseFirstInt(byteString.bytes,0,byteString.length());
 	}
+
+	public int compareTo(ByteString name)
+	{
+		/* FIXME: Provide a better implementation */
+		return this.toString().compareTo(name.toString());
+	}
 }
