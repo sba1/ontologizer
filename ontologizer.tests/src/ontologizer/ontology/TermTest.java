@@ -71,7 +71,7 @@ public class TermTest
 	public void testSimpleBuilder()
 	{
 		ITerm t = Term.name("root").id("GO:0000000").build();
-		Assert.assertEquals("root", t.getName());
+		Assert.assertEquals("root", t.getName().toString());
 		Assert.assertEquals(new TermID("GO:0000000").toString(), t.getID().toString());
 	}
 
@@ -80,7 +80,7 @@ public class TermTest
 	{
 		PrefixPool pool = new PrefixPool();
 		ITerm t = Term.prefixPool(pool).name("root").id("GO:0000000").build();
-		Assert.assertEquals("root", t.getName());
+		Assert.assertEquals("root", t.getName().toString());
 		Assert.assertEquals(new TermID("GO:0000000").toString(), t.getID().toString());
 		Assert.assertTrue(pool.map(new Prefix(("GO"))) == t.getID().getPrefix());
 	}

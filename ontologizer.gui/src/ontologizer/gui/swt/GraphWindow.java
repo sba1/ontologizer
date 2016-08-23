@@ -149,7 +149,7 @@ class GraphWindow extends ApplicationWindow
 				if (t == null) return "";
 
 				builder.append("label=\"");
-				String label = t.getName();
+				String label = t.getName().toString();
 				if (GlobalPreferences.getWrapColumn() != -1)
 					label = Util.wrapLine(label,"\\n",GlobalPreferences.getWrapColumn());
 				builder.append(label);

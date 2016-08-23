@@ -420,7 +420,7 @@ public class SingleTerm
 			{
 				String label;
 
-				label = "\\small \\emph{" + graph.getTerm(id).getName().replace("_", " ") + "}";
+				label = "\\small \\emph{" + graph.getTerm(id).getName().toString().replace("_", " ") + "}";
 
 				StringBuilder str = new StringBuilder(200);
 				str.append("margin=\"0\" shape=\"box\" label=\"");
@@ -579,7 +579,7 @@ public class SingleTerm
 			{
 				public String getDotNodeAttributes(TermID id)
 				{
-					String label = graph.getTerm(id).getName().replace("_", " ");
+					String label = graph.getTerm(id).getName().toString().replace("_", " ");
 					AbstractGOTermProperties prop = result.getGOTermProperties(id);
 					String valStr;
 					if (prop != null)

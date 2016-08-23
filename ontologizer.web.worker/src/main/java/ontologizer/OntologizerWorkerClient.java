@@ -117,7 +117,8 @@ public class OntologizerWorkerClient
 		{
 			ResultEntry re = ResultEntry.createResultEntry();
 			AbstractGOTermProperties prop = props[gm.getRank()];
-			re.setName(prop.goTerm.getName());
+			/* FIXME: Avoid te useless conversions */
+			re.setName(prop.goTerm.getName().toString());
 			re.setID(prop.goTerm.getIDAsString());
 			re.setAdjP(prop.p_adjusted);
 			return re;

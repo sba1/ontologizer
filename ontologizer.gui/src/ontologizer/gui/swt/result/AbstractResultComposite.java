@@ -99,7 +99,9 @@ public abstract class AbstractResultComposite extends Composite
 
 		public int compare(AbstractGOTermProperties o1, AbstractGOTermProperties o2)
 		{
-			return (o1.goTerm.getName().compareToIgnoreCase(o2.goTerm.getName()))*direction;
+			String o1Name = o1.goTerm.getName().toString();
+			String o2Name = o2.goTerm.getName().toString();
+			return o1Name.compareToIgnoreCase(o2Name)*direction;
 		}
 	};
 

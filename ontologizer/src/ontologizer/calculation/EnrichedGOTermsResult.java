@@ -17,6 +17,7 @@ import ontologizer.ontology.Ontology.IVisitingGOVertex;
 import ontologizer.ontology.Term;
 import ontologizer.ontology.TermID;
 import ontologizer.set.StudySet;
+import ontologizer.types.ByteString;
 import ontologizer.util.Util;
 
 /**
@@ -168,7 +169,7 @@ public class EnrichedGOTermsResult extends AbstractGOTermsResult
 				attributes.append(id.toString());
 				attributes.append("\\n");
 
-				String label = graph.getTerm(id).getName();
+				String label = graph.getTerm(id).getName().toString();
 				if (GlobalPreferences.getWrapColumn() != -1)
 					label = Util.wrapLine(label,"\\n",GlobalPreferences.getWrapColumn());
 

@@ -21,7 +21,7 @@ public interface ITerm
 	 *
 	 * @return the name
 	 */
-	public String getName();
+	public ByteString getName();
 
 	/**
 	 * Returns the associated namespace of the term.

@@ -112,7 +112,7 @@ class InternalDatafiles extends Datafiles
 			}
 		});
 
-		DirectedGraph<String> graphWithItems = new DirectedGraph<String>();
+		DirectedGraph<ByteString> graphWithItems = new DirectedGraph<ByteString>();
 		for (Term term : terms)
 			graphWithItems.addVertex(term.getName());
 
@@ -120,34 +120,34 @@ class InternalDatafiles extends Datafiles
 		{
 			for (ParentTermID pid : term.getParents())
 			{
-				graphWithItems.addEdge(new Edge<String>(graph.getTerm(pid.termid).getName(),term.getName()));
+				graphWithItems.addEdge(new Edge<ByteString>(graph.getTerm(pid.termid).getName(),term.getName()));
 			}
 		}
 
-		graphWithItems.addVertex("item1");
-		graphWithItems.addVertex("item2");
-		graphWithItems.addVertex("item3");
-		graphWithItems.addVertex("item4");
-		graphWithItems.addVertex("item5");
+		graphWithItems.addVertex(new ByteString("item1"));
+		graphWithItems.addVertex(new ByteString("item2"));
+		graphWithItems.addVertex(new ByteString("item3"));
+		graphWithItems.addVertex(new ByteString("item4"));
+		graphWithItems.addVertex(new ByteString("item5"));
 
 		for (Gene2Associations g2a : assoc)
 			for (TermID tid : g2a.getAssociations())
-				graphWithItems.addEdge(new Edge<String>(graph.getTerm(tid).getName(),g2a.name().toString()));
+				graphWithItems.addEdge(new Edge<ByteString>(graph.getTerm(tid).getName(),g2a.name()));
 
 		try {
-			graphWithItems.writeDOT(new FileOutputStream("full.dot"), new DotAttributesProvider<String>()
+			graphWithItems.writeDOT(new FileOutputStream("full.dot"), new DotAttributesProvider<ByteString>()
 					{
 						@Override
-						public String getDotNodeAttributes(String vt)
+						public String getDotNodeAttributes(ByteString vt)
 						{
 							if (vt.startsWith("C"))
-								return "label=\""+vt+"\"";
+								return "label=\""+vt.toString()+"\"";
 							else
 								return "shape=\"box\",label=\""+vt+"\"";
 						}
 
 						@Override
-						public String getDotEdgeAttributes(String src, String dest)
+						public String getDotEdgeAttributes(ByteString src, ByteString dest)
 						{
 							return "dir=\"back\"";
 						}

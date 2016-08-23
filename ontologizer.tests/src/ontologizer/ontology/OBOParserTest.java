@@ -171,7 +171,7 @@ public class OBOParserTest
 		String [] expected = new String[]{"test2","test3"};
 		assertEquals(expected.length, terms.get(0).getSynonyms().length);
 		for (int i=0;i<expected.length;i++)
-			assertEquals(expected[i],terms.get(0).getSynonyms()[i]);
+			assertEquals(expected[i],terms.get(0).getSynonyms()[i].toString());
 	}
 
 	@Test
@@ -189,7 +189,7 @@ public class OBOParserTest
 		oboParser.doParse();
 		ArrayList<Term> terms = new ArrayList<Term>(oboParser.getTermMap());
 		assertEquals(1, terms.size());
-		assertEquals("This is a so-called \"test\"", terms.get(0).getDefinition());
+		assertEquals("This is a so-called \"test\"", terms.get(0).getDefinition().toString());
 	}
 
 	@Test

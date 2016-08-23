@@ -266,7 +266,7 @@ public class SVDGOTermsComposite extends AbstractResultComposite
 				{
 					SVDGOTermProperties prop = (SVDGOTermProperties) props[index];
 					item.setText(GOID, prop.goTerm.getIDAsString());
-					item.setText(NAME, prop.goTerm.getName());
+					item.setText(NAME, prop.goTerm.getName().toString());
 					item.setText(NAMESPACE,prop.goTerm.getNamespace().getAbbreviatedName());
 
 					for (int i=0;i<size;i++)

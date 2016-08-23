@@ -198,7 +198,7 @@ public class Ontology implements Iterable<Term>
 				boolean isGO = false;
 				for (Term t : level1terms)
 				{
-					if (goLevel1TermNames.contains(t.getName().toLowerCase())) isGO = true;
+					if (goLevel1TermNames.contains(t.getName().toString().toLowerCase())) isGO = true;
 					else
 					{
 						isGO = false;

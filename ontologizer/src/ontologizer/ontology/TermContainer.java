@@ -65,7 +65,7 @@ public class TermContainer extends TermMap implements Iterable<Term>
 		if (got == null)
 			return null;
 		else
-			return got.getName();
+			return got.getName().toString();
 	}
 
 	/**
@@ -77,7 +77,7 @@ public class TermContainer extends TermMap implements Iterable<Term>
 		if (got == null)
 			return null;
 		else
-			return got.getName();
+			return got.getName().toString();
 	}
 
 	public Term get(String id)

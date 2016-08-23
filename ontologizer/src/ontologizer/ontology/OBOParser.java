@@ -131,7 +131,7 @@ public class OBOParser
 	private TermID currentID;
 
 	/** The name of the GO Term currently being parsed */
-	private String currentName;
+	private ByteString currentName;
 
 	/** The namespace of the stanza currently being parsed */
 	private Namespace currentNamespace;
@@ -209,7 +209,7 @@ public class OBOParser
 
 			/* If no name is defined use the id as a name */
 			if (currentName == null && currentID != null)
-				currentName = currentID.toString();
+				currentName = currentID.toByteString();
 
 			if (currentID == null || currentName == null)
 			{
@@ -861,12 +861,12 @@ public class OBOParser
 			{
 				currentID = readTermID(buf, valueStart, valueLen);
 				if ((options & SETNAMEEQUALTOID) != 0)
-					currentName = currentID.toString();
+					currentName = currentID.toByteString();
 			}
 
 			private void parse_name(byte[] buf, int valueStart, int valueLen)
 			{
-				currentName = new String(buf, valueStart, valueLen);
+				currentName = new ByteString(buf, valueStart, valueStart + valueLen);
 			}
 
 			private void parse_is_a(byte[] buf, int valueStart, int valueLen)

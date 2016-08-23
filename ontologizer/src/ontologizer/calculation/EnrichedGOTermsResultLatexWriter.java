@@ -91,7 +91,7 @@ public class EnrichedGOTermsResultLatexWriter
 				out.print (props.goTerm.getIDAsString());
 				out.print (" & ");
 
-				String name = props.goTerm.getName();
+				String name = props.goTerm.getName().toString();
 				name = name.replaceAll("_", " ");
 				out.print(name);
 				out.print(" & $");

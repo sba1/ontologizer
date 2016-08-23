@@ -548,7 +548,7 @@ public class MainWindow extends ApplicationWindow
 											String [] subontologyChoices = new String[graph.getLevel1Terms().size()];
 											i = 0;
 											for (Term t : graph.getLevel1Terms())
-												subontologyChoices[i++] = t.getName();
+												subontologyChoices[i++] = t.getName().toString();
 											settingsComposite.setConsiderChoices(subontologyChoices);
 											settingsComposite.setConsider(subontology);
 											settingsComposite.setOntologyErrorString(null);

@@ -91,7 +91,7 @@ public class TermFilterSelectionComposite extends Composite
 
 				item.setText(0,suggestionList.get(tableIndex).getIDAsString());
 				item.setText(1,suggestionList.get(tableIndex).getNamespace().getAbbreviatedName());
-				item.setText(2,suggestionList.get(tableIndex).getName());
+				item.setText(2,suggestionList.get(tableIndex).getName().toString());
 			}});
 
 		setLayout(SWTUtil.newEmptyMarginGridLayout(3));
@@ -133,7 +133,7 @@ public class TermFilterSelectionComposite extends Composite
 								idx = subtermFilterSuggestionTable.getSelectionIndex();
 								if (idx != -1)
 								{
-									String name = suggestionList.get(idx).getName();
+									String name = suggestionList.get(idx).getName().toString();
 									subtermFilterText.setText(name);
 									subtermFilterText.setSelection(name.length());
 								}
@@ -172,7 +172,7 @@ public class TermFilterSelectionComposite extends Composite
 				/* We display the list if either we have more than one suggestion or if the single suggestion
 				 * is no exact match
 				 */
-				if (suggestionList.size() > 1 || (suggestionList.size() == 1 && !text.equalsIgnoreCase(suggestionList.get(0).getName())))
+				if (suggestionList.size() > 1 || (suggestionList.size() == 1 && !text.equalsIgnoreCase(suggestionList.get(0).getName().toString())))
 				{
 					subtermFilterSuggestionTable.setItemCount(suggestionList.size());
 					subtermFilterSuggestionTable.clearAll();
@@ -228,7 +228,7 @@ public class TermFilterSelectionComposite extends Composite
 		fsi.clear();
 		for (int i=0;i<supportedTerms.length;i++)
 		{
-			fsi.add(supportedTerms[i].getName(),supportedTerms[i]);
+			fsi.add(supportedTerms[i].getName().toString(),supportedTerms[i]);
 			fsi.add(supportedTerms[i].getIDAsString(),supportedTerms[i]);
 		}
 	}

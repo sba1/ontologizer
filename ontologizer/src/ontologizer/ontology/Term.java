@@ -24,7 +24,7 @@ public class Term implements ITerm
 	private TermID id;
 
 	/** The short human readable name of the id */
-	private String name;
+	private ByteString name;
 
 	/**
 	 * The definition of this term. This might be null if this information is
@@ -85,9 +85,14 @@ public class Term implements ITerm
 	 *            supplied list can be reused after the object have been
 	 *            constructed.
 	 */
-	public Term(TermID id, String name, Namespace namespace, Collection<ParentTermID> parents)
+	public Term(TermID id, ByteString name, Namespace namespace, Collection<ParentTermID> parents)
 	{
 		init(id, name, namespace, parents);
+	}
+
+	public Term(TermID id, String name, Namespace namespace, Collection<ParentTermID> parents)
+	{
+		init(id, new ByteString(name), namespace, parents);
 	}
 
 	/**
@@ -105,9 +110,14 @@ public class Term implements ITerm
 	 * @throws IllegalArgumentException
 	 *             if strId is malformatted.
 	 */
-	public Term(String strId, String name, Namespace namespace, Collection<ParentTermID> parents)
+	public Term(String strId, ByteString name, Namespace namespace, Collection<ParentTermID> parents)
 	{
 		init(new TermID(strId), name, namespace, parents);
+	}
+
+	public Term(String strId, String name, Namespace bNamespace, Collection<ParentTermID> rootlist)
+	{
+		this(new TermID(strId), new ByteString(name), bNamespace, rootlist);
 	}
 
 	/**
@@ -120,7 +130,8 @@ public class Term implements ITerm
 	 * @param parents
 	 *            The parent terms of this term including the relation type.
 	 */
-	public Term(TermID id, String name, Namespace namespace, ParentTermID... parents) {
+	public Term(TermID id, ByteString name, Namespace namespace, ParentTermID... parents)
+	{
 		init(id, name, namespace, parents);
 	}
 
@@ -134,7 +145,8 @@ public class Term implements ITerm
 	 * @param parents
 	 *            The parent terms of this term including the relation type.
 	 */
-	public Term(TermID id, String name, ParentTermID... parents) {
+	public Term(TermID id, ByteString name, ParentTermID... parents)
+	{
 		init(id, name, null, parents);
 	}
 
@@ -150,8 +162,14 @@ public class Term implements ITerm
 	 * @throws IllegalArgumentException
 	 *             if strId is malformatted.
 	 */
-	public Term(String strId, String name, ParentTermID... parents) {
+	public Term(String strId, ByteString name, ParentTermID... parents)
+	{
 		init(new TermID(strId), name, null, parents);
+	}
+
+	public Term(String strId, String name, ParentTermID... parents)
+	{
+		this(new TermID(strId), new ByteString(name), parents);
 	}
 
 	/**
@@ -166,8 +184,14 @@ public class Term implements ITerm
 	 * @throws IllegalArgumentException
 	 *             if strId is malformatted.
 	 */
-	public Term(String strId, String name, Namespace namespace, ParentTermID... parents) {
+	public Term(String strId, ByteString name, Namespace namespace, ParentTermID... parents)
+	{
 		init(new TermID(strId), name, namespace, parents);
+	}
+
+	public Term(String strId, String name, Namespace namespace, ParentTermID... parents)
+	{
+		this(new TermID(strId), new ByteString(name), namespace, parents);
 	}
 
 	/**
@@ -178,7 +202,7 @@ public class Term implements ITerm
 	 * @param namespace
 	 * @param parents
 	 */
-	private void init(TermID id, String name, Namespace namespace, Collection<ParentTermID> parents)
+	private void init(TermID id, ByteString name, Namespace namespace, Collection<ParentTermID> parents)
 	{
 		ParentTermID [] parentArray = new ParentTermID[parents.size()];
 		parents.toArray(parentArray);
@@ -193,7 +217,7 @@ public class Term implements ITerm
 	 * @param namespace
 	 * @param parents
 	 */
-	private void init(TermID id, String name, Namespace namespace, ParentTermID[] parents) {
+	private void init(TermID id, ByteString name, Namespace namespace, ParentTermID[] parents) {
 		this.id = id;
 		this.name = name;
 		this.parents = parents;
@@ -226,7 +250,7 @@ public class Term implements ITerm
 	/**
 	 * @return go:name
 	 */
-	public String getName() {
+	public ByteString getName() {
 		return name;
 	}
 
@@ -414,6 +438,8 @@ public class Term implements ITerm
 
 	public static interface RequiresName
 	{
+		RequiresTermID name(ByteString name);
+
 		RequiresTermID name(String name);
 	}
 
@@ -432,10 +458,15 @@ public class Term implements ITerm
 		private PrefixPool prefixPool;
 
 		@Override
-		public RequiresTermID name(String name)
+		public RequiresTermID name(ByteString name)
 		{
 			term.name = name;
 			return this;
+		}
+
+		public RequiresTermID name(String name)
+		{
+			return name(new ByteString(name));
 		}
 
 		@Override
@@ -495,6 +526,11 @@ public class Term implements ITerm
 	}
 
 	public static RequiresTermID name(String name)
+	{
+		return name(new ByteString(name));
+	}
+
+	public static RequiresTermID name(ByteString name)
 	{
 		TermBuilder builder = new TermBuilder();
 		builder.term.name = name;

@@ -183,7 +183,7 @@ public class OntologyTest
 
 		Ontology biologicalProcess = graph.getOntlogyOfRelevantTerms();
 		assertEquals(21763, biologicalProcess.getNumberOfTerms());
-		assertEquals("biological_process", biologicalProcess.getRootTerm().getName());
+		assertEquals("biological_process", biologicalProcess.getRootTerm().getName().toString());
 
 		Namespace n = biologicalProcess.getRootTerm().getNamespace();
 		ByteString nn = n.getName();
