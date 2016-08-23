@@ -101,6 +101,32 @@ public final class Util
 
         return (wrappedLine.toString());
     }
+
+    /**
+     * Returns the number of characters the given value would occupy of printed
+     * using decimal representation.
+     *
+     * @param value the number to check. Should not be negative.
+     *
+     * @return the number of characters
+     */
+    public static int lengthOf(int value)
+    {
+        if (value < 0) throw new IllegalArgumentException();
+
+        /* FIXME: Binary search would be much better here */
+        if (value <= 9) return 1;
+        if (value <= 99) return 2;
+        if (value <= 999) return 3;
+        if (value <= 9999) return 4;
+        if (value <= 99999) return 5;
+        if (value <= 999999) return 6;
+        if (value <= 9999999) return 7;
+        if (value <= 99999999) return 8;
+        if (value <= 999999999) return 9;
+        return 10;
+    }
+
 	/**
 	 * For debugging only.
 	 *
