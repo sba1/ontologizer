@@ -484,7 +484,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 						str.append("</div>");
 					}
 
-					String def = goTerm.getDefinition();
+					String def = goTerm.getDefinition().toString();
 					if (def == null) def = "No definition available";
 					str.append("<br />Definition: ");
 					str.append("<font size=\"-1\">");
@@ -538,7 +538,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 			Term goTerm = (Term)item.getData("term");
 			if (goTerm != null)
 			{
-				String def = goTerm.getDefinition();
+				String def = goTerm.getDefinition().toString();
 				if (def == null) def = "No definition available";
 				str.append(def);
 			}

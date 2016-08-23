@@ -30,7 +30,7 @@ public class Term implements ITerm
 	 * The definition of this term. This might be null if this information is
 	 * not available
 	 */
-	private String definition;
+	private ByteString definition;
 
 	/** The parents of the this term */
 	private ParentTermID[] parents;
@@ -288,7 +288,7 @@ public class Term implements ITerm
 	 *
 	 * @return the definition or null.
 	 */
-	public String getDefinition() {
+	public ByteString getDefinition() {
 		return definition;
 	}
 
@@ -298,7 +298,7 @@ public class Term implements ITerm
 	 * @param definition
 	 *            defines the definition ;)
 	 */
-	public void setDefinition(String definition) {
+	public void setDefinition(ByteString definition) {
 		this.definition = definition;
 	}
 
@@ -403,7 +403,7 @@ public class Term implements ITerm
 
 	public static interface Optional
 	{
-		Optional definition(String description);
+		Optional definition(ByteString description);
 
 		Optional parents(ParentTermID... parents);
 
@@ -460,7 +460,7 @@ public class Term implements ITerm
 		}
 
 		@Override
-		public Optional definition(String definition)
+		public Optional definition(ByteString definition)
 		{
 			term.definition = definition;
 			return this;

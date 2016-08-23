@@ -137,7 +137,7 @@ public class OBOParser
 	private Namespace currentNamespace;
 
 	/** The definition of the stanza currently being parsed */
-	private String currentDefintion;
+	private ByteString currentDefintion;
 
 	/** Is current term obsolete? */
 	private boolean currentObsolete;
@@ -930,7 +930,7 @@ public class OBOParser
 							continue;
 						temp[len++] = buf[i];
 					}
-					currentDefintion = new String(temp, 0, len);
+					currentDefintion = new ByteString(temp, 0, len);
 				}
 			}
 

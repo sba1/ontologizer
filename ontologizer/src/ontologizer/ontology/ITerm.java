@@ -47,7 +47,7 @@ public interface ITerm
 	 *
 	 * @return the definition or null.
 	 */
-	public String getDefinition();
+	public ByteString getDefinition();
 
 	/**
 	 * Return the term id of terms that are declared as equivalent.
