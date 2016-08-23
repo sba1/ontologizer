@@ -84,4 +84,9 @@ public class Prefix
 	{
 		return prefix.toString();
 	}
+
+	public ByteString getByteString()
+	{
+		return prefix;
+	}
 }
