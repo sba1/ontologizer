@@ -168,9 +168,8 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 	/**
 	 * Constructor.
 	 *
-	 * @param parent
-	 * @param style
-	 * @param go
+	 * @param parent the component's parent
+	 * @param style the swt style.
 	 */
 	public EnrichedGOTermsComposite(Composite parent, int style)
 	{
