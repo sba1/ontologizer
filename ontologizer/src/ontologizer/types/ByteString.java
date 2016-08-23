@@ -118,6 +118,19 @@ public final class ByteString
 	}
 
 	/**
+	 * Copy the bytes of the string of the given extent to a given destination.
+	 *
+	 * @param beginIndex specifies beginning of the substring to be copied (inclusive)
+	 * @param endIndex specifies the end of the substring to be copied (exclusive)
+	 * @param dest the destination array
+	 * @param offset the offset within the destination
+	 */
+	public void copyTo(int beginIndex, int endIndex, byte [] dest, int offset)
+	{
+		System.arraycopy(bytes, beginIndex, dest, offset, endIndex - beginIndex);
+	}
+
+	/**
 	 * Tests if this string is a prefix of the given string.
 	 *
 	 * @param string specifies the string that should be checked
