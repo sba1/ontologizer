@@ -32,12 +32,12 @@ class SinglePValuesCalculation implements IPValueCalculation
 	private TermID [] termIds;
 
 	public SinglePValuesCalculation(Ontology graph,
-			AssociationContainer goAssociations2, PopulationSet populationSet2,
+			AssociationContainer goAssociations, PopulationSet populationSet,
 			StudySet studySet, Hypergeometric hyperg)
 	{
 		this.graph = graph;
-		this.goAssociations = goAssociations2;
-		this.populationSet = populationSet2;
+		this.goAssociations = goAssociations;
+		this.populationSet = populationSet;
 		this.observedStudySet = studySet;
 		this.hyperg = hyperg;
 
