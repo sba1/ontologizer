@@ -28,6 +28,8 @@ class SinglePValuesCalculation implements IPValueCalculation
 	private Hypergeometric hyperg;
 
 	private TermEnumerator populationTermEnumerator;
+	private int totalNumberOfAnnotatedTerms;
+	private TermID [] termIds;
 
 	public SinglePValuesCalculation(Ontology graph,
 			AssociationContainer goAssociations2, PopulationSet populationSet2,
@@ -40,26 +42,32 @@ class SinglePValuesCalculation implements IPValueCalculation
 		this.hyperg = hyperg;
 
 		populationTermEnumerator = populationSet.enumerateGOTerms(graph, goAssociations);
+		totalNumberOfAnnotatedTerms = populationTermEnumerator.getTotalNumberOfAnnotatedTerms();
+
+		int i = 0;
+
+		termIds = new TermID[totalNumberOfAnnotatedTerms];
+		for (TermID term : populationTermEnumerator)
+		{
+			termIds[i++] = term;
+		}
 	}
 
 	private PValue [] calculatePValues(StudySet studySet)
 	{
 		TermEnumerator studyTermEnumerator = studySet.enumerateGOTerms(graph, goAssociations);
 
-		int i = 0;
+		PValue p [] = new PValue[totalNumberOfAnnotatedTerms];
 
-		PValue p [] = new PValue[populationTermEnumerator.getTotalNumberOfAnnotatedTerms()];
-
-		TermForTermGOTermProperties myP;
-
-		for(TermID term : populationTermEnumerator)
+		for (int i = 0; i < termIds.length; i++)
 		{
+			TermID term = termIds[i];
 			int goidAnnotatedPopGeneCount = populationTermEnumerator.getAnnotatedGenes(term).totalAnnotatedCount();
 			int popGeneCount = populationSet.getGeneCount();
 			int studyGeneCount = studySet.getGeneCount();
 			int goidAnnotatedStudyGeneCount = studyTermEnumerator.getAnnotatedGenes(term).totalAnnotatedCount();
 
-			myP = new TermForTermGOTermProperties();
+			TermForTermGOTermProperties myP = new TermForTermGOTermProperties();
 			myP.goTerm = graph.getTerm(term);
 			myP.annotatedStudyGenes = goidAnnotatedStudyGeneCount;
 			myP.annotatedPopulationGenes = goidAnnotatedPopGeneCount;
@@ -93,7 +101,7 @@ class SinglePValuesCalculation implements IPValueCalculation
 				myP.p_min = 1.0;
 			}
 
-			p[i++] = myP;
+			p[i] = myP;
 		}
 		return p;
 	}
