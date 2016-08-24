@@ -27,21 +27,21 @@ public abstract class AbstractTestCorrection
 	 * @return the adjusted p values matching the order of the
 	 *         the p values of the
 	 */
-	abstract public PValue[] adjustPValues(IPValueCalculation pValueCalculation);
+	public abstract PValue[] adjustPValues(IPValueCalculation pValueCalculation);
 
 	/**
 	 * Return a description of the test.
 	 *
 	 * @return the descripton
 	 */
-	abstract public String getDescription();
+	public abstract String getDescription();
 
 	/**
 	 * Return the name of the test correction.
 	 *
 	 * @return the name of the test.
 	 */
-	abstract public String getName();
+	public abstract String getName();
 
 	/**
 	 * Returns the number of pvalues that don't have
