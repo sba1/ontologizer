@@ -16,7 +16,6 @@ import ontologizer.association.AssociationContainer;
 import ontologizer.association.AssociationParser;
 import ontologizer.association.Gene2Associations;
 import ontologizer.benchmark.Datafiles;
-import ontologizer.calculation.AbstractGOTermProperties;
 import ontologizer.calculation.EnrichedGOTermsResult;
 import ontologizer.calculation.TermForTermCalculation;
 import ontologizer.dotwriter.AbstractDotAttributesProvider;
