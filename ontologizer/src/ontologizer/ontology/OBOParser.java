@@ -110,7 +110,7 @@ public class OBOParser
 	private HashSet<Term> terms = new HashSet<Term>();
 
 	/** Collection of subsets */
-	private HashMap<String,Subset> subsets = new HashMap<String, Subset>();
+	private HashMap<ByteString,Subset> subsets = new HashMap<ByteString, Subset>();
 
 	/** Statistics */
 	private int numberOfRelations;
@@ -1010,8 +1010,8 @@ public class OBOParser
 
 			private void parse_subset(byte[] buf, int valueStart, int valueLen)
 			{
-				/* TODO: Avoid string creation */
-				Subset subset = subsets.get(new String(buf, valueStart, valueLen));
+				/* TODO: Avoid ByteString creation */
+				Subset subset = subsets.get(new ByteString(buf, valueStart, valueStart + valueLen));
 				if (subset != null)
 					currentSubsets.add(subset);
 			}

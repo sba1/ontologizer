@@ -197,7 +197,7 @@ public class OntologyTest
 	{
 		HashSet<String> names = new HashSet<String>();
 		for (Subset s : subsets)
-			names.add(s.getName());
+			names.add(s.getName().toString());
 		return names;
 	}
 
@@ -205,7 +205,7 @@ public class OntologyTest
 	{
 		HashSet<String> names = new HashSet<String>();
 		for (Subset s : subsets)
-			names.add(s.getName());
+			names.add(s.getName().toString());
 		return names;
 	}
 

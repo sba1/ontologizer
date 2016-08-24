@@ -541,7 +541,7 @@ public class MainWindow extends ApplicationWindow
 											String [] subsetChoices = new String[graph.getAvailableSubsets().size()];
 											int i=0;
 											for (Subset s : graph.getAvailableSubsets())
-												subsetChoices[i++] = s.getName();
+												subsetChoices[i++] = s.getName().toString();
 											settingsComposite.setRestrictionChoices(subsetChoices);
 											settingsComposite.setRestriction(subset);
 

@@ -325,7 +325,7 @@ public class OBOParserTest
 		ArrayList<Term> terms = new ArrayList<Term>(oboParser.getTermMap());
 		assertEquals(2, terms.size());
 		assertEquals(1, terms.get(0).getSubsets().length);
-		assertEquals("subset", terms.get(0).getSubsets()[0].getName());
+		assertEquals("subset", terms.get(0).getSubsets()[0].getName().toString());
 		assertEquals(0, terms.get(1).getSubsets().length);
 	}
 

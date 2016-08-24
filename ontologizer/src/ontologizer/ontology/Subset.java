@@ -1,5 +1,7 @@
 package ontologizer.ontology;
 
+import ontologizer.types.ByteString;
+
 /**
  * This class represents a single subset. Terms can be accompanied by
  * subsets to restrict the ontology for certain purposes.
@@ -8,15 +10,22 @@ package ontologizer.ontology;
  */
 public class Subset
 {
-	private String name;
-	private String desc;
+	private ByteString name;
+	private ByteString desc;
 
 	public Subset(String name, String desc)
 	{
-		this.name = name;
+		this.name = new ByteString(name);
+		this.desc = new ByteString(desc);
 	}
 
-	public String getName()
+	public Subset(ByteString name, ByteString desc)
+	{
+		this.name = name;
+		this.desc = desc;
+	}
+
+	public ByteString getName()
 	{
 		return name;
 	}
@@ -64,6 +73,6 @@ public class Subset
 			desc = "";
 		}
 
-		return new Subset(name,desc);
+		return new Subset(new ByteString(name),new ByteString(desc));
 	}
 }
