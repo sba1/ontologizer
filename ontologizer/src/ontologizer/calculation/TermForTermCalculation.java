@@ -27,6 +27,8 @@ class SinglePValuesCalculation implements IPValueCalculation
 	private StudySet observedStudySet;
 	private Hypergeometric hyperg;
 
+	private TermEnumerator populationTermEnumerator;
+
 	public SinglePValuesCalculation(Ontology graph,
 			AssociationContainer goAssociations2, PopulationSet populationSet2,
 			StudySet studySet, Hypergeometric hyperg)
@@ -36,12 +38,13 @@ class SinglePValuesCalculation implements IPValueCalculation
 		this.populationSet = populationSet2;
 		this.observedStudySet = studySet;
 		this.hyperg = hyperg;
+
+		populationTermEnumerator = populationSet.enumerateGOTerms(graph, goAssociations);
 	}
 
 	private PValue [] calculatePValues(StudySet studySet)
 	{
 		TermEnumerator studyTermEnumerator = studySet.enumerateGOTerms(graph, goAssociations);
-		TermEnumerator populationTermEnumerator = populationSet.enumerateGOTerms(graph, goAssociations);
 
 		int i = 0;
 
