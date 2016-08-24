@@ -86,11 +86,11 @@ public abstract class AbstractTestCorrection
 	}
 
 	/**
-	 * Enforce monotony contrains of the p values (i.e. that
+	 * Enforce monotony constrains of the p values (i.e. that
 	 * adjusted p values of increasing p values is increasing
 	 * as well)
 	 *
-	 * @param p specfies the p values array which has to be already
+	 * @param p specifies the p values array which has to be already
 	 *        in sorted order!
 	 */
 	public static void enforcePValueMonotony(PValue [] p)
