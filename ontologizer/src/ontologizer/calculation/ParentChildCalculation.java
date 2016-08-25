@@ -11,12 +11,14 @@ import ontologizer.set.PopulationSet;
 import ontologizer.set.StudySet;
 import ontologizer.statistics.AbstractTestCorrection;
 import ontologizer.statistics.IPValueCalculation;
+import ontologizer.statistics.IPValueCalculationProgress;
+import ontologizer.statistics.ITestCorrectionProgress;
 import ontologizer.statistics.PValue;
 import ontologizer.types.ByteString;
 
-public class ParentChildCalculation extends
-		AbstractHypergeometricCalculation
+public class ParentChildCalculation extends AbstractHypergeometricCalculation implements IProgressFeedback
 {
+	private ICalculationProgress calculationProgress;
 
 	public String getName()
 	{
@@ -61,7 +63,7 @@ public class ParentChildCalculation extends
 			public TermEnumerator popTermEnumerator;
 			public StudySet observedStudySet;
 
-			private PValue [] calculatePValues(StudySet studySet)
+			private PValue [] calculatePValues(StudySet studySet, IPValueCalculationProgress progress)
 			{
 				/* We need this to get genes annotated in the study set */
 				TermEnumerator studyTermEnumerator = studySet.enumerateGOTerms(graph,
@@ -90,14 +92,14 @@ public class ParentChildCalculation extends
 				return observedStudySet.getGeneCount();
 			}
 
-			public PValue[] calculateRawPValues()
+			public PValue[] calculateRawPValues(IPValueCalculationProgress progress)
 			{
-				return calculatePValues(observedStudySet);
+				return calculatePValues(observedStudySet, progress);
 			}
 
-			public PValue[] calculateRandomPValues()
+			public PValue[] calculateRandomPValues(IPValueCalculationProgress progress)
 			{
-				return calculatePValues(populationSet.generateRandomStudySet(observedStudySet.getGeneCount()));
+				return calculatePValues(populationSet.generateRandomStudySet(observedStudySet.getGeneCount()), progress);
 			}
 
 			private ParentChildGOTermProperties calculateTerm(
@@ -180,6 +182,12 @@ public class ParentChildCalculation extends
 
 				return prop;
 			}
+
+			@Override
+			public int getNumberOfPValues()
+			{
+				return popTermEnumerator.getTotalNumberOfAnnotatedTerms();
+			}
 		};
 
 		ParentChildPValuesCalculation pValueCalculation = new ParentChildPValuesCalculation();
@@ -188,7 +196,7 @@ public class ParentChildCalculation extends
 		pValueCalculation.populationSet = popSet;
 		pValueCalculation.popTermEnumerator = popSet.enumerateGOTerms(graph, goAssociations);
 		pValueCalculation.observedStudySet = studySet;
-		PValue p[] = testCorrection.adjustPValues(pValueCalculation);
+		PValue p[] = testCorrection.adjustPValues(pValueCalculation, CalculationProgress2TestCorrectionProgress.createUnlessNull(calculationProgress));
 
 		/* Add the results to the result list and filter out terms
 		 * with no annotated genes.
@@ -213,5 +221,9 @@ public class ParentChildCalculation extends
 		return true;
 	}
 
-
+	@Override
+	public void setProgress(ICalculationProgress calculationProgress)
+	{
+		this.calculationProgress = calculationProgress;
+	}
 }

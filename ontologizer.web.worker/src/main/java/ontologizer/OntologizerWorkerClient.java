@@ -14,6 +14,7 @@ import org.teavm.jso.core.JSString;
 import ontologizer.association.AssociationContainer;
 import ontologizer.calculation.AbstractGOTermProperties;
 import ontologizer.calculation.EnrichedGOTermsResult;
+import ontologizer.calculation.ICalculationProgress;
 import ontologizer.calculation.TermForTermCalculation;
 import ontologizer.ontology.Ontology;
 import ontologizer.set.PopulationSet;
@@ -79,8 +80,6 @@ public class OntologizerWorkerClient
 
 		Worker.current().listenMessage(OntologizeMessage.class, (OntologizeMessage om) ->
 		{
-			createProgressMessage().withTitle("Ontologizing").withCurrent(0).withMax(3).post(Worker.current());
-
 			TermForTermCalculation calculation = new TermForTermCalculation();
 			PopulationSet population = new PopulationSet();
 			population.addGenes(associations.getAllAnnotatedGenes());
@@ -88,11 +87,35 @@ public class OntologizerWorkerClient
 			for (String s : om.getItems())
 				study.addGene(new ByteString(s), "");
 
-			createProgressMessage().withTitle("Ontologizing").withCurrent(1).withMax(3).post(Worker.current());
+			final int [] maxP = new int[1];
+
+			calculation.setProgress(new ICalculationProgress()
+			{
+				private long lastNano = 0;
+
+				@Override
+				public void update(int current)
+				{
+					long newNano = System.nanoTime();
+					if (newNano - lastNano > 250*1000*100)
+					{
+						createProgressMessage().withTitle("Ontologizing").withCurrent(current).withMax(maxP[0]).post(Worker.current());
+
+						lastNano = newNano;
+					}
+				}
+
+				@Override
+				public void init(int max)
+				{
+					createProgressMessage().withTitle("Ontologizing").withCurrent(0).withMax(max).post(Worker.current());
+					maxP[0] = max;
+
+					lastNano = System.nanoTime();
+				}
+			});
 
 			result = calculation.calculateStudySet(ontology, associations, population, study, new Bonferroni());
-
-			createProgressMessage().withTitle("Ontologizing").withCurrent(2).withMax(3).post(Worker.current());
 
 			props = new AbstractGOTermProperties[result.getSize()];
 			int i = 0;

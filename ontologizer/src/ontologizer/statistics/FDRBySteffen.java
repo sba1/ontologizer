@@ -24,12 +24,12 @@ public class FDRBySteffen extends AbstractTestCorrection
 		return "FDR-By-Steffen";
 	}
 
-	public PValue[] adjustPValues(IPValueCalculation pvalues)
+	public PValue[] adjustPValues(IPValueCalculation pvalues, ITestCorrectionProgress progress)
 	{
 		int i;
 
 		/* Calculate raw P-values  and sort them*/
-		PValue [] rawP = pvalues.calculateRawPValues();
+		PValue [] rawP = pvalues.calculateRawPValues(null);
 		Arrays.sort(rawP);
 
 		int m = rawP.length;
@@ -41,7 +41,7 @@ public class FDRBySteffen extends AbstractTestCorrection
 		for (int b=0; b < numberOfResamplingSteps; b++)
 		{
 			/* Compute raw p values of "permuted" data */
-			PValue [] randomRawP = pvalues.calculateRandomPValues();
+			PValue [] randomRawP = pvalues.calculateRandomPValues(null);
 			Arrays.sort(randomRawP);
 
 			assert(randomRawP.length == m);

@@ -13,9 +13,10 @@ public interface IPValueCalculation
 	 * Calculate raw (unadjusted) p values. An array of p value objects will be
 	 * returned.
 	 *
+	 * @param progress the interface for updating the progress
 	 * @return the calculated raw p-values
 	 */
-	PValue[] calculateRawPValues();
+	PValue[] calculateRawPValues(IPValueCalculationProgress progress);
 
 	/**
 	 * Calculate the p values using a random dataset. Note that a p value's
@@ -24,9 +25,10 @@ public interface IPValueCalculation
 	 * the returning array has to match the size of the array returned by
 	 * calculateRawPValues().
 	 *
+	 * @param progress the interface for updating the progress
 	 * @return the calculated random p-values
 	 */
-	PValue[] calculateRandomPValues();
+	PValue[] calculateRandomPValues(IPValueCalculationProgress progress);
 
 	/**
 	 * Gives back the size of the study set currently processed. Needed for
@@ -35,4 +37,9 @@ public interface IPValueCalculation
 	 * @return the size of the current study set
 	 */
 	int currentStudySetSize();
+
+	/**
+	 * @return the number of terms for which a calculation will be done.
+	 */
+	public int getNumberOfPValues();
 }

@@ -11,12 +11,12 @@ import java.util.Arrays;
  * @author Sebastian Bauer
  *
  */
-public class BenjaminiYekutieli extends AbstractTestCorrection
+public class BenjaminiYekutieli extends AbstractSimpleTestCorrection
 {
 	@Override
-	public PValue[] adjustPValues(IPValueCalculation pValueCalculation)
+	public PValue[] adjustPValues(IPValueCalculation pValueCalculation, IPValueCalculationProgress progress)
 	{
-		PValue [] p = pValueCalculation.calculateRawPValues();
+		PValue [] p = pValueCalculation.calculateRawPValues(progress);
 		PValue [] relevantP = getRelevantRawPValues(p);
 		Arrays.sort(relevantP);
 		int n = relevantP.length;

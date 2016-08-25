@@ -24,10 +24,12 @@ public abstract class AbstractTestCorrection
 	 * @param pValueCalculation an object implementing the p value
 	 *        calculation.
 	 *
+	 * @param progress interface for monitoring progress
+	 *
 	 * @return the adjusted p values matching the order of the
 	 *         the p values of the
 	 */
-	public abstract PValue[] adjustPValues(IPValueCalculation pValueCalculation);
+	public abstract PValue[] adjustPValues(IPValueCalculation pValueCalculation, ITestCorrectionProgress progress);
 
 	/**
 	 * Return a description of the test.

@@ -5,14 +5,14 @@ import java.lang.Math;
 /**
  * @author Sebastian Bauer
  */
-public class Sidak extends AbstractTestCorrection
+public class Sidak extends AbstractSimpleTestCorrection
 {
 	/** The name of the correction method */
 	private static final String NAME = "Sidak";
 
-	public PValue[] adjustPValues(IPValueCalculation pValueCalculation)
+	public PValue[] adjustPValues(IPValueCalculation pValueCalculation, IPValueCalculationProgress progress)
 	{
-		PValue [] p = pValueCalculation.calculateRawPValues();
+		PValue [] p = pValueCalculation.calculateRawPValues(progress);
 		int pvalsCount = countRelevantPValues(p);
 
 		/* Adjust the values */

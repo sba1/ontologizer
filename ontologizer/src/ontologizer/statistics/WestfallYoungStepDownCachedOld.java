@@ -43,12 +43,12 @@ public class WestfallYoungStepDownCachedOld extends AbstractTestCorrection
 		}
 	};
 
-	public PValue[] adjustPValues(IPValueCalculation pvalueCalc)
+	public PValue[] adjustPValues(IPValueCalculation pvalueCalc, ITestCorrectionProgress progress)
 	{
 		int i;
 
 		/* Calculate raw P-values */
-		PValue [] rawP = pvalueCalc.calculateRawPValues();
+		PValue [] rawP = pvalueCalc.calculateRawPValues(null);
 
 		double [] q = new double[rawP.length];
 		int [] count = new int[rawP.length];
@@ -82,7 +82,7 @@ public class WestfallYoungStepDownCachedOld extends AbstractTestCorrection
 			System.out.println("Sampling for study set size " + studySetSize + "\nThis may take a while...");
 			for (int b=0; b < numberOfResamplingSteps; b++) {
 				/* Compute raw p values of "permuted" data */
-				randomSampledPValues[b] = pvalueCalc.calculateRandomPValues();
+				randomSampledPValues[b] = pvalueCalc.calculateRandomPValues(null);
 
 				System.out.print("created " + b + " samples out of " + numberOfResamplingSteps + "\r");
 			}

@@ -14,6 +14,7 @@ import ontologizer.set.PopulationSet;
 import ontologizer.set.StudySet;
 import ontologizer.statistics.AbstractTestCorrection;
 import ontologizer.statistics.IPValueCalculation;
+import ontologizer.statistics.IPValueCalculationProgress;
 import ontologizer.statistics.PValue;
 import ontologizer.types.ByteString;
 
@@ -138,7 +139,7 @@ public class TopCalculation extends AbstractHypergeometricCalculation
 				return markedGenes;
 			}
 
-			private PValue [] calculatePValues(StudySet studySet)
+			private PValue [] calculatePValues(StudySet studySet, IPValueCalculationProgress progress)
 			{
 				markedGenesMap = new HashMap<TermID, HashSet<ByteString>>();
 				TermEnumerator studyTermEnumerator = studySet.enumerateGOTerms(graph,goAssociations);
@@ -149,19 +150,25 @@ public class TopCalculation extends AbstractHypergeometricCalculation
 				return list.toArray(p);
 			}
 
-			public PValue[] calculateRawPValues()
+			public PValue[] calculateRawPValues(IPValueCalculationProgress progress)
 			{
-				return calculatePValues(observedStudySet);
+				return calculatePValues(observedStudySet, progress);
 			}
 
-			public PValue[] calculateRandomPValues()
+			public PValue[] calculateRandomPValues(IPValueCalculationProgress progress)
 			{
-				return calculatePValues(populationSet.generateRandomStudySet(observedStudySet.getGeneCount()));
+				return calculatePValues(populationSet.generateRandomStudySet(observedStudySet.getGeneCount()), progress);
 			}
 
 			public int currentStudySetSize()
 			{
 				return observedStudySet.getGeneCount();
+			}
+
+			@Override
+			public int getNumberOfPValues()
+			{
+				return populationSet.enumerateGOTerms(graph,goAssociations).getTotalNumberOfAnnotatedTerms();
 			}
 		}
 
@@ -170,7 +177,7 @@ public class TopCalculation extends AbstractHypergeometricCalculation
 		pValueCalculation.graph = graph;
 		pValueCalculation.populationSet = populationSet;
 		pValueCalculation.observedStudySet = studySet;
-		PValue p[] = testCorrection.adjustPValues(pValueCalculation);
+		PValue p[] = testCorrection.adjustPValues(pValueCalculation, null);
 
 		/* Add the results to the result list and filter out terms
 		 * with no annotated genes.

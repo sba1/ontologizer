@@ -7,11 +7,12 @@ package ontologizer.statistics;
  *
  * @author Sebastian Bauer
  */
-public class None extends AbstractTestCorrection
+public class None extends AbstractSimpleTestCorrection
 {
-	public PValue[] adjustPValues(IPValueCalculation pValueCalculation)
+	@Override
+	protected PValue[] adjustPValues(IPValueCalculation pValueCalculation, final IPValueCalculationProgress progress)
 	{
-		PValue [] p = pValueCalculation.calculateRawPValues();
+		PValue [] p = pValueCalculation.calculateRawPValues(progress);
 		for (int i=0;i<p.length;i++)
 			p[i].p_adjusted = p[i].p;
 		return p;

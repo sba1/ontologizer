@@ -9,6 +9,7 @@ import ontologizer.set.StudySet;
 import ontologizer.statistics.AbstractTestCorrection;
 import ontologizer.statistics.Hypergeometric;
 import ontologizer.statistics.IPValueCalculation;
+import ontologizer.statistics.IPValueCalculationProgress;
 import ontologizer.statistics.PValue;
 
 /**
@@ -53,7 +54,7 @@ class SinglePValuesCalculation implements IPValueCalculation
 		}
 	}
 
-	private PValue [] calculatePValues(StudySet studySet)
+	private PValue [] calculatePValues(StudySet studySet, IPValueCalculationProgress progress)
 	{
 		TermEnumerator studyTermEnumerator = studySet.enumerateGOTerms(graph, goAssociations);
 
@@ -61,6 +62,11 @@ class SinglePValuesCalculation implements IPValueCalculation
 
 		for (int i = 0; i < termIds.length; i++)
 		{
+			if (progress != null && (i % 16) == 0)
+			{
+				progress.update(i);
+			}
+
 			TermID term = termIds[i];
 			int goidAnnotatedPopGeneCount = populationTermEnumerator.getAnnotatedGenes(term).totalAnnotatedCount();
 			int popGeneCount = populationSet.getGeneCount();
@@ -106,9 +112,10 @@ class SinglePValuesCalculation implements IPValueCalculation
 		return p;
 	}
 
-	public PValue[] calculateRawPValues()
+	@Override
+	public PValue[] calculateRawPValues(IPValueCalculationProgress progress)
 	{
-		return calculatePValues(observedStudySet);
+		return calculatePValues(observedStudySet, progress);
 	}
 
 	public int currentStudySetSize()
@@ -116,10 +123,17 @@ class SinglePValuesCalculation implements IPValueCalculation
 		return observedStudySet.getGeneCount();
 	}
 
-	public PValue[] calculateRandomPValues()
+	@Override
+	public PValue[] calculateRandomPValues(IPValueCalculationProgress progress)
 	{
-		return calculatePValues(populationSet.generateRandomStudySet(observedStudySet.getGeneCount()));
+		return calculatePValues(populationSet.generateRandomStudySet(observedStudySet.getGeneCount()), progress);
 	}
+
+	public int getNumberOfPValues()
+	{
+		return termIds.length;
+	}
+
 };
 
 
@@ -130,8 +144,10 @@ class SinglePValuesCalculation implements IPValueCalculation
  *
  * @author Sebastian Bauer
  */
-public class TermForTermCalculation extends AbstractHypergeometricCalculation
+public class TermForTermCalculation extends AbstractHypergeometricCalculation implements IProgressFeedback
 {
+	private ICalculationProgress calculateProgress;
+
 	public String getName()
 	{
 		return "Term-For-Term";
@@ -155,7 +171,7 @@ public class TermForTermCalculation extends AbstractHypergeometricCalculation
 		studySetResult.setCorrectionName(testCorrection.getName());
 
 		SinglePValuesCalculation pValueCalculation = new SinglePValuesCalculation(graph, goAssociations, populationSet, studySet, hyperg);
-		PValue p[] = testCorrection.adjustPValues(pValueCalculation);
+		PValue p[] = testCorrection.adjustPValues(pValueCalculation, CalculationProgress2TestCorrectionProgress.createUnlessNull(calculateProgress));
 
 		/* Add the results to the result list and filter out terms
 		 * with no annotated genes.
@@ -177,5 +193,11 @@ public class TermForTermCalculation extends AbstractHypergeometricCalculation
 
 	public boolean supportsTestCorrection() {
 		return true;
+	}
+
+	@Override
+	public void setProgress(ICalculationProgress calculationProgress)
+	{
+		this.calculateProgress = calculationProgress;
 	}
 }

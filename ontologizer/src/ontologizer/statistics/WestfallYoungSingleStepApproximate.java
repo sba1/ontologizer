@@ -39,12 +39,12 @@ public class WestfallYoungSingleStepApproximate extends AbstractResamplingTestCo
 		}
 	};
 
-	public PValue[] adjustPValues(IPValueCalculation pvalues)
+	public PValue[] adjustPValues(IPValueCalculation pvalues, ITestCorrectionProgress progress)
 	{
 		int i;
 
 		/* Calculate raw P-values */
-		PValue [] rawP = pvalues.calculateRawPValues();
+		PValue [] rawP = pvalues.calculateRawPValues(null);
 		int m = rawP.length;
 
 		/* Sort the raw P-values and remember their original index */
@@ -94,7 +94,7 @@ public class WestfallYoungSingleStepApproximate extends AbstractResamplingTestCo
 
 			for (int b=0; b < numberOfResamplingSteps; b++) {
 				/* create random sample */
-				PValue [] randomRawP = pvalues.calculateRandomPValues();
+				PValue [] randomRawP = pvalues.calculateRandomPValues(null);
 
 				if (randomRawP.length > 0)
 				{

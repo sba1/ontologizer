@@ -16,14 +16,14 @@ import java.util.Arrays;
  *
  */
 
-public class BonferroniHolm extends AbstractTestCorrection
+public class BonferroniHolm extends AbstractSimpleTestCorrection
 {
 	/** The name of the correction method */
 	private static final String NAME = "Bonferroni-Holm";
 
-	public PValue[] adjustPValues(IPValueCalculation pValueCalculation)
+	public PValue[] adjustPValues(IPValueCalculation pValueCalculation, IPValueCalculationProgress progress)
 	{
-		PValue [] p = pValueCalculation.calculateRawPValues();
+		PValue [] p = pValueCalculation.calculateRawPValues(progress);
 		PValue [] relevantP = getRelevantRawPValues(p);
 		Arrays.sort(relevantP);
 
