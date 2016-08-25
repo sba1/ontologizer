@@ -149,13 +149,13 @@ public final class Util
         }
     }
 
-    /**
-     * Determine the number of integer values that are common in the two given sorted arrays.
-     *
-     * @param a sorted array number one
-     * @param b sorted array number two
-     * @return number of ints that are common.
-     */
+	/**
+	 * Determine the number of integer values that are common in the two given sorted arrays.
+	 *
+	 * @param a sorted array number one
+	 * @param b sorted array number two
+	 * @return number of ints that are common.
+	 */
 	public static int commonInts(int [] a, int [] b)
 	{
 		int numCommon = 0;
