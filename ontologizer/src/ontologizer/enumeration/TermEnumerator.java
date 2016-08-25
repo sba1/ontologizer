@@ -313,12 +313,15 @@ public class TermEnumerator implements Iterable<TermID>
 	 */
 	public Set<ByteString> getGenes()
 	{
-		LinkedHashSet<ByteString> genes = new LinkedHashSet<ByteString>();
+		return new LinkedHashSet<ByteString>(getGenesAsList());
+	}
 
-		for (Entry<TermID,TermAnnotatedGenes> ent : map.entrySet())
-			genes.addAll(ent.getValue().totalAnnotated);
-
-		return genes;
+	/**
+	 * @return all items as a list
+	 */
+	public List<ByteString> getGenesAsList()
+	{
+		return getAnnotatedGenes(graph.getRootTerm().getID()).totalAnnotated;
 	}
 
 
