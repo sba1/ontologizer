@@ -339,13 +339,27 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 
 	public Iterator<VertexType> getParentNodes(VertexType vt)
 	{
-		VertexAttributes<VertexType> va = vertices.get(vt);
-		assert(va != null);
+		final Iterator<Edge<VertexType>> iter = getInEdges(vt);
 
-		List<VertexType> ancestors = new LinkedList<VertexType>();
-		for (Edge<VertexType> e : va.inEdges)
-			ancestors.add(e.getSource());
-		return ancestors.iterator();
+		return new Iterator<VertexType>()
+		{
+			@Override
+			public boolean hasNext()
+			{
+				return iter.hasNext();
+			}
+
+			@Override
+			public VertexType next()
+			{
+				return iter.next().getSource();
+			}
+
+			@Override
+			public void remove()
+			{
+			}
+		};
 	}
 
 	/**
@@ -447,13 +461,27 @@ public class DirectedGraph<VertexType> extends AbstractGraph<VertexType> impleme
 	 */
 	public Iterator<VertexType> getChildNodes(VertexType vt)
 	{
-		VertexAttributes<VertexType> va = vertices.get(vt);
-		assert(va != null);
+		final Iterator<Edge<VertexType>> iter = getOutEdges(vt);
 
-		List<VertexType> descendant = new LinkedList<VertexType>();
-		for (Edge<VertexType> e : va.outEdges)
-			descendant.add(e.getDest());
-		return descendant.iterator();
+		return new Iterator<VertexType>()
+		{
+			@Override
+			public boolean hasNext()
+			{
+				return iter.hasNext();
+			}
+
+			@Override
+			public VertexType next()
+			{
+				return iter.next().getDest();
+			}
+
+			@Override
+			public void remove()
+			{
+			}
+		};
 	}
 
 	/**
