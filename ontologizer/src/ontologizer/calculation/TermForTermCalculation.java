@@ -1,7 +1,12 @@
 package ontologizer.calculation;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
 import ontologizer.association.AssociationContainer;
 import ontologizer.enumeration.TermEnumerator;
+import ontologizer.enumeration.TermEnumerator.TermAnnotatedGenes;
 import ontologizer.ontology.Ontology;
 import ontologizer.ontology.TermID;
 import ontologizer.set.PopulationSet;
@@ -11,6 +16,8 @@ import ontologizer.statistics.Hypergeometric;
 import ontologizer.statistics.IPValueCalculation;
 import ontologizer.statistics.IPValueCalculationProgress;
 import ontologizer.statistics.PValue;
+import ontologizer.types.ByteString;
+import ontologizer.util.Util;
 
 /**
 *
@@ -23,21 +30,22 @@ import ontologizer.statistics.PValue;
 class SinglePValuesCalculation implements IPValueCalculation
 {
 	private Ontology graph;
-	private AssociationContainer goAssociations;
 	private PopulationSet populationSet;
 	private StudySet observedStudySet;
 	private Hypergeometric hyperg;
 
 	private TermEnumerator populationTermEnumerator;
 	private int totalNumberOfAnnotatedTerms;
+
+	private Map<ByteString,Integer> item2Index = new HashMap<ByteString,Integer>();
 	private TermID [] termIds;
+	private int [][] term2Items;
 
 	public SinglePValuesCalculation(Ontology graph,
 			AssociationContainer goAssociations, PopulationSet populationSet,
 			StudySet studySet, Hypergeometric hyperg)
 	{
 		this.graph = graph;
-		this.goAssociations = goAssociations;
 		this.populationSet = populationSet;
 		this.observedStudySet = studySet;
 		this.hyperg = hyperg;
@@ -45,18 +53,60 @@ class SinglePValuesCalculation implements IPValueCalculation
 		populationTermEnumerator = populationSet.enumerateGOTerms(graph, goAssociations);
 		totalNumberOfAnnotatedTerms = populationTermEnumerator.getTotalNumberOfAnnotatedTerms();
 
-		int i = 0;
+		int nItems = 0;
+		for (ByteString item : populationTermEnumerator.getGenes())
+		{
+			item2Index.put(item, nItems++);
+		}
 
 		termIds = new TermID[totalNumberOfAnnotatedTerms];
+		term2Items = new int[totalNumberOfAnnotatedTerms][];
+
+		int i = 0;
+
 		for (TermID term : populationTermEnumerator)
 		{
-			termIds[i++] = term;
+			TermAnnotatedGenes tag = populationTermEnumerator.getAnnotatedGenes(term);
+			int nTermItems = tag.totalAnnotated.size();
+
+			term2Items[i] = new int[nTermItems];
+
+			int j = 0;
+			for (ByteString item : tag.totalAnnotated)
+			{
+				term2Items[i][j++] = item2Index.get(item);
+			}
+
+			Arrays.sort(term2Items[i]);
+
+			termIds[i] = term;
+			i++;
 		}
 	}
 
 	private PValue [] calculatePValues(StudySet studySet, IPValueCalculationProgress progress)
 	{
-		TermEnumerator studyTermEnumerator = studySet.enumerateGOTerms(graph, goAssociations);
+		int [] studyIds = new int[studySet.getGeneCount()];
+		int mappedStudyItems = 0;
+		for (ByteString studyItem : studySet)
+		{
+			Integer index = item2Index.get(studyItem);
+			if (index != null)
+				studyIds[mappedStudyItems++] = index;
+		}
+
+		if (mappedStudyItems != studyIds.length)
+		{
+			/* This could only happen if there are items in the study set that are not in the population */
+			int [] newStudyIds = new int[mappedStudyItems];
+			for (int j = 0; j < mappedStudyItems; j++)
+			{
+				newStudyIds[j] = studyIds[j];
+			}
+			studyIds = newStudyIds;
+		}
+		/* Sort for simpler intersection finding */
+		Arrays.sort(studyIds);
 
 		PValue p [] = new PValue[totalNumberOfAnnotatedTerms];
 
@@ -68,10 +118,10 @@ class SinglePValuesCalculation implements IPValueCalculation
 			}
 
 			TermID term = termIds[i];
-			int goidAnnotatedPopGeneCount = populationTermEnumerator.getAnnotatedGenes(term).totalAnnotatedCount();
+			int goidAnnotatedPopGeneCount = term2Items[i].length;
 			int popGeneCount = populationSet.getGeneCount();
 			int studyGeneCount = studySet.getGeneCount();
-			int goidAnnotatedStudyGeneCount = studyTermEnumerator.getAnnotatedGenes(term).totalAnnotatedCount();
+			int goidAnnotatedStudyGeneCount = Util.commonInts(studyIds, term2Items[i]);
 
 			TermForTermGOTermProperties myP = new TermForTermGOTermProperties();
 			myP.goTerm = graph.getTerm(term);
