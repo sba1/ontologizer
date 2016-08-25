@@ -34,7 +34,6 @@ class SinglePValuesCalculation implements IPValueCalculation
 	private StudySet observedStudySet;
 	private Hypergeometric hyperg;
 
-	private TermEnumerator populationTermEnumerator;
 	private int totalNumberOfAnnotatedTerms;
 
 	private Map<ByteString,Integer> item2Index = new HashMap<ByteString,Integer>();
@@ -50,7 +49,7 @@ class SinglePValuesCalculation implements IPValueCalculation
 		this.observedStudySet = studySet;
 		this.hyperg = hyperg;
 
-		populationTermEnumerator = populationSet.enumerateGOTerms(graph, goAssociations);
+		TermEnumerator populationTermEnumerator = populationSet.enumerateGOTerms(graph, goAssociations);
 		totalNumberOfAnnotatedTerms = populationTermEnumerator.getTotalNumberOfAnnotatedTerms();
 
 		int nItems = 0;
