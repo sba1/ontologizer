@@ -149,6 +149,34 @@ public final class Util
         }
     }
 
+    /**
+     * Determine the number of integer values that are common in the two given sorted arrays.
+     *
+     * @param a sorted array number one
+     * @param b sorted array number two
+     * @return number of ints that are common.
+     */
+	public static int commonInts(int [] a, int [] b)
+	{
+		int numCommon = 0;
+		for (int i = 0, j = 0; i < a.length && j < b.length;)
+		{
+			if (a[i] > b[j])
+			{
+				j++;
+			} else if (a[i] < b[j])
+			{
+				i++;
+			} else
+			{
+				i++;
+				j++;
+				numCommon++;
+			}
+		}
+		return numCommon;
+	}
+
 	/**
 	 * For debugging only.
 	 *
