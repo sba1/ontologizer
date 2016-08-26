@@ -495,7 +495,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 
 					str.append("<h3>Annotated Gene Products</h3>");
 					/* Enumerate the genes */
-					TermEnumerator enumerator = result.getStudySet().enumerateGOTerms(go,associationContainer);
+					TermEnumerator enumerator = result.getStudySet().enumerateTerms(go,associationContainer);
 					TermAnnotatedGenes annotatedGenes = enumerator.getAnnotatedGenes(goTerm.getID());
 
 					HashSet<String> directGenes = new HashSet<String>();
@@ -1071,7 +1071,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 						}
 					} else if (e.widget.equals(annotateMenuItem))
 					{
-						TermEnumerator enumerator = result.getStudySet().enumerateGOTerms(go,associationContainer);
+						TermEnumerator enumerator = result.getStudySet().enumerateTerms(go,associationContainer);
 
 						Clipboard clipboard = new Clipboard(getDisplay());
 						StringWriter sw = new StringWriter();
@@ -1094,7 +1094,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 						clipboard.dispose();
 					} else if (e.widget.equals(notAnnotatedMenuItem))
 					{
-						TermEnumerator enumerator = result.getStudySet().enumerateGOTerms(go,associationContainer);
+						TermEnumerator enumerator = result.getStudySet().enumerateTerms(go,associationContainer);
 
 						/* Build hashset in order to have constant time access */
 						HashSet<ByteString> annotatedGenes = new HashSet<ByteString>();

@@ -94,7 +94,7 @@ public class SingleTerm
 
 		/* ***************************************************************** */
 
-		final TermEnumerator completePopEnumerator = completePop.enumerateGOTerms(graph, assoc);
+		final TermEnumerator completePopEnumerator = completePop.enumerateTerms(graph, assoc);
 
 //		for (TermID tid : completePopEnumerator)
 //		{
@@ -228,7 +228,7 @@ public class SingleTerm
 				allTermIDs.add(t.getID());
 			}
 
-			final TermEnumerator studySetEnumerator = newStudyGenes.enumerateGOTerms(graph, assoc);
+			final TermEnumerator studySetEnumerator = newStudyGenes.enumerateTerms(graph, assoc);
 
 			GODOTWriter.writeDOT(graph, new File("toy-all.dot"), null, allTermIDs, new AbstractDotAttributesProvider()
 			{

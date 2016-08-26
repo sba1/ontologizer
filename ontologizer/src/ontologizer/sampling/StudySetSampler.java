@@ -162,7 +162,7 @@ public class StudySetSampler
 	{
 		StudySet sampledStudySet = new StudySet();
 
-		TermEnumerator termEnum = baseStudySet.enumerateGOTerms(graph,
+		TermEnumerator termEnum = baseStudySet.enumerateTerms(graph,
 				associationContainer);
 
 		HashSet<ByteString> seenGenes = new HashSet<ByteString>();
@@ -211,7 +211,7 @@ public class StudySetSampler
 	{
 		StudySet studySet = new StudySet();
 
-		TermEnumerator termEnum = baseStudySet.enumerateGOTerms(graph,
+		TermEnumerator termEnum = baseStudySet.enumerateTerms(graph,
 				associationContainer);
 
 		/*

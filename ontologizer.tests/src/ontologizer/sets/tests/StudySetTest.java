@@ -181,7 +181,7 @@ public class StudySetTest
 
 		try
 		{
-			study.enumerateGOTerms(o,  assoc);
+			study.enumerateTerms(o,  assoc);
 			Assert.assertTrue(true);
 		} catch (IllegalArgumentException iae)
 		{
@@ -208,7 +208,7 @@ public class StudySetTest
 		populationSet.addGene(new ByteString("item5"), "");
 
 
-		TermEnumerator gote = populationSet.enumerateGOTerms(idf.graph, idf.assoc);
+		TermEnumerator gote = populationSet.enumerateTerms(idf.graph, idf.assoc);
 		Assert.assertEquals(idf.graph.getNumberOfTerms(), gote.getTotalNumberOfAnnotatedTerms());
 
 		assertEquals(5,gote.getAnnotatedGenes(new TermID("GO:0000001")).totalAnnotated.size());
@@ -277,7 +277,7 @@ public class StudySetTest
 		TermID rootTerm = o.getRootTerm().getID();
 		Assert.assertEquals(rootTerm,new TermID("GO:0000000"));
 
-		TermEnumerator e = s.enumerateGOTerms(o,assocContainer);
+		TermEnumerator e = s.enumerateTerms(o,assocContainer);
 		Assert.assertEquals(6721,e.getTotalNumberOfAnnotatedTerms());
 		Assert.assertEquals(assocContainer.getAllAnnotatedGenes().size(),e.getGenes().size());
 		Assert.assertEquals(assocContainer.getAllAnnotatedGenes().size(),e.getAnnotatedGenes(rootTerm).totalAnnotated.size());

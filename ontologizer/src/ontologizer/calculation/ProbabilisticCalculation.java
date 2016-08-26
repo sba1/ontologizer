@@ -285,7 +285,7 @@ public class ProbabilisticCalculation implements ICalculation
 			StudySet studySet, AbstractTestCorrection testCorrection)
 	{
 		Data data = new Data();
-		data.popEnumerator = populationSet.enumerateGOTerms(graph, goAssociations);
+		data.popEnumerator = populationSet.enumerateTerms(graph, goAssociations);
 		data.allTerms = data.popEnumerator.getAllAnnotatedTermsAsList();
 		data.allGenes = populationSet.getAllGeneNames();
 		data.activeGenes = studySet.getAllGeneNames();

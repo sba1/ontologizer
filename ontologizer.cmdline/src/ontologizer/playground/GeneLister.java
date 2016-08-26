@@ -121,7 +121,7 @@ public class GeneLister
 			for (ByteString gene : allAnnotatedGenes)
 				completePop.addGene(gene, "None");
 
-			TermEnumerator popTermEnumerator = completePop.enumerateGOTerms(graph,assocs);
+			TermEnumerator popTermEnumerator = completePop.enumerateTerms(graph,assocs);
 
 			/* Now find out which genes are annotated to the given term and output them */
 			TermAnnotatedGenes annotatedGenes = popTermEnumerator.getAnnotatedGenes(termId);

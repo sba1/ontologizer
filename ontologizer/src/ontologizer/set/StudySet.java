@@ -59,7 +59,7 @@ public class StudySet implements Iterable<ByteString>
 	private String name;
 
 	/** Cached TermEnumerator */
-	private TermEnumerator goTermEnumerator;
+	private TermEnumerator termEnumerator;
 
 	/** The current random ID. Used for unique study set names */
 	private int randomID = 0;
@@ -182,7 +182,7 @@ public class StudySet implements Iterable<ByteString>
 	 */
 	public void resetCounterAndEnumerator()
 	{
-		goTermEnumerator = null;
+		termEnumerator = null;
 	}
 
 	/**
@@ -331,14 +331,14 @@ public class StudySet implements Iterable<ByteString>
 		this.resetCounterAndEnumerator();
 	}
 
-	public TermEnumerator enumerateGOTerms(Ontology graph, AssociationContainer associationContainer)
+	public TermEnumerator enumerateTerms(Ontology graph, AssociationContainer associationContainer)
 	{
-		return enumerateGOTerms(graph, associationContainer, null);
+		return enumerateTerms(graph, associationContainer, null);
 	}
 
-	public TermEnumerator enumerateGOTerms(Ontology graph, AssociationContainer associationContainer, Set<ByteString> evidences)
+	public TermEnumerator enumerateTerms(Ontology graph, AssociationContainer associationContainer, Set<ByteString> evidences)
 	{
-		return enumerateGOTerms(graph, associationContainer, evidences, null);
+		return enumerateTerms(graph, associationContainer, evidences, null);
 	}
 
 	/**
@@ -353,24 +353,24 @@ public class StudySet implements Iterable<ByteString>
 	 *  is removed from the annotation set.
 	 * @return the term enumerator
 	 */
-	public synchronized TermEnumerator enumerateGOTerms(Ontology graph, AssociationContainer associationContainer, Set<ByteString> evidences, TermEnumerator.IRemover remover)
+	public synchronized TermEnumerator enumerateTerms(Ontology graph, AssociationContainer associationContainer, Set<ByteString> evidences, TermEnumerator.IRemover remover)
 	{
 		/* Return cached enumerator if available */
-		if (goTermEnumerator != null) return goTermEnumerator;
+		if (termEnumerator != null) return termEnumerator;
 
-		goTermEnumerator =  new TermEnumerator(graph);
+		termEnumerator =  new TermEnumerator(graph);
 
 		/* Iterate over all gene names and add their annotations to the goTermCounter */
 		for (ByteString geneName : gene2Attribute.keySet())
 		{
 			Gene2Associations geneAssociations = associationContainer.get(geneName);
 			if (geneAssociations != null)
-				goTermEnumerator.push(geneAssociations,evidences);
+				termEnumerator.push(geneAssociations,evidences);
 		}
 
 		if (remover != null)
-			goTermEnumerator.removeTerms(remover);
-		return goTermEnumerator;
+			termEnumerator.removeTerms(remover);
+		return termEnumerator;
 	}
 
 	/**
@@ -413,15 +413,15 @@ public class StudySet implements Iterable<ByteString>
 	 */
 	public void writeMinimumSubsumerMatrix(final Ontology graph,  AssociationContainer associations, File file)
 	{
-		TermEnumerator enumerator = goTermEnumerator;
+		TermEnumerator enumerator = termEnumerator;
 
 		/* If terms weren't already annotated do it now, but
 		 * remove the local reference then
 		 */
 		if (enumerator == null)
 		{
-			enumerator = enumerateGOTerms(graph,associations);
-			goTermEnumerator = null;
+			enumerator = enumerateTerms(graph,associations);
+			termEnumerator = null;
 		}
 
 		class ParentFetcher implements IVisitingGOVertex
@@ -534,15 +534,15 @@ public class StudySet implements Iterable<ByteString>
 	 */
 	public void writeTermAnnotatedGenes(Ontology graph, AssociationContainer associations, File file)
 	{
-		TermEnumerator enumerator = goTermEnumerator;
+		TermEnumerator enumerator = termEnumerator;
 
 		/* If terms weren't already annotated do it now, but
 		 * remove the local reference then
 		 */
 		if (enumerator == null)
 		{
-			enumerator = enumerateGOTerms(graph,associations);
-			goTermEnumerator = null;
+			enumerator = enumerateTerms(graph,associations);
+			termEnumerator = null;
 		}
 
 		try

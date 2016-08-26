@@ -445,7 +445,7 @@ public class SemanticCalculation
 		for (ByteString gene : goAssociations.getAllAnnotatedGenes())
 			allGenesStudy.addGene(gene,"");
 
-		enumerator = allGenesStudy.enumerateGOTerms(graph, goAssociations);
+		enumerator = allGenesStudy.enumerateTerms(graph, goAssociations);
 		totalAnnotated = enumerator.getAnnotatedGenes(graph.getRootTerm().getID()).totalAnnotated.size();
 
 		cache = new IntHashMapForDoubles[g.maximumTermID()];

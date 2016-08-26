@@ -142,8 +142,8 @@ public class TopCalculation extends AbstractHypergeometricCalculation
 			private PValue [] calculatePValues(StudySet studySet, IPValueCalculationProgress progress)
 			{
 				markedGenesMap = new HashMap<TermID, HashSet<ByteString>>();
-				TermEnumerator studyTermEnumerator = studySet.enumerateGOTerms(graph,goAssociations);
-				TermEnumerator populationTermEnumerator = populationSet.enumerateGOTerms(graph,goAssociations);
+				TermEnumerator studyTermEnumerator = studySet.enumerateTerms(graph,goAssociations);
+				TermEnumerator populationTermEnumerator = populationSet.enumerateTerms(graph,goAssociations);
 				ArrayList<PValue> list = new ArrayList<PValue>(100);
 				calculateTerm(populationTermEnumerator, studyTermEnumerator, studySet, graph.getRootTerm().getID(), list);
 				PValue p [] = new PValue[list.size()];
@@ -168,7 +168,7 @@ public class TopCalculation extends AbstractHypergeometricCalculation
 			@Override
 			public int getNumberOfPValues()
 			{
-				return populationSet.enumerateGOTerms(graph,goAssociations).getTotalNumberOfAnnotatedTerms();
+				return populationSet.enumerateTerms(graph,goAssociations).getTotalNumberOfAnnotatedTerms();
 			}
 		}
 

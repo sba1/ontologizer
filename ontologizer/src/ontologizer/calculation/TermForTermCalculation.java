@@ -49,7 +49,7 @@ class SinglePValuesCalculation implements IPValueCalculation
 		this.observedStudySet = studySet;
 		this.hyperg = hyperg;
 
-		TermEnumerator populationTermEnumerator = populationSet.enumerateGOTerms(graph, goAssociations);
+		TermEnumerator populationTermEnumerator = populationSet.enumerateTerms(graph, goAssociations);
 		totalNumberOfAnnotatedTerms = populationTermEnumerator.getTotalNumberOfAnnotatedTerms();
 
 		int nItems = 0;

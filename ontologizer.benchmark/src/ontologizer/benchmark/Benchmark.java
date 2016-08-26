@@ -423,7 +423,7 @@ public class Benchmark
 			completePop.addGene(gene,"None");
 		completePop.filterOutAssociationlessGenes(assoc);
 
-		final TermEnumerator completePopEnumerator = completePop.enumerateGOTerms(graph, assoc);
+		final TermEnumerator completePopEnumerator = completePop.enumerateTerms(graph, assoc);
 
 		for (TermID tid : completePopEnumerator)
 		{
@@ -692,7 +692,7 @@ public class Benchmark
 
 					if (newStudySet != null)
 					{
-						TermEnumerator studyEnumerator = newStudySet.enumerateGOTerms(graph, assoc);
+						TermEnumerator studyEnumerator = newStudySet.enumerateTerms(graph, assoc);
 
 						long times[] = new long[calcMethods.size()];
 

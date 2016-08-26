@@ -108,7 +108,7 @@ public class OverlapLister
 			for (ByteString gene : allAnnotatedGenes)
 				completePop.addGene(gene, "None");
 
-			TermEnumerator popTermEnumerator = completePop.enumerateGOTerms(graph,assocs);
+			TermEnumerator popTermEnumerator = completePop.enumerateTerms(graph,assocs);
 
 			/* making outDir if necessary */
 			File outDir = null;

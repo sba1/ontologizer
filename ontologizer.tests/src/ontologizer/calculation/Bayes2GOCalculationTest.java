@@ -109,7 +109,7 @@ public class Bayes2GOCalculationTest
 
 		PopulationSet populationSet = new PopulationSet();
 		populationSet.addGenes(assoc.getAllAnnotatedGenes());
-		TermEnumerator populationEnumerator = populationSet.enumerateGOTerms(ontology, assoc);
+		TermEnumerator populationEnumerator = populationSet.enumerateTerms(ontology, assoc);
 
 		StudySet valuedStudySet = new StudySet();
 		for (String t : terms)
@@ -189,7 +189,7 @@ public class Bayes2GOCalculationTest
 		HashMap<TermID,StudySet> wantedActiveTerm2StudySet = new HashMap<TermID,StudySet>();
 
 //		graph.setRelevantSubontology("biological_process");
-		final TermEnumerator allEnumerator = allGenes.enumerateGOTerms(graph, assoc);
+		final TermEnumerator allEnumerator = allGenes.enumerateTerms(graph, assoc);
 
 		System.out.println("Considering a total of " + allEnumerator.getAllAnnotatedTermsAsList().size() + " terms");
 
@@ -271,7 +271,7 @@ public class Bayes2GOCalculationTest
 			for (Term t : graph)
 				allTermIDs.add(t.getID());
 
-			final TermEnumerator studySetEnumerator = newStudyGenes.enumerateGOTerms(graph, assoc);
+			final TermEnumerator studySetEnumerator = newStudyGenes.enumerateTerms(graph, assoc);
 
 			GODOTWriter.writeDOT(graph, new File("toy-all.dot"), null, allTermIDs, new AbstractDotAttributesProvider()
 			{

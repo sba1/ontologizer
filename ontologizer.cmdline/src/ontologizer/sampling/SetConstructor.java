@@ -262,7 +262,7 @@ public class SetConstructor
 
 			if (wantSubTermMatrix)
 			{
-				TermEnumerator populationTermCounter = completePop.enumerateGOTerms(graph,assocs);
+				TermEnumerator populationTermCounter = completePop.enumerateTerms(graph,assocs);
 				PrintWriter matrixOut = new PrintWriter(new File(outDir,"subtermMatrix.txt"));
 
 				matrixOut.print("TermID");
@@ -296,7 +296,7 @@ public class SetConstructor
 			if (listAllAnnotations)
 			{
 				PrintWriter annoOut = new PrintWriter(new File(outDir,"annotations.txt"));
-				TermEnumerator populationTermEnumerator = completePop.enumerateGOTerms(graph,assocs);
+				TermEnumerator populationTermEnumerator = completePop.enumerateTerms(graph,assocs);
 
 				for (TermID t : populationTermEnumerator)
 				{
@@ -632,7 +632,7 @@ public class SetConstructor
 			File outDir, StudySet sample) throws IOException
 	{
 		// construct a TermEnumerator for the reduced population set
-		TermEnumerator sampleEnumerator = sample.enumerateGOTerms(graph,
+		TermEnumerator sampleEnumerator = sample.enumerateTerms(graph,
 				assocs);
 
 		writeSampledSet(sampleFileName, sample, outDir);

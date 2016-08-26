@@ -41,7 +41,7 @@ public class FixedAlphaBetaScoreTest
 		Ontology ontology = internalOntology.graph;
 
 		SingleCalculationSetting sss = SingleCalculationSetting.create(new Random(1), wantedActiveTerms, 0.0, ontology, assoc);
-		TermEnumerator popEnumerator = sss.pop.enumerateGOTerms(ontology, assoc);
+		TermEnumerator popEnumerator = sss.pop.enumerateTerms(ontology, assoc);
 		FixedAlphaBetaScore fabs = new FixedAlphaBetaScore(new Random(1), popEnumerator.getAllAnnotatedTermsAsList(), popEnumerator, sss.study.getAllGeneNames());
 		fabs.setAlpha(0.001);
 		fabs.setBeta(0.001);
@@ -79,7 +79,7 @@ public class FixedAlphaBetaScoreTest
 		Ontology ontology = internalOntology.graph;
 
 		SingleCalculationSetting sss = SingleCalculationSetting.create(new Random(1), wantedActiveTerms, 0.0, ontology, assoc);
-		TermEnumerator popEnumerator = sss.pop.enumerateGOTerms(ontology, assoc);
+		TermEnumerator popEnumerator = sss.pop.enumerateTerms(ontology, assoc);
 		FixedAlphaBetaScore fabs = new FixedAlphaBetaScore(new Random(1), popEnumerator.getAllAnnotatedTermsAsList(), popEnumerator, sss.study.getAllGeneNames());
 		fabs.setIntegrateParams(true);
 

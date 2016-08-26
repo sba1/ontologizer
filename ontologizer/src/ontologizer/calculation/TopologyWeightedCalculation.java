@@ -178,8 +178,8 @@ public class TopologyWeightedCalculation extends AbstractHypergeometricCalculati
 		studySetResult.setCalculationName(this.getName());
 		studySetResult.setCorrectionName(testCorrection.getName());
 
-		TermEnumerator studyTermEnumerator = studySet.enumerateGOTerms(graph,goAssociations);
-		TermEnumerator populationTermEnumerator = populationSet.enumerateGOTerms(graph,goAssociations);
+		TermEnumerator studyTermEnumerator = studySet.enumerateTerms(graph,goAssociations);
+		TermEnumerator populationTermEnumerator = populationSet.enumerateTerms(graph,goAssociations);
 
 		Set<TermID> allAnnotatedTerms = studyTermEnumerator.getAllAnnotatedTermsAsSet();
 		GOLevels levels = graph.getGOLevels(allAnnotatedTerms);

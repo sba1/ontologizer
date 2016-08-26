@@ -44,7 +44,7 @@ public class SingleCalculationSetting
 		for (ByteString gene : assoc.getAllAnnotatedGenes())
 			allGenes.addGene(gene, "");
 
-		TermEnumerator allEnumerator = allGenes.enumerateGOTerms(ontology,assoc);
+		TermEnumerator allEnumerator = allGenes.enumerateTerms(ontology,assoc);
 
 		/* Create for each wanted term an study set for its own */
 		HashMap<TermID,StudySet> wantedActiveTerm2StudySet = new HashMap<TermID,StudySet>();

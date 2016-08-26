@@ -68,7 +68,7 @@ public class ParentChildCutCalculation extends AbstractHypergeometricCalculation
 			private PValue[] calculatePValues(StudySet studySet, IPValueCalculationProgress progress)
 			{
 				/* We need this to get genes annotated in the study set */
-				TermEnumerator studyTermEnumerator = studySet.enumerateGOTerms(
+				TermEnumerator studyTermEnumerator = studySet.enumerateTerms(
 						graph, goAssociations);
 
 				// PValue p [] = new
@@ -211,7 +211,7 @@ public class ParentChildCutCalculation extends AbstractHypergeometricCalculation
 		pValueCalculation.goAssociations = goAssociations;
 		pValueCalculation.graph = graph;
 		pValueCalculation.populationSet = popSet;
-		pValueCalculation.popTermEnumerator = popSet.enumerateGOTerms(graph,
+		pValueCalculation.popTermEnumerator = popSet.enumerateTerms(graph,
 				goAssociations);
 		pValueCalculation.observedStudySet = studySet;
 		PValue p[] = testCorrection.adjustPValues(pValueCalculation, CalculationProgress2TestCorrectionProgress.createUnlessNull(calculationProgress));
