@@ -49,6 +49,11 @@ class SinglePValuesCalculation implements IPValueCalculation
 		this.observedStudySet = studySet;
 		this.hyperg = hyperg;
 
+		initCalculationContext(graph, goAssociations, populationSet);
+	}
+
+	private void initCalculationContext(Ontology graph, AssociationContainer goAssociations, StudySet populationSet)
+	{
 		TermEnumerator populationTermEnumerator = populationSet.enumerateTerms(graph, goAssociations);
 		totalNumberOfAnnotatedTerms = populationTermEnumerator.getTotalNumberOfAnnotatedTerms();
 
