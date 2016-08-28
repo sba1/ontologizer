@@ -27,7 +27,7 @@ import ontologizer.types.ByteString;
  */
 public class TermEnumerator implements Iterable<TermID>
 {
-	public class TermAnnotatedGenes
+	public static class TermAnnotatedGenes
 	{
 		/** List of directly annotated genes TODO: Make private */
 		public List<ByteString> directAnnotated = new ArrayList<ByteString>();
