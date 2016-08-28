@@ -12,7 +12,6 @@ import ontologizer.set.StudySet;
 import ontologizer.statistics.AbstractTestCorrection;
 import ontologizer.statistics.IPValueCalculation;
 import ontologizer.statistics.IPValueCalculationProgress;
-import ontologizer.statistics.ITestCorrectionProgress;
 import ontologizer.statistics.PValue;
 import ontologizer.types.ByteString;
 
