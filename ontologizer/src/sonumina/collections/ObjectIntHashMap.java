@@ -15,7 +15,6 @@ public class ObjectIntHashMap<K>
 
    private static final long serialVersionUID = 1L;
    private static final int OCCUPIED_DATA_RATIO = 2;
-   private static final int OCCUPIED_SENTINEL_RATIO = 4;
    private static final int DEFAULT_INITIAL_CAPACITY = 8;
 
    private static final Object NULL_KEY = new Object()
@@ -579,10 +578,5 @@ public class ObjectIntHashMap<K>
        int capacity = this.keys.length;
        // need at least one free slot for open addressing
        return Math.min(capacity - 1, capacity / OCCUPIED_DATA_RATIO);
-   }
-
-   private int maxOccupiedWithSentinels()
-   {
-       return this.keys.length / OCCUPIED_SENTINEL_RATIO;
    }
 }
