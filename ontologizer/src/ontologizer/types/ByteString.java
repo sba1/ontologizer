@@ -16,6 +16,7 @@ import java.util.ArrayList;
 public final class ByteString
 {
 	private byte [] bytes;
+	private transient int hashVal;
 
 	public ByteString(String str)
 	{
@@ -253,7 +254,9 @@ public final class ByteString
 	@Override
 	public int hashCode()
 	{
-		int hashVal = 0;
+		if (hashVal != 0)
+			return hashVal;
+
 		for (int i = 0; i < bytes.length; i++)
 			hashVal = 31*hashVal + bytes[i];
 		return hashVal;
