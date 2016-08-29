@@ -62,6 +62,17 @@ public class AssociationContainer implements Iterable<Gene2Associations>
 	}
 
 	/**
+	 * Add a synonym for a given item.
+	 *
+	 * @param item the item for which the synonym should be added.
+	 * @param synonym the synonym
+	 */
+	public void addSynonym(ByteString item, ByteString synonym)
+	{
+		synonym2gene.put(item, synonym);
+	}
+
+	/**
 	 * Constructor for an empty container.
 	 *
 	 * @see #addAssociation(Association)
