@@ -1,8 +1,7 @@
 package ontologizer.calculation;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 import ontologizer.association.AssociationContainer;
 import ontologizer.enumeration.TermEnumerator;
@@ -18,6 +17,7 @@ import ontologizer.statistics.IPValueCalculationProgress;
 import ontologizer.statistics.PValue;
 import ontologizer.types.ByteString;
 import ontologizer.util.Util;
+import sonumina.collections.ObjectIntHashMap;
 
 /**
 *
@@ -36,7 +36,7 @@ class SinglePValuesCalculation implements IPValueCalculation
 
 	private int totalNumberOfAnnotatedTerms;
 
-	private Map<ByteString,Integer> item2Index = new HashMap<ByteString,Integer>();
+	private ObjectIntHashMap<ByteString> item2Index;
 	private TermID [] termIds;
 	private int [][] term2Items;
 
@@ -57,10 +57,12 @@ class SinglePValuesCalculation implements IPValueCalculation
 		TermEnumerator populationTermEnumerator = populationSet.enumerateTerms(graph, goAssociations);
 		totalNumberOfAnnotatedTerms = populationTermEnumerator.getTotalNumberOfAnnotatedTerms();
 
-		int nItems = 0;
-		for (ByteString item : populationTermEnumerator.getGenesAsList())
+		List<ByteString> itemList = populationTermEnumerator.getGenesAsList();
+		item2Index = new ObjectIntHashMap<ByteString>(itemList.size());
+		int itemId = 0;
+		for (ByteString item : itemList)
 		{
-			item2Index.put(item, nItems++);
+			item2Index.put(item, itemId++);
 		}
 
 		termIds = new TermID[totalNumberOfAnnotatedTerms];
@@ -94,8 +96,8 @@ class SinglePValuesCalculation implements IPValueCalculation
 		int mappedStudyItems = 0;
 		for (ByteString studyItem : studySet)
 		{
-			Integer index = item2Index.get(studyItem);
-			if (index != null)
+			int index = item2Index.getIfAbsent(studyItem, Integer.MAX_VALUE);
+			if (index != Integer.MAX_VALUE)
 				studyIds[mappedStudyItems++] = index;
 		}
 
