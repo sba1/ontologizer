@@ -58,7 +58,7 @@ class SinglePValuesCalculation implements IPValueCalculation
 		totalNumberOfAnnotatedTerms = populationTermEnumerator.getTotalNumberOfAnnotatedTerms();
 
 		List<ByteString> itemList = populationTermEnumerator.getGenesAsList();
-		item2Index = new ObjectIntHashMap<ByteString>(itemList.size());
+		item2Index = new ObjectIntHashMap<ByteString>(itemList.size()*3/2);
 		int itemId = 0;
 		for (ByteString item : itemList)
 		{
