@@ -194,7 +194,7 @@ public class AssociationContainer implements Iterable<Gene2Associations>
 	}
 
 	/**
-	 * @return all evidence codes that can be found in the container.
+	 * @return all evidence codes and their occurrence count that can be found in the container.
 	 */
 	public Map<String,Integer> getAllEvidenceCodes()
 	{
