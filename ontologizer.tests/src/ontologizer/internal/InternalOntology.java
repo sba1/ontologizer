@@ -82,14 +82,15 @@ public class InternalOntology
 		/* Randomly assign the items (note that redundant associations are filtered out later) */
 		for (int i=1;i<=500;i++)
 		{
-			String itemName = "item" + i;
 			int numTerms = r.nextInt(2) + 1;
+			ByteString itemName = new ByteString("item" + i);
 
 			for (int j=0;j<numTerms;j++)
 			{
 				int tid = r.nextInt(terms.size())+1;
-				assoc.addAssociation(new Association(new ByteString(itemName),new TermID(goPrefix, tid)));
+				assoc.addAssociation(new Association(itemName, new TermID(goPrefix, tid)));
 			}
+			assoc.addSynonym(itemName, new ByteString("synonym" + i));
 		}
 	}
 }
