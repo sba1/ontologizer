@@ -77,7 +77,8 @@ public class AssociationContainer implements Iterable<Gene2Associations>
 
 
 	/**
-	 * Adds a new association.
+	 * Adds a new association. Note that this will not read out synonyms or any other field
+	 * than the object symbol.
 	 *
 	 * @param a the associated to be added
 	 */
