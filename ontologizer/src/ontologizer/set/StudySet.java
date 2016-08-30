@@ -84,24 +84,6 @@ public class StudySet implements Iterable<ByteString>
 		name = generateUniqueName();
 	}
 
-	/*
-	public StudySet(String name, String [] entries)
-	{
-		this.name = name;
-
-		try
-		{
-			if (entries != null)
-			{
-				OneOnALineParser parser = new OneOnALineParser(entries);
-				parseAndRetrieveGenesAndAttributes(parser);
-			}
-		} catch (IOException ex)
-		{
-			logger.warning(ex.getLocalizedMessage());
-		}
-	}*/
-
 	/**
 	 * Obtain the number of genes or gene products within this studyset.
 	 *
