@@ -30,10 +30,10 @@ public class SingleCalculationSetting
 	 * @param rnd the random generator to use
 	 * @param wantedActiveTerms the terms that should be over represented. The value for each entry represents the false negative-rate of the term, i.e.,
 	 *  how many items are removed in average.
-	 * @param alphaStudySet false positive rate, i.e., how many item are included randomily.
+	 * @param alphaStudySet false positive rate, i.e., how many item are included randomly.
 	 * @param ontology the underlying ontology
 	 * @param assoc the container holding associations between items and terms.
-	 * @return
+	 * @return the calculation setting for a single calculation.
 	 */
 	public static SingleCalculationSetting create(Random rnd, HashMap<TermID, Double> wantedActiveTerms, double alphaStudySet, Ontology ontology, AssociationContainer assoc)
 	{
