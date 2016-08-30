@@ -27,9 +27,12 @@ public class EnrichedGOTermsTableWriter
 	 */
 	public static void writeTable(OutputStream os, EnrichedGOTermsResult result)
 	{
-		AbstractGOTermProperties first = result.iterator().next();
-
 		PrintWriter out = new PrintWriter(os);
+
+		if (!result.iterator().hasNext())
+			return;
+
+		AbstractGOTermProperties first = result.iterator().next();
 
 		/* Write out the table header */
 
