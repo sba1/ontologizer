@@ -142,12 +142,14 @@ public class AssociationContainer implements Iterable<Gene2Associations>
 		if (g2a == null)
 		{
 			ByteString dbObject = dbObject2gene.get(geneName);
-			g2a = gene2assocs.get(dbObject);
+			if (dbObject != null)
+				g2a = gene2assocs.get(dbObject);
 		}
 		if (g2a == null)
 		{
 			ByteString synonym = synonym2gene.get(geneName);
-			g2a = gene2assocs.get(synonym);
+			if (synonym != null)
+				g2a = gene2assocs.get(synonym);
 		}
 		return g2a;
 	}
