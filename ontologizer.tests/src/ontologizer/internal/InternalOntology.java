@@ -1,7 +1,9 @@
 package ontologizer.internal;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Random;
 
 import ontologizer.association.Association;
@@ -26,6 +28,7 @@ public class InternalOntology
 {
 	public Ontology graph;
 	public AssociationContainer assoc;
+	public Map<ByteString,ByteString> synonymMap = new HashMap<ByteString,ByteString>();
 
 	public InternalOntology()
 	{
@@ -84,13 +87,15 @@ public class InternalOntology
 		{
 			int numTerms = r.nextInt(2) + 1;
 			ByteString itemName = new ByteString("item" + i);
+			ByteString synonymName = new ByteString("synonym" + i);
 
 			for (int j=0;j<numTerms;j++)
 			{
 				int tid = r.nextInt(terms.size())+1;
 				assoc.addAssociation(new Association(itemName, new TermID(goPrefix, tid)));
 			}
-			assoc.addSynonym(itemName, new ByteString("synonym" + i));
+			assoc.addSynonym(itemName, synonymName);
+			synonymMap.put(itemName, synonymName);
 		}
 	}
 }
