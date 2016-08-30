@@ -69,7 +69,7 @@ public class AssociationContainer implements Iterable<Gene2Associations>
 	 */
 	public void addSynonym(ByteString item, ByteString synonym)
 	{
-		synonym2gene.put(item, synonym);
+		synonym2gene.put(synonym, item);
 	}
 
 	/**
