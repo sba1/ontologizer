@@ -28,6 +28,8 @@ public class InternalOntology
 {
 	public Ontology graph;
 	public AssociationContainer assoc;
+
+	/** Maps each item to a synonym */
 	public Map<ByteString,ByteString> synonymMap = new HashMap<ByteString,ByteString>();
 
 	public InternalOntology()
