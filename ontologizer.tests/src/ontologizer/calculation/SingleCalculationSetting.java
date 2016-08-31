@@ -1,7 +1,10 @@
 package ontologizer.calculation;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import ontologizer.association.AssociationContainer;
@@ -36,6 +39,24 @@ public class SingleCalculationSetting
 	 * @return the calculation setting for a single calculation.
 	 */
 	public static SingleCalculationSetting create(Random rnd, HashMap<TermID, Double> wantedActiveTerms, double alphaStudySet, Ontology ontology, AssociationContainer assoc)
+	{
+		return create(rnd, wantedActiveTerms, alphaStudySet, ontology, assoc);
+	}
+
+	/**
+	 * Sample from the entire population defined by the association container a study set with given false-positive
+	 * and false-negative rates.
+	 *
+	 * @param rnd the random generator to use
+	 * @param wantedActiveTerms the terms that should be over represented. The value for each entry represents the false negative-rate of the term, i.e.,
+	 *  how many items are removed in average.
+	 * @param alphaStudySet false positive rate, i.e., how many item are included randomly.
+	 * @param ontology the underlying ontology
+	 * @param assoc the container holding associations between items and terms.
+	 * @param synonyms a item to synonym map
+	 * @return the calculation setting for a single calculation.
+	 */
+	public static SingleCalculationSetting create(Random rnd, HashMap<TermID, Double> wantedActiveTerms, double alphaStudySet, Ontology ontology, AssociationContainer assoc, Map<ByteString,ByteString> synonyms)
 	{
 		SingleCalculationSetting scs = new SingleCalculationSetting();
 
@@ -89,6 +110,24 @@ public class SingleCalculationSetting
 
 		newStudyGenes.addGenes(fp);
 		newStudyGenes.removeGenes(fn);
+
+		/* If there are any synonyms defined use them instead if possible */
+		if (synonyms != null)
+		{
+			List<ByteString> toBeRemoved = new ArrayList<ByteString>();
+			List<ByteString> toBeAdded = new ArrayList<ByteString>();
+			for (ByteString item : scs.study)
+			{
+				ByteString synonym = synonyms.get(item);
+				if (synonym != null)
+				{
+					toBeRemoved.add(item);
+					toBeAdded.add(synonym);
+				}
+			}
+			scs.study.removeGenes(toBeRemoved);
+			scs.study.addGenes(toBeAdded);
+		}
 		return scs;
 	}
 }

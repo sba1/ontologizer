@@ -8,8 +8,10 @@ import java.util.Random;
 import ontologizer.association.AssociationContainer;
 import ontologizer.internal.InternalOntology;
 import ontologizer.ontology.Ontology;
+import ontologizer.ontology.Term;
 import ontologizer.ontology.TermID;
 import ontologizer.statistics.None;
+import ontologizer.types.ByteString;
 
 public class CalculationTestUtils
 {
@@ -35,17 +37,28 @@ public class CalculationTestUtils
 		AssociationContainer assoc = internalOntology.assoc;
 		Ontology ontology = internalOntology.graph;
 
-		SingleCalculationSetting scs = SingleCalculationSetting.create(new Random(1), wantedActiveTerms, 0.00, ontology, assoc);
-		assertEquals(500, scs.pop.getGeneCount());
-		assertEquals(57, scs.study.getGeneCount());
+		EnrichedGOTermsResult [] r = new EnrichedGOTermsResult[2];
 
-		EnrichedGOTermsResult r = calc.calculateStudySet(ontology, assoc, scs.pop, scs.study, new None());
-		EnrichedGOTermsTableWriter.writeTable(System.out, r);
+		/* Try calculation without (i=0) and with (i=1) synonyms */
+		for (int i = 0; i < 2; i++)
+		{
+			SingleCalculationSetting scs = SingleCalculationSetting.create(new Random(1), wantedActiveTerms, 0.00, ontology, assoc, i==1?internalOntology.synonymMap:null);
+			assertEquals(500, scs.pop.getGeneCount());
+			assertEquals(57, scs.study.getGeneCount());
 
-		assertEquals(11, r.getSize());
-		assertEquals(500, r.getPopulationGeneCount());
-		assertEquals(57, r.getStudyGeneCount());
-		return r;
+			r[i] = calc.calculateStudySet(ontology, assoc, scs.pop, scs.study, new None());
+			EnrichedGOTermsTableWriter.writeTable(System.out, r[i]);
+
+			assertEquals(11, r[i].getSize());
+			assertEquals(500, r[i].getPopulationGeneCount());
+			assertEquals(57, r[i].getStudyGeneCount());
+		}
+
+		for (Term t : ontology)
+		{
+			assertEquals(r[0].getGOTermProperties(t).p_adjusted, r[1].getGOTermProperties(t).p_adjusted, 1e-10);
+		}
+		return r[0];
 	}
 
 	public static void assertResultEquals(Expected[] expected, Class<?> expectedPropClass, EnrichedGOTermsResult r)
