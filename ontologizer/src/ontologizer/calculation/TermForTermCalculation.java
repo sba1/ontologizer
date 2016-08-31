@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import ontologizer.association.AssociationContainer;
+import ontologizer.association.Gene2Associations;
 import ontologizer.enumeration.TermEnumerator;
 import ontologizer.enumeration.TermEnumerator.TermAnnotatedGenes;
 import ontologizer.ontology.Ontology;
@@ -30,6 +31,7 @@ import sonumina.collections.ObjectIntHashMap;
 class SinglePValuesCalculation implements IPValueCalculation
 {
 	private Ontology graph;
+	private AssociationContainer associations;
 	private PopulationSet populationSet;
 	private StudySet observedStudySet;
 	private Hypergeometric hyperg;
@@ -45,6 +47,7 @@ class SinglePValuesCalculation implements IPValueCalculation
 			StudySet studySet, Hypergeometric hyperg)
 	{
 		this.graph = graph;
+		this.associations = goAssociations;
 		this.populationSet = populationSet;
 		this.observedStudySet = studySet;
 		this.hyperg = hyperg;
@@ -97,6 +100,13 @@ class SinglePValuesCalculation implements IPValueCalculation
 		for (ByteString studyItem : studySet)
 		{
 			int index = item2Index.getIfAbsent(studyItem, Integer.MAX_VALUE);
+			if (index == Integer.MAX_VALUE)
+			{
+				/* Try synonyms etc. */
+				Gene2Associations g2a = associations.get(studyItem);
+				if (g2a != null)
+					index = item2Index.getIfAbsent(g2a.name(), Integer.MAX_VALUE);
+			}
 			if (index != Integer.MAX_VALUE)
 				studyIds[mappedStudyItems++] = index;
 		}
