@@ -40,7 +40,7 @@ public class SingleCalculationSetting
 	 */
 	public static SingleCalculationSetting create(Random rnd, HashMap<TermID, Double> wantedActiveTerms, double alphaStudySet, Ontology ontology, AssociationContainer assoc)
 	{
-		return create(rnd, wantedActiveTerms, alphaStudySet, ontology, assoc);
+		return create(rnd, wantedActiveTerms, alphaStudySet, ontology, assoc, null);
 	}
 
 	/**
