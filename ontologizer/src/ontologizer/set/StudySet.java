@@ -279,8 +279,9 @@ public class StudySet implements Iterable<ByteString>
 	 *
 	 * @param associationContainer the association container that is used to determine
 	 *  of a gene has associations or not.
+	 * @return this studyset for convenience
 	 */
-	public void filterOutAssociationlessGenes(AssociationContainer associationContainer)
+	public StudySet filterOutAssociationlessGenes(AssociationContainer associationContainer)
 	{
 		int numObjectSymbol = 0;
 		int numObjectID = 0;
@@ -311,6 +312,8 @@ public class StudySet implements Iterable<ByteString>
 
 		/* Reset counter and enumerator */
 		this.resetCounterAndEnumerator();
+
+		return this;
 	}
 
 	public TermEnumerator enumerateTerms(Ontology graph, AssociationContainer associationContainer)
