@@ -126,10 +126,14 @@ public class TopologyWeightedCalculation extends AbstractHypergeometricCalculati
 		for (ByteString gene : studyAnnotatedGenes.totalAnnotated)
 			goidAnnotatedStudyGeneCount += prop.getWeight(gene);
 
-		for (ByteString gene : populationSet)
+		/* Cannot use the population set items directly here as there could be synonyms. The term enumerator
+		 * will contain normalized item names.
+		 */
+		for (ByteString gene : populationTermEnumerator.getGenesAsList())
 			popGeneCount += prop.getWeight(gene);
 
-		for (ByteString gene : studySet)
+		/* Same as above */
+		for (ByteString gene : studyTermEnumerator.getGenesAsList())
 			studyGeneCount += prop.getWeight(gene);
 
 		if (goidAnnotatedStudyGeneCount != 0)
