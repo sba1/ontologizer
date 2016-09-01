@@ -11,7 +11,6 @@ import ontologizer.ontology.Ontology;
 import ontologizer.ontology.Term;
 import ontologizer.ontology.TermID;
 import ontologizer.statistics.None;
-import ontologizer.types.ByteString;
 
 public class CalculationTestUtils
 {
