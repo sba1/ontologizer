@@ -704,11 +704,13 @@ public class StudySet implements Iterable<ByteString>
 	 * Adds the genes of the study set to this study set.
 	 *
 	 * @param studySet the study set from which the genes should be added.
+	 * @return this study set for convenience
 	 */
-	public void addGenes(StudySet studySet)
+	public StudySet addGenes(StudySet studySet)
 	{
 		for (ByteString g : studySet)
 			addGene(g, studySet.getItemAttribute(g));
+		return studySet;
 	}
 
 	/**
