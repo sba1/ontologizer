@@ -6,6 +6,8 @@
  */
 package ontologizer.set;
 
+import ontologizer.association.AssociationContainer;
+
 /**
  * This class represents the whole population. It inherits from
  * StudySet
@@ -34,4 +36,27 @@ public class PopulationSet extends StudySet
 
 		setName(name);
 	}
+
+	@Override
+	public PopulationSet addGenes(StudySet studySet)
+	{
+		super.addGenes(studySet);
+		return this;
+	}
+
+	@Override
+	public PopulationSet filterOutDuplicateGenes(AssociationContainer associationContainer)
+	{
+		super.filterOutDuplicateGenes(associationContainer);
+		return this;
+	}
+
+	@Override
+	public PopulationSet filterOutAssociationlessGenes(AssociationContainer associationContainer)
+	{
+		super.filterOutAssociationlessGenes(associationContainer);
+		return this;
+	}
+
+
 }
