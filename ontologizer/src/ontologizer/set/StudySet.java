@@ -233,7 +233,7 @@ public class StudySet implements Iterable<ByteString>
 	 *
 	 * @param associationContainer the association container the defines
 	 */
-	public void filterOutDuplicateGenes(AssociationContainer associationContainer)
+	public StudySet filterOutDuplicateGenes(AssociationContainer associationContainer)
 	{
 		/* This will be filled with unique genes */
 		HashMap<ByteString,ItemAttribute> uniqueGenes = new HashMap<ByteString,ItemAttribute>();
@@ -272,6 +272,7 @@ public class StudySet implements Iterable<ByteString>
 
 		/* Reset counter and enumerator */
 		this.resetCounterAndEnumerator();
+		return this;
 	}
 
 	/**
