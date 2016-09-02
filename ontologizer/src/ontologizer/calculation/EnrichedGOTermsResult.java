@@ -17,7 +17,6 @@ import ontologizer.ontology.Ontology.IVisitingGOVertex;
 import ontologizer.ontology.Term;
 import ontologizer.ontology.TermID;
 import ontologizer.set.StudySet;
-import ontologizer.types.ByteString;
 import ontologizer.util.Util;
 
 /**
