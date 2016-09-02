@@ -2,7 +2,6 @@ package ontologizer.calculation.b2g;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -10,6 +9,7 @@ import java.util.Set;
 import ontologizer.enumeration.TermEnumerator;
 import ontologizer.ontology.TermID;
 import ontologizer.types.ByteString;
+import sonumina.collections.ObjectIntHashMap;
 
 /**
  * A basic container representing a set of genes
@@ -74,12 +74,12 @@ abstract public class Bayes2GOScore
 	protected int [] activeHiddenGenes;
 
 	/** Maps genes to an unique gene index */
-	protected HashMap<ByteString,Integer> gene2GenesIdx = new HashMap<ByteString,Integer>();
+	protected ObjectIntHashMap<ByteString> gene2GenesIdx;
 
 	protected ByteString [] genes;
 
 	/** Maps the term to the index in allTermsArray */
-	protected HashMap<TermID,Integer> term2TermsIdx = new HashMap<TermID,Integer>();
+	protected ObjectIntHashMap<TermID> term2TermsIdx;
 
 	/** Maps a term id to the ids of the genes to that the term is annotated */
 	protected GeneIDs [] termLinks;
@@ -144,6 +144,8 @@ abstract public class Bayes2GOScore
 		genes = new ByteString[population.size()];
 		observedGenes = new boolean[genes.length];
 		observedValueOfGene = new double[genes.length];
+		gene2GenesIdx = new ObjectIntHashMap<ByteString>(population.size() * 3 / 2);
+
 		i=0;
 		for (ByteString g : population)
 		{
@@ -168,6 +170,7 @@ abstract public class Bayes2GOScore
 		termLinks = new GeneIDs[termList.size()];
 
 		i=0;
+		term2TermsIdx = new ObjectIntHashMap<TermID>(termList.size() * 3 / 2);
 		for (TermID tid : termList)
 		{
 			term2TermsIdx.put(tid,i);
@@ -268,8 +271,8 @@ abstract public class Bayes2GOScore
 		/* Enable new terms */
 		for (TermID tid : activeTerms)
 		{
-			Integer idx = term2TermsIdx.get(tid);
-			if (idx != null)
+			int idx = term2TermsIdx.getIfAbsent(tid, Integer.MAX_VALUE);
+			if (idx != Integer.MAX_VALUE)
 				switchState(idx);
 		}
 
@@ -278,8 +281,8 @@ abstract public class Bayes2GOScore
 		/* Disable new terms */
 		for (TermID tid : activeTerms)
 		{
-			Integer idx = term2TermsIdx.get(tid);
-			if (idx != null)
+			int idx = term2TermsIdx.getIfAbsent(tid, Integer.MAX_VALUE);
+			if (idx != Integer.MAX_VALUE)
 				switchState(idx);
 		}
 
