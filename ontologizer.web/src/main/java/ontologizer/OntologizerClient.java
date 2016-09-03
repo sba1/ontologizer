@@ -33,6 +33,7 @@ public class OntologizerClient
 	private static HTMLElement resultsTable;
 	private static HTMLElement resultsBody;
 	private static HTMLSelectElement speciesElement;
+	private static HTMLSelectElement methodElement;
 	private static ACE ace;
 
 	/** Maps human readable species names to association filenames */
@@ -214,6 +215,8 @@ public class OntologizerClient
 			addOption(speciesElement, sp);
 
 		speciesElement.addEventListener("change", ev -> loadDataForCurrentSpecies() );
+
+		addOption(speciesElement, "Term-for-Term");
 
 		allGenesButton = document.getElementById("allgenes").cast();
 		allGenesButton.listenClick(ev ->
