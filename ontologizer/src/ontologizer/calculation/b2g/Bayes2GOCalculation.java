@@ -1,9 +1,5 @@
 package ontologizer.calculation.b2g;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -32,8 +28,6 @@ public class Bayes2GOCalculation implements ICalculation, IProgressFeedback
 {
 	private static Logger logger = Logger.getLogger(Bayes2GOCalculation.class.getCanonicalName());
 
-	private boolean WRITE_STATS_FILE = false;
-
 	private long seed = 0;
 
 	private boolean usePrior = true;
@@ -51,6 +45,19 @@ public class Bayes2GOCalculation implements ICalculation, IProgressFeedback
 
 	private int mcmcSteps = 1020000;
 	private int updateReportTime = 1000; /* Update report time in ms */
+
+	private Bayes2GOCalculationProgress bayes2GOCalculationProgress;
+
+	/**
+	 * Provided dedicated feedback for bayes2go calculation.
+	 *
+	 * @author Sebastian Bauer
+	 */
+	public static interface Bayes2GOCalculationProgress
+	{
+		void update(int iterationNumber, int step, double acceptProb, int numAccept, double score);
+	}
+
 
 	public Bayes2GOCalculation()
 	{
@@ -332,16 +339,6 @@ public class Bayes2GOCalculation implements ICalculation, IProgressFeedback
 
 		logger.info(allTerms.size() + " terms and " + populationEnumerator.getGenes().size() + " genes in consideration.");
 
-		BufferedWriter statsFile = null;
-		try {
-			if (WRITE_STATS_FILE)
-			{
-				statsFile = new BufferedWriter(new FileWriter(new File("stats.txt")));
-				statsFile.append("iter\tstep\tacceptProb\taccepted\tscore\n");
-			}
-		} catch (IOException e) {
-		}
-
 		for (int i=0;i<maxIter;i++)
 		{
 			Bayes2GOScore bayes2GOScore;
@@ -472,13 +469,8 @@ public class Bayes2GOCalculation implements ICalculation, IProgressFeedback
 					bayes2GOScore.record();
 
 
-				if (statsFile != null)
-				{
-					try {
-						statsFile.append(i + "\t" + t + "\t" + acceptProb + "\t" + numAccepts + "\t" + score + "\n");
-					} catch (IOException e) {
-					}
-				}
+				if (bayes2GOCalculationProgress != null)
+					bayes2GOCalculationProgress.update(i, t, acceptProb, numAccepts, score);
 			}
 
 			if (fixedAlphaBetaScore != null)
@@ -560,14 +552,16 @@ public class Bayes2GOCalculation implements ICalculation, IProgressFeedback
 				}
 			}
 		}
+	}
 
-		if (statsFile != null)
-		{
-			try {
-				statsFile.flush();
-			} catch (IOException e) {
-			}
-		}
+	/**
+	 * Set the callback interface for notifications about a special Bayes2GO progress
+	 *
+	 * @param bayes2GOCalculationProgress
+	 */
+	public void setBayes2GOCalculationProgress(Bayes2GOCalculationProgress bayes2GOCalculationProgress)
+	{
+		this.bayes2GOCalculationProgress = bayes2GOCalculationProgress;
 	}
 
 	public String getDescription()
