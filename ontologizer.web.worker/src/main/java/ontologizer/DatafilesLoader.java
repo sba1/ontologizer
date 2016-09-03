@@ -105,6 +105,12 @@ public class DatafilesLoader
 						this.max = max;
 						associationProgess.update(0, max);
 					}
+
+					@Override
+					public void warning(String message)
+					{
+						/* Ignore warnings for now */
+					}
 				});
 			annotation = new AssociationContainer(ap.getAssociations(), ap.getSynonym2gene(), ap.getDbObject2gene());
 

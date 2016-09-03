@@ -227,6 +227,12 @@ public class OntologizerCore
 						}
 					}
 
+					@Override
+					public void warning(String message)
+					{
+
+					}
+
 				});
 		goAssociations = new AssociationContainer(ap.getAssociations(), ap.getSynonym2gene(), ap.getDbObject2gene());
 

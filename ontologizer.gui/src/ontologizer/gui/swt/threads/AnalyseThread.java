@@ -296,6 +296,12 @@ public class AnalyseThread extends AbstractOntologizerThread
 								result.updateProgress(current);
 						}});
 				}
+
+				@Override
+				public void warning(String message)
+				{
+					/* Ignore warnings for now */
+				}
 			});
 			AssociationContainer goAssociations = new AssociationContainer(ap.getAssociations(), ap.getSynonym2gene(), ap.getDbObject2gene());
 

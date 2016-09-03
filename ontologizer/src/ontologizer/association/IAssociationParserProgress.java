@@ -15,4 +15,11 @@ public interface IAssociationParserProgress
 	 * @param current the current number of steps.
 	 */
 	void update(int current);
+
+	/**
+	 * In case of a warning.
+	 *
+	 * @param message
+	 */
+	void warning(String message);
 }

@@ -468,6 +468,12 @@ public class WorkSetLoadThread extends Thread
 					{
 						workSetProgress.updateGauge(current);
 					}
+
+					@Override
+					public void warning(String message)
+					{
+						/* Ignore warnings for now */
+					}
 				});
 
 				AssociationContainer ac = new AssociationContainer(ap.getAssociations(), ap.getSynonym2gene(), ap.getDbObject2gene());
