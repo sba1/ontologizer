@@ -136,6 +136,26 @@ public class AssociationParserTest
 	}
 
 	@Test
+	public void testTwoEntries() throws IOException, OBOParserException
+	{
+		File tmp = tmpFolder.newFile("testTwoEntries.gaf");
+		BufferedWriter bw = new BufferedWriter(new FileWriter(tmp));
+		bw.write("\n\n");
+		bw.write("DB\tDBOBJID\tSYMBOL1\t\tGO:0005763\tPMID:00000\tEVIDENCE\t\tC\tSYNONYM1|SYNONYM2\tgene\ttaxon:4932\t20121212\tSBA\n");
+		bw.write("DB\tDBOBJID2\tSYMBOL2\t\tGO:0005760\tPMID:00000\tEVIDENCE\t\tC\t\tgene\ttaxon:4932\t20121212\tSBA\n");
+		bw.flush();
+		bw.close();
+
+		OBOParser oboParser = new OBOParser(new OBOParserFileInput(OBO_FILE));
+		oboParser.doParse();
+
+		AssociationParser ap = new AssociationParser(new OBOParserFileInput(tmp.getAbsolutePath()), new TermContainer(oboParser.getTermMap(), "", ""));
+		AssociationContainer assoc = new AssociationContainer(ap.getAssociations(), ap.getSynonym2gene(), ap.getDbObject2gene());
+
+		assertEquals(2,assoc.getAllAnnotatedGenes().size());
+	}
+
+	@Test
 	public void testIDS() throws IOException, OBOParserException
 	{
 		File tmp = tmpFolder.newFile("testIDS.ids");
