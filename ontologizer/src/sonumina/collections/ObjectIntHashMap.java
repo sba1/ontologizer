@@ -579,4 +579,20 @@ public class ObjectIntHashMap<K>
        // need at least one free slot for open addressing
        return Math.min(capacity - 1, capacity / OCCUPIED_DATA_RATIO);
    }
+
+   public static interface ObjectIntProcedure<K>
+   {
+      public void keyValue(K key, int value);
+   }
+
+   public void forEachKeyValue(ObjectIntProcedure<? super K> procedure)
+   {
+       for (int i = 0; i < this.keys.length; i++)
+       {
+           if (isNonSentinel(this.keys[i]))
+           {
+               procedure.keyValue(this.toNonSentinel(this.keys[i]), this.values[i]);
+           }
+       }
+   }
 }
