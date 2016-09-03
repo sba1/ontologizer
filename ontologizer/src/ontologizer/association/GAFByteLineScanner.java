@@ -261,11 +261,13 @@ class GAFByteLineScanner extends AbstractByteLineScanner
 		/* Add the Association to ArrayList */
 		associations.add(assoc);
 
-		ArrayList<Association> gassociations = gene2Associations.get(assoc.getObjectSymbol());
+		/* And throw them in item buckets */
+		ByteString objectSymbol = assoc.getObjectSymbol();
+		ArrayList<Association> gassociations = gene2Associations.get(objectSymbol);
 		if (gassociations == null)
 		{
 			gassociations = new ArrayList<Association>();
-			gene2Associations.put(assoc.getObjectSymbol(),gassociations);
+			gene2Associations.put(objectSymbol, gassociations);
 		}
 		gassociations.add(assoc);
 
