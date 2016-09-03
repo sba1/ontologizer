@@ -156,6 +156,46 @@ public class AssociationParserTest
 	}
 
 	@Test
+	public void testAmbiguousGAFCaseB() throws IOException, OBOParserException
+	{
+		File tmp = tmpFolder.newFile("testAmbiguousGAFCaseB.gaf");
+		BufferedWriter bw = new BufferedWriter(new FileWriter(tmp));
+		bw.write("DB\tDBOBJID\tSYMBOL1\t\tGO:0005763\tPMID:00000\tEVIDENCE\t\tC\tSYNONYM1|SYNONYM2\tgene\ttaxon:4932\t20121212\tSBA\n");
+		bw.write("DB\tDBOBJID\tSYMBOL2\t\tGO:0005760\tPMID:00000\tEVIDENCE\t\tC\t\tgene\ttaxon:4932\t20121212\tSBA\n");
+		bw.flush();
+		bw.close();
+
+		final int [] warnings = new int[1];
+
+		OBOParser oboParser = new OBOParser(new OBOParserFileInput(OBO_FILE));
+		oboParser.doParse();
+
+		AssociationParser ap = new AssociationParser(new OBOParserFileInput(tmp.getAbsolutePath()), new TermContainer(oboParser.getTermMap(), "", ""), null, new IAssociationParserProgress() {
+
+			@Override
+			public void init(int max)
+			{
+			}
+
+			@Override
+			public void update(int current)
+			{
+			}
+
+			@Override
+			public void warning(String message)
+			{
+				warnings[0]++;
+			}
+		});
+		AssociationContainer assoc = new AssociationContainer(ap.getAssociations(), ap.getSynonym2gene(), ap.getDbObject2gene());
+
+		/* We expect only one annotated object as DBOBJID1 is the same as DBOBJID2 due to the same symbol */
+		assertEquals(2,assoc.getAllAnnotatedGenes().size());
+		assertEquals(1, warnings[0]);
+	}
+
+	@Test
 	public void testIDS() throws IOException, OBOParserException
 	{
 		File tmp = tmpFolder.newFile("testIDS.ids");
