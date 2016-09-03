@@ -3,6 +3,7 @@ package ontologizer.association;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -13,6 +14,8 @@ import ontologizer.ontology.Term;
 import ontologizer.ontology.TermID;
 import ontologizer.ontology.TermMap;
 import ontologizer.types.ByteString;
+import sonumina.collections.ObjectIntHashMap;
+import sonumina.collections.ObjectIntHashMap.ObjectIntProcedure;
 
 /**
  * A GAF Line scanner.
@@ -56,19 +59,25 @@ class GAFByteLineScanner extends AbstractByteLineScanner
 	/** Our prefix pool */
 	private PrefixPool prefixPool = new PrefixPool();
 
-	/** Items as identified by the object symbol to the list of associations */
-	private HashMap<ByteString, ArrayList<Association>> gene2Associations = new HashMap<ByteString, ArrayList<Association>>();
-
-	/** key: synonym, value: main gene name (dbObject_Symbol) */
-	private HashMap<ByteString, ByteString> synonym2gene = new HashMap<ByteString,ByteString>();
-
-	/** key: dbObjectID, value: main gene name (dbObject_Symbol) */
-	private HashMap<ByteString, ByteString> dbObjectID2gene = new HashMap<ByteString,ByteString>();
-
-	private HashMap<ByteString,ByteString> dbObject2ObjectSymbol = new HashMap<ByteString,ByteString>();
-	private HashMap<ByteString,ByteString> objectSymbol2dbObject = new HashMap<ByteString,ByteString>();
 	private HashMap<TermID, Term> altTermID2Term = null;
 	private HashSet<TermID> usedGoTerms = new HashSet<TermID>();
+
+	/**********************************************************************/
+
+	/** Unique list of items seen so far */
+	private List<ByteString> items = new ArrayList<ByteString>();
+
+	/** And the corresponding object ids */
+	private List<ByteString> objectIds = new ArrayList<ByteString>();
+
+	/** Maps object symbols to item indices within the items list */
+	private ObjectIntHashMap<ByteString> objectSymbolMap = new ObjectIntHashMap<ByteString>();
+
+	/** Maps object ids to item indices within the items list */
+	private ObjectIntHashMap<ByteString> objectIdMap = new ObjectIntHashMap<ByteString>();
+
+	/** Maps synonyms to item indices within the items list */
+	private ObjectIntHashMap<ByteString> synonymMap = new ObjectIntHashMap<ByteString>();
 
 	public GAFByteLineScanner(IParserInput input, byte [] head, Set<ByteString> names, TermMap terms, Set<ByteString> evidences, IAssociationParserProgress progress)
 	{
@@ -218,62 +227,51 @@ class GAFByteLineScanner extends AbstractByteLineScanner
 			kept++;
 		}
 
-		if (synonyms != null)
-		{
-			for (int i = 0; i < synonyms.length; i++)
-				synonym2gene.put(synonyms[i], assoc.getObjectSymbol());
-		}
-
-		{
-			/* Check if db object id and object symbol are really bijective */
-			ByteString dbObject = objectSymbol2dbObject.get(assoc.getObjectSymbol());
-			if (dbObject == null) objectSymbol2dbObject.put(assoc.getObjectSymbol(),assoc.getDB_Object());
-			else
-			{
-				if (!dbObject.equals(assoc.getDB_Object()))
-				{
-					symbolWarnings++;
-					if (symbolWarnings < 1000)
-					{
-						logger.warning("Line " + lineno + ": Expected that symbol \"" + assoc.getObjectSymbol() + "\" maps to \"" + dbObject + "\" but it maps to \"" + assoc.getDB_Object() + "\"");
-					}
-				}
-
-			}
-
-			ByteString objectSymbol = dbObject2ObjectSymbol.get(assoc.getDB_Object());
-			if (objectSymbol == null) dbObject2ObjectSymbol.put(assoc.getDB_Object(),assoc.getObjectSymbol());
-			else
-			{
-				if (!objectSymbol.equals(assoc.getObjectSymbol()))
-				{
-					dbObjectWarnings++;
-					if (dbObjectWarnings < 1000)
-					{
-						logger.warning("Line " + lineno + ": Expected that dbObject \"" + assoc.getDB_Object() + "\" maps to symbol \"" + objectSymbol + "\" but it maps to \"" + assoc.getObjectSymbol() + "\"");
-					}
-				}
-
-			}
-
-		}
-
 		/* Add the Association to ArrayList */
 		associations.add(assoc);
 
 		/* And throw them in item buckets */
 		ByteString objectSymbol = assoc.getObjectSymbol();
-		ArrayList<Association> gassociations = gene2Associations.get(objectSymbol);
-		if (gassociations == null)
+
+		/* New code */
+		int potentialObjectIndex = items.size();
+		int objectIndex = objectSymbolMap.getIfAbsentPut(objectSymbol, potentialObjectIndex);
+		if (objectIndex == potentialObjectIndex)
 		{
-			gassociations = new ArrayList<Association>();
-			gene2Associations.put(objectSymbol, gassociations);
+			/* Object symbol was not seen before */
+			items.add(objectSymbol);
+			objectIds.add(assoc.getDB_Object());
+		} else
+		{
+			/* Object symbol was seen before */
+			if (!assoc.getDB_Object().equals(objectIds.get(objectIndex)))
+			{
+				/* Warn about that the same symbol is used with at least two object ids */
+				dbObjectWarnings++;
+				if (dbObjectWarnings < 1000)
+				{
+					logger.warning("Line " + lineno + ": Expected that symbol \"" + assoc.getObjectSymbol() + "\" maps to \"" + objectIds.get(objectIndex) + "\" but it maps to \"" + assoc.getDB_Object() + "\"");
+				}
+			}
 		}
-		gassociations.add(assoc);
 
-		/* dbObject2Gene has a mapping from dbObjects to gene names */
-		dbObjectID2gene.put(assoc.getDB_Object(), assoc.getObjectSymbol());
+		/* Get how the object id is mapped to our id space */
+		int objectIdIndex = objectIdMap.getIfAbsentPut(assoc.getDB_Object(), objectIndex);
+		if (objectIdIndex != objectIndex)
+		{
+			/* The same object id is is used for two object symbols, warn about it */
+			symbolWarnings++;
+			if (symbolWarnings < 1000)
+			{
+				logger.warning("Line " + lineno + ": Expected that dbObject \"" + assoc.getDB_Object() + "\" maps to symbol \"" + items.get(objectIdIndex) + "\" but it maps to \"" + assoc.getObjectSymbol() + "\"");
+			}
+		}
 
+		if (synonyms != null)
+		{
+			for (ByteString synonym : synonyms)
+				synonymMap.put(synonym, objectIndex);
+		}
 		return true;
 	}
 
@@ -292,11 +290,29 @@ class GAFByteLineScanner extends AbstractByteLineScanner
 
 	public HashMap<ByteString, ByteString> getSynonym2Gene()
 	{
+		final HashMap<ByteString, ByteString> synonym2gene = new HashMap<ByteString, ByteString>(synonymMap.size());
+		synonymMap.forEachKeyValue(new ObjectIntProcedure<ByteString>()
+		{
+			@Override
+			public void keyValue(ByteString key, int value)
+			{
+				synonym2gene.put(key, items.get(value));
+			}
+		});
 		return synonym2gene;
 	}
 
 	public HashMap<ByteString, ByteString> getDbObjectID2Gene()
 	{
+		final HashMap<ByteString, ByteString> dbObjectID2gene = new HashMap<ByteString, ByteString>(synonymMap.size());
+		objectIdMap.forEachKeyValue(new ObjectIntProcedure<ByteString>()
+		{
+			@Override
+			public void keyValue(ByteString key, int value)
+			{
+				dbObjectID2gene.put(key, items.get(value));
+			}
+		});
 		return dbObjectID2gene;
 	}
 };
