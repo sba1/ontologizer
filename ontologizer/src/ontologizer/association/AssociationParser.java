@@ -200,8 +200,9 @@ public class AssociationParser
 				{
 					if (len > 0 && buf[start] != '#')
 					{
-						byte [] b = new byte[len];
+						byte [] b = new byte[len+1];
 						System.arraycopy(buf, start, b, 0, len);
+						b[len] = 10;
 						lines.add(b);
 						return false;
 					}
