@@ -216,7 +216,7 @@ public class OntologizerClient
 
 		speciesElement.addEventListener("change", ev -> loadDataForCurrentSpecies() );
 
-		addOption(speciesElement, "Term-for-Term");
+		addOption(methodElement, "Term-for-Term");
 
 		allGenesButton = document.getElementById("allgenes").cast();
 		allGenesButton.listenClick(ev ->
