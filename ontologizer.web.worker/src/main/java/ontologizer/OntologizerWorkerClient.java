@@ -6,6 +6,7 @@ import static ontologizer.WorkerMessage.createWorkerMessage;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.logging.Logger;
 
 import org.teavm.jso.core.JSArray;
 import org.teavm.jso.core.JSNumber;
@@ -32,6 +33,8 @@ import ontologizer.types.ByteString;
  */
 public class OntologizerWorkerClient
 {
+	private static Logger logger = Logger.getLogger(OntologizerWorkerClient.class.getName());
+
 	public static DatafilesLoader loader;
 	public static Ontology ontology;
 	public static AssociationContainer associations;
@@ -45,6 +48,21 @@ public class OntologizerWorkerClient
 		supportedCalculations = new ICalculation[2];
 		supportedCalculations[0] = new TermForTermCalculation();
 		supportedCalculations[1] = new Bayes2GOCalculation();
+
+		if (supportedCalculations.length != SupportedCalculations.NAMES.length)
+		{
+			logger.severe("No agreement in supported calculation!");
+			return;
+		}
+
+		for (int i = 0; i < supportedCalculations.length; i++)
+		{
+			if (!supportedCalculations[i].getName().equals(SupportedCalculations.NAMES[i]))
+			{
+				logger.severe("No agreement in supported calculation!");
+				return;
+			}
+		}
 
 		Worker.current().listenMessage(LoadDataMessage.class, ldm ->
 		{
