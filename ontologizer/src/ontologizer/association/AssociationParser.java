@@ -222,7 +222,7 @@ public class AssociationParser
 				fileType = Type.AFFYMETRIX;
 			} else
 			{
-				importAssociationFile(input,head,names,terms,evidences,progress);
+				importGAF(input,head,names,terms,evidences,progress);
 				fileType = Type.GAF;
 			}
 		}
@@ -324,7 +324,7 @@ public class AssociationParser
 	 * @param progress used for monitoring progress.
 	 * @throws IOException
 	 */
-	private void importAssociationFile(IParserInput input, byte [] head, HashSet<ByteString> names, TermMap terms, Collection<String> evidences, IAssociationParserProgress progress) throws IOException
+	private void importGAF(IParserInput input, byte [] head, HashSet<ByteString> names, TermMap terms, Collection<String> evidences, IAssociationParserProgress progress) throws IOException
 	{
 		if (progress != null)
 			progress.init(input.getSize());
