@@ -14,8 +14,11 @@ import org.teavm.jso.core.JSString;
 import ontologizer.association.AssociationContainer;
 import ontologizer.calculation.AbstractGOTermProperties;
 import ontologizer.calculation.EnrichedGOTermsResult;
+import ontologizer.calculation.ICalculation;
 import ontologizer.calculation.ICalculationProgress;
+import ontologizer.calculation.IProgressFeedback;
 import ontologizer.calculation.TermForTermCalculation;
+import ontologizer.calculation.b2g.Bayes2GOCalculation;
 import ontologizer.ontology.Ontology;
 import ontologizer.set.PopulationSet;
 import ontologizer.set.StudySet;
@@ -35,8 +38,14 @@ public class OntologizerWorkerClient
 	public static EnrichedGOTermsResult result;
 	public static AbstractGOTermProperties [] props;
 
+	public static ICalculation [] supportedCalculations;
+
 	public static void main(String[] args)
 	{
+		supportedCalculations = new ICalculation[2];
+		supportedCalculations[0] = new TermForTermCalculation();
+		supportedCalculations[1] = new Bayes2GOCalculation();
+
 		Worker.current().listenMessage(LoadDataMessage.class, ldm ->
 		{
 			loader = new DatafilesLoader(ldm.getAssociationFilename());
@@ -80,7 +89,7 @@ public class OntologizerWorkerClient
 
 		Worker.current().listenMessage(OntologizeMessage.class, (OntologizeMessage om) ->
 		{
-			TermForTermCalculation calculation = new TermForTermCalculation();
+			ICalculation calculation = supportedCalculations[0];
 			PopulationSet population = new PopulationSet();
 			population.addGenes(associations.getAllAnnotatedGenes());
 			StudySet study = new StudySet();
@@ -89,31 +98,35 @@ public class OntologizerWorkerClient
 
 			final int [] maxP = new int[1];
 
-			calculation.setProgress(new ICalculationProgress()
+			if (calculation instanceof IProgressFeedback)
 			{
-				private long lastNano = 0;
-
-				@Override
-				public void update(int current)
+				IProgressFeedback progressFeedback = (IProgressFeedback)calculation;
+				progressFeedback.setProgress(new ICalculationProgress()
 				{
-					long newNano = System.nanoTime();
-					if (newNano - lastNano > 250*1000*100)
+					private long lastNano = 0;
+
+					@Override
+					public void update(int current)
 					{
-						createProgressMessage().withTitle("Ontologizing").withCurrent(current).withMax(maxP[0]).post(Worker.current());
+						long newNano = System.nanoTime();
+						if (newNano - lastNano > 250*1000*100)
+						{
+							createProgressMessage().withTitle("Ontologizing").withCurrent(current).withMax(maxP[0]).post(Worker.current());
 
-						lastNano = newNano;
+							lastNano = newNano;
+						}
 					}
-				}
 
-				@Override
-				public void init(int max)
-				{
-					createProgressMessage().withTitle("Ontologizing").withCurrent(0).withMax(max).post(Worker.current());
-					maxP[0] = max;
+					@Override
+					public void init(int max)
+					{
+						createProgressMessage().withTitle("Ontologizing").withCurrent(0).withMax(max).post(Worker.current());
+						maxP[0] = max;
 
-					lastNano = System.nanoTime();
-				}
-			});
+						lastNano = System.nanoTime();
+					}
+				});
+			}
 
 			result = calculation.calculateStudySet(ontology, associations, population, study, new Bonferroni());
 
