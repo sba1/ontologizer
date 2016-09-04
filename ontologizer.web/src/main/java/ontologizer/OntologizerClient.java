@@ -216,7 +216,8 @@ public class OntologizerClient
 
 		speciesElement.addEventListener("change", ev -> loadDataForCurrentSpecies() );
 
-		addOption(methodElement, "Term-for-Term");
+		for (String calc : SupportedCalculations.NAMES)
+			addOption(methodElement, calc);
 
 		allGenesButton = document.getElementById("allgenes").cast();
 		allGenesButton.listenClick(ev ->
@@ -234,7 +235,7 @@ public class OntologizerClient
 			String [] items = ace.getValue().split("\n");
 			OntologizeMessage om = createWorkerMessage(OntologizeMessage.class);
 			om.setItems(items);
-			om.setCalculationType(0);
+			om.setCalculationType(methodElement.getSelectedIndex());
 			worker.postMessage(om);
 
 			if (resultsTable == null)
