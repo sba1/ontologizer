@@ -294,6 +294,14 @@ class GAFByteLineScanner extends AbstractByteLineScanner
 		return associations;
 	}
 
+	/**
+	 * @return the annotation context.
+	 */
+	public AnnotationContext getAnnotationContext()
+	{
+		return new AnnotationContext(items, objectIds, objectSymbolMap, objectIdMap, synonymMap);
+	}
+
 	public HashMap<ByteString, ByteString> getSynonym2Gene()
 	{
 		final HashMap<ByteString, ByteString> synonym2gene = new HashMap<ByteString, ByteString>(synonymMap.size());
