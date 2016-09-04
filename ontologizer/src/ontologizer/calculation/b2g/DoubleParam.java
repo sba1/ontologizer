@@ -97,7 +97,7 @@ class DoubleParam extends B2GParam
 	@Override
 	public String toString()
 	{
-		if (isFixed()) return String.format("%g",val);
+		if (isFixed()) return Double.toString(val);
 		return getType().toString();
 	}
 }

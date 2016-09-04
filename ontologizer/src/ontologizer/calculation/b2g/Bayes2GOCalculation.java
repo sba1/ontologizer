@@ -3,6 +3,7 @@ package ontologizer.calculation.b2g;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import ontologizer.association.AssociationContainer;
@@ -26,7 +27,7 @@ import ontologizer.statistics.AbstractTestCorrection;
  */
 public class Bayes2GOCalculation implements ICalculation, IProgressFeedback
 {
-	private static Logger logger = Logger.getLogger(Bayes2GOCalculation.class.getCanonicalName());
+	private static Logger logger = Logger.getLogger(Bayes2GOCalculation.class.getName());
 
 	private long seed = 0;
 
@@ -292,11 +293,11 @@ public class Bayes2GOCalculation implements ICalculation, IProgressFeedback
 		if (seed != 0)
 		{
 			rnd = new Random(seed);
-			logger.info("Use a random seed of: " + seed);
+			logger.log(Level.INFO, "Use a random seed of: " + seed);
 		} else
 		{
 			long newSeed = new Random().nextLong();
-			logger.info("Use a random seed of: " + newSeed);
+			logger.log(Level.INFO, "Use a random seed of: " + newSeed);
 			rnd = new Random(newSeed);
 		}
 
@@ -337,7 +338,7 @@ public class Bayes2GOCalculation implements ICalculation, IProgressFeedback
 		if (doEm) maxIter = 12;
 		else maxIter = 1;
 
-		logger.info(allTerms.size() + " terms and " + populationEnumerator.getGenes().size() + " genes in consideration.");
+		logger.log(Level.INFO, allTerms.size() + " terms and " + populationEnumerator.getGenes().size() + " genes in consideration.");
 
 		for (int i=0;i<maxIter;i++)
 		{
@@ -369,7 +370,7 @@ public class Bayes2GOCalculation implements ICalculation, IProgressFeedback
 				fixedAlphaBetaScore.setExpectedNumberOfTerms(expectedNumberOfTerms);
 				fixedAlphaBetaScore.setUsePrior(usePrior);
 
-				logger.info("Score of empty set: " + fixedAlphaBetaScore.getScore());
+				logger.log(Level.INFO, "Score of empty set: " + fixedAlphaBetaScore.getScore());
 
 				/* Provide a starting point */
 				if (randomStart)
@@ -380,7 +381,7 @@ public class Bayes2GOCalculation implements ICalculation, IProgressFeedback
 					for (int j=0;j<allTerms.size();j++)
 						if (rnd.nextDouble() < pForStart) fixedAlphaBetaScore.switchState(j);
 
-					logger.info("Starting with " + fixedAlphaBetaScore.getActiveTerms().size() + " terms (p=" + pForStart + ")");
+					logger.log(Level.INFO, "Starting with " + fixedAlphaBetaScore.getActiveTerms().size() + " terms (p=" + pForStart + ")");
 				}
 
 				bayes2GOScore = fixedAlphaBetaScore;
@@ -393,7 +394,7 @@ public class Bayes2GOCalculation implements ICalculation, IProgressFeedback
 			result.setScore(bayes2GOScore);
 
 			double score = bayes2GOScore.getScore();
-			logger.info("Score of initial set: " + score);
+			logger.log(Level.INFO, "Score of initial set: " + score);
 
 			int maxSteps = mcmcSteps;
 			int burnin = 20000;
@@ -431,9 +432,9 @@ public class Bayes2GOCalculation implements ICalculation, IProgressFeedback
 				long now = System.currentTimeMillis();
 				if (now - start > updateReportTime)
 				{
-					logger.info((t*100/maxSteps) + "% (score=" + score +" maxScore=" + maxScore + " #terms="+bayes2GOScore.getActiveTerms().size()+
-										" accept/reject=" + String.format("%g",(double)numAccepts / (double)numRejects) +
-										" accept/steps=" + String.format("%g",(double)numAccepts / (double)t) +
+					logger.log(Level.INFO, (t*100/maxSteps) + "% (score=" + score +" maxScore=" + maxScore + " #terms="+bayes2GOScore.getActiveTerms().size()+
+										" accept/reject=" + Double.toString((double)numAccepts / (double)numRejects) +
+										" accept/steps=" + Double.toString((double)numAccepts / (double)t) +
 										" exp=" + expectedNumberOfTerms + " usePrior=" + usePrior + ")");
 					start = now;
 

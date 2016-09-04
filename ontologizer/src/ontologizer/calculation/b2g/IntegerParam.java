@@ -39,7 +39,7 @@ class IntegerParam extends B2GParam
 	@Override
 	public String toString()
 	{
-		if (isFixed()) return String.format("%d",val);
+		if (isFixed()) return Integer.toString(val);
 		return getType().toString();
 	}
 }
