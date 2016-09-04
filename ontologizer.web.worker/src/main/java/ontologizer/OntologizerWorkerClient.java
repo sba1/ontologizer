@@ -89,7 +89,13 @@ public class OntologizerWorkerClient
 
 		Worker.current().listenMessage(OntologizeMessage.class, (OntologizeMessage om) ->
 		{
-			ICalculation calculation = supportedCalculations[0];
+			if (om.getCalculationType() >= 0 && om.getCalculationType() < supportedCalculations.length)
+			{
+				/* Type is unknown */
+				return;
+			}
+
+			ICalculation calculation = supportedCalculations[om.getCalculationType()];
 			PopulationSet population = new PopulationSet();
 			population.addGenes(associations.getAllAnnotatedGenes());
 			StudySet study = new StudySet();

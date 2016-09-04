@@ -9,4 +9,10 @@ public abstract class OntologizeMessage extends WorkerMessage
 
 	@JSProperty
 	public abstract void setItems(String [] items);
+
+	@JSProperty
+	public abstract int getCalculationType();
+
+	@JSProperty
+	public abstract void setCalculationType(int calculationType);
 }

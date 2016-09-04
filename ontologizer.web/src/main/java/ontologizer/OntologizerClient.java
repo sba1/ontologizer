@@ -234,6 +234,7 @@ public class OntologizerClient
 			String [] items = ace.getValue().split("\n");
 			OntologizeMessage om = createWorkerMessage(OntologizeMessage.class);
 			om.setItems(items);
+			om.setCalculationType(0);
 			worker.postMessage(om);
 
 			if (resultsTable == null)
