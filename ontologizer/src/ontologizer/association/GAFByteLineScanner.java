@@ -15,7 +15,6 @@ import ontologizer.ontology.TermID;
 import ontologizer.ontology.TermMap;
 import ontologizer.types.ByteString;
 import sonumina.collections.ObjectIntHashMap;
-import sonumina.collections.ObjectIntHashMap.ObjectIntProcedure;
 
 /**
  * A GAF Line scanner.
@@ -300,34 +299,6 @@ class GAFByteLineScanner extends AbstractByteLineScanner
 	public AnnotationContext getAnnotationContext()
 	{
 		return new AnnotationContext(items, objectIds, objectSymbolMap, objectIdMap, synonymMap);
-	}
-
-	public HashMap<ByteString, ByteString> getSynonym2Gene()
-	{
-		final HashMap<ByteString, ByteString> synonym2gene = new HashMap<ByteString, ByteString>(synonymMap.size());
-		synonymMap.forEachKeyValue(new ObjectIntProcedure<ByteString>()
-		{
-			@Override
-			public void keyValue(ByteString key, int value)
-			{
-				synonym2gene.put(key, items.get(value));
-			}
-		});
-		return synonym2gene;
-	}
-
-	public HashMap<ByteString, ByteString> getDbObjectID2Gene()
-	{
-		final HashMap<ByteString, ByteString> dbObjectID2gene = new HashMap<ByteString, ByteString>(synonymMap.size());
-		objectIdMap.forEachKeyValue(new ObjectIntProcedure<ByteString>()
-		{
-			@Override
-			public void keyValue(ByteString key, int value)
-			{
-				dbObjectID2gene.put(key, items.get(value));
-			}
-		});
-		return dbObjectID2gene;
 	}
 };
 

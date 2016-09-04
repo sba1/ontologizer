@@ -349,8 +349,9 @@ public class AssociationParser
 				+ " items.");
 
 		associations = ls.getAssociations();
-		synonym2gene = ls.getSynonym2Gene();
-		dbObjectID2gene = ls.getDbObjectID2Gene();
+		AnnotationContext ac = ls.getAnnotationContext();
+		synonym2gene = ac.getSynonym2Symbol();
+		dbObjectID2gene = ac.getDbObjectID2Symbol();
 
 
 		if (symbolWarnings >= 1000)
