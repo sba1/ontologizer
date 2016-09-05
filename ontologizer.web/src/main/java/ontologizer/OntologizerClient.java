@@ -216,6 +216,7 @@ public class OntologizerClient
 
 		speciesElement.addEventListener("change", ev -> loadDataForCurrentSpecies() );
 
+		methodElement = document.getElementById("methods").cast();
 		for (String calc : SupportedCalculations.NAMES)
 			addOption(methodElement, calc);
 
