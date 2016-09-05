@@ -20,6 +20,7 @@ import ontologizer.calculation.ICalculationProgress;
 import ontologizer.calculation.IProgressFeedback;
 import ontologizer.calculation.TermForTermCalculation;
 import ontologizer.calculation.b2g.Bayes2GOCalculation;
+import ontologizer.calculation.b2g.Bayes2GOEnrichedGOTermsResult;
 import ontologizer.ontology.Ontology;
 import ontologizer.set.PopulationSet;
 import ontologizer.set.StudySet;
@@ -153,12 +154,13 @@ public class OntologizerWorkerClient
 			}
 
 			result = calculation.calculateStudySet(ontology, associations, population, study, new Bonferroni());
+			final double orderMult = result instanceof Bayes2GOEnrichedGOTermsResult?-1:1;
 
 			props = new AbstractGOTermProperties[result.getSize()];
 			int i = 0;
 			for (AbstractGOTermProperties p : result)
 				props[i++] = p;
-			Arrays.sort(props, Comparator.comparingDouble(p -> p.p));
+			Arrays.sort(props, Comparator.comparingDouble(p -> p.p * orderMult));
 
 			createProgressMessage().withTitle("Ontologizing").withCurrent(3).withMax(3).post(Worker.current());
 
