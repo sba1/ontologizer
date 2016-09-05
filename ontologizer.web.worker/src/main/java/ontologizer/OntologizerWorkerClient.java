@@ -107,7 +107,7 @@ public class OntologizerWorkerClient
 
 		Worker.current().listenMessage(OntologizeMessage.class, (OntologizeMessage om) ->
 		{
-			if (om.getCalculationType() >= 0 && om.getCalculationType() < supportedCalculations.length)
+			if (om.getCalculationType() < 0 || om.getCalculationType() >= supportedCalculations.length)
 			{
 				/* Type is unknown */
 				return;
