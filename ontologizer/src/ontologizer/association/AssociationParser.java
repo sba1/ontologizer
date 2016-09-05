@@ -359,12 +359,7 @@ public class AssociationParser
 	}
 
 	/**
-	 *
-	 *
-	 * @param names
-	 * @param terms
-	 * @param progress
-	 * @throws IOException
+	 * @return all parsed associations.
 	 */
 	public ArrayList<Association> getAssociations()
 	{
