@@ -10,6 +10,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -155,6 +157,30 @@ public class AssociationParserTest
 		assertEquals(2,assoc.getAllAnnotatedGenes().size());
 	}
 
+	/**
+	 * A progress that just captures the warnings.
+	 */
+	public static class WarningCapture implements IAssociationParserProgress
+	{
+		public List<String> warnings = new ArrayList<String>();
+
+		@Override
+		public void init(int max)
+		{
+		}
+
+		@Override
+		public void update(int current)
+		{
+		}
+
+		@Override
+		public void warning(String message)
+		{
+			warnings.add(message);
+		}
+	}
+
 	@Test
 	public void testAmbiguousGAFCaseB() throws IOException, OBOParserException
 	{
@@ -165,34 +191,16 @@ public class AssociationParserTest
 		bw.flush();
 		bw.close();
 
-		final int [] warnings = new int[1];
-
 		OBOParser oboParser = new OBOParser(new OBOParserFileInput(OBO_FILE));
 		oboParser.doParse();
 
-		AssociationParser ap = new AssociationParser(new OBOParserFileInput(tmp.getAbsolutePath()), new TermContainer(oboParser.getTermMap(), "", ""), null, new IAssociationParserProgress() {
-
-			@Override
-			public void init(int max)
-			{
-			}
-
-			@Override
-			public void update(int current)
-			{
-			}
-
-			@Override
-			public void warning(String message)
-			{
-				warnings[0]++;
-			}
-		});
+		WarningCapture warningCapture = new WarningCapture();
+		AssociationParser ap = new AssociationParser(new OBOParserFileInput(tmp.getAbsolutePath()), new TermContainer(oboParser.getTermMap(), "", ""), null, warningCapture);
 		AssociationContainer assoc = new AssociationContainer(ap.getAssociations(), ap.getSynonym2gene(), ap.getDbObject2gene());
 
 		/* We expect only one annotated object as DBOBJID1 is the same as DBOBJID2 due to the same symbol */
-		assertEquals(2,assoc.getAllAnnotatedGenes().size());
-		assertEquals(1, warnings[0]);
+		assertEquals(2, assoc.getAllAnnotatedGenes().size());
+		assertEquals(1, warningCapture.warnings.size());
 	}
 
 	@Test
