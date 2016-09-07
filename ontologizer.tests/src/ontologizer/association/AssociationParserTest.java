@@ -198,7 +198,6 @@ public class AssociationParserTest
 		AssociationParser ap = new AssociationParser(new OBOParserFileInput(tmp.getAbsolutePath()), new TermContainer(oboParser.getTermMap(), "", ""), null, warningCapture);
 		AssociationContainer assoc = new AssociationContainer(ap.getAssociations(), ap.getSynonym2gene(), ap.getDbObject2gene());
 
-		/* We expect only one annotated object as DBOBJID1 is the same as DBOBJID2 due to the same symbol */
 		assertEquals(2, assoc.getAllAnnotatedGenes().size());
 		assertEquals(1, warningCapture.warnings.size());
 	}
