@@ -245,6 +245,9 @@ class GAFByteLineScanner extends AbstractByteLineScanner
 			/* Object symbol was seen before */
 			if (!assoc.getDB_Object().equals(objectIds.get(objectIndex)))
 			{
+				/* Record this as a synonym now */
+				synonymMap.put(assoc.getDB_Object(), objectIndex);
+
 				/* Warn about that the same symbol is used with at least two object ids */
 				dbObjectWarnings++;
 				if (dbObjectWarnings < 1000)

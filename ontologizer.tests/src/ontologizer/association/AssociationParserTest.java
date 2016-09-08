@@ -23,6 +23,7 @@ import ontologizer.ontology.OBOParser;
 import ontologizer.ontology.OBOParserException;
 import ontologizer.ontology.OBOParserFileInput;
 import ontologizer.ontology.TermContainer;
+import ontologizer.types.ByteString;
 
 public class AssociationParserTest
 {
@@ -137,6 +138,8 @@ public class AssociationParserTest
 		assertEquals(1,assoc.getAllAnnotatedGenes().size());
 		assertEquals("SYMBOL",assoc.getAllAnnotatedGenes().iterator().next().toString());
 		assertEquals(1, warningCapture.warnings.size());
+		/* DBOBJID2 becomes a synonym */
+		assertEquals(true, assoc.isSynonym(new ByteString("DBOBJID2")));
 	}
 
 	@Test
