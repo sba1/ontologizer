@@ -19,15 +19,15 @@ public abstract class AbstractOntologizerThread extends Thread
 {
 	protected Display display;
 	protected ResultWindow result;
-	private Runnable calledWhenFinished;
+	private Runnable doneCallback;
 
-	public AbstractOntologizerThread(String threadName, Runnable calledWhenFinnished, Display d, ResultWindow r)
+	public AbstractOntologizerThread(String threadName, Runnable doneCallback, Display d, ResultWindow r)
 	{
 		super(OntologizerThreadGroups.workerThreadGroup, threadName);
 
 		this.display = d;
 		this.result = r;
-		this.calledWhenFinished = calledWhenFinnished;
+		this.doneCallback = doneCallback;
 	}
 
 	/**
@@ -47,7 +47,7 @@ public abstract class AbstractOntologizerThread extends Thread
 	final public void run()
 	{
 		perform();
-		calledWhenFinished.run();
+		doneCallback.run();
 	}
 
 	/**
