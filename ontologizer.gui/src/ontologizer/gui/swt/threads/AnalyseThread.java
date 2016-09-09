@@ -239,8 +239,8 @@ public class AnalyseThread extends AbstractOntologizerThread
 						}});
 				}
 			});
-			display.asyncExec(new ResultAppendLogRunnable(diag));
-			display.asyncExec(new ResultAppendLogRunnable("Building GO graph"));
+			log(diag);
+			log("Building GO graph");
 			TermContainer goTerms = new TermContainer(oboParser.getTermMap(), oboParser.getFormatVersion(), oboParser.getDate());
 			Ontology goGraph = Ontology.create(goTerms);
 			if (subsetName != null) goGraph.setRelevantSubset(subsetName);
@@ -270,7 +270,7 @@ public class AnalyseThread extends AbstractOntologizerThread
 			/* Parse the GO association file containing GO annotations for genes or gene
 			 * products. Results are placed in association parser.
 			 */
-			display.asyncExec(new ResultAppendLogRunnable("Parse associations"));
+			log("Parse associations");
 			AssociationParser ap = new AssociationParser(new OBOParserFileInput(associationsFile), goTerms, populationSet.getAllGeneNames(), checkedEvidences, new IAssociationParserProgress()
 			{
 				public void init(final int max)
@@ -372,7 +372,7 @@ public class AnalyseThread extends AbstractOntologizerThread
 					});
 				}
 
-				display.asyncExec(new ResultAppendLogRunnable("Perform analysis on study set " + studyNum + " (out of " + studySetList.size() + ")"));
+				log("Perform analysis on study set " + studyNum + " (out of " + studySetList.size() + ")");
 
 				EnrichedGOTermsResult studySetResult = calculation.calculateStudySet(
 						goGraph, goAssociations, populationSet, studySet,

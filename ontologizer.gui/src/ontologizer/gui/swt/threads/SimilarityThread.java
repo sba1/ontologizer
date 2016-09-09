@@ -106,13 +106,13 @@ public class SimilarityThread extends AbstractOntologizerThread
 				if (graph == null) throw new RuntimeException("Error in loading the ontology graph!");
 				if (assoc == null) throw new RuntimeException("Error in loading the associations!");
 
-				display.asyncExec(new ResultAppendLogRunnable("Preparing semantic calculation"));
+				log("Preparing semantic calculation");
 
 				SemanticCalculation s = new SemanticCalculation(graph,assoc);
 
 				for (StudySet studySet : studySetList)
 				{
-					display.asyncExec(new ResultAppendLogRunnable("Analyzing study set \"" + studySet.getName() + "\""));
+					log("Analyzing study set \"" + studySet.getName() + "\"");
 
 					final SemanticResult sr = s.calculate(studySet,new SemanticCalculation.ISemanticCalculationProgress()
 					{

@@ -31,16 +31,22 @@ public abstract class AbstractOntologizerThread extends Thread
 	}
 
 	/**
-	 * Basic runnable which appends a given text to the result window.
+	 * Log the given text.
 	 *
-	 * @author Sebastian Bauer
-	 *
+	 * @param log text to be logged.
 	 */
-	class ResultAppendLogRunnable implements Runnable
+	protected void log(final String log)
 	{
-		String log;
-		ResultAppendLogRunnable(String log){this.log = log;}
-		public void run() { result.appendLog(log); }
+		display.asyncExec(new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				if (result.isDisposed())
+					return;
+				result.appendLog(log);
+			}
+		});
 	}
 
 	@Override
