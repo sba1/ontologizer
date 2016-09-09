@@ -314,7 +314,7 @@ public class AnalyseThread extends AbstractOntologizerThread
 					populationSet.addGene(bs,"");
 			}
 
-			/* Filter out duplicate genes (i.e. different gene names refering
+			/* Filter out duplicate genes (i.e. different gene names referring
 			 * to the same gene) */
 			display.asyncExec(new Runnable(){public void run() {
 				result.appendLog("Filter out duplicate genes");
