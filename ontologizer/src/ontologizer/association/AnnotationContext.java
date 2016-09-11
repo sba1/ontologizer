@@ -1,7 +1,10 @@
 package ontologizer.association;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import ontologizer.types.ByteString;
 import sonumina.collections.ObjectIntHashMap;
@@ -37,6 +40,65 @@ public class AnnotationContext
 		this.objectSymbolMap = objectSymbolMap;
 		this.objectIdMap = objectIdMap;
 		this.synonymMap = synonymMap;
+	}
+
+	/**
+	 * Creates a mapping from a list and two other maps.
+	 *
+	 * @param symbols
+	 * @param synonym2Item
+	 * @param objectId2Item
+	 */
+	public AnnotationContext(List<ByteString> symbols, HashMap<ByteString, ByteString> synonym2Item, HashMap<ByteString, ByteString> objectId2Item)
+	{
+		objectSymbolMap = new ObjectIntHashMap<ByteString>();
+		Set<ByteString> allSymbols = new HashSet<ByteString>(symbols);
+
+		if (synonym2Item != null)
+		{
+			for (ByteString otherSymbol : synonym2Item.values())
+				allSymbols.add(otherSymbol);
+		}
+
+		if (objectId2Item != null)
+		{
+			for (ByteString otherSymbol : objectId2Item.values())
+				allSymbols.add(otherSymbol);
+		}
+
+		this.symbols = new ByteString[allSymbols.size()];
+		this.objectIds = new ByteString[allSymbols.size()];
+		this.synonymMap = new ObjectIntHashMap<ByteString>(synonym2Item.size());
+		this.objectIdMap = new ObjectIntHashMap<ByteString>(objectId2Item.size());
+		int i = 0;
+		for (ByteString symbol : allSymbols)
+		{
+			objectSymbolMap.put(symbol, i);
+			this.symbols[i] = symbol;
+			i++;
+		}
+
+		if (synonym2Item != null)
+		{
+			for (Entry<ByteString, ByteString> e : synonym2Item.entrySet())
+			{
+				ByteString synonym = e.getKey();
+				ByteString symbol = e.getValue();
+
+				synonymMap.put(synonym, objectSymbolMap.get(symbol));
+			}
+		}
+
+		if (objectId2Item != null)
+		{
+			for (Entry<ByteString, ByteString> e : objectId2Item.entrySet())
+			{
+				ByteString objectId = e.getKey();
+				ByteString symbol = e.getValue();
+
+				objectIdMap.put(objectId, objectSymbolMap.get(symbol));
+			}
+		}
 	}
 
 	/**
