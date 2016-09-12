@@ -144,4 +144,13 @@ public class AnnotationContext
 		return dbObjectID2gene;
 	}
 
+	/**
+	 * Return the array of symbols.
+	 *
+	 * @return array of symbols.
+	 */
+	public ByteString [] getSymbols()
+	{
+		return symbols;
+	}
 }
