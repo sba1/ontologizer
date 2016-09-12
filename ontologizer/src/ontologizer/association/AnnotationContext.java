@@ -51,6 +51,9 @@ public class AnnotationContext
 	 */
 	public AnnotationContext(List<ByteString> symbols, HashMap<ByteString, ByteString> synonym2Item, HashMap<ByteString, ByteString> objectId2Item)
 	{
+		int initialSynonymMapSize = 32;
+		int initialObjectIdMapSize = 32;
+
 		objectSymbolMap = new ObjectIntHashMap<ByteString>();
 		Set<ByteString> allSymbols = new HashSet<ByteString>(symbols);
 
@@ -58,18 +61,20 @@ public class AnnotationContext
 		{
 			for (ByteString otherSymbol : synonym2Item.values())
 				allSymbols.add(otherSymbol);
+			initialSynonymMapSize = synonym2Item.size();
 		}
 
 		if (objectId2Item != null)
 		{
 			for (ByteString otherSymbol : objectId2Item.values())
 				allSymbols.add(otherSymbol);
+			initialObjectIdMapSize = objectId2Item.size();
 		}
 
 		this.symbols = new ByteString[allSymbols.size()];
 		this.objectIds = new ByteString[allSymbols.size()];
-		this.synonymMap = new ObjectIntHashMap<ByteString>(synonym2Item.size());
-		this.objectIdMap = new ObjectIntHashMap<ByteString>(objectId2Item.size());
+		this.synonymMap = new ObjectIntHashMap<ByteString>(initialSynonymMapSize);
+		this.objectIdMap = new ObjectIntHashMap<ByteString>(initialObjectIdMapSize);
 		int i = 0;
 		for (ByteString symbol : allSymbols)
 		{
