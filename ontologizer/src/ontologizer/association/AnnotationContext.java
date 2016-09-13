@@ -153,4 +153,15 @@ public class AnnotationContext
 	{
 		return symbols;
 	}
+
+	/**
+	 * Map the given symbol to the unique id.
+	 *
+	 * @param name
+	 * @return the id or Integer.MAX if mapping was not successful.
+	 */
+	public int mapSymbol(ByteString name)
+	{
+		return objectSymbolMap.getIfAbsent(name, Integer.MAX_VALUE);
+	}
 }
