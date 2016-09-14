@@ -5,6 +5,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import org.hamcrest.CustomMatcher;
@@ -60,6 +61,9 @@ public class AnnotationContextTest
 	private static ByteString ITEM2 = new ByteString("ITEM2");
 	private static ByteString ITEM3 = new ByteString("ITEM3");
 
+	private static ByteString SYN1_1 = new ByteString("SYN1_1");
+	private static ByteString SYN1_2 = new ByteString("SYN1_2");
+
 	@Test
 	public void testAnnotationContextOnlySymbols()
 	{
@@ -76,5 +80,29 @@ public class AnnotationContextTest
 		assertThat(id3, between(0,2));
 
 		assertTrue(id1 != id2 && id2 != id3);
+	}
+
+	@Test
+	public void testAnnotationContextSynonyms()
+	{
+		List<ByteString> symbols = Arrays.asList(ITEM1, ITEM2, ITEM3);
+		HashMap<ByteString,ByteString> synonym2Item = new HashMap<ByteString,ByteString>();
+		synonym2Item.put(SYN1_1, ITEM1);
+		synonym2Item.put(SYN1_2, ITEM1);
+		AnnotationContext ac = new AnnotationContext(symbols, synonym2Item, null);
+		assertEquals(3, ac.getSymbols().length);
+
+		int id1 = ac.mapSymbol(ITEM1);
+		int id2 = ac.mapSymbol(ITEM2);
+		int id3 = ac.mapSymbol(ITEM3);
+
+		assertThat(id1, between(0,2));
+		assertThat(id2, between(0,2));
+		assertThat(id3, between(0,2));
+
+		assertTrue(id1 != id2 && id2 != id3);
+
+		assertEquals(id1, ac.mapSynonym(SYN1_1));
+		assertEquals(id1, ac.mapSynonym(SYN1_2));
 	}
 }

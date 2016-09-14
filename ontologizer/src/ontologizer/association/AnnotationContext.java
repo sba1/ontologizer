@@ -164,4 +164,15 @@ public class AnnotationContext
 	{
 		return objectSymbolMap.getIfAbsent(name, Integer.MAX_VALUE);
 	}
+
+	/**
+	 * Map the given symbol to the unique id.
+	 *
+	 * @param synonym
+	 * @return the id or Integer.MAX if mapping was not successful.
+	 */
+	public int mapSynonym(ByteString synonym)
+	{
+		return synonymMap.getIfAbsent(synonym, Integer.MAX_VALUE);
+	}
 }
