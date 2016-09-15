@@ -79,7 +79,9 @@ public class InternalOntology
 			tids.add(term.getID());
 
 		/* Associations */
-		assoc = new AssociationContainer();
+		ArrayList<Association> associations = new ArrayList<Association>();
+		HashMap<ByteString,ByteString> synonym2Item = new HashMap<ByteString,ByteString>();
+
 		Random r = new Random(seed);
 
 		Prefix goPrefix = new Prefix("GO");
@@ -94,11 +96,13 @@ public class InternalOntology
 			for (int j=0;j<numTerms;j++)
 			{
 				int tid = r.nextInt(terms.size())+1;
-				assoc.addAssociation(new Association(itemName, new TermID(goPrefix, tid)));
+				associations.add(new Association(itemName, new TermID(goPrefix, tid)));
 			}
-			assoc.addSynonym(itemName, synonymName);
+			synonym2Item.put(synonymName, itemName);
 			synonymMap.put(itemName, synonymName);
 		}
+
+		assoc = new AssociationContainer(associations, synonym2Item, new HashMap<ByteString,ByteString>());
 	}
 }
 

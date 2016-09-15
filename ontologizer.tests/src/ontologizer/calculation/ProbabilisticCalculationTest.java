@@ -1,5 +1,7 @@
 package ontologizer.calculation;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 
 import org.junit.Test;
@@ -40,19 +42,21 @@ public class ProbabilisticCalculationTest
 			pop.addGene(new ByteString("gene"+i), "");
 
 		/* Associations */
-		AssociationContainer assocContainer = new AssociationContainer();
+		ArrayList<Association> associations = new ArrayList<Association>();
 
 		/* for C2 */
 		for (int i=0;i<10;i++)
-			assocContainer.addAssociation(new Association(new ByteString("gene"+i),"GO:0000002"));
+			associations.add(new Association(new ByteString("gene"+i),"GO:0000002"));
 
 		/* for C3 */
 		for (int i=10;i<20;i++)
-			assocContainer.addAssociation(new Association(new ByteString("gene"+i),"GO:0000003"));
+			associations.add(new Association(new ByteString("gene"+i),"GO:0000003"));
 
 		/* for C4 */
 		for (int i=20;i<100;i++)
-			assocContainer.addAssociation(new Association(new ByteString("gene"+i),"GO:0000004"));
+			associations.add(new Association(new ByteString("gene"+i),"GO:0000004"));
+
+		AssociationContainer assocContainer = new AssociationContainer(associations, new HashMap<ByteString,ByteString>(), new HashMap<ByteString,ByteString>());
 
 		/* Study */
 		StudySet study = new StudySet("study");

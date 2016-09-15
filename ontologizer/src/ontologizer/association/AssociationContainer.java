@@ -62,38 +62,12 @@ public class AssociationContainer implements Iterable<Gene2Associations>
 	}
 
 	/**
-	 * Add a synonym for a given item.
-	 *
-	 * @param item the item for which the synonym should be added.
-	 * @param synonym the synonym
-	 */
-	public void addSynonym(ByteString item, ByteString synonym)
-	{
-		synonym2gene.put(synonym, item);
-	}
-
-	/**
-	 * Constructor for an empty container.
-	 *
-	 * @see #addAssociation(Association)
-	 */
-	public AssociationContainer()
-	{
-		synonym2gene = new HashMap<ByteString,ByteString>();
-		dbObject2gene = new HashMap<ByteString, ByteString>();
-		gene2assocs = new HashMap<ByteString, Gene2Associations>();
-
-		totalAnnotations = 0;
-	}
-
-
-	/**
 	 * Adds a new association. Note that this will not read out synonyms or any other field
 	 * than the object symbol.
 	 *
 	 * @param a the associated to be added
 	 */
-	public void addAssociation(Association a)
+	private void addAssociation(Association a)
 	{
 		totalAnnotations++;
 		Gene2Associations g2a = null;

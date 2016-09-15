@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 
 import org.junit.Assert;
@@ -85,24 +87,25 @@ class InternalDatafiles extends Datafiles
 		for (Term term : terms)
 			tids.add(term.getID());
 
+		ArrayList<Association> associations = new ArrayList<Association>();
+		associations.add(new Association(new ByteString("item1"),"GO:0000004"));
+		associations.add(new Association(new ByteString("item1"),"GO:0000011"));
+
+		associations.add(new Association(new ByteString("item2"),"GO:0000010"));
+		associations.add(new Association(new ByteString("item2"),"GO:0000013"));
+
+		associations.add(new Association(new ByteString("item3"),"GO:0000007"));
+		associations.add(new Association(new ByteString("item3"),"GO:0000015"));
+
+		associations.add(new Association(new ByteString("item4"),"GO:0000012"));
+		associations.add(new Association(new ByteString("item4"),"GO:0000013"));
+		associations.add(new Association(new ByteString("item4"),"GO:0000014"));
+
+		associations.add(new Association(new ByteString("item5"),"GO:0000006"));
+		associations.add(new Association(new ByteString("item5"),"GO:0000014"));
+
 		/* Associations */
-		assoc = new AssociationContainer();
-
-		assoc.addAssociation(new Association(new ByteString("item1"),"GO:0000004"));
-		assoc.addAssociation(new Association(new ByteString("item1"),"GO:0000011"));
-
-		assoc.addAssociation(new Association(new ByteString("item2"),"GO:0000010"));
-		assoc.addAssociation(new Association(new ByteString("item2"),"GO:0000013"));
-
-		assoc.addAssociation(new Association(new ByteString("item3"),"GO:0000007"));
-		assoc.addAssociation(new Association(new ByteString("item3"),"GO:0000015"));
-
-		assoc.addAssociation(new Association(new ByteString("item4"),"GO:0000012"));
-		assoc.addAssociation(new Association(new ByteString("item4"),"GO:0000013"));
-		assoc.addAssociation(new Association(new ByteString("item4"),"GO:0000014"));
-
-		assoc.addAssociation(new Association(new ByteString("item5"),"GO:0000006"));
-		assoc.addAssociation(new Association(new ByteString("item5"),"GO:0000014"));
+		assoc = new AssociationContainer(associations, new HashMap<ByteString,ByteString>(), new HashMap<ByteString,ByteString>());
 
 		GODOTWriter.writeDOT(graph, new File("example.dot"), null, tids, new AbstractDotAttributesProvider() {
 			public String getDotNodeAttributes(TermID id) {
@@ -172,9 +175,9 @@ public class StudySetTest
 		TermContainer container = new TermContainer(oboParser.getTermMap(), oboParser.getFormatVersion(), oboParser.getDate());
 		Ontology o = Ontology.create(container);
 
-		AssociationContainer assoc = new AssociationContainer();
-		Association a = new Association(new ByteString("Test"), "TEST:0000000");
-		assoc.addAssociation(a);
+		ArrayList<Association> associations = new ArrayList<Association>();
+		associations.add(new Association(new ByteString("Test"), "TEST:0000000"));
+		AssociationContainer assoc = new AssociationContainer(associations, new HashMap<ByteString,ByteString>(), new HashMap<ByteString,ByteString>());
 
 		StudySet study = new StudySet();
 		study.addGene(new ByteString("Test"), "");
