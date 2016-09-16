@@ -85,20 +85,6 @@ public class AssociationContainer implements Iterable<Gene2Associations>
 		}
 	}
 
-	/** For debugging */
-	public String toString()
-	{
-		StringBuilder sb = new StringBuilder();
-		sb.append("*****\n---AssociationContainer---\n*****\n");
-		sb.append("Total annotations: " + totalAnnotations + "\n");
-		sb.append("Number of genes with associations: " + gene2assocs.size()
-				+ "\n");
-		sb.append("Number of synonyms: " + synonym2gene.size() + "\n");
-		sb.append("Number of dbo -> genename mappings: " + dbObject2gene.size()
-				+ "\n");
-		return sb.toString();
-	}
-
 	/**
 	 * get a Gene2Associations object corresponding to a given gene name. If the
 	 * name is not initially found as dbObject Symbol, (which is usually a
