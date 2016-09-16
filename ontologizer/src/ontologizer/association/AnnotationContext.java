@@ -1,5 +1,6 @@
 package ontologizer.association;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -27,7 +28,7 @@ public class AnnotationContext
 	/** Maps synonyms to item indices within the items list */
 	private ObjectIntHashMap<ByteString> synonymMap;
 
-	public AnnotationContext(List<ByteString> symbols, List<ByteString> objectIds, ObjectIntHashMap<ByteString> objectSymbolMap, ObjectIntHashMap<ByteString> objectIdMap, ObjectIntHashMap<ByteString> synonymMap)
+	public AnnotationContext(Collection<ByteString> symbols, List<ByteString> objectIds, ObjectIntHashMap<ByteString> objectSymbolMap, ObjectIntHashMap<ByteString> objectIdMap, ObjectIntHashMap<ByteString> synonymMap)
 	{
 		if (symbols.size() != objectIds.size()) throw new IllegalArgumentException("Symbols and object ids size must match");
 
@@ -49,7 +50,7 @@ public class AnnotationContext
 	 * @param synonym2Item
 	 * @param objectId2Item
 	 */
-	public AnnotationContext(List<ByteString> symbols, HashMap<ByteString, ByteString> synonym2Item, HashMap<ByteString, ByteString> objectId2Item)
+	public AnnotationContext(Collection<ByteString> symbols, HashMap<ByteString, ByteString> synonym2Item, HashMap<ByteString, ByteString> objectId2Item)
 	{
 		int initialSynonymMapSize = 32;
 		int initialObjectIdMapSize = 32;
