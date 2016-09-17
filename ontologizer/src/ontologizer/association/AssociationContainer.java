@@ -17,11 +17,8 @@ public class AssociationContainer implements Iterable<Gene2Associations>
 	/** Mapping from gene (or gene product) names to Association objects */
 	private HashMap<ByteString, Gene2Associations> gene2assocs;
 
-	/** Mapping of synonyms to gene names */
-	private HashMap<ByteString, ByteString> synonym2gene;
-
-	/** <I>key</I>: dbObject <I>value</I>: main gene name (dbObject_Symbol) */
-	private HashMap<ByteString, ByteString> dbObject2gene;
+	/** Mapping */
+	private AnnotationContext annotationMapping;
 
 	/**
 	 * Total number of annotations available for the genes in our dataset.
@@ -51,14 +48,13 @@ public class AssociationContainer implements Iterable<Gene2Associations>
 			ArrayList<Association> assocs, HashMap<ByteString, ByteString> s2g,
 			HashMap<ByteString, ByteString> dbo2g)
 	{
-		synonym2gene = s2g;
-		dbObject2gene = dbo2g;
-
 		totalAnnotations = 0;
 		gene2assocs = new HashMap<ByteString, Gene2Associations>();
 
 		for (Association a : assocs)
 			addAssociation(a);
+
+		annotationMapping = new AnnotationContext(gene2assocs.keySet(), s2g, dbo2g);
 	}
 
 	/**
@@ -101,15 +97,17 @@ public class AssociationContainer implements Iterable<Gene2Associations>
 		Gene2Associations g2a = gene2assocs.get(geneName);
 		if (g2a == null)
 		{
-			ByteString dbObject = dbObject2gene.get(geneName);
-			if (dbObject != null)
-				g2a = gene2assocs.get(dbObject);
-		}
-		if (g2a == null)
-		{
-			ByteString synonym = synonym2gene.get(geneName);
-			if (synonym != null)
-				g2a = gene2assocs.get(synonym);
+			int index = annotationMapping.mapObjectID(geneName);
+			if (index == Integer.MAX_VALUE)
+			{
+				index = annotationMapping.mapSynonym(geneName);
+			}
+
+			if (index != Integer.MAX_VALUE)
+			{
+				ByteString symbol = annotationMapping.getSymbols()[index];
+				g2a = gene2assocs.get(symbol);
+			}
 		}
 		return g2a;
 	}
@@ -133,7 +131,7 @@ public class AssociationContainer implements Iterable<Gene2Associations>
 	 */
 	public boolean isObjectID(ByteString name)
 	{
-		return dbObject2gene.containsKey(name);
+		return annotationMapping.mapObjectID(name) != Integer.MAX_VALUE;
 	}
 
 	/**
@@ -144,7 +142,7 @@ public class AssociationContainer implements Iterable<Gene2Associations>
 	 */
 	public boolean isSynonym(ByteString name)
 	{
-		return synonym2gene.containsKey(name);
+		return annotationMapping.mapSynonym(name) != Integer.MAX_VALUE;
 	}
 
 	/**
