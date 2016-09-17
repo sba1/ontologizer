@@ -2,6 +2,7 @@ package ontologizer.association;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -14,8 +15,8 @@ import ontologizer.types.ByteString;
  */
 public class AssociationContainer implements Iterable<Gene2Associations>
 {
-	/** Mapping from gene (or gene product) names to Association objects */
-	private HashMap<ByteString, Gene2Associations> gene2assocs;
+	/** Associations keys by the unique id */
+	private Gene2Associations [] associations;
 
 	/** Mapping */
 	private AnnotationContext annotationMapping;
@@ -43,12 +44,16 @@ public class AssociationContainer implements Iterable<Gene2Associations>
 			ArrayList<Association> assocs, HashMap<ByteString, ByteString> s2g,
 			HashMap<ByteString, ByteString> dbo2g)
 	{
-		gene2assocs = new HashMap<ByteString, Gene2Associations>();
+		Set<ByteString> allSymbols = new HashSet<ByteString>();
 
 		for (Association a : assocs)
-			addAssociation(a);
+			allSymbols.add(a.getObjectSymbol());
 
-		annotationMapping = new AnnotationContext(gene2assocs.keySet(), s2g, dbo2g);
+		annotationMapping = new AnnotationContext(allSymbols, s2g, dbo2g);
+
+		associations = new Gene2Associations[allSymbols.size()];
+		for (Association a : assocs)
+			addAssociation(a);
 	}
 
 	/**
@@ -59,19 +64,18 @@ public class AssociationContainer implements Iterable<Gene2Associations>
 	 */
 	private void addAssociation(Association a)
 	{
-		Gene2Associations g2a = null;
-		if (gene2assocs.containsKey(a.getObjectSymbol()))
+		ByteString symbol = a.getObjectSymbol();
+		int index = annotationMapping.mapSymbol(a.getObjectSymbol());
+		if (index == Integer.MAX_VALUE)
+			return;
+
+		Gene2Associations g2a = associations[index];
+		if (g2a == null)
 		{
-			g2a = gene2assocs.get(a.getObjectSymbol());
-			g2a.add(a); // Add the Association to existing g2a
-		} else
-		{
-			// Otherwise create new Gene2Associations object
-			// for this gene.
-			g2a = new Gene2Associations(a.getObjectSymbol());
-			g2a.add(a);
-			gene2assocs.put(a.getObjectSymbol(), g2a);
+			g2a = new Gene2Associations(symbol);
+			associations[index] = g2a;
 		}
+		g2a.add(a);
 	}
 
 	/**
@@ -87,22 +91,20 @@ public class AssociationContainer implements Iterable<Gene2Associations>
 	 */
 	public Gene2Associations get(ByteString geneName)
 	{
-		Gene2Associations g2a = gene2assocs.get(geneName);
-		if (g2a == null)
+		int index = annotationMapping.mapSymbol(geneName);
+		if (index == Integer.MAX_VALUE)
 		{
-			int index = annotationMapping.mapObjectID(geneName);
+			index = annotationMapping.mapObjectID(geneName);
 			if (index == Integer.MAX_VALUE)
 			{
 				index = annotationMapping.mapSynonym(geneName);
 			}
-
-			if (index != Integer.MAX_VALUE)
-			{
-				ByteString symbol = annotationMapping.getSymbols()[index];
-				g2a = gene2assocs.get(symbol);
-			}
 		}
-		return g2a;
+
+		if (index == Integer.MAX_VALUE)
+			return null;
+
+		return associations[index];
 	}
 
 	/**
@@ -113,7 +115,7 @@ public class AssociationContainer implements Iterable<Gene2Associations>
 	 */
 	public boolean isObjectSymbol(ByteString name)
 	{
-		return gene2assocs.containsKey(name);
+		return annotationMapping.mapSymbol(name) != Integer.MAX_VALUE;
 	}
 
 	/**
@@ -145,7 +147,11 @@ public class AssociationContainer implements Iterable<Gene2Associations>
 	 */
 	public Set<ByteString> getAllAnnotatedGenes()
 	{
-		return gene2assocs.keySet();
+		Set<ByteString> symbols = new HashSet<ByteString>();
+		for (ByteString bs : annotationMapping.getSymbols())
+			symbols.add(bs);
+
+		return symbols;
 	}
 
 	public boolean containsGene(ByteString g1)
@@ -155,7 +161,32 @@ public class AssociationContainer implements Iterable<Gene2Associations>
 
 	public Iterator<Gene2Associations> iterator()
 	{
-		return gene2assocs.values().iterator();
+		return new Iterator<Gene2Associations>()
+		{
+			int current;
+
+			@Override
+			public boolean hasNext()
+			{
+				if (current == associations.length)
+					return false;
+				return true;
+			}
+
+			@Override
+			public Gene2Associations next()
+			{
+				Gene2Associations value = associations[current];
+				current++;
+				return value;
+			}
+
+			@Override
+			public void remove()
+			{
+				throw new UnsupportedOperationException();
+			}
+		};
 	}
 
 	/**
@@ -164,7 +195,7 @@ public class AssociationContainer implements Iterable<Gene2Associations>
 	public Map<String,Integer> getAllEvidenceCodes()
 	{
 		Map<String,Integer> evidenceCounts = new HashMap<String, Integer>();
-		for (Gene2Associations g2a : this)
+		for (Gene2Associations g2a : associations)
 		{
 			for (Association a : g2a)
 			{
