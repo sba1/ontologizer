@@ -167,6 +167,17 @@ public class AnnotationContext
 	}
 
 	/**
+	 * Map the given objectid to the unique id.
+	 *
+	 * @param objectid
+	 * @return the id or Integer.MAX if mapping was not successful.
+	 */
+	public int mapObjectID(ByteString objectid)
+	{
+		return objectIdMap.getIfAbsent(objectid, Integer.MAX_VALUE);
+	}
+
+	/**
 	 * Map the given symbol to the unique id.
 	 *
 	 * @param synonym
