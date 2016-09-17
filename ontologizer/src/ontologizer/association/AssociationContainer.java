@@ -21,11 +21,6 @@ public class AssociationContainer implements Iterable<Gene2Associations>
 	private AnnotationContext annotationMapping;
 
 	/**
-	 * Total number of annotations available for the genes in our dataset.
-	 */
-	private int totalAnnotations;
-
-	/**
 	 * The constructor receives data from the AssociationParser object, which
 	 * does the basic work of Parsing a gene_association file. The constructor
 	 * takes an array list of associations, and classifies them according to
@@ -48,7 +43,6 @@ public class AssociationContainer implements Iterable<Gene2Associations>
 			ArrayList<Association> assocs, HashMap<ByteString, ByteString> s2g,
 			HashMap<ByteString, ByteString> dbo2g)
 	{
-		totalAnnotations = 0;
 		gene2assocs = new HashMap<ByteString, Gene2Associations>();
 
 		for (Association a : assocs)
@@ -65,7 +59,6 @@ public class AssociationContainer implements Iterable<Gene2Associations>
 	 */
 	private void addAssociation(Association a)
 	{
-		totalAnnotations++;
 		Gene2Associations g2a = null;
 		if (gene2assocs.containsKey(a.getObjectSymbol()))
 		{
