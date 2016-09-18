@@ -39,9 +39,7 @@ public class AssociationParserTest2
 
 		assocParser = new AssociationParser(new OBOParserFileInput(GOAssociationFile), container, null);
 
-		assocContainer = new AssociationContainer(assocParser.getAssociations(),
-				assocParser.getSynonym2gene(),
-				assocParser.getDbObject2gene());
+		assocContainer = new AssociationContainer(assocParser.getAssociations(), assocParser.getAnnotationMapping());
 	}
 
 
@@ -49,8 +47,8 @@ public class AssociationParserTest2
 	public void testBasicStructure()
 	{
 		Assert.assertEquals("number of parsed associations", nAssociations, assocParser.getAssociations().size());
-		Assert.assertEquals("number of parsed synonyms", nSynonyms,assocParser.getSynonym2gene().size());
-		Assert.assertEquals("number of parsed DB objects", nDBObjects,assocParser.getDbObject2gene().size());
+		Assert.assertEquals("number of parsed synonyms", nSynonyms,assocParser.getAnnotationMapping().getNumberOfSynonyms());
+		Assert.assertEquals("number of parsed DB objects", nDBObjects,assocParser.getAnnotationMapping().getSymbols().length);
 		Assert.assertEquals("number of annotated genes", nAnnotatedGenes,assocContainer.getAllAnnotatedGenes().size());
 
 		for (int i=0; i<someGenes.length; i++) {

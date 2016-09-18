@@ -112,7 +112,7 @@ public class DatafilesLoader
 						/* Ignore warnings for now */
 					}
 				});
-			annotation = new AssociationContainer(ap.getAssociations(), ap.getSynonym2gene(), ap.getDbObject2gene());
+			annotation = new AssociationContainer(ap.getAssociations(), ap.getAnnotationMapping());
 
 			return true;
 		} catch (Exception e)

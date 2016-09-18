@@ -476,7 +476,7 @@ public class WorkSetLoadThread extends Thread
 					}
 				});
 
-				AssociationContainer ac = new AssociationContainer(ap.getAssociations(), ap.getSynonym2gene(), ap.getDbObject2gene());
+				AssociationContainer ac = new AssociationContainer(ap.getAssociations(), ap.getAnnotationMapping());
 				assocMap.put(assocName, ac);
 				workSetProgress.message("");
 				workSetProgress.initGauge(0);

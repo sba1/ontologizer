@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -52,6 +53,20 @@ public class AssociationContainer implements Iterable<Gene2Associations>
 		annotationMapping = new AnnotationContext(allSymbols, s2g, dbo2g);
 
 		associations = new Gene2Associations[allSymbols.size()];
+		for (Association a : assocs)
+			addAssociation(a);
+	}
+
+	/**
+	 * Constructs the container using a list of association and an annotation mapping created from it.
+	 *
+	 * @param assocs
+	 * @param annotationMapping
+	 */
+	public AssociationContainer(List<Association> assocs, AnnotationContext annotationMapping)
+	{
+		this.annotationMapping = annotationMapping;
+		associations = new Gene2Associations[annotationMapping.getSymbols().length];
 		for (Association a : assocs)
 			addAssociation(a);
 	}

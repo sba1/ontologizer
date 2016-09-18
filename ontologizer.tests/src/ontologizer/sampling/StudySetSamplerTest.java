@@ -31,9 +31,7 @@ public class StudySetSamplerTest
 		oboParser.doParse();
 		TermContainer container = new TermContainer(oboParser.getTermMap(), oboParser.getFormatVersion(), oboParser.getDate());
 		AssociationParser assocParser = new AssociationParser(new OBOParserFileInput(GOAssociationFile), container, null);
-		AssociationContainer assocContainer = new AssociationContainer(assocParser.getAssociations(),
-				assocParser.getSynonym2gene(),
-				assocParser.getDbObject2gene());
+		AssociationContainer assocContainer = new AssociationContainer(assocParser.getAssociations(), assocParser.getAnnotationMapping());
 
 		Set<ByteString> allAnnotatedGenes = assocContainer.getAllAnnotatedGenes();
 

@@ -234,7 +234,7 @@ public class OntologizerCore
 					}
 
 				});
-		goAssociations = new AssociationContainer(ap.getAssociations(), ap.getSynonym2gene(), ap.getDbObject2gene());
+		goAssociations = new AssociationContainer(ap.getAssociations(), ap.getAnnotationMapping());
 
 		/* Filter out duplicate genes (i.e. different gene names refering
 		 * to the same gene) */

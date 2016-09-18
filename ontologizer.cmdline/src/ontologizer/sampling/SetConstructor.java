@@ -240,7 +240,7 @@ public class SetConstructor
 
 			// loading associations
 			AssociationParser assocParser = new AssociationParser(new OBOParserFileInput(assocFileName), goTerms, null);
-			AssociationContainer assocs = new AssociationContainer(assocParser.getAssociations(), assocParser.getSynonym2gene(), assocParser.getDbObject2gene());
+			AssociationContainer assocs = new AssociationContainer(assocParser.getAssociations(), assocParser.getAnnotationMapping());
 
 			// making outDir if necessary
 			File outDir = null;

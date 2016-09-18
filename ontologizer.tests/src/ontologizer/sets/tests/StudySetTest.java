@@ -270,9 +270,7 @@ public class StudySetTest
 		Ontology o = Ontology.create(container);
 		AssociationParser assocParser = new AssociationParser(new OBOParserFileInput(GOAssociationFile), container, null);
 
-		AssociationContainer assocContainer = new AssociationContainer(assocParser.getAssociations(),
-				assocParser.getSynonym2gene(),
-				assocParser.getDbObject2gene());
+		AssociationContainer assocContainer = new AssociationContainer(assocParser.getAssociations(), assocParser.getAnnotationMapping());
 
 		StudySet s = new StudySet();
 		s.addGenes(assocContainer.getAllAnnotatedGenes());

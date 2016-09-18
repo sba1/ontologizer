@@ -53,11 +53,8 @@ public class AssociationParser
 	/** Mapping from gene (or gene product) names to Association objects */
 	private ArrayList<Association> associations;
 
-	/** key: synonym, value: main gene name (dbObject_Symbol) */
-	private HashMap<ByteString, ByteString> synonym2gene;
-
-	/** key: dbObjectID, value: main gene name (dbObject_Symbol) */
-	private HashMap<ByteString, ByteString> dbObjectID2gene;
+	/** The mapping */
+	private AnnotationContext annotationMapping;
 
 	/** The file type of the association file which was parsed */
 	private Type fileType = Type.UNKNOWN;
@@ -153,8 +150,6 @@ public class AssociationParser
 		this.iterative = iterative;
 
 		associations = new ArrayList<Association>();
-		synonym2gene = new HashMap<ByteString, ByteString>();
-		dbObjectID2gene = new HashMap<ByteString, ByteString>();
 
 		if (iterative)
 		{
@@ -216,7 +211,10 @@ public class AssociationParser
 				AffyParser ap = new AffyParser();
 				ap.parse(input,head,names,terms,progress);
 				associations = ap.getAssociations();
-				synonym2gene = ap.getSynonym2Symbol();
+				Set<ByteString> allSymbols = new HashSet<ByteString>();
+				for (Association a : associations)
+					allSymbols.add(a.getObjectSymbol());
+				annotationMapping = new AnnotationContext(allSymbols, ap.getSynonym2Symbol(), new HashMap<ByteString,ByteString>());
 				fileType = Type.AFFYMETRIX;
 			} else
 			{
@@ -343,14 +341,11 @@ public class AssociationParser
 				+ ls.evidenceMismatch + " didn't"
 				+ " match the requested evidence codes");
 		logger.log(Level.INFO, "A total of " + ls.getNumberOfUsedTerms()
-				+ " terms are directly associated to " + dbObjectID2gene.size()
+				+ " terms are directly associated to " + ls.getAnnotationContext().getSymbols().length
 				+ " items.");
 
 		associations = ls.getAssociations();
-		AnnotationContext ac = ls.getAnnotationContext();
-		synonym2gene = ac.getSynonym2Symbol();
-		dbObjectID2gene = ac.getDbObjectID2Symbol();
-
+		annotationMapping = ls.getAnnotationContext();
 
 		if (symbolWarnings >= 1000)
 			logger.warning("The symbols of a total of " + symbolWarnings + " entries mapped ambiguously");
@@ -366,14 +361,9 @@ public class AssociationParser
 		return associations;
 	}
 
-	public HashMap<ByteString, ByteString> getSynonym2gene()
+	public AnnotationContext getAnnotationMapping()
 	{
-		return synonym2gene;
-	}
-
-	public HashMap<ByteString, ByteString> getDbObject2gene()
-	{
-		return dbObjectID2gene;
+		return annotationMapping;
 	}
 
 	/**

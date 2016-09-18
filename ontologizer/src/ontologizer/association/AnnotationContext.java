@@ -187,4 +187,9 @@ public class AnnotationContext
 	{
 		return synonymMap.getIfAbsent(synonym, Integer.MAX_VALUE);
 	}
+
+	public int getNumberOfSynonyms()
+	{
+		return synonymMap.size();
+	}
 }

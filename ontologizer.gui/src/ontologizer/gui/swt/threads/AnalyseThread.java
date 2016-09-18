@@ -303,7 +303,7 @@ public class AnalyseThread extends AbstractOntologizerThread
 					/* Ignore warnings for now */
 				}
 			});
-			AssociationContainer goAssociations = new AssociationContainer(ap.getAssociations(), ap.getSynonym2gene(), ap.getDbObject2gene());
+			AssociationContainer goAssociations = new AssociationContainer(ap.getAssociations(), ap.getAnnotationMapping());
 
 			if (popWasEmpty)
 			{

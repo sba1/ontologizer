@@ -75,13 +75,7 @@ public class SteffenExec
 					goTermCont,
 					null
 			);
-		AssociationContainer goAssociations =
-			new AssociationContainer(
-					ap.getAssociations(),
-					ap.getSynonym2gene(),
-					ap.getDbObject2gene()
-			);
-
+		AssociationContainer goAssociations = new AssociationContainer(ap.getAssociations(), ap.getAnnotationMapping());
 
 		/*
 		 * Building a PopulationSet from all genes for which we have annotation
