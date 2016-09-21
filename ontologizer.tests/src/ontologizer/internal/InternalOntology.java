@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Random;
 
+import ontologizer.association.AnnotationContext;
 import ontologizer.association.Association;
 import ontologizer.association.AssociationContainer;
 import ontologizer.ontology.Ontology;
@@ -102,7 +103,8 @@ public class InternalOntology
 			synonymMap.put(itemName, synonymName);
 		}
 
-		assoc = new AssociationContainer(associations, synonym2Item, new HashMap<ByteString,ByteString>());
+		AnnotationContext ac = new AnnotationContext(synonymMap.keySet(), synonym2Item, new HashMap<ByteString,ByteString>());
+		assoc = new AssociationContainer(associations, ac);
 	}
 }
 

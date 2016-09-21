@@ -13,6 +13,8 @@ import java.util.HashSet;
 import org.junit.Assert;
 import org.junit.Test;
 
+import ontologizer.association.AnnotationContext;
+import ontologizer.association.AnnotationUtil;
 import ontologizer.association.Association;
 import ontologizer.association.AssociationContainer;
 import ontologizer.association.AssociationParser;
@@ -105,7 +107,8 @@ class InternalDatafiles extends Datafiles
 		associations.add(new Association(new ByteString("item5"),"GO:0000014"));
 
 		/* Associations */
-		assoc = new AssociationContainer(associations, new HashMap<ByteString,ByteString>(), new HashMap<ByteString,ByteString>());
+		AnnotationContext mapping = new AnnotationContext(AnnotationUtil.getSymbols(associations), new HashMap<ByteString,ByteString>(), new HashMap<ByteString,ByteString>());
+		assoc = new AssociationContainer(associations, mapping);
 
 		GODOTWriter.writeDOT(graph, new File("example.dot"), null, tids, new AbstractDotAttributesProvider() {
 			public String getDotNodeAttributes(TermID id) {
@@ -177,8 +180,9 @@ public class StudySetTest
 
 		ArrayList<Association> associations = new ArrayList<Association>();
 		associations.add(new Association(new ByteString("Test"), "TEST:0000000"));
-		AssociationContainer assoc = new AssociationContainer(associations, new HashMap<ByteString,ByteString>(), new HashMap<ByteString,ByteString>());
 
+		AnnotationContext mapping = new AnnotationContext(AnnotationUtil.getSymbols(associations), new HashMap<ByteString,ByteString>(), new HashMap<ByteString,ByteString>());
+		AssociationContainer assoc = new AssociationContainer(associations, mapping);
 		StudySet study = new StudySet();
 		study.addGene(new ByteString("Test"), "");
 

@@ -6,6 +6,8 @@ import java.util.HashSet;
 
 import org.junit.Test;
 
+import ontologizer.association.AnnotationContext;
+import ontologizer.association.AnnotationUtil;
 import ontologizer.association.Association;
 import ontologizer.association.AssociationContainer;
 import ontologizer.ontology.Ontology;
@@ -56,7 +58,8 @@ public class ProbabilisticCalculationTest
 		for (int i=20;i<100;i++)
 			associations.add(new Association(new ByteString("gene"+i),"GO:0000004"));
 
-		AssociationContainer assocContainer = new AssociationContainer(associations, new HashMap<ByteString,ByteString>(), new HashMap<ByteString,ByteString>());
+		AnnotationContext mapping = new AnnotationContext(AnnotationUtil.getSymbols(associations), new HashMap<ByteString,ByteString>(), new HashMap<ByteString,ByteString>());
+		AssociationContainer assocContainer = new AssociationContainer(associations, mapping);
 
 		/* Study */
 		StudySet study = new StudySet("study");

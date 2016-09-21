@@ -1,6 +1,5 @@
 package ontologizer.association;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -21,41 +20,6 @@ public class AssociationContainer implements Iterable<Gene2Associations>
 
 	/** Mapping */
 	private AnnotationContext annotationMapping;
-
-	/**
-	 * The constructor receives data from the AssociationParser object, which
-	 * does the basic work of Parsing a gene_association file. The constructor
-	 * takes an array list of associations, and classifies them according to
-	 * gene (one gene can have multiple annotations) in Gene2Association
-	 * objects.
-	 *
-	 * @param assocs
-	 *            a list of all Associations referring to genes of the current
-	 *            dataset
-	 * @param s2g
-	 *            HashMap of synonyms for gene names extracted from the
-	 *            association file
-	 * @param dbo2g
-	 *            HashMap of mappings from database objects (e.g., accession
-	 *            numbers) to gene names.
-	 * @see Gene2Associations
-	 * @see AssociationParser
-	 */
-	public AssociationContainer(
-			ArrayList<Association> assocs, HashMap<ByteString, ByteString> s2g,
-			HashMap<ByteString, ByteString> dbo2g)
-	{
-		Set<ByteString> allSymbols = new HashSet<ByteString>();
-
-		for (Association a : assocs)
-			allSymbols.add(a.getObjectSymbol());
-
-		annotationMapping = new AnnotationContext(allSymbols, s2g, dbo2g);
-
-		associations = new Gene2Associations[allSymbols.size()];
-		for (Association a : assocs)
-			addAssociation(a);
-	}
 
 	/**
 	 * Constructs the container using a list of association and an annotation mapping created from it.
