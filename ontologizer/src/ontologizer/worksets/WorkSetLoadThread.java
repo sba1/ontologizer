@@ -94,8 +94,8 @@ public class WorkSetLoadThread extends Thread
 		/**
 		 * Checks whether the work set describes this task.
 		 *
-		 * @param ws
-		 * @return
+		 * @param ws the work set
+		 * @return whether the work set describes this task.
 		 */
 		public boolean matches(WorkSet ws)
 		{
