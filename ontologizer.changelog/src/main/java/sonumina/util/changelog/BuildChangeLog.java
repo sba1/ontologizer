@@ -88,6 +88,13 @@ public class BuildChangeLog
 			path = args[0];
 			if (args.length > 1)
 			{
+				File destFile = new File(args[1]);
+				File parent = destFile.getParentFile();
+				if (!parent.exists())
+				{
+					System.err.println("Creating \"" + parent.getPath() + "\" directory");
+					parent.mkdirs();
+				}
 				System.err.println("Writing to \"" + args[1] + "\"");
 				out = new PrintStream(new FileOutputStream(args[1]));
 			}
