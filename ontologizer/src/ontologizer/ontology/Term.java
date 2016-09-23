@@ -405,10 +405,6 @@ public class Term implements ITerm
 
 	}
 
-	public String[] getIntersections() {
-		return intersections;
-	}
-
 	public void addAlternativeId(TermID id2) {
 		if (this.alternatives == null)
 			this.alternatives = new ArrayList<TermID>();

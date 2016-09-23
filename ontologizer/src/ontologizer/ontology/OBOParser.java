@@ -154,9 +154,6 @@ public class OBOParser
 	/** Synonyms, if any, for the Term currently being parsed */
 	private ArrayList<ByteString> currentSynonyms = new ArrayList<ByteString>();
 
-	/** Intersections, if any, for the Term currently being parsed */
-	private ArrayList<String> currentIntersections = new ArrayList<String>();
-
 	/** The subsets */
 	private ArrayList<Subset> currentSubsets = new ArrayList<Subset>();
 
@@ -228,7 +225,6 @@ public class OBOParser
 			t.setEquivalents(currentEquivalents);
 			t.setSubsets(currentSubsets);
 			t.setSynonyms(currentSynonyms);
-			t.setIntersections(currentIntersections);
 			t.setXrefs(currentXrefs);
 			terms.add(t);
 
@@ -252,7 +248,6 @@ public class OBOParser
 		currentEquivalents.clear();
 		currentSubsets.clear();
 		currentSynonyms.clear();
-		currentIntersections.clear();
 		currentXrefs.clear();
 	}
 

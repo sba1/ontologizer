@@ -80,9 +80,4 @@ public interface ITerm
 	 * @return the associated xrefs
 	 */
 	public TermXref[] getXrefs();
-
-	/**
-	 * @return the terms that are declared in an intersection relation.
-	 */
-	public String[] getIntersections();
 }
