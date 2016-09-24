@@ -357,9 +357,7 @@ public class GraphCanvas extends Canvas implements IGraphCanvas
 	}
 
 	/**
-	 * Returns the name of the currently selected Node.
-	 *
-	 * @return
+	 * @return the name of the currently selected node.
 	 */
 	public String getNameOfCurrentSelectedNode()
 	{
@@ -369,7 +367,7 @@ public class GraphCanvas extends Canvas implements IGraphCanvas
 	}
 
 	/**
-	 * Selectes the node with the given name. Other nodes are deselected.
+	 * Selects the node with the given name. Other nodes are unselected.
 	 *
 	 * @param name
 	 */

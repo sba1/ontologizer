@@ -234,9 +234,7 @@ public class TermFilterSelectionComposite extends Composite
 	}
 
 	/**
-	 * Returns the currently selected term.
-	 *
-	 * @return
+	 * @return the currently selected term.
 	 */
 	public Term getSelectedTerm()
 	{

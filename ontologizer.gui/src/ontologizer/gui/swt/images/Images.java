@@ -39,7 +39,7 @@ public class Images
 	 * Loads the given image.
 	 *
 	 * @param fileName
-	 * @return
+	 * @return the loaded image
 	 */
 	public static Image loadImage(String fileName)
 	{
