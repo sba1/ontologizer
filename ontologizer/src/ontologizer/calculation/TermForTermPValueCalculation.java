@@ -15,13 +15,10 @@ import ontologizer.types.ByteString;
 import ontologizer.util.Util;
 
 /**
-*
-* This class hides all the details about how the p values are calculated
-* from the multiple test correction.
-*
-* @author Sebastian Bauer
-*
-*/
+ * A specific term-for-term p-value calculation.
+ *
+ * @author Sebastian Bauer
+ */
 public class TermForTermPValueCalculation extends AbstractPValueCalculation
 {
 	public TermForTermPValueCalculation(Ontology graph,
