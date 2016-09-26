@@ -1,23 +1,18 @@
 package ontologizer.calculation;
 
 import java.util.Arrays;
-import java.util.List;
 
 import ontologizer.association.AssociationContainer;
 import ontologizer.association.Gene2Associations;
-import ontologizer.enumeration.TermEnumerator;
-import ontologizer.enumeration.TermEnumerator.TermAnnotatedGenes;
 import ontologizer.ontology.Ontology;
 import ontologizer.ontology.TermID;
 import ontologizer.set.PopulationSet;
 import ontologizer.set.StudySet;
 import ontologizer.statistics.Hypergeometric;
-import ontologizer.statistics.IPValueCalculation;
 import ontologizer.statistics.IPValueCalculationProgress;
 import ontologizer.statistics.PValue;
 import ontologizer.types.ByteString;
 import ontologizer.util.Util;
-import sonumina.collections.ObjectIntHashMap;
 
 /**
 *
@@ -27,69 +22,13 @@ import sonumina.collections.ObjectIntHashMap;
 * @author Sebastian Bauer
 *
 */
-public class TermForTermPValueCalculation implements IPValueCalculation
+public class TermForTermPValueCalculation extends AbstractPValueCalculation
 {
-	private Ontology graph;
-	private AssociationContainer associations;
-	private PopulationSet populationSet;
-	private StudySet observedStudySet;
-	private Hypergeometric hyperg;
-
-	private int totalNumberOfAnnotatedTerms;
-
-	private ObjectIntHashMap<ByteString> item2Index;
-	private TermID [] termIds;
-	private int [][] term2Items;
-
 	public TermForTermPValueCalculation(Ontology graph,
-			AssociationContainer goAssociations, PopulationSet populationSet,
+			AssociationContainer associations, PopulationSet populationSet,
 			StudySet studySet, Hypergeometric hyperg)
 	{
-		this.graph = graph;
-		this.associations = goAssociations;
-		this.populationSet = populationSet;
-		this.observedStudySet = studySet;
-		this.hyperg = hyperg;
-
-		initCalculationContext(graph, goAssociations, populationSet);
-	}
-
-	private void initCalculationContext(Ontology graph, AssociationContainer goAssociations, StudySet populationSet)
-	{
-		TermEnumerator populationTermEnumerator = populationSet.enumerateTerms(graph, goAssociations);
-		totalNumberOfAnnotatedTerms = populationTermEnumerator.getTotalNumberOfAnnotatedTerms();
-
-		List<ByteString> itemList = populationTermEnumerator.getGenesAsList();
-		item2Index = new ObjectIntHashMap<ByteString>(itemList.size()*3/2);
-		int itemId = 0;
-		for (ByteString item : itemList)
-		{
-			item2Index.put(item, itemId++);
-		}
-
-		termIds = new TermID[totalNumberOfAnnotatedTerms];
-		term2Items = new int[totalNumberOfAnnotatedTerms][];
-
-		int i = 0;
-
-		for (TermID term : populationTermEnumerator)
-		{
-			TermAnnotatedGenes tag = populationTermEnumerator.getAnnotatedGenes(term);
-			int nTermItems = tag.totalAnnotated.size();
-
-			term2Items[i] = new int[nTermItems];
-
-			int j = 0;
-			for (ByteString item : tag.totalAnnotated)
-			{
-				term2Items[i][j++] = item2Index.get(item);
-			}
-
-			Arrays.sort(term2Items[i]);
-
-			termIds[i] = term;
-			i++;
-		}
+		super(graph, associations, populationSet, studySet, hyperg);
 	}
 
 	private PValue [] calculatePValues(StudySet studySet, IPValueCalculationProgress progress)
@@ -123,7 +62,7 @@ public class TermForTermPValueCalculation implements IPValueCalculation
 		/* Sort for simpler intersection finding */
 		Arrays.sort(studyIds);
 
-		PValue p [] = new PValue[totalNumberOfAnnotatedTerms];
+		PValue p [] = new PValue[getTotalNumberOfAnnotatedTerms()];
 
 		for (int i = 0; i < termIds.length; i++)
 		{
