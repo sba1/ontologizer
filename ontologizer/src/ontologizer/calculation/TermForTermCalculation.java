@@ -1,24 +1,11 @@
 package ontologizer.calculation;
 
-import java.util.Arrays;
-import java.util.List;
-
 import ontologizer.association.AssociationContainer;
-import ontologizer.association.Gene2Associations;
-import ontologizer.enumeration.TermEnumerator;
-import ontologizer.enumeration.TermEnumerator.TermAnnotatedGenes;
 import ontologizer.ontology.Ontology;
-import ontologizer.ontology.TermID;
 import ontologizer.set.PopulationSet;
 import ontologizer.set.StudySet;
 import ontologizer.statistics.AbstractTestCorrection;
-import ontologizer.statistics.Hypergeometric;
-import ontologizer.statistics.IPValueCalculation;
-import ontologizer.statistics.IPValueCalculationProgress;
 import ontologizer.statistics.PValue;
-import ontologizer.types.ByteString;
-import ontologizer.util.Util;
-import sonumina.collections.ObjectIntHashMap;
 
 /**
  *
