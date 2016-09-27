@@ -119,19 +119,9 @@ public class TermForTermPValueCalculation extends AbstractPValueCalculation
 		return calculatePValues(observedStudySet, progress);
 	}
 
-	public int currentStudySetSize()
-	{
-		return observedStudySet.getGeneCount();
-	}
-
 	@Override
 	public PValue[] calculateRandomPValues(IPValueCalculationProgress progress)
 	{
 		return calculatePValues(populationSet.generateRandomStudySet(observedStudySet.getGeneCount()), progress);
-	}
-
-	public int getNumberOfPValues()
-	{
-		return termIds.length;
 	}
 };

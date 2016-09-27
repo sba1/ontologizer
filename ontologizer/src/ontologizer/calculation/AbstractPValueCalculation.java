@@ -84,4 +84,14 @@ public abstract class AbstractPValueCalculation implements IPValueCalculation
 	{
 		return totalNumberOfAnnotatedTerms;
 	}
+
+	public final int currentStudySetSize()
+	{
+		return observedStudySet.getGeneCount();
+	}
+
+	public final int getNumberOfPValues()
+	{
+		return termIds.length;
+	}
 }
