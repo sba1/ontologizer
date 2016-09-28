@@ -1,5 +1,6 @@
 package ontologizer.ontology;
 
+import static ontologizer.types.ByteString.b;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -15,6 +16,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import ontologizer.types.ByteString;
 import ontologizer.ontology.OBOParser;
 import ontologizer.ontology.OBOParserException;
 import ontologizer.ontology.OBOParserFileInput;
@@ -31,6 +33,7 @@ public class OBOParserTest
 	private static final int nRelations = 63105;
 	private static final String formatVersion = "1.2";
 	private static final String date = "04:01:2012 11:50";
+	private static final ByteString data_version = b("1.1.2476");
 
 	@Rule
 	public TemporaryFolder tmpFolder = new TemporaryFolder();
@@ -54,6 +57,7 @@ public class OBOParserTest
 		assertEquals(nTermCount, oboParser.getTermMap().size());
 		assertEquals(formatVersion,oboParser.getFormatVersion());
 		assertEquals(date,oboParser.getDate());
+		assertEquals(data_version,oboParser.getDataVersion());
 		assertEquals(nRelations,relations);
 		assertTrue(id2Term.containsKey("GO:0008150"));
 		assertEquals(0,id2Term.get("GO:0008150").getParents().length);
