@@ -278,6 +278,13 @@ public class FileCache
 		new File(FileCache.cacheDirectory).mkdirs();
 
 		File index = new File(cacheDirectory,".index");
+
+		if (!index.exists())
+		{
+			/* If index file doesn't exist yet, just bail out */
+			return;
+		}
+
 		BufferedReader br = null;
 		try
 		{
