@@ -17,13 +17,6 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 import ontologizer.types.ByteString;
-import ontologizer.ontology.OBOParser;
-import ontologizer.ontology.OBOParserException;
-import ontologizer.ontology.OBOParserFileInput;
-import ontologizer.ontology.Term;
-import ontologizer.ontology.TermID;
-import ontologizer.ontology.TermRelation;
-
 
 public class OBOParserTest
 {
