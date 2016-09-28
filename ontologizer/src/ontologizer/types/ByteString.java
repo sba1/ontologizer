@@ -334,4 +334,16 @@ public final class ByteString
 		/* FIXME: Provide a better implementation */
 		return this.toString().compareTo(name.toString());
 	}
+
+
+	/**
+	 * Return a ByteString representation from the given str.
+	 *
+	 * @param str the string whose ByteString representation should be returned.
+	 * @return the ByteString representation.
+	 */
+	public static ByteString b(String str)
+	{
+		return new ByteString(str);
+	}
 }
