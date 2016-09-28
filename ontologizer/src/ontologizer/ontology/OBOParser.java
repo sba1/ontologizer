@@ -106,6 +106,9 @@ public class OBOParser
 	/** Date of the gene_ontology.obo file */
 	private String date;
 
+	/** Data version (sort of version identifier) of the obo file */
+	private ByteString data_version;
+
 	/** Collection of all terms */
 	private HashSet<Term> terms = new HashSet<Term>();
 
@@ -302,6 +305,7 @@ public class OBOParser
 			/* Supported header types */
 			private final byte [] FORMAT_VERSION_KEYWORD = "format-version".getBytes();
 			private final byte [] DATE_KEYWORD = "date".getBytes();
+			private final byte [] DATA_VERSION_KEYWORD = "data-version".getBytes();
 			private final byte [] SUBSETDEF_KEYWORD = "subsetdef".getBytes();
 
 			/* Supported term types */
@@ -747,6 +751,9 @@ public class OBOParser
 				} else if (equalsIgnoreCase(buf, keyStart, keyLen, DATE_KEYWORD))
 				{
 					date = new String(buf, valueStart, valueLen);
+				} else if (equalsIgnoreCase(buf, keyStart, keyLen, DATA_VERSION_KEYWORD))
+				{
+					data_version = new ByteString(buf, valueStart, valueStart + valueLen);
 				} else if (equalsIgnoreCase(buf, keyStart, keyLen, SUBSETDEF_KEYWORD))
 				{
 					Subset s = Subset.createFromString(new String(buf, valueStart, valueLen));
@@ -1085,6 +1092,14 @@ public class OBOParser
 	public String getDate()
 	{
 		return date;
+	}
+
+	/**
+	 * @return the version number of the data of described by obo file.
+	 */
+	public ByteString getDataVersion()
+	{
+		return data_version;
 	}
 
 	/**
