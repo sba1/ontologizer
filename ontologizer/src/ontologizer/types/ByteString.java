@@ -15,6 +15,8 @@ import java.util.ArrayList;
  */
 public final class ByteString
 {
+	public static final ByteString EMPTY = b("");
+
 	private byte [] bytes;
 	private transient int hashVal;
 
