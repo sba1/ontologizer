@@ -1,5 +1,7 @@
 package ontologizer.association;
 
+import static ontologizer.types.ByteString.b;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -23,7 +25,7 @@ import ontologizer.types.ByteString;
 public class AffyParser
 {
 	/** Predefined three slashes string */
-	private static ByteString THREE_SLASHES = new ByteString("///");
+	private static ByteString THREE_SLASHES = b("///");
 
 	private static Logger logger = Logger.getLogger(AffyParser.class.getName());
 

@@ -1,5 +1,8 @@
 package ontologizer.association;
 
+import static ontologizer.types.ByteString.b;
+import static ontologizer.types.ByteString.EMPTY;
+
 import java.util.regex.*;
 
 import ontologizer.ontology.PrefixPool;
@@ -110,9 +113,9 @@ public class Association
 	/** Use this pattern to split tab-separated fields on a line */
 	private static final Pattern pattern = Pattern.compile(DELIM);
 
-	private static final ByteString emptyString = new ByteString("");
+	private static final ByteString emptyString = EMPTY;
 
-	private static final ByteString notString = new ByteString("NOT");
+	private static final ByteString notString = b("NOT");
 
 	/**
 	 * @param line :
@@ -134,7 +137,7 @@ public class Association
 	 */
 	public Association(ByteString db_object_symbol, int goIntID)
 	{
-		DB_Object = synonym = new ByteString("");
+		DB_Object = synonym = ByteString.EMPTY;
 		DB_Object_Symbol = db_object_symbol;
 		termID = new TermID(goIntID);
 	}
@@ -149,7 +152,7 @@ public class Association
 	 */
 	public Association(ByteString db_object_symbol, TermID termID)
 	{
-		DB_Object = synonym = new ByteString("");
+		DB_Object = synonym = EMPTY;
 		DB_Object_Symbol = db_object_symbol;
 		this.termID = termID;
 	}
@@ -163,7 +166,7 @@ public class Association
 	 */
 	public Association(ByteString db_object_symbol, String term)
 	{
-		DB_Object = synonym = new ByteString("");
+		DB_Object = synonym = EMPTY;
 		DB_Object_Symbol = db_object_symbol;
 		termID = new TermID(term);
 	}
