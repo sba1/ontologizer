@@ -2,6 +2,8 @@ package ontologizer.ontology;
 
 import java.util.*;
 
+import ontologizer.types.ByteString;
+
 /**
  * A Container class for the terms parsed by OBOParser. The class stores the
  * parsed terms as a HashMap. While OBOParser basically has to do with input
@@ -20,12 +22,12 @@ public class TermContainer extends TermMap implements Iterable<Term>
 	private LinkedList<Term> termList;
 
 	/** Format version of the gene_ontology.obo file */
-	private String formatVersion;
+	private ByteString formatVersion;
 
 	/** Date of the OBO file */
-	private String date;
+	private ByteString date;
 
-	public TermContainer(Iterable<Term> terms, String format, String datum)
+	public TermContainer(Iterable<Term> terms, ByteString format, ByteString datum)
 	{
 		super(terms);
 
@@ -46,12 +48,12 @@ public class TermContainer extends TermMap implements Iterable<Term>
 		return termList.size();
 	}
 
-	public String getFormatVersion()
+	public ByteString getFormatVersion()
 	{
 		return formatVersion;
 	}
 
-	public String getDate()
+	public ByteString getDate()
 	{
 		return date;
 	}

@@ -1,5 +1,7 @@
 package ontologizer.calculation;
 
+import static ontologizer.types.ByteString.EMPTY;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -35,7 +37,7 @@ public class ProbabilisticCalculationTest
 		terms.add(c2);
 		terms.add(c3);
 		terms.add(c4);
-		TermContainer termContainer = new TermContainer(terms,"","");
+		TermContainer termContainer = new TermContainer(terms, EMPTY, EMPTY);
 		Ontology graph = Ontology.create(termContainer);
 
 		/* Population */

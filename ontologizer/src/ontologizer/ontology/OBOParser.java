@@ -101,10 +101,10 @@ public class OBOParser
 	private int options;
 
 	/** Format version of the gene_ontology.obo file */
-	private String format_version;
+	private ByteString format_version;
 
 	/** Date of the gene_ontology.obo file */
-	private String date;
+	private ByteString date;
 
 	/** Data version (sort of version identifier) of the obo file */
 	private ByteString data_version;
@@ -747,10 +747,10 @@ public class OBOParser
 			{
 				if (equalsIgnoreCase(buf, keyStart, keyLen, FORMAT_VERSION_KEYWORD))
 				{
-					format_version = new String(buf, valueStart, valueLen);
+					format_version = new ByteString(buf, valueStart, valueStart + valueLen);
 				} else if (equalsIgnoreCase(buf, keyStart, keyLen, DATE_KEYWORD))
 				{
-					date = new String(buf, valueStart, valueLen);
+					date = new ByteString(buf, valueStart, valueStart + valueLen);
 				} else if (equalsIgnoreCase(buf, keyStart, keyLen, DATA_VERSION_KEYWORD))
 				{
 					data_version = new ByteString(buf, valueStart, valueStart + valueLen);
@@ -1084,12 +1084,12 @@ public class OBOParser
 		return this.getParseDiagnostics();
 	}
 
-	public String getFormatVersion()
+	public ByteString getFormatVersion()
 	{
 		return format_version;
 	}
 
-	public String getDate()
+	public ByteString getDate()
 	{
 		return date;
 	}

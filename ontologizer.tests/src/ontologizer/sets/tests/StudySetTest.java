@@ -1,5 +1,6 @@
 package ontologizer.sets.tests;
 
+import static ontologizer.types.ByteString.EMPTY;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
@@ -81,7 +82,7 @@ class InternalDatafiles extends Datafiles
 		terms.add(c13);
 		terms.add(c14);
 		terms.add(c15);
-		TermContainer termContainer = new TermContainer(terms,"","");
+		TermContainer termContainer = new TermContainer(terms, EMPTY, EMPTY);
 
 		graph = Ontology.create(termContainer);
 

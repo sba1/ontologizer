@@ -12,6 +12,7 @@ import ontologizer.ontology.Term;
 import ontologizer.ontology.TermContainer;
 import ontologizer.ontology.TermRelation;
 
+import static ontologizer.types.ByteString.b;
 
 public class TermContainerTest
 {
@@ -38,7 +39,7 @@ public class TermContainerTest
 		termsConstructed.add(cellcomp);
 		termsConstructed.add(molfunc);
 
-		container = new TermContainer(termsConstructed, "noformat", "nodate");
+		container = new TermContainer(termsConstructed, b("noformat"), b("nodate"));
 	}
 
 	@Test

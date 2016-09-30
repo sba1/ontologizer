@@ -1,5 +1,7 @@
 package ontologizer.internal;
 
+import static ontologizer.types.ByteString.EMPTY;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -72,7 +74,7 @@ public class InternalOntology
 		terms.add(c9);
 		terms.add(c10);
 		terms.add(c11);
-		TermContainer termContainer = new TermContainer(terms,"","");
+		TermContainer termContainer = new TermContainer(terms, EMPTY, EMPTY);
 		graph = Ontology.create(termContainer);
 
 		HashSet<TermID> tids = new HashSet<TermID>();

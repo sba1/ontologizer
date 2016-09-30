@@ -24,8 +24,8 @@ public class OBOParserTest
 	public static final String GOtermsOBOFile = "data/gene_ontology.1_2.obo.gz";
 	private static final int nTermCount = 35520;
 	private static final int nRelations = 63105;
-	private static final String formatVersion = "1.2";
-	private static final String date = "04:01:2012 11:50";
+	private static final ByteString formatVersion = b("1.2");
+	private static final ByteString date = b("04:01:2012 11:50");
 	private static final ByteString data_version = b("1.1.2476");
 
 	@Rule
