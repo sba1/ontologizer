@@ -28,7 +28,7 @@ public class TermForTermPValueCalculation extends AbstractPValueCalculation
 		super(graph, associations, populationSet, studySet, hyperg);
 	}
 
-	private PValue [] calculatePValues(StudySet studySet, IPValueCalculationProgress progress)
+	protected PValue [] calculatePValues(StudySet studySet, IPValueCalculationProgress progress)
 	{
 		int [] studyIds = new int[studySet.getGeneCount()];
 		int mappedStudyItems = 0;
@@ -111,17 +111,5 @@ public class TermForTermPValueCalculation extends AbstractPValueCalculation
 			p[i] = myP;
 		}
 		return p;
-	}
-
-	@Override
-	public PValue[] calculateRawPValues(IPValueCalculationProgress progress)
-	{
-		return calculatePValues(observedStudySet, progress);
-	}
-
-	@Override
-	public PValue[] calculateRandomPValues(IPValueCalculationProgress progress)
-	{
-		return calculatePValues(populationSet.generateRandomStudySet(observedStudySet.getGeneCount()), progress);
 	}
 };

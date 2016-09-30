@@ -12,6 +12,8 @@ import ontologizer.set.PopulationSet;
 import ontologizer.set.StudySet;
 import ontologizer.statistics.Hypergeometric;
 import ontologizer.statistics.IPValueCalculation;
+import ontologizer.statistics.IPValueCalculationProgress;
+import ontologizer.statistics.PValue;
 import ontologizer.types.ByteString;
 import sonumina.collections.ObjectIntHashMap;
 
@@ -94,4 +96,25 @@ public abstract class AbstractPValueCalculation implements IPValueCalculation
 	{
 		return termIds.length;
 	}
+
+	/**
+	 * Calculate the p-values for the given study set. The study set must not be the same
+	 * as the observed study set.
+	 *
+	 * @param studySet the studyset.
+	 * @param progress the progress,
+	 * @return the array of p-values.
+	 */
+	protected abstract PValue [] calculatePValues(StudySet studySet, IPValueCalculationProgress progress);
+
+	public final PValue[] calculateRawPValues(IPValueCalculationProgress progress)
+	{
+		return calculatePValues(observedStudySet, progress);
+	}
+
+	public final PValue[] calculateRandomPValues(IPValueCalculationProgress progress)
+	{
+		return calculatePValues(populationSet.generateRandomStudySet(observedStudySet.getGeneCount()), progress);
+	}
+
 }
