@@ -1,9 +1,6 @@
 package ontologizer.calculation;
 
-import java.util.Arrays;
-
 import ontologizer.association.AssociationContainer;
-import ontologizer.association.Gene2Associations;
 import ontologizer.ontology.Ontology;
 import ontologizer.ontology.TermID;
 import ontologizer.set.PopulationSet;
@@ -11,7 +8,6 @@ import ontologizer.set.StudySet;
 import ontologizer.statistics.Hypergeometric;
 import ontologizer.statistics.IPValueCalculationProgress;
 import ontologizer.statistics.PValue;
-import ontologizer.types.ByteString;
 import ontologizer.util.Util;
 
 /**
@@ -30,34 +26,7 @@ public class TermForTermPValueCalculation extends AbstractPValueCalculation
 
 	protected PValue [] calculatePValues(StudySet studySet, IPValueCalculationProgress progress)
 	{
-		int [] studyIds = new int[studySet.getGeneCount()];
-		int mappedStudyItems = 0;
-		for (ByteString studyItem : studySet)
-		{
-			int index = item2Index.getIfAbsent(studyItem, Integer.MAX_VALUE);
-			if (index == Integer.MAX_VALUE)
-			{
-				/* Try synonyms etc. */
-				Gene2Associations g2a = associations.get(studyItem);
-				if (g2a != null)
-					index = item2Index.getIfAbsent(g2a.name(), Integer.MAX_VALUE);
-			}
-			if (index != Integer.MAX_VALUE)
-				studyIds[mappedStudyItems++] = index;
-		}
-
-		if (mappedStudyItems != studyIds.length)
-		{
-			/* This could only happen if there are items in the study set that are not in the population */
-			int [] newStudyIds = new int[mappedStudyItems];
-			for (int j = 0; j < mappedStudyItems; j++)
-			{
-				newStudyIds[j] = studyIds[j];
-			}
-			studyIds = newStudyIds;
-		}
-		/* Sort for simpler intersection finding */
-		Arrays.sort(studyIds);
+		int[] studyIds = getUniqueIDs(studySet);
 
 		PValue p [] = new PValue[getTotalNumberOfAnnotatedTerms()];
 

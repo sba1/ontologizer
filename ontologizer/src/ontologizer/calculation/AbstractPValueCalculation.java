@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import ontologizer.association.AssociationContainer;
+import ontologizer.association.Gene2Associations;
 import ontologizer.enumeration.TermEnumerator;
 import ontologizer.enumeration.TermEnumerator.TermAnnotatedGenes;
 import ontologizer.ontology.Ontology;
@@ -117,4 +118,43 @@ public abstract class AbstractPValueCalculation implements IPValueCalculation
 		return calculatePValues(populationSet.generateRandomStudySet(observedStudySet.getGeneCount()), progress);
 	}
 
+
+	/**
+	 * Get a unique id representation of the given study set.
+	 *
+	 * @param studySet the study set
+	 * @return the unique id representation of the study set.
+	 */
+	protected int[] getUniqueIDs(StudySet studySet)
+	{
+		int [] studyIds = new int[studySet.getGeneCount()];
+		int mappedStudyItems = 0;
+		for (ByteString studyItem : studySet)
+		{
+			int index = item2Index.getIfAbsent(studyItem, Integer.MAX_VALUE);
+			if (index == Integer.MAX_VALUE)
+			{
+				/* Try synonyms etc. */
+				Gene2Associations g2a = associations.get(studyItem);
+				if (g2a != null)
+					index = item2Index.getIfAbsent(g2a.name(), Integer.MAX_VALUE);
+			}
+			if (index != Integer.MAX_VALUE)
+				studyIds[mappedStudyItems++] = index;
+		}
+
+		if (mappedStudyItems != studyIds.length)
+		{
+			/* This could only happen if there are items in the study set that are not in the population */
+			int [] newStudyIds = new int[mappedStudyItems];
+			for (int j = 0; j < mappedStudyItems; j++)
+			{
+				newStudyIds[j] = studyIds[j];
+			}
+			studyIds = newStudyIds;
+		}
+		/* Sort for simpler intersection finding */
+		Arrays.sort(studyIds);
+		return studyIds;
+	}
 }
