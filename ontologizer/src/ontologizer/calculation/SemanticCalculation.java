@@ -1,12 +1,10 @@
 package ontologizer.calculation;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -14,19 +12,11 @@ import java.util.concurrent.locks.ReentrantReadWriteLock.ReadLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
 import java.util.logging.Logger;
 
-import ontologizer.DOTDumper;
-import ontologizer.association.Association;
 import ontologizer.association.AssociationContainer;
 import ontologizer.association.Gene2Associations;
-import ontologizer.dotwriter.AbstractDotAttributesProvider;
-import ontologizer.dotwriter.GODOTWriter;
 import ontologizer.enumeration.TermEnumerator;
 import ontologizer.ontology.Ontology;
-import ontologizer.ontology.ParentTermID;
-import ontologizer.ontology.Term;
-import ontologizer.ontology.TermContainer;
 import ontologizer.ontology.TermID;
-import ontologizer.ontology.TermRelation;
 import ontologizer.set.StudySet;
 import ontologizer.types.ByteString;
 
