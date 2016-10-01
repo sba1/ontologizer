@@ -30,6 +30,7 @@ public abstract class AbstractPValueCalculation implements IPValueCalculation
 
 	protected ObjectIntHashMap<ByteString> item2Index;
 	protected TermID [] termIds;
+	private ObjectIntHashMap<TermID> termId2Index;
 	protected int [][] term2Items;
 
 	public AbstractPValueCalculation(Ontology graph,
@@ -156,5 +157,22 @@ public abstract class AbstractPValueCalculation implements IPValueCalculation
 		/* Sort for simpler intersection finding */
 		Arrays.sort(studyIds);
 		return studyIds;
+	}
+
+	/**
+	 * Return the index of the given term.
+	 *
+	 * @param tid the term whose index shall be determined
+	 * @return the index or Integer.MAX if the term id is not known.
+	 */
+	protected final int getIndex(TermID tid)
+	{
+		if (termId2Index == null)
+		{
+			termId2Index = new ObjectIntHashMap<TermID>(termIds.length);
+			for (int i = 0; i < termIds.length; i++)
+				termId2Index.put(termIds[i], i);
+		}
+		return termId2Index.getIfAbsentPut(tid, Integer.MAX_VALUE);
 	}
 }
