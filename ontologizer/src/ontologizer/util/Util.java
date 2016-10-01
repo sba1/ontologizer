@@ -150,13 +150,13 @@ public final class Util
     }
 
 	/**
-	 * Determine the number of integer values that are common in the two given sorted arrays.
-	 *
+	 * Intersection of a and b with result in c.
 	 * @param a sorted array number one
 	 * @param b sorted array number two
-	 * @return number of ints that are common.
+	 * @param c destination array or null.
+	 * @return number of valid entries of c (number of common elements).
 	 */
-	public static int commonInts(int [] a, int [] b)
+	private static int commonInts(int [] a, int [] b, int c[])
 	{
 		int numCommon = 0;
 		for (int i = 0, j = 0; i < a.length && j < b.length;)
@@ -169,12 +169,49 @@ public final class Util
 				i++;
 			} else
 			{
+				if (c != null)
+				{
+					c[numCommon] = a[i];
+				}
 				i++;
 				j++;
 				numCommon++;
 			}
 		}
 		return numCommon;
+	}
+
+	/**
+	 * Determine the number of integer values that are common in the two given sorted arrays.
+	 *
+	 * @param a sorted array number one
+	 * @param b sorted array number two
+	 * @return number of ints that are common.
+	 */
+	public static int commonInts(int [] a, int [] b)
+	{
+		return commonInts(a, b, null);
+	}
+
+	public static class CommonIntSet
+	{
+		public int numberOfCommonInts;
+		public int [] common;
+	};
+
+	/**
+	 * Determine the set of common ints (i.e., the intersection of both sets).
+	 *
+	 * @param a sorted array number one
+	 * @param b sorted array number two
+	 * @return ints that are common.
+	 */
+	public static CommonIntSet commonIntsSet(int a [], int [] b)
+	{
+		CommonIntSet cis = new CommonIntSet();
+		cis.common = new int[Math.min(a.length, b.length)];
+		cis.numberOfCommonInts = commonInts(a, b, cis.common);
+		return cis;
 	}
 
 	/**
