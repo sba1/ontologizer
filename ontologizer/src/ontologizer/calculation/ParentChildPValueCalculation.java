@@ -4,16 +4,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 import ontologizer.association.AssociationContainer;
-import ontologizer.enumeration.TermEnumerator;
 import ontologizer.ontology.Ontology;
 import ontologizer.ontology.TermID;
 import ontologizer.set.PopulationSet;
 import ontologizer.set.StudySet;
 import ontologizer.statistics.Hypergeometric;
-import ontologizer.statistics.IPValueCalculation;
 import ontologizer.statistics.IPValueCalculationProgress;
 import ontologizer.statistics.PValue;
-import ontologizer.types.ByteString;
+import ontologizer.util.Util;
 
 /**
  *
@@ -23,66 +21,36 @@ import ontologizer.types.ByteString;
  * @author Sebastian Bauer
  *
  */
-class ParentChildPValuesCalculation implements IPValueCalculation
+class ParentChildPValuesCalculation extends AbstractPValueCalculation
 {
-	/*
-	 * We basically have the arguments of calculateStudy as fields
-	 */
-	public Ontology graph;
-	public AssociationContainer goAssociations;
-	public PopulationSet populationSet;
-	public TermEnumerator popTermEnumerator;
-	public StudySet observedStudySet;
-	public Hypergeometric hyperg;
-
-	private PValue [] calculatePValues(StudySet studySet, IPValueCalculationProgress progress)
+	public ParentChildPValuesCalculation(Ontology graph,
+			AssociationContainer goAssociations, PopulationSet populationSet,
+			StudySet studySet, Hypergeometric hyperg)
 	{
-		/* We need this to get genes annotated in the study set */
-		TermEnumerator studyTermEnumerator = studySet.enumerateTerms(graph,
-				goAssociations);
+		super(graph, goAssociations, populationSet, studySet, hyperg);
+	}
 
-		//PValue p [] = new PValue[populationTermCounter.getTotalNumberOfAnnotatedTerms()];
-		PValue p [] = new PValue[popTermEnumerator.getTotalNumberOfAnnotatedTerms()];
-		int i=0;
+	protected PValue [] calculatePValues(StudySet studySet, IPValueCalculationProgress progress)
+	{
+		int[] studyIds = getUniqueIDs(studySet);
 
-		/* For every term within the goTermCounter */
-		for (TermID term : popTermEnumerator)
+		PValue p [] = new PValue[getTotalNumberOfAnnotatedTerms()];
+
+		for (int i = 0; i < termIds.length; i++)
 		{
-			// calculating properties of term
-			ParentChildGOTermProperties termProp = calculateTerm(term, graph,
-					popTermEnumerator, studyTermEnumerator);
-
-			// adding properties to p Vector
-			p[i++] = termProp;
+			ParentChildGOTermProperties termProp = calculateTerm(studyIds, i);
+			p[i] = termProp;
 		}
 
 		return p;
 	}
 
-	public int currentStudySetSize()
+	private ParentChildGOTermProperties calculateTerm(int [] studyIds, int termId)
 	{
-		return observedStudySet.getGeneCount();
-	}
-
-	public PValue[] calculateRawPValues(IPValueCalculationProgress progress)
-	{
-		return calculatePValues(observedStudySet, progress);
-	}
-
-	public PValue[] calculateRandomPValues(IPValueCalculationProgress progress)
-	{
-		return calculatePValues(populationSet.generateRandomStudySet(observedStudySet.getGeneCount()), progress);
-	}
-
-	private ParentChildGOTermProperties calculateTerm(
-			TermID term,
-			Ontology graph,
-			TermEnumerator popTermEnumerator,
-			TermEnumerator studyTermEnumerator)
-	{
+		TermID term = termIds[termId];
 		// counts annotated to term
-		int studyTermCount = studyTermEnumerator.getAnnotatedGenes(term).totalAnnotatedCount();
-		int popTermCount = popTermEnumerator.getAnnotatedGenes(term).totalAnnotatedCount();
+		int studyTermCount = Util.commonInts(studyIds, term2Items[termId]);
+		int popTermCount = term2Items[termId].length;
 
 		// this is what we give back
 		ParentChildGOTermProperties prop = new ParentChildGOTermProperties();
@@ -90,29 +58,32 @@ class ParentChildPValuesCalculation implements IPValueCalculation
 		prop.annotatedPopulationGenes = popTermCount;
 		prop.annotatedStudyGenes = studyTermCount;
 
-		if (graph.isRootTerm(term)) {
+		if (graph.isRootTerm(term))
+		{
 			prop.nparents = 0;
 			prop.ignoreAtMTC = true;
 			prop.p = 1.0;
 			prop.p_adjusted = 1.0;
 			prop.p_min = 1.0;
-		} else {
-			// getting parents
+		} else
+		{
 			Set<TermID> parents = graph.getTermParents(term);
 
-			// These will hold the names of all genes directly annotated to parents
-			HashSet<ByteString> popParentAllGenes = new HashSet<ByteString>();
-			HashSet<ByteString> studyParentAllGenes = new HashSet<ByteString>();
+			/* These will hold the items annotated to parents */
+			HashSet<Integer> popParentAllGenes = new HashSet<Integer>();
+			HashSet<Integer> studyParentAllGenes = new HashSet<Integer>();
 
 			// looping over all parents to get the genes and adding all annotated genes to HashSets
 			for (TermID parent : parents)
 			{
-				popParentAllGenes.addAll(
-						popTermEnumerator.getAnnotatedGenes(parent).totalAnnotated
-				);
-				studyParentAllGenes.addAll(
-						studyTermEnumerator.getAnnotatedGenes(parent).totalAnnotated
-				);
+				int p = getIndex(parent);
+
+				for (int i = 0; i < term2Items[p].length; i++)
+					popParentAllGenes.add(term2Items[p][i]);
+
+				Util.CommonIntSet cis = Util.commonIntsSet(term2Items[p], studyIds);
+				for (int i = 0; i < cis.numberOfCommonInts; i++)
+					studyParentAllGenes.add(cis.common[i]);
 			}
 
 			// number of genes annotated to family (term and parents)
@@ -123,13 +94,16 @@ class ParentChildPValuesCalculation implements IPValueCalculation
 			prop.studyFamilyGenes = studyFamilyCount;
 			prop.nparents = parents.size();
 
-			if (studyTermCount != 0) {
-				if (popFamilyCount == popTermCount) {
+			if (studyTermCount != 0)
+			{
+				if (popFamilyCount == popTermCount)
+				{
 					prop.ignoreAtMTC = true;
 					prop.p = 1.0;
 					prop.p_adjusted = 1.0;
 					prop.p_min = 1.0;
-				} else {
+				} else
+				{
 					double p = hyperg.phypergeometric(
 							popFamilyCount,
 							(double)popTermCount / (double)popFamilyCount,
@@ -144,7 +118,8 @@ class ParentChildPValuesCalculation implements IPValueCalculation
 							popTermCount,
 							popTermCount);
 				}
-			} else {
+			} else
+			{
 				prop.ignoreAtMTC = true;
 				prop.p = 1.0;
 				prop.p_adjusted = 1.0;
@@ -153,11 +128,5 @@ class ParentChildPValuesCalculation implements IPValueCalculation
 		}
 
 		return prop;
-	}
-
-	@Override
-	public int getNumberOfPValues()
-	{
-		return popTermEnumerator.getTotalNumberOfAnnotatedTerms();
 	}
 };
