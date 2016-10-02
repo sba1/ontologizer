@@ -1,5 +1,6 @@
 package ontologizer.calculation;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -69,9 +70,8 @@ class ParentChildPValuesCalculation extends AbstractPValueCalculation
 		{
 			Set<TermID> parents = graph.getTermParents(term);
 
-			/* These will hold the items annotated to parents */
+			/* These will hold the items annotated to parents (with respect to the population) */
 			HashSet<Integer> popParentAllGenes = new HashSet<Integer>();
-			HashSet<Integer> studyParentAllGenes = new HashSet<Integer>();
 
 			// looping over all parents to get the genes and adding all annotated genes to HashSets
 			for (TermID parent : parents)
@@ -80,15 +80,18 @@ class ParentChildPValuesCalculation extends AbstractPValueCalculation
 
 				for (int i = 0; i < term2Items[p].length; i++)
 					popParentAllGenes.add(term2Items[p][i]);
-
-				Util.CommonIntSet cis = Util.commonIntsSet(term2Items[p], studyIds);
-				for (int i = 0; i < cis.numberOfCommonInts; i++)
-					studyParentAllGenes.add(cis.common[i]);
 			}
+
+			/* Make an array out of it */
+			int [] popItems = new int[popParentAllGenes.size()];
+			int i = 0;
+			for (int item : popParentAllGenes)
+				popItems[i++] = item;
+			Arrays.sort(popItems);
 
 			// number of genes annotated to family (term and parents)
 			int popFamilyCount = popParentAllGenes.size();
-			int studyFamilyCount = studyParentAllGenes.size();
+			int studyFamilyCount = Util.commonInts(popItems, studyIds);
 
 			prop.popFamilyGenes = popFamilyCount;
 			prop.studyFamilyGenes = studyFamilyCount;
