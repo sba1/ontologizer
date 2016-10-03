@@ -213,14 +213,4 @@ public final class Util
 		cis.numberOfCommonInts = commonInts(a, b, cis.common);
 		return cis;
 	}
-
-	/**
-	 * For debugging only.
-	 *
-	 * @param args defines the args.
-	 */
-	public static void main(final String[] args)
-	{
-		System.out.println(getAppDataDirectory("testapp").getAbsolutePath());
-	}
 }
