@@ -193,6 +193,57 @@ public final class Util
 		return commonInts(a, b, null);
 	}
 
+	/**
+	 * Returns the union of both sorted arrays. It is basically a merge without
+	 * duplication.
+	 *
+	 * @param a sorted array number one (no duplicates allowed)
+	 * @param b sorted array number two (no duplicates allowed)
+	 * @return union of a and b
+	 */
+	public static int [] union(int [] a, int [] b)
+	{
+		int [] c = new int[a.length + b.length];
+		int i = 0, j = 0, k = 0;
+
+		for (; i < a.length && j < b.length;k++)
+		{
+			if (a[i] > b[j])
+			{
+				c[k] = b[j];
+				j++;
+			} else if (a[i] < b[j])
+			{
+				c[k] = a[i];
+				i++;
+			} else
+			{
+				c[k] = a[i];
+				i++;
+				j++;
+			}
+		}
+
+		for (; i < a.length; i++)
+		{
+			c[k++] = a[i];
+		}
+
+		for (; j < b.length; j++)
+		{
+			c[k++] = b[j];
+		}
+
+
+		if (k != c.length)
+		{
+			int [] nc = new int[k];
+			System.arraycopy(c, 0, nc, 0, k);
+			return nc;
+		}
+		return c;
+	}
+
 	public static class CommonIntSet
 	{
 		public int numberOfCommonInts;
