@@ -244,6 +244,29 @@ public final class Util
 		return c;
 	}
 
+	/**
+	 * Calculates the cardinality of a union (b1 intersect b2 ... intersect bn)
+	 *
+	 * @param a sorted array a
+	 * @param b many sorted arrays b
+	 * @return the cardinality of the resulting set.
+	 */
+	public static int commonIntsWithUnion(int [] a, int [] ...b)
+	{
+		if (b == null)
+		{
+			return 0;
+		}
+
+		int [] bAll = b[0];
+		for (int i = 1; i < b.length; i++)
+		{
+			bAll = union(bAll, b[i]);
+		}
+
+		return commonInts(a, bAll);
+	}
+
 	public static class CommonIntSet
 	{
 		public int numberOfCommonInts;
