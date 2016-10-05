@@ -44,4 +44,15 @@ public class UtilTest
 
 		assertArrayEquals(new int[]{4,5,6,7,8,9}, Util.union(c, d));
 	}
+
+	@Test
+	public void testCommonIntsWithUnion()
+	{
+		int [] a = new int[]{1,2,3,4,5,6};
+		int [] b1 = new int[]{1,2};
+		int [] b2 = new int[]{3,4};
+		int [] b3 = new int[]{5,6};
+
+		assertEquals(6, Util.commonIntsWithUnion(a, b1, b2, b3));
+	}
 }
