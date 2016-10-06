@@ -247,11 +247,12 @@ public final class Util
 	/**
 	 * Calculates the cardinality of a union (b1 intersect b2 ... intersect bn)
 	 *
+	 * @param unionCardinality where the cardinality of the union is stored
 	 * @param a sorted array a
 	 * @param b many sorted arrays b
 	 * @return the cardinality of the resulting set.
 	 */
-	public static int commonIntsWithUnion(int [] a, int [] ...b)
+	public static int commonIntsWithUnion(int [] unionCardinality, int [] a, int [] ...b)
 	{
 		if (b == null)
 		{
@@ -264,6 +265,7 @@ public final class Util
 			bAll = union(bAll, b[i]);
 		}
 
+		unionCardinality[0] = bAll.length;
 		return commonInts(a, bAll);
 	}
 
