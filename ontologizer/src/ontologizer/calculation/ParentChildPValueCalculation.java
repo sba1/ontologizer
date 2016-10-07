@@ -69,29 +69,18 @@ class ParentChildPValuesCalculation extends AbstractPValueCalculation
 		} else
 		{
 			Set<TermID> parents = graph.getTermParents(term);
+			int [][] parentItems = new int[parents.size()][];
 
-			/* These will hold the items annotated to parents (with respect to the population) */
-			HashSet<Integer> popParentAllGenes = new HashSet<Integer>();
-
-			// looping over all parents to get the genes and adding all annotated genes to HashSets
+			int i = 0;
 			for (TermID parent : parents)
 			{
-				int p = getIndex(parent);
-
-				for (int i = 0; i < term2Items[p].length; i++)
-					popParentAllGenes.add(term2Items[p][i]);
+				parentItems[i++] = term2Items[getIndex(parent)];
 			}
 
-			/* Make an array out of it */
-			int [] popItems = new int[popParentAllGenes.size()];
-			int i = 0;
-			for (int item : popParentAllGenes)
-				popItems[i++] = item;
-			Arrays.sort(popItems);
-
-			// number of genes annotated to family (term and parents)
-			int popFamilyCount = popParentAllGenes.size();
-			int studyFamilyCount = Util.commonInts(popItems, studyIds);
+			/* number of genes annotated to family (term and parents) */
+			int [] popFamilyCountArray = new int[1];
+			int studyFamilyCount = Util.commonIntsWithUnion(popFamilyCountArray, studyIds, parentItems);
+			int popFamilyCount = popFamilyCountArray[0];
 
 			prop.popFamilyGenes = popFamilyCount;
 			prop.studyFamilyGenes = studyFamilyCount;
