@@ -54,7 +54,15 @@ public class UtilTest
 		int [] b2 = new int[]{3,4};
 		int [] b3 = new int[]{5,6};
 
+		assertEquals(6, Util.commonIntsWithUnion(unionCardinality, a));
+
 		assertEquals(6, Util.commonIntsWithUnion(unionCardinality, a, b1, b2, b3));
 		assertEquals(6, unionCardinality[0]);
+
+		assertEquals(4, Util.commonIntsWithUnion(unionCardinality, a, b1, b2));
+		assertEquals(4, unionCardinality[0]);
+
+		assertEquals(6, Util.commonIntsWithUnion(unionCardinality, a, b1, b2, b3, new int[]{7,8}));
+		assertEquals(8, unionCardinality[0]);
 	}
 }

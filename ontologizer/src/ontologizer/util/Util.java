@@ -254,9 +254,9 @@ public final class Util
 	 */
 	public static int commonIntsWithUnion(int [] unionCardinality, int [] a, int [] ...b)
 	{
-		if (b == null)
+		if (b == null || b.length == 0)
 		{
-			return 0;
+			return a.length;
 		}
 
 		int [] bAll = b[0];
