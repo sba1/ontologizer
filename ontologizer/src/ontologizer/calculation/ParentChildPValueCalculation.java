@@ -1,9 +1,8 @@
 package ontologizer.calculation;
 
-import java.util.Set;
-
 import ontologizer.association.AssociationContainer;
 import ontologizer.ontology.Ontology;
+import ontologizer.ontology.Term;
 import ontologizer.ontology.TermID;
 import ontologizer.set.PopulationSet;
 import ontologizer.set.StudySet;
@@ -11,6 +10,7 @@ import ontologizer.statistics.Hypergeometric;
 import ontologizer.statistics.IPValueCalculationProgress;
 import ontologizer.statistics.PValue;
 import ontologizer.util.Util;
+import sonumina.math.graph.SlimDirectedGraphView;
 
 /**
  *
@@ -22,11 +22,15 @@ import ontologizer.util.Util;
  */
 class ParentChildPValuesCalculation extends AbstractPValueCalculation
 {
+	private SlimDirectedGraphView<Term> slimGraph;
+
 	public ParentChildPValuesCalculation(Ontology graph,
 			AssociationContainer goAssociations, PopulationSet populationSet,
 			StudySet studySet, Hypergeometric hyperg)
 	{
 		super(graph, goAssociations, populationSet, studySet, hyperg);
+
+		slimGraph = graph.getSlimGraphView();
 	}
 
 	protected PValue [] calculatePValues(StudySet studySet, IPValueCalculationProgress progress)
@@ -66,13 +70,15 @@ class ParentChildPValuesCalculation extends AbstractPValueCalculation
 			prop.p_min = 1.0;
 		} else
 		{
-			Set<TermID> parents = graph.getTermParents(term);
-			int [][] parentItems = new int[parents.size()][];
+			int index = slimGraph.getVertexIndex(prop.goTerm);
+
+			int [] parents = slimGraph.vertexParents[index];
+			int [][] parentItems = new int[parents.length][];
 
 			int i = 0;
-			for (TermID parent : parents)
+			for (int parent : parents)
 			{
-				parentItems[i++] = term2Items[getIndex(parent)];
+				parentItems[i++] = term2Items[getIndex(slimGraph.getVertex(parent).getID())];
 			}
 
 			/* number of genes annotated to family (term and parents) */
@@ -82,7 +88,7 @@ class ParentChildPValuesCalculation extends AbstractPValueCalculation
 
 			prop.popFamilyGenes = popFamilyCount;
 			prop.studyFamilyGenes = studyFamilyCount;
-			prop.nparents = parents.size();
+			prop.nparents = parents.length;;
 
 			if (studyTermCount != 0)
 			{
