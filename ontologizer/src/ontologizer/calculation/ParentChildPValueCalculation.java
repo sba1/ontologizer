@@ -41,8 +41,7 @@ class ParentChildPValuesCalculation extends AbstractPValueCalculation
 
 		for (int i = 0; i < termIds.length; i++)
 		{
-			ParentChildGOTermProperties termProp = calculateTerm(studyIds, i);
-			p[i] = termProp;
+			p[i] = calculateTerm(studyIds, i);
 		}
 
 		return p;
