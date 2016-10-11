@@ -7,6 +7,7 @@
 package ontologizer.util;
 
 import java.io.File;
+import java.util.Arrays;
 
 /**
  *
@@ -156,7 +157,7 @@ public final class Util
 	 * @param c destination array or null.
 	 * @return number of valid entries of c (number of common elements).
 	 */
-	private static int commonInts(int [] a, int [] b, int c[])
+	private static int commonIntsWithResult(int [] a, int [] b, int c[])
 	{
 		int numCommon = 0;
 		for (int i = 0, j = 0; i < a.length && j < b.length;)
@@ -182,15 +183,23 @@ public final class Util
 	}
 
 	/**
-	 * Determine the number of integer values that are common in the two given sorted arrays.
+	 * Determine the number of integer values that are common in the given sorted arrays.
 	 *
-	 * @param a sorted array number one
-	 * @param b sorted array number two
+	 * @param a sorted arrays
 	 * @return number of ints that are common.
 	 */
-	public static int commonInts(int [] a, int [] b)
+	public static int commonInts(int [] ... a)
 	{
-		return commonInts(a, b, null);
+		if (a.length == 0) return 0;
+		if (a.length == 1) return a[0].length;
+		if (a.length == 2) return commonIntsWithResult(a[0], a[1], null);
+
+		/* Slice array */
+		int [][] newA = Arrays.copyOfRange(a, 1, a.length);
+		int [] tmp = new int[Math.max(a[0].length, a[1].length)];
+		int tmpLen = commonIntsWithResult(a[0], a[1], tmp);
+		newA[0] = Arrays.copyOf(tmp, tmpLen);
+		return commonInts(newA);
 	}
 
 	/**
@@ -286,7 +295,7 @@ public final class Util
 	{
 		CommonIntSet cis = new CommonIntSet();
 		cis.common = new int[Math.min(a.length, b.length)];
-		cis.numberOfCommonInts = commonInts(a, b, cis.common);
+		cis.numberOfCommonInts = commonIntsWithResult(a, b, cis.common);
 		return cis;
 	}
 }

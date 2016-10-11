@@ -15,9 +15,12 @@ public class UtilTest
 		int [] c = new int[]{4,5,6,7};
 		int [] d = new int[]{7,8,9};
 
+		assertEquals(0, Util.commonInts());
+		assertEquals(a.length, Util.commonInts(a));
 		assertEquals(2, Util.commonInts(a, b));
 		assertEquals(3, Util.commonInts(a, c));
 		assertEquals(0, Util.commonInts(a, d));
+		assertEquals(2, Util.commonInts(a, b, c));
 	}
 
 	@Test
