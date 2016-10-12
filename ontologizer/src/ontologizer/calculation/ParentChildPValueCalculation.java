@@ -24,6 +24,25 @@ class ParentChildPValuesCalculation extends AbstractPValueCalculation
 {
 	private SlimDirectedGraphView<Term> slimGraph;
 
+	/**
+	 * Return value type for getCounts().
+	 *
+	 * @author Sebastian Bauer
+	 */
+	private static class Counts
+	{
+		public final int parents;
+		public final int studyFamilyCount;
+		public final int popFamilyCount;
+
+		public Counts(int parents, int studyFamilyCount, int popFamilyCount)
+		{
+			this.parents = parents;
+			this.studyFamilyCount = studyFamilyCount;
+			this.popFamilyCount = popFamilyCount;
+		}
+	}
+
 	public ParentChildPValuesCalculation(Ontology graph,
 			AssociationContainer goAssociations, PopulationSet populationSet,
 			StudySet studySet, Hypergeometric hyperg)
@@ -47,20 +66,20 @@ class ParentChildPValuesCalculation extends AbstractPValueCalculation
 		return p;
 	}
 
-	private ParentChildGOTermProperties calculateTerm(int [] studyIds, int termId)
+	private ParentChildGOTermProperties calculateTerm(int [] studyIds, int termIndex)
 	{
-		TermID term = termIds[termId];
+		TermID termId = termIds[termIndex];
 		// counts annotated to term
-		int studyTermCount = Util.commonInts(studyIds, term2Items[termId]);
-		int popTermCount = term2Items[termId].length;
+		int studyTermCount = Util.commonInts(studyIds, term2Items[termIndex]);
+		int popTermCount = term2Items[termIndex].length;
 
 		// this is what we give back
 		ParentChildGOTermProperties prop = new ParentChildGOTermProperties();
-		prop.goTerm = graph.getTerm(term);
+		prop.goTerm = graph.getTerm(termId);
 		prop.annotatedPopulationGenes = popTermCount;
 		prop.annotatedStudyGenes = studyTermCount;
 
-		if (graph.isRootTerm(term))
+		if (graph.isRootTerm(termId))
 		{
 			prop.nparents = 0;
 			prop.ignoreAtMTC = true;
@@ -69,25 +88,16 @@ class ParentChildPValuesCalculation extends AbstractPValueCalculation
 			prop.p_min = 1.0;
 		} else
 		{
-			int index = slimGraph.getVertexIndex(prop.goTerm);
+			Term term = prop.goTerm;
 
-			int [] parents = slimGraph.vertexParents[index];
-			int [][] parentItems = new int[parents.length][];
+			Counts counts = getCounts(studyIds, term);
 
-			int i = 0;
-			for (int parent : parents)
-			{
-				parentItems[i++] = term2Items[getIndex(slimGraph.getVertex(parent).getID())];
-			}
-
-			/* number of genes annotated to family (term and parents) */
-			int [] popFamilyCountArray = new int[1];
-			int studyFamilyCount = Util.commonIntsWithUnion(popFamilyCountArray, studyIds, parentItems);
-			int popFamilyCount = popFamilyCountArray[0];
+			int studyFamilyCount = counts.studyFamilyCount;
+			int popFamilyCount = counts.popFamilyCount;
 
 			prop.popFamilyGenes = popFamilyCount;
 			prop.studyFamilyGenes = studyFamilyCount;
-			prop.nparents = parents.length;;
+			prop.nparents = counts.parents;
 
 			if (studyTermCount != 0)
 			{
@@ -123,5 +133,23 @@ class ParentChildPValuesCalculation extends AbstractPValueCalculation
 		}
 
 		return prop;
+	}
+
+	private Counts getCounts(int[] studyIds, Term term)
+	{
+		int slimIndex = slimGraph.getVertexIndex(term);
+		int [] parents = slimGraph.vertexParents[slimIndex];
+		int [][] parentItems = new int[parents.length][];
+
+		int i = 0;
+		for (int parent : parents)
+		{
+			parentItems[i++] = term2Items[getIndex(slimGraph.getVertex(parent).getID())];
+		}
+
+		/* number of genes annotated to family (term and parents) */
+		int [] popFamilyCountArray = new int[1];
+		Counts counts = new Counts(parents.length, Util.commonIntsWithUnion(popFamilyCountArray, studyIds, parentItems), popFamilyCountArray[0]);
+		return counts;
 	}
 };
