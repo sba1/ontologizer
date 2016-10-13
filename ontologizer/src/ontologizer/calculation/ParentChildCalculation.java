@@ -35,7 +35,7 @@ public class ParentChildCalculation extends AbstractHypergeometricCalculation im
 		studySetResult.setCalculationName(this.getName());
 		studySetResult.setCorrectionName(testCorrection.getName());
 
-		ParentChildPValuesCalculation pValueCalculation = new ParentChildPValuesCalculation(graph, goAssociations, popSet, studySet, hyperg);
+		ParentChildPValuesCalculation pValueCalculation = new ParentChildUnionPValueCalculation(graph, goAssociations, popSet, studySet, hyperg);
 		PValue p[] = testCorrection.adjustPValues(pValueCalculation, CalculationProgress2TestCorrectionProgress.createUnlessNull(calculationProgress));
 
 		/* Add the results to the result list and filter out terms

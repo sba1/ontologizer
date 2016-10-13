@@ -20,16 +20,16 @@ import sonumina.math.graph.SlimDirectedGraphView;
  * @author Sebastian Bauer
  *
  */
-class ParentChildPValuesCalculation extends AbstractPValueCalculation
+abstract class ParentChildPValuesCalculation extends AbstractPValueCalculation
 {
-	private SlimDirectedGraphView<Term> slimGraph;
+	protected SlimDirectedGraphView<Term> slimGraph;
 
 	/**
 	 * Return value type for getCounts().
 	 *
 	 * @author Sebastian Bauer
 	 */
-	private static class Counts
+	protected static class Counts
 	{
 		public final int parents;
 		public final int studyFamilyCount;
@@ -135,21 +135,5 @@ class ParentChildPValuesCalculation extends AbstractPValueCalculation
 		return prop;
 	}
 
-	private Counts getCounts(int[] studyIds, Term term)
-	{
-		int slimIndex = slimGraph.getVertexIndex(term);
-		int [] parents = slimGraph.vertexParents[slimIndex];
-		int [][] parentItems = new int[parents.length][];
-
-		int i = 0;
-		for (int parent : parents)
-		{
-			parentItems[i++] = term2Items[getIndex(slimGraph.getVertex(parent).getID())];
-		}
-
-		/* number of genes annotated to family (term and parents) */
-		int [] popFamilyCountArray = new int[1];
-		Counts counts = new Counts(parents.length, Util.commonIntsWithUnion(popFamilyCountArray, studyIds, parentItems), popFamilyCountArray[0]);
-		return counts;
-	}
+	abstract protected Counts getCounts(int[] studyIds, Term term);
 };
