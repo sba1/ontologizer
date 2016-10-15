@@ -7,7 +7,7 @@ import ontologizer.set.StudySet;
 import ontologizer.statistics.AbstractTestCorrection;
 import ontologizer.statistics.PValue;
 
-public class ParentChildCutCalculation extends AbstractHypergeometricCalculation implements IProgressFeedback
+public class ParentChildCutCalculation extends AbstractPValueBasedCalculation implements IProgressFeedback
 {
 	private ICalculationProgress calculationProgress;
 

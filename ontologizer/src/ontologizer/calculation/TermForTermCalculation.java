@@ -14,7 +14,7 @@ import ontologizer.statistics.PValue;
  *
  * @author Sebastian Bauer
  */
-public class TermForTermCalculation extends AbstractHypergeometricCalculation implements IProgressFeedback
+public class TermForTermCalculation extends AbstractPValueBasedCalculation implements IProgressFeedback
 {
 	private ICalculationProgress calculateProgress;
 
