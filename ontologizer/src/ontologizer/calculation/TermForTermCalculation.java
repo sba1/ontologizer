@@ -5,6 +5,7 @@ import ontologizer.ontology.Ontology;
 import ontologizer.set.PopulationSet;
 import ontologizer.set.StudySet;
 import ontologizer.statistics.AbstractTestCorrection;
+import ontologizer.statistics.Hypergeometric;
 import ontologizer.statistics.PValue;
 
 /**
@@ -40,7 +41,7 @@ public class TermForTermCalculation extends AbstractPValueBasedCalculation imple
 		studySetResult.setCalculationName(this.getName());
 		studySetResult.setCorrectionName(testCorrection.getName());
 
-		TermForTermPValueCalculation pValueCalculation = new TermForTermPValueCalculation(graph, goAssociations, populationSet, studySet, hyperg);
+		TermForTermPValueCalculation pValueCalculation = newPValueCalculation(graph, goAssociations, populationSet, studySet, hyperg);
 		PValue p[] = testCorrection.adjustPValues(pValueCalculation, CalculationProgress2TestCorrectionProgress.createUnlessNull(calculateProgress));
 
 		/* Add the results to the result list and filter out terms
@@ -59,6 +60,13 @@ public class TermForTermCalculation extends AbstractPValueBasedCalculation imple
 		}
 
 		return studySetResult;
+	}
+
+	protected TermForTermPValueCalculation newPValueCalculation(Ontology graph,
+			AssociationContainer goAssociations, PopulationSet populationSet,
+			StudySet studySet, Hypergeometric hyperg)
+	{
+		return new TermForTermPValueCalculation(graph, goAssociations, populationSet, studySet, hyperg);
 	}
 
 	public boolean supportsTestCorrection() {
