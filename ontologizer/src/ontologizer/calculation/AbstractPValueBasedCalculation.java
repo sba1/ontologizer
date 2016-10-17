@@ -19,23 +19,25 @@ public abstract class AbstractPValueBasedCalculation extends AbstractHypergeomet
 {
 	private ICalculationProgress calculationProgress;
 
+	 * @return
+	 */
 	protected abstract IPValueCalculation newPValueCalculation(Ontology graph,
-			AssociationContainer goAssociations, PopulationSet populationSet,
+			AssociationContainer associations, PopulationSet populationSet,
 			StudySet studySet, Hypergeometric hyperg);
 
 	@Override
 	public EnrichedGOTermsResult calculateStudySet(
 			Ontology graph,
-			AssociationContainer goAssociations,
+			AssociationContainer associations,
 			PopulationSet populationSet,
 			StudySet studySet,
 			AbstractTestCorrection testCorrection)
 	{
-		EnrichedGOTermsResult studySetResult = new EnrichedGOTermsResult(graph, goAssociations, studySet, populationSet.getGeneCount());
+		EnrichedGOTermsResult studySetResult = new EnrichedGOTermsResult(graph, associations, studySet, populationSet.getGeneCount());
 		studySetResult.setCalculationName(this.getName());
 		studySetResult.setCorrectionName(testCorrection.getName());
 
-		IPValueCalculation pValueCalculation = newPValueCalculation(graph, goAssociations, populationSet, studySet, hyperg);
+		IPValueCalculation pValueCalculation = newPValueCalculation(graph, associations, populationSet, studySet, hyperg);
 		PValue p[] = testCorrection.adjustPValues(pValueCalculation, CalculationProgress2TestCorrectionProgress.createUnlessNull(calculationProgress));
 
 		/* Add the results to the result list and filter out terms
