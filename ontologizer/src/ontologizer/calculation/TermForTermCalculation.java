@@ -4,9 +4,7 @@ import ontologizer.association.AssociationContainer;
 import ontologizer.ontology.Ontology;
 import ontologizer.set.PopulationSet;
 import ontologizer.set.StudySet;
-import ontologizer.statistics.AbstractTestCorrection;
 import ontologizer.statistics.Hypergeometric;
-import ontologizer.statistics.PValue;
 
 /**
  *
