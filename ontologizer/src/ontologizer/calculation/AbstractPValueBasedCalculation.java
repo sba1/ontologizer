@@ -19,6 +19,14 @@ public abstract class AbstractPValueBasedCalculation extends AbstractHypergeomet
 {
 	private ICalculationProgress calculationProgress;
 
+	/**
+	 * Return a new p-value calculation instance.
+	 *
+	 * @param graph the graph
+	 * @param associations the associations.
+	 * @param populationSet the underlying population set
+	 * @param studySet the study set
+	 * @param hyperg instance of a helper class for the hypergeometric distribution.
 	 * @return
 	 */
 	protected abstract IPValueCalculation newPValueCalculation(Ontology graph,
