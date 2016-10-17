@@ -32,7 +32,7 @@ public class TermForTermPValueCalculation extends AbstractPValueCalculation
 
 		for (int i = 0; i < termIds.length; i++)
 		{
-			if (progress != null && (i % 16) == 0)
+			if (progress != null && (i % 256) == 0)
 			{
 				progress.update(i);
 			}
