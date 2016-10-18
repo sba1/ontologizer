@@ -140,5 +140,5 @@ abstract class ParentChildPValuesCalculation extends AbstractPValueCalculation
 		return prop;
 	}
 
-	abstract protected Counts getCounts(int[] studyIds, Term term);
+	protected abstract Counts getCounts(int[] studyIds, Term term);
 };
