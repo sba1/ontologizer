@@ -140,5 +140,12 @@ abstract class ParentChildPValuesCalculation extends AbstractPValueCalculation
 		return prop;
 	}
 
+	/**
+	 * Calculate the counts for the given study set ids for the term.
+	 *
+	 * @param studyIds the study sets
+	 * @param term the term for which the counts shall be determined.
+	 * @return the count structure.
+	 */
 	protected abstract Counts getCounts(int[] studyIds, Term term);
 };
