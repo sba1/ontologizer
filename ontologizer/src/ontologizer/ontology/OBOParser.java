@@ -323,21 +323,6 @@ public class OBOParser
 			private final byte [] SUBSET_KEYWORD = "subset".getBytes();
 			private final byte [] TRUE_KEYWORD = "true".getBytes();
 
-			private final byte[][] termKeywords =
-			{
-				ID_KEYWORD,
-				NAME_KEYWORD,
-				IS_A_KEYWORD,
-				RELATIONSHIP_KEYWORD,
-				SYNONYM_KEYWORD,
-				DEF_KEYWORD,
-				NAMESPACE_KEYWORD,
-				EQUIVALENT_TO_KEYWORD,
-				IS_OBSOLETE_KEYWORD,
-				XREF_KEYWORD,
-				SUBSET_KEYWORD
-			};
-
 			/* Supported relationship types */
 			private final byte [] PART_OF_KEYWORD = "part_of".getBytes();
 			private final byte [] REGULATES_KEYWORD = "regulates".getBytes();
