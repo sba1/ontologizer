@@ -2,7 +2,6 @@ package ontologizer.ontology;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -14,9 +13,6 @@ import java.util.logging.Logger;
 import ontologizer.linescanner.AbstractByteLineScanner;
 import ontologizer.types.ByteString;
 import sonumina.collections.ReferencePool;
-import sonumina.math.graph.AbstractGraph.DotAttributesProvider;
-import sonumina.math.graph.DirectedGraph;
-import sonumina.math.graph.Edge;
 
 /*
  * I gratefully acknowledge the help of John Richter Day, who provided the
