@@ -1,54 +1,16 @@
 package ontologizer.ontology;
 
+import static ontologizer.ontology.OBOKeywords.TERM_KEYWORDS;
+
 import java.io.PrintStream;
 import java.util.Iterator;
 
+import sonumina.math.graph.AbstractGraph.DotAttributesProvider;
 import sonumina.math.graph.DirectedGraph;
 import sonumina.math.graph.Edge;
-import sonumina.math.graph.AbstractGraph.DotAttributesProvider;
 
 public class OBOByteLineScannerGenerator
 {
-	/* Stanza types */
-	private final byte [] TERM_KEYWORD = "term".getBytes();
-	private final byte [] TYPEDEF_KEYWORD = "typedef".getBytes();
-
-	/* Supported header types */
-	private final byte [] FORMAT_VERSION_KEYWORD = "format-version".getBytes();
-	private final byte [] DATE_KEYWORD = "date".getBytes();
-	private final byte [] DATA_VERSION_KEYWORD = "data-version".getBytes();
-	private final byte [] SUBSETDEF_KEYWORD = "subsetdef".getBytes();
-
-	/* Supported term types */
-	private final byte [] ID_KEYWORD = "id".getBytes();
-	private final byte [] NAME_KEYWORD = "name".getBytes();
-	private final byte [] IS_A_KEYWORD = "is_a".getBytes();
-	private final byte [] RELATIONSHIP_KEYWORD = "relationship".getBytes();
-	private final byte [] SYNONYM_KEYWORD = "synonym".getBytes();
-	private final byte [] DEF_KEYWORD = "def".getBytes();
-	private final byte [] NAMESPACE_KEYWORD = "namespace".getBytes();
-	private final byte [] ALT_ID_KEYWORD = "alt_id".getBytes();
-	private final byte [] EQUIVALENT_TO_KEYWORD = "equivalent_to".getBytes();
-	private final byte [] IS_OBSOLETE_KEYWORD = "is_obsolete".getBytes();
-	private final byte [] XREF_KEYWORD = "xref".getBytes();
-	private final byte [] SUBSET_KEYWORD = "subset".getBytes();
-	private final byte [] TRUE_KEYWORD = "true".getBytes();
-
-	private final byte[][] termKeywords =
-	{
-		ID_KEYWORD,
-		NAME_KEYWORD,
-		IS_A_KEYWORD,
-		RELATIONSHIP_KEYWORD,
-		SYNONYM_KEYWORD,
-		DEF_KEYWORD,
-		NAMESPACE_KEYWORD,
-		EQUIVALENT_TO_KEYWORD,
-		IS_OBSOLETE_KEYWORD,
-		XREF_KEYWORD,
-		SUBSET_KEYWORD
-	};
-
 	class StringEdge extends Edge<Integer>
 	{
 		private String l;
@@ -224,9 +186,9 @@ public class OBOByteLineScannerGenerator
 		Integer root = new Integer(0);
 		tree.addVertex(root);
 
-		for (int i=0;i<termKeywords.length;i++)
+		for (int i=0;i<TERM_KEYWORDS.length;i++)
 		{
-			byte [] keyword = termKeywords[i];
+			byte [] keyword = TERM_KEYWORDS[i];
 
 			/* First level is the length of the keyword */
 			Integer current = insertEdge(tree, root, (byte)keyword.length);
