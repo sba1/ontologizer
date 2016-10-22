@@ -213,7 +213,5 @@ public class OBOByteLineScannerGenerator
 						return "label=\"" + ((StringEdge)tree.getEdge(src, dest)).getL() +  "\"";
 					}
 				});
-
-		System.exit(-1);
 	}
 }
