@@ -179,7 +179,7 @@ public class OBOByteLineScannerGenerator
 	/**
 	 * Generate Java code for if clauses.
 	 */
-	private void generateKeywordIfClauses()
+	public void generateKeywordIfClauses()
 	{
 		final DirectedGraph<Integer> tree = new DirectedGraph<Integer>();
 
