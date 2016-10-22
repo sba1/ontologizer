@@ -214,4 +214,9 @@ public class OBOByteLineScannerGenerator
 					}
 				});
 	}
+
+	public static void main(String[] args)
+	{
+		new OBOByteLineScannerGenerator().generateKeywordIfClauses();
+	}
 }
