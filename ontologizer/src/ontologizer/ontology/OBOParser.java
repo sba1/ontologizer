@@ -1,5 +1,29 @@
 package ontologizer.ontology;
 
+import static ontologizer.ontology.OBOKeywords.ALT_ID_KEYWORD;
+import static ontologizer.ontology.OBOKeywords.DATA_VERSION_KEYWORD;
+import static ontologizer.ontology.OBOKeywords.DATE_KEYWORD;
+import static ontologizer.ontology.OBOKeywords.DEF_KEYWORD;
+import static ontologizer.ontology.OBOKeywords.EQUIVALENT_TO_KEYWORD;
+import static ontologizer.ontology.OBOKeywords.FORMAT_VERSION_KEYWORD;
+import static ontologizer.ontology.OBOKeywords.ID_KEYWORD;
+import static ontologizer.ontology.OBOKeywords.IS_A_KEYWORD;
+import static ontologizer.ontology.OBOKeywords.IS_OBSOLETE_KEYWORD;
+import static ontologizer.ontology.OBOKeywords.NAMESPACE_KEYWORD;
+import static ontologizer.ontology.OBOKeywords.NAME_KEYWORD;
+import static ontologizer.ontology.OBOKeywords.NEGATIVELY_REGULATES_KEYWORD;
+import static ontologizer.ontology.OBOKeywords.PART_OF_KEYWORD;
+import static ontologizer.ontology.OBOKeywords.POSITIVELY_REGULATES_KEYWORD;
+import static ontologizer.ontology.OBOKeywords.REGULATES_KEYWORD;
+import static ontologizer.ontology.OBOKeywords.RELATIONSHIP_KEYWORD;
+import static ontologizer.ontology.OBOKeywords.SUBSETDEF_KEYWORD;
+import static ontologizer.ontology.OBOKeywords.SUBSET_KEYWORD;
+import static ontologizer.ontology.OBOKeywords.SYNONYM_KEYWORD;
+import static ontologizer.ontology.OBOKeywords.TERM_KEYWORD;
+import static ontologizer.ontology.OBOKeywords.TRUE_KEYWORD;
+import static ontologizer.ontology.OBOKeywords.TYPEDEF_KEYWORD;
+import static ontologizer.ontology.OBOKeywords.XREF_KEYWORD;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -293,37 +317,6 @@ public class OBOParser
 			private byte [] temp;
 
 			public OBOParserException exception;
-
-			/* Stanza types */
-			private final byte [] TERM_KEYWORD = "term".getBytes();
-			private final byte [] TYPEDEF_KEYWORD = "typedef".getBytes();
-
-			/* Supported header types */
-			private final byte [] FORMAT_VERSION_KEYWORD = "format-version".getBytes();
-			private final byte [] DATE_KEYWORD = "date".getBytes();
-			private final byte [] DATA_VERSION_KEYWORD = "data-version".getBytes();
-			private final byte [] SUBSETDEF_KEYWORD = "subsetdef".getBytes();
-
-			/* Supported term types */
-			private final byte [] ID_KEYWORD = "id".getBytes();
-			private final byte [] NAME_KEYWORD = "name".getBytes();
-			private final byte [] IS_A_KEYWORD = "is_a".getBytes();
-			private final byte [] RELATIONSHIP_KEYWORD = "relationship".getBytes();
-			private final byte [] SYNONYM_KEYWORD = "synonym".getBytes();
-			private final byte [] DEF_KEYWORD = "def".getBytes();
-			private final byte [] NAMESPACE_KEYWORD = "namespace".getBytes();
-			private final byte [] ALT_ID_KEYWORD = "alt_id".getBytes();
-			private final byte [] EQUIVALENT_TO_KEYWORD = "equivalent_to".getBytes();
-			private final byte [] IS_OBSOLETE_KEYWORD = "is_obsolete".getBytes();
-			private final byte [] XREF_KEYWORD = "xref".getBytes();
-			private final byte [] SUBSET_KEYWORD = "subset".getBytes();
-			private final byte [] TRUE_KEYWORD = "true".getBytes();
-
-			/* Supported relationship types */
-			private final byte [] PART_OF_KEYWORD = "part_of".getBytes();
-			private final byte [] REGULATES_KEYWORD = "regulates".getBytes();
-			private final byte [] NEGATIVELY_REGULATES_KEYWORD = "negatively_regulates".getBytes();
-			private final byte [] POSITIVELY_REGULATES_KEYWORD = "positively_regulates".getBytes();
 
 			public OBOByteLineScanner(InputStream is)
 			{
