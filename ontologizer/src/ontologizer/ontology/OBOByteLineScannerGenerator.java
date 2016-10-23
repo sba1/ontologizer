@@ -186,10 +186,8 @@ public class OBOByteLineScannerGenerator
 		Integer root = new Integer(0);
 		tree.addVertex(root);
 
-		for (int i=0;i<TERM_KEYWORDS.length;i++)
+		for (byte [] keyword : TERM_KEYWORDS)
 		{
-			byte [] keyword = TERM_KEYWORDS[i];
-
 			/* First level is the length of the keyword */
 			Integer current = insertEdge(tree, root, (byte)keyword.length);
 
