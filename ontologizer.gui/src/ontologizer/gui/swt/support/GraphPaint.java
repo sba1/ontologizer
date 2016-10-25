@@ -68,9 +68,7 @@ public class GraphPaint
 	}
 
 	/**
-	 * Returns the currently selected node.
-	 *
-	 * @return
+	 * @return the currently selected node.
 	 */
 	public Node getSelectedNode()
 	{
@@ -342,11 +340,11 @@ public class GraphPaint
 	}
 
 	/**
-	 * Returns the node below the given coordinate.
+	 * Find a node by given coordinates.
 	 *
-	 * @param x
-	 * @param y
-	 * @return
+	 * @param x the x coordinate
+	 * @param y the y coordinate
+	 * @return the node below the given coordinate.
 	 */
 	public Node findNodeByCoord(float x, float y)
 	{
@@ -404,11 +402,11 @@ public class GraphPaint
 	}
 
 	/**
-	 * Returns the edge below the given coordinate.
+	 * Find an edge below the given coordinates.
 	 *
-	 * @param x
-	 * @param y
-	 * @return
+	 * @param x the x coordinate
+	 * @param y the y coordinate
+	 * @return the edge below the given coordinate.
 	 */
 	public Edge findEdgeByCoord(float x, float y)
 	{
