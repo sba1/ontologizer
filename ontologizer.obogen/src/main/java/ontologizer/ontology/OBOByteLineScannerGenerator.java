@@ -36,39 +36,40 @@ public class OBOByteLineScannerGenerator
 	 * @param pos
 	 * @param name
 	 */
-	private void writeCode(Integer current, DirectedGraph<Integer> tree, int depth, int pos, String name)
+	private void writeCode(PrintStream out, Integer current, DirectedGraph<Integer> tree, int depth, int pos, String name)
 	{
 		boolean first = true;
 		Iterator<Edge<Integer>> iter = tree.getOutEdges(current);
+
 		while (iter.hasNext())
 		{
 			StringEdge se = (StringEdge)iter.next();
 
 			for (int i=0;i<depth;i++)
-				System.out.print("\t");
+				out.print("\t");
 
-			if (!first) System.out.print("else ");
+			if (!first) out.print("else ");
 
-			System.out.print("if (");
+			out.print("if (");
 
 			if (depth != 0)
 			{
 				for (int i=0;i<se.l.length();i++)
-					System.out.print(String.format("toLower(buf[keyStart + %d]) == %d && ",pos+i-1,se.l.getBytes()[i]));
-				System.out.println(String.format("true) /* %s */",se.l));
+					out.print(String.format("toLower(buf[keyStart + %d]) == %d && ",pos+i-1,se.l.getBytes()[i]));
+				out.println(String.format("true) /* %s */",se.l));
 			} else
 			{
-				System.out.println(String.format("keyLen==%d)",se.l.getBytes()[0]));
+				out.println(String.format("keyLen==%d)",se.l.getBytes()[0]));
 			}
 
 			for (int i=0;i<depth;i++)
-				System.out.print("\t");
-			System.out.println("{");
+				out.print("\t");
+			out.println("{");
 			writeCode(se.getDest(),tree,depth+1,pos + se.l.length(),name + se.l);
 
 			for (int i=0;i<depth;i++)
-				System.out.print("\t");
-			System.out.println("}");
+				out.print("\t");
+			out.println("}");
 
 			first = false;
 		}
@@ -76,8 +77,8 @@ public class OBOByteLineScannerGenerator
 		{
 			/* We are at a leaf */
 			for (int i=0;i<depth;i++)
-				System.out.print("\t");
-			System.out.println(String.format("parse_%s(buf, valueStart, valueLen);",name.substring(1)));
+				out.print("\t");
+			out.println(String.format("parse_%s(buf, valueStart, valueLen);",name.substring(1)));
 		}
 	}
 
@@ -201,7 +202,7 @@ public class OBOByteLineScannerGenerator
 		/* Collapse */
 		collapse(root,tree);
 
-		writeCode(root,tree,0,0,"");
+		writeCode(System.out, root,tree,0,0,"");
 
 		tree.writeDOT(new PrintStream(System.out), new DotAttributesProvider<Integer>()
 				{
