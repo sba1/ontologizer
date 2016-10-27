@@ -65,7 +65,7 @@ public class OBOByteLineScannerGenerator
 			for (int i=0;i<depth;i++)
 				out.print("\t");
 			out.println("{");
-			writeCode(se.getDest(),tree,depth+1,pos + se.l.length(),name + se.l);
+			writeCode(out,se.getDest(),tree,depth+1,pos + se.l.length(),name + se.l);
 
 			for (int i=0;i<depth;i++)
 				out.print("\t");
