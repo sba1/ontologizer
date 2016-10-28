@@ -129,7 +129,6 @@ public abstract class Grappa
      * Method for displaying an exception in a pop-up window (if enabled).
      * @param ex The exception value about which information is to be displayed.
      * @see Grappa#doDisplayException
-     * @see DisplayException
      */
     public static void displayException(java.lang.Exception ex) {
 	if(doDisplayException) exceptionDisplay.displayException(ex);
@@ -140,7 +139,6 @@ public abstract class Grappa
      * @param ex The exception value about which information is to be displayed.
      * @param msg Additional text to be displayed ahead of exception info.
      * @see Grappa#doDisplayException
-     * @see DisplayException
      */
     public static void displayException(java.lang.Exception ex, java.lang.String msg) {
 	if(doDisplayException) exceptionDisplay.displayException(ex,msg);
@@ -372,7 +370,7 @@ public abstract class Grappa
      * wrapper. When enable the Graph dropcloth method can be used to
      * prevent paints during certain critical operations.
      *
-     * @see Graph#dropcloth(boolan, boolean)
+     * @see Graph#dropcloth(boolean, boolean)
      */
     public static boolean synchronizePaint     		= false;
 
