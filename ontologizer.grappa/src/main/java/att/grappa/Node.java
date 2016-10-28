@@ -37,9 +37,6 @@ public class Node extends Element
     // vector of edges going out of the node
     private Vector<Edge> outEdges = null;
 
-    // vector of edge ports (not used yet)
-    private Vector Ports = null;
-
     /**
      * Use this constructor when creating a node within a subgraph.
      *
