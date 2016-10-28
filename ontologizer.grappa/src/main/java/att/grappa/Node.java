@@ -10,11 +10,10 @@
 
 package att.grappa;
 
-import java.util.*;
-import java.io.*;
-
-import java.awt.Color;
-import java.awt.geom.Point2D;
+import java.io.PrintWriter;
+import java.util.Enumeration;
+import java.util.NoSuchElementException;
+import java.util.Vector;
 
 
 /**
