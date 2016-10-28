@@ -33,9 +33,9 @@ public class Node extends Element
     public final static String defaultNamePrefix = "N";
 
     // vector of edges going into the node
-    private Vector inEdges = null;
+    private Vector<Edge> inEdges = null;
     // vector of edges going out of the node
-    private Vector outEdges = null;
+    private Vector<Edge> outEdges = null;
 
     // vector of edge ports (not used yet)
     private Vector Ports = null;
@@ -170,13 +170,13 @@ public class Node extends Element
 
 	if (inEdges != null) {
 	    for(int i = 0; i < inEdges.size(); i++) {
-		edge = (Edge)(inEdges.elementAt(i));
+		edge = inEdges.elementAt(i);
 		edge.canonName = null;
 	    }
 	}
 	if (outEdges != null) {
 	    for(int i = 0; i < outEdges.size(); i++) {
-		edge = (Edge)(outEdges.elementAt(i));
+		edge = outEdges.elementAt(i);
 		edge.canonName = null;
 	    }
 	}
@@ -197,14 +197,14 @@ public class Node extends Element
 	if(edge == null) return;
 	if(inEdge) {
 	    if(inEdges == null) {
-		inEdges = new Vector();
+		inEdges = new Vector<Edge>();
 	    }
 	    if(!inEdges.contains(edge)) {
 		inEdges.addElement(edge);
 	    }
 	} else {
 	    if(outEdges == null) {
-		outEdges = new Vector();
+		outEdges = new Vector<Edge>();
 	    }
 	    outEdges.addElement(edge);
 	    if(!outEdges.contains(edge)) {
@@ -352,7 +352,7 @@ public class Node extends Element
      *
      * @return an Enumeration of all the edges (in or out) associated with this node.
      */
-    public Enumeration edgeElements() {
+    public Enumeration<Edge> edgeElements() {
 	return new Enumerator(inEdges, outEdges);
     }
 
@@ -361,7 +361,7 @@ public class Node extends Element
      *
      * @return an Enumeration of all the inbound edges associated with this node.
      */
-    public Enumeration inEdgeElements() {
+    public Enumeration<Edge> inEdgeElements() {
 	return new Enumerator(inEdges, null);
     }
 
@@ -370,17 +370,17 @@ public class Node extends Element
      *
      * @return an Enumeration of all the outbound edges associated with this node.
      */
-    public Enumeration outEdgeElements() {
+    public Enumeration<Edge> outEdgeElements() {
 	return new Enumerator(null, outEdges);
     }
 
-    class Enumerator implements Enumeration {
+    class Enumerator implements Enumeration<Edge> {
 	int inCnt = 0;
 	int outCnt = 0;
-	Vector inEdges = null;
-	Vector outEdges = null;
+	Vector<Edge> inEdges = null;
+	Vector<Edge> outEdges = null;
 
-	Enumerator(Vector inEdges, Vector outEdges) {
+	Enumerator(Vector<Edge> inEdges, Vector<Edge> outEdges) {
 	    inCnt = (inEdges == null) ? 0 : inEdges.size();
 	    outCnt = (outEdges == null) ? 0 : outEdges.size();
 	    this.inEdges = inEdges;
@@ -394,7 +394,7 @@ public class Node extends Element
 	    return((inCnt+outCnt) > 0);
 	}
 
-	public Object nextElement() {
+	public Edge nextElement() {
 	    synchronized (Node.this) {
 		int tmp;
 		if(inCnt > 0 && inCnt > (tmp = inEdges.size())) inCnt = tmp;
