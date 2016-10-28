@@ -28,7 +28,7 @@ public class Node extends Element
     /**
      * Default node name prefix used by setName().
      *
-     * @see setName()
+     * @see #setName()
      */
     public final static String defaultNamePrefix = "N";
 
@@ -58,7 +58,7 @@ public class Node extends Element
      * with an automatically generated name.
      *
      * @param subg the parent subgraph.
-     * @see setName()
+     * @see #setName()
      */
     public Node(Subgraph subg) {
 	this(subg,(String)null);
@@ -132,8 +132,8 @@ public class Node extends Element
      * Sets the node name to the supplied argument.
      * When the argument is null, setName() is called.
      *
-     * @exception IllegalArgumentException when newName is not unique.
      * @param newName the new name for the node.
+     * @exception IllegalArgumentException when newName is not unique.
      * @see Node#setName()
      */
     public void setName(String newName) throws IllegalArgumentException {
