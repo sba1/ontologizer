@@ -467,7 +467,7 @@ public final class Attribute extends java.util.Observable
      *
      * @param type the element type to which the named attribute applies
      * @param name the name of the attribute
-     * @param value the string value to be converted to an object
+     * @param stringValue the string value to be converted to an object
      * @param attrtype the type of the attribute
      * @return an object representation of the supplied value
      */
