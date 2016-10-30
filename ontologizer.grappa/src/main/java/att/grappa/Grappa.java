@@ -55,11 +55,11 @@ public abstract class Grappa
     /**
      * Look-up table that maps a shape name to its integer reference value.
      */
-    public static java.util.Hashtable keyToShape = new java.util.Hashtable();
+    public static java.util.Hashtable<String, Integer> keyToShape = new java.util.Hashtable<String, Integer>();
     /**
      * Look-up table that maps a shape reference value to its name.
      */
-    public static java.util.Hashtable shapeToKey = new java.util.Hashtable();
+    public static java.util.Hashtable<Integer, String> shapeToKey = new java.util.Hashtable<Integer, String>();
 
     /*
      * Set-up lookup table that defines recognized shapes (useful
@@ -95,10 +95,10 @@ public abstract class Grappa
 	keyToShape.put("Mrecord", new Integer(MRECORD_SHAPE));
 	keyToShape.put("Msquare", new Integer(MSQUARE_SHAPE));
 
-	java.util.Enumeration enm = keyToShape.keys();
+	java.util.Enumeration<String> enm = keyToShape.keys();
 	String key = null;
 	while(enm.hasMoreElements()) {
-	    key = (String)enm.nextElement();
+	    key = enm.nextElement();
 	    shapeToKey.put(keyToShape.get(key),key);
 	}
 
@@ -150,7 +150,8 @@ public abstract class Grappa
      * be <I>Grappa.emptyEnumeration.elements()</I>, whose <I>hasMoreElements()</I> method
      * will return <B>false</B>).
      */
-    public static final java.util.Vector emptyEnumeration = new java.util.Vector(0,0);
+    @SuppressWarnings("rawtypes")
+	public static final java.util.Vector emptyEnumeration = new java.util.Vector(0,0);
 
     /*
      * Default tool-tip text when cursor is outside graph, but inside

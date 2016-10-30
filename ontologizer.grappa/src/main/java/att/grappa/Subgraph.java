@@ -34,9 +34,9 @@ public class Subgraph extends Element
     public final static String defaultNamePrefix = "G";
 
     // node, edge and graph dictionaries for this subgraph
-    private Hashtable nodedict = null;
-    private Hashtable edgedict = null;
-    private Hashtable graphdict = null;
+    private Hashtable<String,Node> nodedict = null;
+    private Hashtable<String,Edge> edgedict = null;
+    private Hashtable<String,Subgraph> graphdict = null;
 
     // indicators for dislaying element labels when drawing
     private boolean nodeLabels = true;
@@ -44,10 +44,10 @@ public class Subgraph extends Element
     private boolean subgLabels = true;
 
     // default node attributes
-    private Hashtable nodeAttributes = null;
+    private Hashtable<String,Attribute> nodeAttributes = null;
 
     // default edge attributes
-    private Hashtable edgeAttributes = null;
+    private Hashtable<String,Attribute> edgeAttributes = null;
 
     // for cluster subgraphs
     private boolean cluster = false;
@@ -78,9 +78,9 @@ public class Subgraph extends Element
 	super(SUBGRAPH,subg);
 	setName(name);
 
-	Enumeration enm = subg.getNodeAttributePairs();
+	Enumeration<Attribute> enm = subg.getNodeAttributePairs();
 	while(enm.hasMoreElements()) {
-	    setNodeAttribute((Attribute)enm.nextElement());
+	    setNodeAttribute(enm.nextElement());
 	}
 	enm = subg.getEdgeAttributePairs();
 	while(enm.hasMoreElements()) {
@@ -235,7 +235,7 @@ public class Subgraph extends Element
      */
     public Attribute getNodeAttribute(String key) {
 	if(nodeAttributes == null) return(null);
-	return((Attribute)(nodeAttributes.get(key)));
+	return(nodeAttributes.get(key));
     }
 
     /**
@@ -247,7 +247,7 @@ public class Subgraph extends Element
     public Object getNodeAttributeValue(String key) {
 	Attribute attr;
 	if(nodeAttributes == null) return(null);
-	if((attr = (Attribute)(nodeAttributes.get(key))) == null) return(null);
+	if((attr = nodeAttributes.get(key)) == null) return(null);
 	return(attr.getValue());
     }
 
@@ -256,7 +256,8 @@ public class Subgraph extends Element
      *
      * @return an enumeration of String objects.
      */
-    public Enumeration getNodeAttributeKeys() {
+    @SuppressWarnings("unchecked")
+	public Enumeration<String> getNodeAttributeKeys() {
 	if(nodeAttributes == null) return Grappa.emptyEnumeration.elements();
 	return(nodeAttributes.keys());
     }
@@ -266,7 +267,8 @@ public class Subgraph extends Element
      *
      * @return an enumeration of Attribute objects.
      */
-    public Enumeration getNodeAttributePairs() {
+    @SuppressWarnings("unchecked")
+	public Enumeration<Attribute> getNodeAttributePairs() {
 	if(nodeAttributes == null) return Grappa.emptyEnumeration.elements();
 	return(nodeAttributes.elements());
     }
@@ -283,7 +285,7 @@ public class Subgraph extends Element
     public Object setNodeAttribute(Attribute attr) {
 	if(attr == null) return null;
 	if(nodeAttributes == null) {
-	    nodeAttributes = new Hashtable();
+	    nodeAttributes = new Hashtable<String,Attribute>();
 	}
 	// check to see if attr is being passed down the subgraph chain
 	Subgraph sg = getSubgraph();
@@ -331,7 +333,7 @@ public class Subgraph extends Element
      */
     public Object setNodeAttribute(String name, Object value) {
 	if(nodeAttributes == null) {
-	    nodeAttributes = new Hashtable();
+	    nodeAttributes = new Hashtable<String,Attribute>();
 	}
 	if(name == null) {
 	    throw new IllegalArgumentException("cannot set an attribute using a null name");
@@ -410,7 +412,7 @@ public class Subgraph extends Element
     public Object setEdgeAttribute(Attribute attr) {
 	if(attr == null) return null;
 	if(edgeAttributes == null) {
-	    edgeAttributes = new Hashtable();
+	    edgeAttributes = new Hashtable<String,Attribute>();
 	}
 	// check to see if attr is being passed down the subgraph chain
 	Subgraph sg = getSubgraph();
@@ -457,7 +459,7 @@ public class Subgraph extends Element
      */
     public Object setEdgeAttribute(String name, Object value) {
 	if(edgeAttributes == null) {
-	    edgeAttributes = new Hashtable();
+	    edgeAttributes = new Hashtable<String,Attribute>();
 	}
 	if(name == null) {
 	    throw new IllegalArgumentException("cannot set an attribute using a null name");
@@ -531,7 +533,7 @@ public class Subgraph extends Element
     public Object setAttribute(Attribute attr) {
 	if(attr == null) return null;
 	if(attributes == null) {
-	    attributes = new Hashtable();
+	    attributes = new Hashtable<String,Attribute>();
 	}
 	// check to see if attr is being passed down the subgraph chain
 	Subgraph sg = getSubgraph();
@@ -580,7 +582,7 @@ public class Subgraph extends Element
      */
     public Object setAttribute(String name, Object value) {
 	if(attributes == null) {
-	    attributes = new Hashtable();
+	    attributes = new Hashtable<String,Attribute>();
 	}
 	if(name == null) {
 	    throw new IllegalArgumentException("cannot set an attribute using a null name");
@@ -668,7 +670,8 @@ public class Subgraph extends Element
      *
      * @return an enumeration of String objects.
      */
-    public Enumeration getEdgeAttributeKeys() {
+    @SuppressWarnings("unchecked")
+	public Enumeration<String> getEdgeAttributeKeys() {
 	if(edgeAttributes == null) return Grappa.emptyEnumeration.elements();
 	return(edgeAttributes.keys());
     }
@@ -678,7 +681,8 @@ public class Subgraph extends Element
      *
      * @return an enumeration of Attribute objects.
      */
-    public Enumeration getEdgeAttributePairs() {
+    @SuppressWarnings("unchecked")
+	public Enumeration<Attribute> getEdgeAttributePairs() {
 	if(edgeAttributes == null) return Grappa.emptyEnumeration.elements();
 	return(edgeAttributes.elements());
     }
@@ -805,23 +809,23 @@ public class Subgraph extends Element
 	printDflt(out,EDGE);
 
 	if(graphdict != null && !graphdict.isEmpty()) {
-	    Enumeration elems = graphdict.elements();
+	    Enumeration<Subgraph> elems = graphdict.elements();
 	    while(elems.hasMoreElements()) {
-		((Subgraph)(elems.nextElement())).printSubgraph(out);
+		elems.nextElement().printSubgraph(out);
 	    }
 	}
 
 	if(nodedict != null && !nodedict.isEmpty()) {
-	    Enumeration elems = nodedict.elements();
+	    Enumeration<Node> elems = nodedict.elements();
 	    while(elems.hasMoreElements()) {
 		((Node)(elems.nextElement())).printNode(out);
 	    }
 	}
 
 	if(edgedict != null && !edgedict.isEmpty()) {
-	    Enumeration elems = edgedict.elements();
+	    Enumeration<Edge> elems = edgedict.elements();
 	    while(elems.hasMoreElements()) {
-		((Edge)(elems.nextElement())).printEdge(out);
+		elems.nextElement().printEdge(out);
 	    }
 	}
 
@@ -1146,7 +1150,7 @@ public class Subgraph extends Element
     public void addNode(Node newNode) {
 	if(newNode == null) return;
 	if(nodedict == null) {
-	    nodedict = new Hashtable();
+	    nodedict = new Hashtable<String,Node>();
 	}
 	nodedict.put(newNode.getName(),newNode);
     }
@@ -1170,7 +1174,7 @@ public class Subgraph extends Element
     public void addEdge(Edge newEdge) {
 	if(newEdge == null) return;
 	if(edgedict == null) {
-	    edgedict = new Hashtable();
+	    edgedict = new Hashtable<String,Edge>();
 	}
 	edgedict.put(newEdge.getName(),newEdge);
     }
@@ -1194,7 +1198,7 @@ public class Subgraph extends Element
     public void addSubgraph(Subgraph newGraph) {
 	if(newGraph == null) return;
 	if(graphdict == null) {
-	    graphdict = new Hashtable();
+	    graphdict = new Hashtable<String,Subgraph>();
 	}
 	graphdict.put(newGraph.getName(),newGraph);
     }
@@ -1477,9 +1481,9 @@ public class Subgraph extends Element
 	if((types&EDGE) != 0 && edgedict != null) count += edgedict.size();
 	if(graphdict != null) {
 	    if((types&SUBGRAPH) != 0) count += graphdict.size();
-	    Enumeration enm = graphdict.elements();
+	    Enumeration<Subgraph> enm = graphdict.elements();
 	    while(enm.hasMoreElements()) {
-		count += ((Subgraph)enm.nextElement()).countOfElements(types);
+		count += enm.nextElement().countOfElements(types);
 	    }
 	}
 	return count;
@@ -1501,9 +1505,9 @@ public class Subgraph extends Element
 	    return;
 	}
 	if(graphdict != null) {
-	    Enumeration enm = graphdict.elements();
+	    Enumeration<Subgraph> enm = graphdict.elements();
 	    while(enm.hasMoreElements()) {
-		((Subgraph)enm.nextElement()).removeEmptySubgraphs();
+		enm.nextElement().removeEmptySubgraphs();
 	    }
 	}
     }
@@ -1523,9 +1527,9 @@ public class Subgraph extends Element
 	    return(true);
 	}
 	if(graphdict != null) {
-	    Enumeration enm = graphdict.elements();
+	    Enumeration<Subgraph> enm = graphdict.elements();
 	    while(enm.hasMoreElements()) {
-		if(((Subgraph)enm.nextElement()).hasEmptySubgraphs()) {
+		if(enm.nextElement().hasEmptySubgraphs()) {
 		    return(true);
 		}
 	    }
@@ -2075,7 +2079,8 @@ public class Subgraph extends Element
      *
      * @return an Enumeration of Node objects
      */
-    public Enumeration nodeElements() {
+    @SuppressWarnings("unchecked")
+	public Enumeration<Node> nodeElements() {
 	if(nodedict == null) {
 	    return Grappa.emptyEnumeration.elements();
 	}
@@ -2087,7 +2092,8 @@ public class Subgraph extends Element
      *
      * @return an Enumeration of Edge objects
      */
-    public Enumeration edgeElements() {
+    @SuppressWarnings("unchecked")
+	public Enumeration<Edge> edgeElements() {
 	if(edgedict == null) {
 	    return Grappa.emptyEnumeration.elements();
 	}
@@ -2099,7 +2105,8 @@ public class Subgraph extends Element
      *
      * @return an Enumeration of Subgraph objects
      */
-    public Enumeration subgraphElements() {
+    @SuppressWarnings("unchecked")
+	public Enumeration<Subgraph> subgraphElements() {
 	if(graphdict == null) {
 	    return Grappa.emptyEnumeration.elements();
 	}
@@ -2137,7 +2144,7 @@ public class Subgraph extends Element
     class Enumerator implements GraphEnumeration {
 	private Subgraph root = null;
 	private int types = 0;
-	private Enumeration enm = null;
+	private Enumeration<?extends Element> enm = null;
 	private GraphEnumeration subEnum = null;
 	private Element elem = null;
 	private int dictType = 0;
@@ -2219,10 +2226,10 @@ public class Subgraph extends Element
 		    if(dictType == SUBGRAPH) {
 			if((getEnumerationTypes()&NODE) != 0 && (enm = nodeElements()).hasMoreElements()) {
 			    dictType = NODE;
-			    elem = (Element)enm.nextElement();
+			    elem = enm.nextElement();
 			} else if((getEnumerationTypes()&EDGE) != 0 && (enm = edgeElements()).hasMoreElements()) {
 			    dictType = EDGE;
-			    elem = (Element)enm.nextElement();
+			    elem = enm.nextElement();
 			} else {
 			    dictType = 0;
 			    enm = null;
@@ -2230,7 +2237,7 @@ public class Subgraph extends Element
 		    } else if(dictType == NODE) {
 			if((getEnumerationTypes()&EDGE) != 0 && (enm = edgeElements()).hasMoreElements()) {
 			    dictType = EDGE;
-			    elem = (Element)enm.nextElement();
+			    elem = enm.nextElement();
 			} else {
 			    dictType = 0;
 			    enm = null;
@@ -2268,10 +2275,10 @@ public class Subgraph extends Element
      * @see GrappaConstants#EDGE
      * @see GrappaConstants#SUBGRAPH
      */
-    public Vector vectorOfElements(int types) {
-	Vector retVec = new Vector();
+    public Vector<Element> vectorOfElements(int types) {
+	Vector<Element> retVec = new Vector<Element>();
 	int count = 0;
-	Enumeration elems = null;
+	Enumeration<?extends Element> elems = null;
 	if((types&NODE) != 0 && nodedict != null) {
 	    count += nodedict.size();
 	    retVec.ensureCapacity(count);

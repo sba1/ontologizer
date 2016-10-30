@@ -117,14 +117,14 @@ public class Edge extends Element
 	    if(tail == head) {
 		throw new RuntimeException("cannot create self-looping edge in a strict graph (" + tail.getName() + (directed?"->":"--") + head.getName() + ")");
 	    } else {
-		Enumeration enm = Edge.findEdgesByEnds(tail,head);
+		Enumeration<Edge> enm = Edge.findEdgesByEnds(tail,head);
 		if(enm.hasMoreElements()) {
 		    if(!directed) {
 			throw new RuntimeException("cannot create multiple edges between the same nodes in a strict graph");
 		    } else {
 			Edge tmpedge = null;
 			while(enm.hasMoreElements()) {
-			    tmpedge = (Edge)enm.nextElement();
+			    tmpedge = enm.nextElement();
 			    if(tmpedge.getHead() == head && tmpedge.getTail() == tail) {
 				throw new RuntimeException("cannot create multiple edges between the same nodes in the same direction in a strict directed graph");
 			    }
@@ -417,19 +417,20 @@ public class Edge extends Element
      *              or null for no constraint on the other vertex
      * @return an enumeration of Edge objects.
      */
-    public static Enumeration findEdgesByEnds(Node node1, Node node2) {
+    @SuppressWarnings("unchecked")
+	public static Enumeration<Edge> findEdgesByEnds(Node node1, Node node2) {
 	if(node1 == null) {
 	    return Grappa.emptyEnumeration.elements();
 	}
 	return new Enumerator(node1,node2);
     }
 
-    static class Enumerator implements Enumeration {
+    static class Enumerator implements Enumeration<Edge> {
 	Node node1 = null;
 	Node node2 = null;
 	Edge next = null;
-	Enumeration outEdges = null;
-	Enumeration inEdges = null;
+	Enumeration<Edge> outEdges = null;
+	Enumeration<Edge> inEdges = null;
 
 	Enumerator(Node node1, Node node2) {
 	    this.node1 = node1;
@@ -468,7 +469,7 @@ public class Edge extends Element
 	    return(next != null);
 	}
 
-	public Object nextElement() {
+	public Edge nextElement() {
 	    if(next == null) {
 		throw new NoSuchElementException("Node$Enumerator");
 	    }

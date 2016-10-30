@@ -47,7 +47,7 @@ public abstract class Element
      * associate a String-to-Object and vice versa translation for
      * attributes they may supply.
      */
-    private static Hashtable userAttributeTypeMap = null;
+    private static Hashtable<String, Integer> userAttributeTypeMap = null;
 
     /**
      * A general-purpose object not used by Grappa and intended for
@@ -103,10 +103,10 @@ public abstract class Element
     String name = null;
 
     // attributes
-    Hashtable attributes = null;
+    Hashtable<String,Attribute> attributes = null;
 
     // attributes
-    Hashtable attrsOfInterest = null;
+    Hashtable<String,String> attrsOfInterest = null;
 
     // the Shape for drawing
     GrappaNexus grappaNexus = null;
@@ -300,7 +300,7 @@ public abstract class Element
     protected void attrOfInterest(String name) {
 	if(name == null || isOfInterest(name)) return;
 	if(attrsOfInterest == null) {
-	    attrsOfInterest = new Hashtable();
+	    attrsOfInterest = new Hashtable<String,String>();
 	}
 	attrsOfInterest.put(name,name);
 	if(grappaNexus != null) {
@@ -375,7 +375,7 @@ public abstract class Element
      */
     public Object setAttribute(String name, Object value) {
 	if(attributes == null) {
-	    attributes = new Hashtable();
+	    attributes = new Hashtable<String,Attribute>();
 	}
 	if(name == null) {
 	    throw new IllegalArgumentException("cannot set an attribute using a null name");
@@ -550,9 +550,10 @@ public abstract class Element
      *
      * @return an Enumneration of the (local) Attribute objects.
      */
-    public Enumeration  getLocalAttributePairs() {
+	@SuppressWarnings("unchecked")
+	public Enumeration<Attribute>  getLocalAttributePairs() {
 	if(attributes == null) {
-	    return Grappa.emptyEnumeration.elements();
+	    return (Enumeration<Attribute>)Grappa.emptyEnumeration.elements();
 	}
 	return(attributes.elements());
     }
@@ -562,12 +563,12 @@ public abstract class Element
      *
      * @return an enumeration of local and default Attribute objects for this element.
      */
-    public Enumeration getAttributePairs() {
-	Hashtable pairs = null;
+    public Enumeration<Attribute> getAttributePairs() {
+	Hashtable<String, Attribute> pairs = null;
 	Attribute attr = null;
 
-	Enumeration enm = getLocalAttributePairs();
-	if(enm.hasMoreElements()) pairs = new Hashtable(32);
+	Enumeration<Attribute> enm = getLocalAttributePairs();
+	if(enm.hasMoreElements()) pairs = new Hashtable<String, Attribute>(32);
 	while(enm.hasMoreElements()) {
 	    attr = (Attribute)enm.nextElement();
 	    pairs.put(attr.getName(),attr);
@@ -609,7 +610,7 @@ public abstract class Element
      */
     public Attribute getLocalAttribute(String key) {
 	if(attributes == null) return(null);
-	return((Attribute)(attributes.get(key)));
+	return(attributes.get(key));
     }
 
     /**
@@ -872,7 +873,7 @@ public abstract class Element
 	    printlist = (Hashtable)getAttributeValue(PRINTLIST_ATTR);
 	}
 
-	Enumeration attrs = null;
+	Enumeration<Attribute> attrs = null;
 	if(Grappa.elementPrintAllAttributes || printAllAttributes) {
 	    attrs = getAttributePairs();
 	} else if(attributes != null && !attributes.isEmpty()) {
@@ -1319,9 +1320,9 @@ public abstract class Element
 	}
 
 	if(userAttributeTypeMap == null) {
-	    userAttributeTypeMap = new Hashtable();
+	    userAttributeTypeMap = new Hashtable<String, Integer>();
 	}
-	Integer old = (Integer)(userAttributeTypeMap.get(attrname));
+	Integer old = userAttributeTypeMap.get(attrname);
 	if(old != null) {
 	    oldtype = old.intValue();
 	}
@@ -1373,7 +1374,7 @@ public abstract class Element
 	    } else if(hashCode == WIDTH_HASH && attrname.equals(WIDTH_ATTR)) {
 		convtype = DOUBLE_TYPE;
 	    } else if(userAttributeTypeMap != null) {
-		Integer usertype = (Integer)(userAttributeTypeMap.get(attrname));
+		Integer usertype = userAttributeTypeMap.get(attrname);
 		if(usertype == null) {
 		    convtype = STRING_TYPE;
 		} else {
