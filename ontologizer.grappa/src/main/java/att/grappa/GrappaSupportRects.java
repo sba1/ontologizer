@@ -11,9 +11,9 @@
 
 package att.grappa;
 
-import java.awt.*;
-import java.awt.geom.*;
-import java.util.*;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.Rectangle;
 
 /**
  * This class provides a method for parsing RECORD_SHAPE node
@@ -215,7 +215,6 @@ public class GrappaSupportRects
 	portBuf = new StringBuffer();
 
 	int mode = 0;
-	int fi = 0;
 	boolean wflag = true;
 	TableField tf = null;
 	char curCh = '\000';
