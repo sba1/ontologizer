@@ -173,11 +173,11 @@ public class GrappaNexus
     /**
      * Recompute the components of this GrappaNexus.
      *
-     * @see updateStyle
-     * @see updateDecoration
-     * @see updateShape
-     * @see updateText
-     * @see updateImage
+     * @see #updateStyle
+     * @see #updateDecoration
+     * @see #updateShape
+     * @see #updateText
+     * @see #updateImage
      */
     public void rebuild() {
 	updateStyle();
@@ -242,7 +242,7 @@ public class GrappaNexus
 		if(custom == null) {
 		    throw new IllegalArgumentException("custom attibuted null for node (" + node.getName() + ") with custom shape");
 		}
-		Class custom_class;
+		Class<?> custom_class;
 		try {
 		    custom_class = Class.forName(custom);
 		}
@@ -252,7 +252,7 @@ public class GrappaNexus
 		if(!(GrappaShape.class.isAssignableFrom(custom_class))) {
 		    throw new IllegalArgumentException("custom class '" + custom + "' does not extend the GrappaShape class");
 		}
-		Constructor ccustom;
+		Constructor<?> ccustom;
 		try {
 		    ccustom= custom_class.getConstructor(new Class[] { Element.class, double.class, double.class, double.class, double.class });
 		}
@@ -1283,7 +1283,7 @@ public class GrappaNexus
     /**
      * Equivalent to <TT>getPathIterator(null)</TT>.
      *
-     * @see getPathIterator(AffineTransform)
+     * @see #getPathIterator(AffineTransform)
      */
     public PathIterator getPathIterator() {
 	return new GrappaPathIterator(this, null);

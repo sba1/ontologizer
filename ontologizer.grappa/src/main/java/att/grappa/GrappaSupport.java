@@ -487,19 +487,18 @@ class GrappaSupport
 	if(bb.contains(pt)) {
 	    elem = subg;
 
-	    Enumeration enm;
 	    Element subelem = null;
 
-	    enm = subg.subgraphElements();
-	    while(enm.hasMoreElements()) {
-		if((subelem = findContainingElement((Subgraph)(enm.nextElement()), pt)) != null) {
+	    Enumeration<Subgraph> subenm = subg.subgraphElements();
+	    while(subenm.hasMoreElements()) {
+		if((subelem = findContainingElement(subenm.nextElement(), pt)) != null) {
 		    elem = subelem;
 		}
 	    }
-	    enm = subg.edgeElements();
+	    Enumeration<Edge> egdeenm = subg.edgeElements();
 	    Edge edge;
-	    while(enm.hasMoreElements()) {
-		edge = (Edge)enm.nextElement();
+	    while(egdeenm.hasMoreElements()) {
+		edge = egdeenm.nextElement();
 		if((grappaNexus = edge.grappaNexus) == null) continue;
 		if(grappaNexus.rawBounds2D().contains(pt)) {
 		    if(grappaNexus.contains(pt)) {
@@ -507,10 +506,10 @@ class GrappaSupport
 		    }
 		}
 	    }
-	    enm = subg.nodeElements();
+	    Enumeration<Node> nodeenm = subg.nodeElements();
 	    Node node;
-	    while(enm.hasMoreElements()) {
-		node = (Node)enm.nextElement();
+	    while(nodeenm.hasMoreElements()) {
+		node = nodeenm.nextElement();
 		if((grappaNexus = node.grappaNexus) == null) continue;
 		if(grappaNexus.rawBounds2D().contains(pt)) {
 		    if(grappaNexus.contains(pt)) {
@@ -527,7 +526,7 @@ class GrappaSupport
      * the given box.
      *
      * @param subg the subgraph to be searched.
-     * @param pt the container box.
+     * @param box the container box.
      * @return a vector whose components may be single elements or another
      *         vector of this same type with the property that all the elements
      *         in the vector (when eventually unravelled) are contained in
