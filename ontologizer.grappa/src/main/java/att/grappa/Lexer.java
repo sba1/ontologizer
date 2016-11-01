@@ -75,8 +75,8 @@ public class Lexer
     /**
      *  hash tables to hold symbols
      */
-    private Hashtable keywords = new Hashtable(32);
-    private Hashtable char_symbols = new Hashtable(32);
+    private Hashtable<String,Integer> keywords = new Hashtable<String,Integer>(32);
+    private Hashtable<Integer,Integer> char_symbols = new Hashtable<Integer,Integer>(32);
 
     private Reader inReader;
     private PrintWriter errWriter = null;

@@ -104,7 +104,7 @@ public class GrappaLine
     /**
      * Check for equality of this object with the supplied object.
      *
-     * @param the object to be checked for equality
+     * @param obj the object to be checked for equality
      * @return true, when equal
      */
     public boolean equals(Object obj) {
@@ -286,7 +286,6 @@ public class GrappaLine
 	int pts = 1;
 	boolean wasSpace = true;
 	GrappaPoint[] grpts = null;
-	Integer attr_type;
 
 	// first pass is mostly sizing and basic validity check
 	for(i = 0, j = len; i < len; i++) {
@@ -510,7 +509,7 @@ public class GrappaLine
     /**
      * Equivalent to <TT>getPathIterator(null)</TT>.
      *
-     * @see getPathIterator(AffineTransform)
+     * @see #getPathIterator(AffineTransform)
      */
     public final PathIterator getPathIterator() {
 	return path.getPathIterator(null);
