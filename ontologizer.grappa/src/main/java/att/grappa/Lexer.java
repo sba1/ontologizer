@@ -563,4 +563,21 @@ public class Lexer
 	    return real_next_token();
 	}
     }
+
+    /**
+     * @return the number of errors encountered so far
+     */
+    public int getErrorCount()
+    {
+	return error_count;
+    }
+
+    /**
+     * @return the number of warning encountered so far
+     */
+    public int getWarningCount()
+    {
+	return warning_count;
+    }
+
 }
