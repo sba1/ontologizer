@@ -57,7 +57,11 @@ public class OBOByteLineScannerGenerator
 			if (depth != 0)
 			{
 				for (int i=0;i<se.l.length();i++)
-					out.print(String.format("toLower(buf[keyStart + %d]) == %d && ",pos+i-1,se.l.getBytes()[i]));
+				{
+					int plus = pos+i-1;
+
+					out.print(String.format("toLower(buf[keyStart%s]) == %d && ",plus!=0?String.format(" + %d", plus):"",se.l.getBytes()[i]));
+				}
 				out.println(String.format("true) /* %s */",se.l));
 			} else
 			{
