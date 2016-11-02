@@ -538,7 +538,8 @@ public abstract class Element
      * @return an Enumneration of String objects
      */
 
-    public Enumeration  getLocalAttributeKeys() {
+    @SuppressWarnings("unchecked")
+	public Enumeration<String>  getLocalAttributeKeys() {
 	if(attributes == null) {
 	    return Grappa.emptyEnumeration.elements();
 	}
@@ -1121,20 +1122,21 @@ public abstract class Element
      *
      * @param tag the tag to associate with this Element.
      */
-    public void addTag(String tag) {
+    @SuppressWarnings("unchecked")
+	public void addTag(String tag) {
 	Attribute attr;
-	Hashtable tags;
+	Hashtable<String,String> tags;
 
 	if(tag == null || tag.indexOf(',') >= 0) {
 	    throw new RuntimeException("tag value null or contains a comma (" + tag + ")");
 	}
 
 	if((attr = getLocalAttribute(TAG_ATTR)) == null) {
-	    attr = new Attribute(getType(),TAG_ATTR,new Hashtable());
+	    attr = new Attribute(getType(),TAG_ATTR,new Hashtable<String,String>());
 	    setAttribute(attr);
 	    attr = getAttribute(TAG_ATTR); // needed
 	}
-	tags = (Hashtable)(attr.getValue());
+	tags = (Hashtable<String,String>)(attr.getValue());
 
 	tags.put(tag,tag);
 	// if it becomes desireable to retain the original order, we
