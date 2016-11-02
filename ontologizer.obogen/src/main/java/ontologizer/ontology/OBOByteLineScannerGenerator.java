@@ -202,7 +202,10 @@ public class OBOByteLineScannerGenerator
 		/* Collapse */
 		collapse(root,tree);
 
-		writeCode(System.out, root,tree,0,0,"");
+		System.out.println("private void readTermValue(byte[] buf, int keyStart, int keyLen, int valueStart, int valueLen)");
+		System.out.println("{");
+		writeCode(System.out, root,tree,1,0,"");
+		System.out.println("}");
 
 		tree.writeDOT(new PrintStream(System.out), new DotAttributesProvider<Integer>()
 				{
