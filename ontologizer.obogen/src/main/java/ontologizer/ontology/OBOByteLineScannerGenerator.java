@@ -28,15 +28,17 @@ public class OBOByteLineScannerGenerator
 	}
 
 	/**
-	 * Writes selection - action code to stdout.
+	 * Writes selection - action code to the given out.
 	 *
-	 * @param current
-	 * @param tree
-	 * @param depth
-	 * @param pos
+	 * @param out where to put the output
+	 * @param current the index of the current node
+	 * @param tree the tree
+	 * @param indentLevel the level of code intend
+	 * @param depth the current node depth within the tree
+	 * @param pos the position within the tree
 	 * @param name
 	 */
-	private void writeCode(PrintStream out, Integer current, DirectedGraph<Integer> tree, int depth, int pos, String name)
+	private void writeCode(PrintStream out, Integer current, DirectedGraph<Integer> tree, int indentLevel, int depth, int pos, String name)
 	{
 		boolean first = true;
 		Iterator<Edge<Integer>> iter = tree.getOutEdges(current);
@@ -45,7 +47,7 @@ public class OBOByteLineScannerGenerator
 		{
 			StringEdge se = (StringEdge)iter.next();
 
-			for (int i=0;i<depth;i++)
+			for (int i=0;i<indentLevel;i++)
 				out.print("\t");
 
 			if (!first) out.print("else ");
@@ -62,12 +64,12 @@ public class OBOByteLineScannerGenerator
 				out.println(String.format("keyLen==%d)",se.l.getBytes()[0]));
 			}
 
-			for (int i=0;i<depth;i++)
+			for (int i=0;i<indentLevel;i++)
 				out.print("\t");
 			out.println("{");
-			writeCode(out,se.getDest(),tree,depth+1,pos + se.l.length(),name + se.l);
+			writeCode(out,se.getDest(),tree,indentLevel+1,depth+1,pos + se.l.length(),name + se.l);
 
-			for (int i=0;i<depth;i++)
+			for (int i=0;i<indentLevel;i++)
 				out.print("\t");
 			out.println("}");
 
@@ -76,7 +78,7 @@ public class OBOByteLineScannerGenerator
 		if (first)
 		{
 			/* We are at a leaf */
-			for (int i=0;i<depth;i++)
+			for (int i=0;i<indentLevel;i++)
 				out.print("\t");
 			out.println(String.format("parse_%s(buf, valueStart, valueLen);",name.substring(1)));
 		}
@@ -204,7 +206,7 @@ public class OBOByteLineScannerGenerator
 
 		System.out.println("private void readTermValue(byte[] buf, int keyStart, int keyLen, int valueStart, int valueLen)");
 		System.out.println("{");
-		writeCode(System.out, root,tree,1,0,"");
+		writeCode(System.out, root,tree,1,0,0,"");
 		System.out.println("}");
 
 		tree.writeDOT(new PrintStream(System.out), new DotAttributesProvider<Integer>()
