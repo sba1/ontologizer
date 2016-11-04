@@ -186,7 +186,7 @@ public class Ontologizer
 		{
 			if (!helpFolderFile.exists())
 			{
-				/* The help folder doesn't exists, so try to copy the files to a
+				/* The help folder doesn't exist, so try to copy the files to a
 				 * directory */
 
 				/* TODO: Find out if there is a possibility to list the files */
