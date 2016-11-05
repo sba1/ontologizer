@@ -1,3 +1,3 @@
 #! /bin/bash -x
 
-(cd ontologizer.parent && mvn -DskipSource -DskipTests package -Dmaven.javadoc.skip=true -pl ontologizer:ontologizer.cmdline -am)
+(cd $(dirname $0)/ontologizer.parent && mvn -DskipSource -DskipTests package -Dmaven.javadoc.skip=true -pl ontologizer:ontologizer.cmdline -am)
