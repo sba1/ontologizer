@@ -60,7 +60,6 @@ public class OntologizerCMD
 	 *
 	 * @param args
 	 *            an array of Strings that will passed to a myCommandLine object
-	 * @see myCommandLine
 	 * @see OntologizerCore
 	 */
 	public static void main(String[] args)
