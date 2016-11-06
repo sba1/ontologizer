@@ -3,4 +3,4 @@
 # Simple wrapper script to start the ontologizer application
 #
 
-java -Dontologizer.commandName=ontologizer -jar /usr/share/ontologizer/lib/ontologizer.cmdline.jar "$@"
+exec java -Dontologizer.commandName=ontologizer -jar /usr/share/ontologizer/lib/ontologizer.cmdline.jar "$@"
