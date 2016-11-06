@@ -64,6 +64,11 @@ public class OntologizerCMD
 	 */
 	public static void main(String[] args)
 	{
+		String commandName = "java -jar Ontologizer.jar";
+
+		// TODO: Also ask "sun.java.command"
+		commandName = System.getProperty("ontologizer.commandName", commandName);
+
 		OntologizerCore.Arguments arguments = new OntologizerCore.Arguments();
 
 		try
@@ -75,7 +80,7 @@ public class OntologizerCMD
 			if (cmd.hasOption("h"))
 			{
 				HelpFormatter formatter = new HelpFormatter();
-				formatter.printHelp(100, "java -jar Ontologizer.jar", "Analyze High-Throughput Biological Data Using Gene Ontology", options, "", true);
+				formatter.printHelp(100, commandName, "Analyze High-Throughput Biological Data Using Gene Ontology", options, "", true);
 				System.exit(0);
 			}
 
