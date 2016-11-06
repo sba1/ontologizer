@@ -6,3 +6,7 @@ Version: [[version]]
 Package: ontologizer-cli
 Architecture: all
 Description: Command-line version of Ontologizer
+  Ontologizer is a tool for the statistical analysis and visualization of
+  high-throughput biological data using Gene Ontology. This is the command
+  line version.
+Homepage: http://ontologizer.de
