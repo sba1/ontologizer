@@ -24,9 +24,9 @@ import java.util.List;
 public abstract class GrappaColor
 {
   // given name, get color
-  private static Hashtable colorTable  = new Hashtable(660,10);
+  private static Hashtable<String,Color> colorTable  = new Hashtable<String,Color>(660,10);
   // given color, get name
-  private static Hashtable colorLookUp = new Hashtable(660,10);
+  private static Hashtable<Color,String> colorLookUp = new Hashtable<Color,String>(660,10);
 
   // initialize colorTable
   static {
@@ -830,7 +830,7 @@ public abstract class GrappaColor
 
     String canonName = canonColor(name, hsb);
 
-    Color retColor = (Color)colorTable.get(canonName);
+    Color retColor = colorTable.get(canonName);
 
     if(retColor == null) {
       if(hsb[0] < 0) {
@@ -878,7 +878,7 @@ public abstract class GrappaColor
    */
   public static String getColorName(Color color) {
       if(color == null) return null;
-      String name = (String)(colorLookUp.get(color));
+      String name = colorLookUp.get(color);
       if(name == null) {
 	  float[] hsb = Color.RGBtoHSB(color.getRed(),color.getGreen(),color.getBlue(),null);
 	  name = hsb[0]+","+hsb[1]+","+hsb[2];
