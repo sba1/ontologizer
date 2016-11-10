@@ -882,7 +882,7 @@ public abstract class Element
 	}
 	if(attrs != null) {
 	    while(attrs.hasMoreElements()) {
-		attr = (Attribute)(attrs.nextElement());
+		attr = attrs.nextElement();
 		key = attr.getName();
 		if(printlist != null && printlist.get(key) == null) continue;
 		if(attr != null && (Grappa.elementPrintAllAttributes || printAllAttributes || !attr.equalsValue(getDefaultAttribute(key)))) {
