@@ -330,7 +330,8 @@ public abstract class Element
      *
      * @return an enumeration of attribute names that are of interest
      */
-    public Enumeration listAttrsOfInterest() {
+    @SuppressWarnings("unchecked")
+	public Enumeration<String> listAttrsOfInterest() {
 	if(attrsOfInterest == null) return Grappa.emptyEnumeration.elements();
 	return attrsOfInterest.elements();
     }

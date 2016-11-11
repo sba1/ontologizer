@@ -1013,9 +1013,9 @@ public class Subgraph extends Element
 
 	if(elem != null || graphdict == null) return elem;
 
-	Enumeration enm = graphdict.elements();
+	Enumeration<Subgraph> enm = graphdict.elements();
 	while(enm.hasMoreElements()) {
-	    if((elem = ((Subgraph)enm.nextElement()).findElementInSubgraphByName(type,name)) != null) {
+	    if((elem = enm.nextElement().findElementInSubgraphByName(type,name)) != null) {
 		return elem;
 	    }
 	}
@@ -1545,7 +1545,6 @@ public class Subgraph extends Element
     private double PATCHEDGE2 = 2.0 * PATCHEDGE;
     private Element[] sgPatches = null;
     private Element[] elPatches = null;
-    private GrappaBox patch = null;
 
     public void clearPatchWork() {
 
@@ -1560,7 +1559,7 @@ public class Subgraph extends Element
 	    Subgraph sg;
 	    String style;
 	    Attribute attr;
-	    Enumeration enm = elements(Grappa.SUBGRAPH);
+	    Enumeration<Element> enm = elements(Grappa.SUBGRAPH);
 	    while(enm.hasMoreElements()) {
 		sg = (Subgraph)(enm.nextElement());
 		if(sg != this) {
@@ -1577,7 +1576,7 @@ public class Subgraph extends Element
 	    Subgraph sg;
 	    String style;
 	    Attribute attr;
-	    Enumeration enm = elements(Grappa.SUBGRAPH);
+	    Enumeration<Element> enm = elements(Grappa.SUBGRAPH);
 	    while(enm.hasMoreElements()) {
 		sg = (Subgraph)(enm.nextElement());
 		if(sg != this) {
@@ -2196,7 +2195,7 @@ public class Subgraph extends Element
 	    return elem != null;
 	}
 
-	public Object nextElement() {
+	public Element nextElement() {
 	    if(elem == null) {
 		throw new NoSuchElementException("Subgraph$Enumerator");
 	    }
