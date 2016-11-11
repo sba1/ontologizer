@@ -953,7 +953,7 @@ public class Subgraph extends Element
 		subg = subg.getSubgraph();
 	    }
 	    if(attr == null) {
-		attr = getGraph().getGlobalAttribute(SUBGRAPH,key);
+		attr = Graph.getGlobalAttribute(SUBGRAPH,key);
 	    }
 	    return attr;
 	case NODE:
@@ -961,7 +961,7 @@ public class Subgraph extends Element
 		subg = subg.getSubgraph();
 	    }
 	    if(attr == null) {
-		attr = getGraph().getGlobalAttribute(NODE,key);
+		attr = Graph.getGlobalAttribute(NODE,key);
 	    }
 	    return attr;
 	case EDGE:
@@ -969,7 +969,7 @@ public class Subgraph extends Element
 		subg = subg.getSubgraph();
 	    }
 	    if(attr == null) {
-		attr = getGraph().getGlobalAttribute(EDGE,key);
+		attr = Graph.getGlobalAttribute(EDGE,key);
 	    }
 	    return attr;
 	}
