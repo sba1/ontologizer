@@ -37,6 +37,7 @@
     <module>../ontologizer</module>
     <module>../ontologizer.dataprep</module>
     <module>../ontologizer.obogen</module>
+    <module>../ontologizer.jmh</module>
   </modules>
 
   <profiles>
