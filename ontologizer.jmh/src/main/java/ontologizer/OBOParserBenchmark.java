@@ -12,7 +12,7 @@ import ontologizer.ontology.OBOParser;
 import ontologizer.ontology.OBOParserException;
 import ontologizer.ontology.OBOParserFileInput;
 
-public class OntologizerJMH
+public class OBOParserBenchmark
 {
 	private static final String obofile = "../../ontologizer.tests/data/gene_ontology.1_2.obo.gz";
 
