@@ -18,3 +18,4 @@ all:
 	aptly snapshot create ontologizer from repo ontologizer
 	aptly publish repo -skip-signing=true -architectures=all ontologizer ontologizer
 	# Debian repo is now in $(HOME)/.aptly/public/ontologizer/
+	cp -R $(HOME)/.aptly/public/ontologizer/* ontologizer-deb
