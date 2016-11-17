@@ -13,6 +13,7 @@ all:
 	-aptly publish drop unstable ontologizer 
 	-aptly repo drop ontologizer
 	aptly repo create -distribution=unstable -architectures=all ontologizer
+	-aptly repo add ontologizer $(shell find ontologizer-deb -name *.deb)
 	aptly repo add ontologizer ../ontologizer.cmdline/target/*.deb
 	aptly snapshot create ontologizer from repo ontologizer
 	aptly publish repo -skip-signing=true -architectures=all ontologizer ontologizer
