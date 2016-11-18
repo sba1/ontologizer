@@ -3,16 +3,45 @@ title = "Command Line"
 weight = 15
 +++
 
-The command-line version of Ontologizer can be used for batch processing or pipelines. Most general users will prefer the Java WebStart version, though. But if you want to use the command-line version, you need to download
-the [Ontologizer.jar](/cmdline/Ontologizer.jar) file first.
+The command-line version of Ontologizer can be used for batch processing or pipelines. Most general users will prefer the Java WebStart version, though.
+
+Installation
+------------
+
+If you want to use the command-line version, you need just need to download the [Ontologizer.jar](/cmdline/Ontologizer.jar) file.
+
+
+Installation under Debian
+-------------------------
+
+Users that run Debian or a Debian-based distribution are recommended to install the command-line version of Ontologizer
+from Ontologizer's Debian repository. To do so, enter:
+
+```
+ $ su
+ $ echo deb [arch=all] https://sba1.github.io/ontologizer-deb/ unstable main >/etc/apt/sources.list.d/ontologizer.list
+ $ apt-get update
+ $ apt-get install ontologizer-cli
+ $ exit
+```
+
+Note that the Debian packages offered in this repository are currently not signed.
+
 
 Help
 ----
 
-Ontologizer is a Java-Application and needs to be started via the `java` command and be invoked with a plenty of arguments. All possible command arguments along with a short description can be viewed via the `--help` argument. E.g.
+Ontologizer is a Java-Application and if you downloaded the [Ontologizer.jar](/cmdline/Ontologizer.jar) jar file, you need to start it via the `java` command.
+But if you installed it via the Debian repository, you can invoke it more conveniently via the ```ontologizer``` wrapper script.
+
+All possible command arguments along with a short description can be viewed via the `--help` argument. E.g.
 
 ```
 $ java -jar Ontologizer.jar --help
+```
+or
+```
+$ ontologizer --help
 ```
 will produce following output:
 
