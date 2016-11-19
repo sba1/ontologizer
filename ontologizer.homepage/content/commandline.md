@@ -25,7 +25,8 @@ from Ontologizer's Debian repository. To do so, enter:
  $ exit
 ```
 
-Note that the Debian packages offered in this repository are currently not signed.
+Note that the Debian packages offered in this repository are currently not signed. You may need to install the Debian package `apt-transport-https`
+prior these steps in order to allow downloading packages via the `https` protocol.
 
 
 Help
