@@ -33,7 +33,7 @@ public class OntologizerOptions
 		/* Build up the calculation string to show it within the help description */
 		String calculations[] = CalculationRegistry.getAllRegistered();
 		StringBuilder calHelpStrBuilder = new StringBuilder();
-		calHelpStrBuilder.append("Specifies the calculation method to use. Possible values are: ");
+		calHelpStrBuilder.append("Specifies the calculation method to use. Possible values for name are: ");
 
 		for (int i=0;i<calculations.length;i++)
 		{
@@ -90,7 +90,7 @@ public class OntologizerOptions
 				"Path to a file of a study set or to a directory containing study set files. Required"
 				).build());
 		options.addOption(new Option("i","ignore",false,"Ignore genes within the calculation to which no association exists."));
-		options.addOption(new Option("c","calculation",true,calHelpString));
+		options.addOption(Option.builder("c").longOpt("calculation").argName("name").hasArg().desc(calHelpString).build());
 		options.addOption(new Option("m","mtc",true,mtcHelpString));
 		options.addOption(Option.builder("d").longOpt("dot").argName("[thrsh[,id]|id]").hasArg().optionalArg(true).desc(
 				"For every study set analysis write out an additional .dot file (GraphViz) containing "+
