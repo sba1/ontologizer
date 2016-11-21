@@ -484,7 +484,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 						str.append("</div>");
 					}
 
-					String def = goTerm.getDefinition().toString();
+					String def = ByteString.toString(goTerm.getDefinition());
 					if (def == null) def = "No definition available";
 					str.append("<br />Definition: ");
 					str.append("<font size=\"-1\">");
