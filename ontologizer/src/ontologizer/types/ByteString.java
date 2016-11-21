@@ -348,4 +348,18 @@ public final class ByteString
 	{
 		return new ByteString(str);
 	}
+
+	/**
+	 * Convert a ByteString to a String. Accepts null pointer in which case a null pointer
+	 * is returned as well.
+	 *
+	 * @param bStr the byte string to be converted
+	 * @return the converted String
+	 */
+	public static String toString(ByteString bStr)
+	{
+		if (bStr == null)
+			return null;
+		return bStr.toString();
+	}
 }
