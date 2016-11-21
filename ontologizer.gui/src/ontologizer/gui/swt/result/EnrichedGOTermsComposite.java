@@ -112,7 +112,8 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 	/* Texts */
 	private static String NOBROWSER_TOOLTIP = "The SWT browser widget could not " +
 	"be instantiated. Please ensure that your system fulfills the requirements " +
-	"of the SWT browser. Further information can be obtained from the FAQ at " +
+	"of the SWT browser. For example, Debian users may need to install the libwebkitgtk-1.0-0 package. " +
+	"Further information can be obtained from the FAQ at " +
 	"http://www.eclipse.org/swt.";
 
 	/* Attributes */
