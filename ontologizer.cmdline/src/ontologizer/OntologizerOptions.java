@@ -102,6 +102,7 @@ public class OntologizerOptions
 		options.addOption(new Option("f","filter",true,"Filter the gene names by appling rules in a given file (currently only mapping supported)."));
 		options.addOption(new Option("o","outdir",true,"Specifies the directory in which the results will be placed."));
 
+		options.addOption(Option.builder().longOpt("mcmcSteps").argName("steps").hasArg(true).desc("Number of sample steps for MCMC based approaches like MSGA. Defaults to " + GlobalPreferences.getMcmcSteps() + ".").build());
 		if (resamplingBasedMTCsExists) {
 			options.addOption(new Option("r","resamplingsteps", true, "Specifies the number of steps used in resampling based MTCs"));
 			options.addOption(new Option("t","sizetolerance", true, "Specifies the percentage at which the actual study set size and " +

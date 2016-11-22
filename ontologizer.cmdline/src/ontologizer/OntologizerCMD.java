@@ -100,6 +100,25 @@ public class OntologizerCMD
 			arguments.correctionName = cmd.getOptionValue('m');
 			arguments.filterOutUnannotatedGenes = cmd.hasOption('i');
 			arguments.filterFile = cmd.getOptionValue('f');
+			if (cmd.hasOption("mcmcSteps"))
+			{
+				int mcmcSteps;
+
+				try
+				{
+					mcmcSteps = Integer.parseInt(cmd.getOptionValue("mcmcSteps"));
+					if (mcmcSteps < 10000)
+					{
+						throw new Exception();
+					}
+					GlobalPreferences.setMcmcSteps(mcmcSteps);
+				} catch (Exception e)
+				{
+					System.err.println("The mcmcSteps argument needs to be an integer larger than 10000.");
+					System.exit(-1);
+				}
+
+			}
 
 			/* Prepare the output directory name */
 			String outputDirectoryName = cmd.getOptionValue('o', ".");
