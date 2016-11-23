@@ -100,13 +100,13 @@ public class OntologizerCMD
 			arguments.correctionName = cmd.getOptionValue('m');
 			arguments.filterOutUnannotatedGenes = cmd.hasOption('i');
 			arguments.filterFile = cmd.getOptionValue('f');
-			if (cmd.hasOption("mcmcSteps"))
+			if (cmd.hasOption(OntologizerOptions.MCMC_STEPS))
 			{
 				int mcmcSteps;
 
 				try
 				{
-					mcmcSteps = Integer.parseInt(cmd.getOptionValue("mcmcSteps"));
+					mcmcSteps = Integer.parseInt(cmd.getOptionValue(OntologizerOptions.MCMC_STEPS));
 					if (mcmcSteps < 10000)
 					{
 						throw new Exception();
