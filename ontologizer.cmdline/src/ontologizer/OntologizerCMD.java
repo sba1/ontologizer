@@ -114,7 +114,7 @@ public class OntologizerCMD
 					GlobalPreferences.setMcmcSteps(mcmcSteps);
 				} catch (Exception e)
 				{
-					System.err.println("The mcmcSteps argument needs to be an integer larger than 10000.");
+					System.err.println("The --" + OntologizerOptions.MCMC_STEPS + " argument needs to be an integer larger than 10000.");
 					System.exit(-1);
 				}
 
