@@ -1,0 +1,13 @@
+Source: ontologizer-common
+Section: science
+Maintainer: Sebastian Bauer <mail@sebastianbauer.info>
+Priority: extra
+Version: [[version]]
+Package: ontologizer-ccommon
+Architecture: all
+Depends: default-jre-headless (>= 1:1.6)
+Recommends: graphviz
+Description: Common base for Ontologizer applications
+  Ontologizer is a tool for the statistical analysis and visualization of
+  high-throughput biological data using Gene Ontology.
+Homepage: http://ontologizer.de
