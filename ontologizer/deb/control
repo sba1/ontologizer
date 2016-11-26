@@ -1,9 +1,9 @@
-Source: ontologizer-common
+Source: [[name]]
 Section: science
 Maintainer: Sebastian Bauer <mail@sebastianbauer.info>
 Priority: extra
 Version: [[version]]
-Package: ontologizer-ccommon
+Package: [[name]]
 Architecture: all
 Depends: default-jre-headless (>= 1:1.6)
 Recommends: graphviz
