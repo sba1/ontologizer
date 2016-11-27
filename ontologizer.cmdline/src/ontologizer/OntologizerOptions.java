@@ -14,6 +14,8 @@ public class OntologizerOptions
 	private Options options;
 
 	public static final String MCMC_STEPS = "mcmcSteps";
+	public static final String MAX_ALPHA = "maxAlpha";
+	public static final String MAX_BETA = "maxBeta";
 
 	public Options options()
 	{
@@ -105,6 +107,8 @@ public class OntologizerOptions
 		options.addOption(new Option("o","outdir",true,"Specifies the directory in which the results will be placed."));
 
 		options.addOption(Option.builder().longOpt(MCMC_STEPS).argName("steps").hasArg(true).desc("Number of sample steps for MCMC based approaches like MSGA. Defaults to " + GlobalPreferences.getMcmcSteps() + ".").build());
+		options.addOption(Option.builder().longOpt(MAX_ALPHA).argName("alpha").hasArg(true).desc("Upper bound for alpha that is inferred in MGSA. Defaults to " + GlobalPreferences.getAlpha() + ".").build());
+		options.addOption(Option.builder().longOpt(MAX_BETA).argName("beta").hasArg(true).desc("Upper bound for beta that is inferred in MGSA. Defaults to " + GlobalPreferences.getBeta() + ".").build());
 		if (resamplingBasedMTCsExists) {
 			options.addOption(new Option("r","resamplingsteps", true, "Specifies the number of steps used in resampling based MTCs"));
 			options.addOption(new Option("t","sizetolerance", true, "Specifies the percentage at which the actual study set size and " +

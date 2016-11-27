@@ -117,7 +117,44 @@ public class OntologizerCMD
 					System.err.println("The --" + OntologizerOptions.MCMC_STEPS + " argument needs to be an integer larger than 10000.");
 					System.exit(-1);
 				}
+			}
 
+			if (cmd.hasOption(OntologizerOptions.MAX_ALPHA))
+			{
+				double alphaMax;
+
+				try
+				{
+					alphaMax = Double.parseDouble(cmd.getOptionValue(OntologizerOptions.MAX_ALPHA));
+					if (alphaMax < 0 || alphaMax > 1)
+					{
+						throw new Exception();
+					}
+					GlobalPreferences.setUpperAlpha(alphaMax);
+				} catch (Exception e)
+				{
+					System.err.println("The --" + OntologizerOptions.MAX_ALPHA + " argument needs to be an double between 0 and 1.");
+					System.exit(-1);
+				}
+			}
+
+			if (cmd.hasOption(OntologizerOptions.MAX_BETA))
+			{
+				double betaMax;
+
+				try
+				{
+					betaMax = Double.parseDouble(cmd.getOptionValue(OntologizerOptions.MAX_BETA));
+					if (betaMax < 0 || betaMax > 1)
+					{
+						throw new Exception();
+					}
+					GlobalPreferences.setUpperBeta(betaMax);
+				} catch (Exception e)
+				{
+					System.err.println("The --" + OntologizerOptions.MAX_BETA + " argument needs to be an double between 0 and 1.");
+					System.exit(-1);
+				}
 			}
 
 			/* Prepare the output directory name */
