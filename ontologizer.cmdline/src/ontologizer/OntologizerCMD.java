@@ -133,7 +133,7 @@ public class OntologizerCMD
 					GlobalPreferences.setUpperAlpha(alphaMax);
 				} catch (Exception e)
 				{
-					System.err.println("The --" + OntologizerOptions.MAX_ALPHA + " argument needs to be an double between 0 and 1.");
+					System.err.println("The --" + OntologizerOptions.MAX_ALPHA + " argument needs to be a value between 0 and 1.");
 					System.exit(-1);
 				}
 			}
@@ -152,7 +152,7 @@ public class OntologizerCMD
 					GlobalPreferences.setUpperBeta(betaMax);
 				} catch (Exception e)
 				{
-					System.err.println("The --" + OntologizerOptions.MAX_BETA + " argument needs to be an double between 0 and 1.");
+					System.err.println("The --" + OntologizerOptions.MAX_BETA + " argument needs to be a value between 0 and 1.");
 					System.exit(-1);
 				}
 			}
