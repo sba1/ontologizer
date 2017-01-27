@@ -19,9 +19,9 @@ import sonumina.math.graph.AbstractGraph.IVisitor;
 import sonumina.math.graph.DirectedGraph.IDistanceVisitor;
 
 /**
- * An edge in the go graph
+ * Represents an edge in the ontology graph
  *
- * @author sba
+ * @author Sebastian Bauer
  */
 class OntologyEdge extends Edge<Term>
 {
