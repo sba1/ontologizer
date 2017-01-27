@@ -269,6 +269,25 @@ public class Ontology implements Iterable<Term>
 	}
 
 	/**
+	 * Utility method to return a term from the given termId.
+	 * If the root term id is given then the root term (that
+	 * not necessarily will be contained in the termContainer)
+	 * will be returned.
+	 *
+	 * @param termID as string
+	 * @return the term or null if no such term could be found.
+	 */
+	private Term getTermOrRoot(String termID)
+	{
+		Term term;
+		if (termID.equals(rootTerm.getIDAsString()))
+			term = rootTerm;
+		else
+			term = termContainer.get(termID);
+		return term;
+	}
+
+	/**
 	 * Return the set of term IDs containing the given term's descendants.
 	 *
 	 * @param termID as string
@@ -276,11 +295,7 @@ public class Ontology implements Iterable<Term>
 	 */
 	public Set<String> getTermChildrenAsStrings(String termID)
 	{
-		Term term;
-		if (termID.equals(rootTerm.getIDAsString()))
-			term = rootTerm;
-		else
-			term = termContainer.get(termID);
+		Term term = getTermOrRoot(termID);
 
 		HashSet<String> terms = new HashSet<String>();
 		Iterator<Edge<Term>> edgeIter = graph.getOutEdges(term);
@@ -297,11 +312,7 @@ public class Ontology implements Iterable<Term>
 	 */
 	public Set<String> getTermParentsAsStrings(String termID)
 	{
-		Term term;
-		if (termID.equals(rootTerm.getIDAsString()))
-			term = rootTerm;
-		else
-			term = termContainer.get(termID);
+		Term term = getTermOrRoot(termID);
 
 		HashSet<String> terms = new HashSet<String>();
 
