@@ -3,6 +3,10 @@ jdk:
     - oraclejdk8
     - oraclejdk7
 
+before_install:
+    - sudo apt-get update -qq
+    - sudo apt-get install -qq pandoc
+
 before_script:
     - cd ontologizer.parent
 
