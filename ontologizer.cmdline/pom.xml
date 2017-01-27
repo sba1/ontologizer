@@ -60,6 +60,31 @@
 			</plugin>
 
 			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.5.0</version>
+				<executions>
+					<execution>
+						<phase>compile</phase>
+						<goals><goal>exec</goal></goals>
+					</execution>
+				</executions>
+				<configuration>
+					<workingDirectory>${project.basedir}/doc</workingDirectory>
+					<executable>pandoc</executable>
+					<arguments>
+						<argument>-s</argument>
+						<argument>--to</argument>
+						<argument>man</argument>
+						<argument>--standalone</argument>
+						<argument>--output</argument>
+						<argument>${project.build.directory}/ontologizer.1</argument>
+						<argument>ontologizer.md</argument>
+					</arguments>
+				</configuration>
+			</plugin>
+
+			<plugin>
 				<artifactId>jdeb</artifactId>
 				<groupId>org.vafer</groupId>
 				<version>1.5</version>
