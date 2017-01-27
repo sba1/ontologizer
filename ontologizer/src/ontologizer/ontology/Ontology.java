@@ -47,7 +47,8 @@ class OntologyEdge extends Edge<Term>
 }
 
 /**
- * Represents the whole ontology.
+ * Represents the whole ontology. Note that the terms "parents" and "children" are
+ * used somewhat mixed here.
  *
  * @author Sebastian Bauer
  */
