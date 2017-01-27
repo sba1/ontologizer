@@ -238,25 +238,17 @@ public class Term implements ITerm
 		return id.toString();
 	}
 
-	/**
-	 * Returns the GO ID as TermID object.
-	 *
-	 * @return the id
-	 */
+	@Override
 	public TermID getID() {
 		return id;
 	}
 
-	/**
-	 * @return go:name
-	 */
+	@Override
 	public ByteString getName() {
 		return name;
 	}
 
-	/**
-	 * @return the namespace of the term as a Namespace enum
-	 */
+	@Override
 	public Namespace getNamespace()
 	{
 		if (namespace == null)
@@ -264,9 +256,7 @@ public class Term implements ITerm
 		return namespace;
 	}
 
-	/**
-	 * @return the parent terms including the relation.
-	 */
+	@Override
 	public ParentTermID[] getParents() {
 		return parents;
 	}
@@ -300,18 +290,12 @@ public class Term implements ITerm
 		obsolete = currentObsolete;
 	}
 
-	/**
-	 * @return whether term is declared as obsolete
-	 */
+	@Override
 	public boolean isObsolete() {
 		return obsolete;
 	}
 
-	/**
-	 * Returns the definition of this term. Might be null if none is available.
-	 *
-	 * @return the definition or null.
-	 */
+	@Override
 	public ByteString getDefinition() {
 		return definition;
 	}
@@ -333,6 +317,7 @@ public class Term implements ITerm
 			equivalents[i++] = t;
 	}
 
+	@Override
 	public TermID[] getEquivalents() {
 		return equivalents;
 	}
@@ -348,9 +333,7 @@ public class Term implements ITerm
 		this.alternatives.addAll(altList);
 	}
 
-	/**
-	 * @return the alternatives of this term.
-	 */
+	@Override
 	public TermID[] getAlternatives()
 	{
 		TermID [] alts = new TermID[alternatives.size()];
@@ -382,6 +365,7 @@ public class Term implements ITerm
 		}
 	}
 
+	@Override
 	public ByteString[] getSynonyms() {
 		return synonyms;
 	}
@@ -393,6 +377,7 @@ public class Term implements ITerm
 		}
 	}
 
+	@Override
 	public TermXref[] getXrefs() {
 		return xrefs;
 	}
