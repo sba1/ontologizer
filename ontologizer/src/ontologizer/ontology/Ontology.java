@@ -56,7 +56,7 @@ public class Ontology implements Iterable<Term>
 	private static Logger logger = Logger.getLogger(Ontology.class.getName());
 
 	/** This is used to identify Gene Ontology until a better way is found */
-	private static HashSet<String> goLevel1TermNames = new HashSet<String>(Arrays.asList("molecular_function","biological_process", "cellular_component"));
+	private static HashSet<String> level1TermNames = new HashSet<String>(Arrays.asList("molecular_function","biological_process", "cellular_component"));
 
 	/** The graph */
 	private DirectedGraph<Term> graph;
@@ -80,7 +80,7 @@ public class Ontology implements Iterable<Term>
 	private HashMap<String, String> alternativeId2primaryId;
 
 	/**
-	 * Construct the GO Graph from the given container.
+	 * Construct an Ontology graph from the given container.
 	 *
 	 * @param newTermContainer
 	 * @deprecated use Ontology.create() instead
@@ -173,10 +173,10 @@ public class Ontology implements Iterable<Term>
 		level1terms = new ArrayList<Term>();
 
 		/* Find the terms without any ancestors */
-		for (Term goTerm : graph)
+		for (Term term : graph)
 		{
-			if (graph.getInDegree(goTerm) == 0 && !goTerm.isObsolete())
-				level1terms.add(goTerm);
+			if (graph.getInDegree(term) == 0 && !term.isObsolete())
+				level1terms.add(term);
 		}
 
 		if (level1terms.size() > 1)
@@ -198,7 +198,7 @@ public class Ontology implements Iterable<Term>
 				boolean isGO = false;
 				for (Term t : level1terms)
 				{
-					if (goLevel1TermNames.contains(t.getName().toString().toLowerCase())) isGO = true;
+					if (level1TermNames.contains(t.getName().toString().toLowerCase())) isGO = true;
 					else
 					{
 						isGO = false;
@@ -230,10 +230,8 @@ public class Ontology implements Iterable<Term>
 	}
 
 	/**
-	 * Determines whether the given id is the id of the (possible artificial)
-	 * root term
-	 *
-	 * @return The root vertex as a GOVertex object
+	 * @return whether the given id is the id of the (possible artificial)
+	 *  root term
 	 */
 	public boolean isRootTerm(TermID id)
 	{
@@ -277,14 +275,14 @@ public class Ontology implements Iterable<Term>
 	 */
 	public Set<String> getTermChildrenAsStrings(String termID)
 	{
-		Term goTerm;
+		Term term;
 		if (termID.equals(rootTerm.getIDAsString()))
-			goTerm = rootTerm;
+			term = rootTerm;
 		else
-			goTerm = termContainer.get(termID);
+			term = termContainer.get(termID);
 
 		HashSet<String> terms = new HashSet<String>();
-		Iterator<Edge<Term>> edgeIter = graph.getOutEdges(goTerm);
+		Iterator<Edge<Term>> edgeIter = graph.getOutEdges(term);
 		while (edgeIter.hasNext())
 			terms.add(edgeIter.next().getDest().getIDAsString());
 		return terms;
@@ -298,15 +296,15 @@ public class Ontology implements Iterable<Term>
 	 */
 	public Set<String> getTermParentsAsStrings(String termID)
 	{
-		Term goTerm;
+		Term term;
 		if (termID.equals(rootTerm.getIDAsString()))
-			goTerm = rootTerm;
+			term = rootTerm;
 		else
-			goTerm = termContainer.get(termID);
+			term = termContainer.get(termID);
 
 		HashSet<String> terms = new HashSet<String>();
 
-		Iterator<Edge<Term>> edgeIter = graph.getInEdges(goTerm);
+		Iterator<Edge<Term>> edgeIter = graph.getInEdges(term);
 		while (edgeIter.hasNext())
 			terms.add(edgeIter.next().getSource().getIDAsString());
 		return terms;
