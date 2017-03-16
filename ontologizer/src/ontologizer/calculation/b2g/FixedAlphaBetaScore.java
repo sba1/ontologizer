@@ -61,12 +61,22 @@ public class FixedAlphaBetaScore extends Bayes2GOScore
 	private long totalN11;
 	private long totalT;
 
+	/**
+	 * Assumes a fixed alpha value.
+	 *
+	 * @param alpha the value for alpha to assume.
+	 */
 	public void setAlpha(double alpha)
 	{
 		this.alpha = alpha;
 		doAlphaMCMC = Double.isNaN(alpha);
 	}
 
+	/**
+	 * Assumes a fixed beta value.
+	 *
+	 * @param beta the value for beta to assume.
+	 */
 	public void setBeta(double beta)
 	{
 		this.beta = beta;
@@ -117,6 +127,12 @@ public class FixedAlphaBetaScore extends Bayes2GOScore
 
 	}
 
+	/**
+	 * Sets whether the hyperparameter alpha, beta, and p should be integrated out analytically
+	 * by assuming that they follow a beta distribution.
+	 *
+	 * @param integrateParams
+	 */
 	public void setIntegrateParams(boolean integrateParams)
 	{
 		this.integrateParams = integrateParams;
@@ -340,6 +356,7 @@ public class FixedAlphaBetaScore extends Bayes2GOScore
 
 			double s1 = logBeta(alpha1 + n10, alpha2 + n00);
 			double s2 = logBeta(beta1 + n01, beta2 + n11);
+			/* FIXME: At least for p we should also try a four parameter beta distribution */
 			double s3 = logBeta(p1 + m1, p2 + m0);
 			newScore2 = s1 + s2 + s3;
 		}
