@@ -214,6 +214,11 @@ public class Benchmark
 		m.mcmc = true;
 		availableCalcMethods.add(m);
 
+		m = new Method("MGSA", "b2g.mcmc.int");
+		m.mcmc = true;
+		m.integrateParams = true;
+		availableCalcMethods.add(m);
+
 		m = new Method("MGSA", "b2g.mcmc.pop");
 		m.takePopulationAsReference = true;
 		m.mcmc = true;
