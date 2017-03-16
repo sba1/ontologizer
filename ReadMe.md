@@ -4,7 +4,9 @@ Ontologizer
 ===========
 
 Ontologizer is a tool for identifying enriched Gene Ontology terms in lists of names
-of genes or gene products. Look at http://ontologizer.de for details and binary
+of genes or gene products. It is available as a Java program for both UI and
+command line usage as well as JavaScript version that can be conveniently run in
+modern Web browsers. Look at http://ontologizer.de for details and binary
 distribution.
 
 Building
