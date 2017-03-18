@@ -59,7 +59,7 @@ MathJax.Hub.Config({
             <a class="pure-menu-heading" href="{{ .Scratch.Get "homeurl" }}">{{ .Site.Title }}</a>
 
             <ul class="pure-menu-list">
-                {{ range .Site.Pages }}
+                {{ range .Site.Pages.ByWeight }}
                     {{ if ne .Type "homepage" }}
                     <li class="pure-menu-item"><a href="{{ .Permalink }}" class="pure-menu-link">{{ .Title }}</a></li>
                     {{ end }}
