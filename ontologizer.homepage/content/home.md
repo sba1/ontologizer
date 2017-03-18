@@ -14,8 +14,8 @@ Note however that the Webstart facility will no longer work by default with rece
 the Java runtime due to increased security settings. See the [Webstart]({{< relref "webstart.md" >}})
 section for details.
 
-A preliminary Web version that does not rely on Webstart but uses modern Web standards is
-available from the [Web Ontologizer]({{< relref "webontologizer.md" >}}) section.
+A preliminary Web version that does not rely on Webstart but uses modern Web standards can be
+accessed via the [Web Ontologizer]({{< relref "webontologizer.md" >}}) section.
 
 Other Downloads
 ---------------
