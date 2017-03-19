@@ -90,4 +90,33 @@
 
 	</dependencies>
 
+	<profiles>
+		<profile>
+			<id>wasm</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.teavm</groupId>
+						<artifactId>teavm-maven-plugin</artifactId>
+						<version>${teavm.version}</version>
+						<executions>
+							<execution>
+								<id>wasm-client</id>
+								<goals>
+									<goal>compile</goal>
+								</goals>
+								<configuration>
+									<targetDirectory>${project.build.directory}/generated/wasm/worker</targetDirectory>
+									<mainClass>ontologizer.OntologizerWorkerClient</mainClass>
+									<debugInformationGenerated>true</debugInformationGenerated>
+									<targetType>WEBASSEMBLY</targetType>
+									<optimizationLevel>FULL</optimizationLevel>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
