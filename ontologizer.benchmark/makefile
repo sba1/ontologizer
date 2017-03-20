@@ -19,6 +19,11 @@ help:
 	ONTOLOGIZER_ENABLE_EXPERIMENTAL=yes java -jar target/ontologizer.benchmark-$(VERSION)-jar-with-dependencies.jar --help
 
 clperf:
-	if [ ! -d "clperf.git" ]; then git clone https://github.com/sba1/clperf.git clperf.git; fi
+	# Checkout most recent version of clperf
+	(cd clperf.git && git pull --ff-only origin master) || git clone https://github.com/sba1/clperf.git clperf.git
+
+	# Compile it
 	make -C clperf.git
+
+	# Copy it
 	cp clperf.git/clperf .
