@@ -13,7 +13,8 @@ clicking on the following icon:
 Webstart applications are started directly from a web browser, which downloads the
 program code to the local computer. If the code has already been downloaded, the
 browser checks if the server has a newer version. If not, the local copy of the
-program is started. Further information is available at Sun's webstart site.
+program is started. Further information is available at the [webstart site of
+Oracle](https://docs.oracle.com/javase/tutorial/deployment/webstart/running.html).
 
 For users, webstart means that the webbrowser will automatically download and
 use the latest available version of the webstart program, so users will automatically
