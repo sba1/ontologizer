@@ -1,4 +1,8 @@
 #!/bin/bash
+#
+# Simple script to build the test docker image and spawning a new container
+# from it.
+#
 
 NO_CACHE=""
 
