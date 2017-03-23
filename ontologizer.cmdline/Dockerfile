@@ -10,6 +10,7 @@ RUN echo "deb http://httpredir.debian.org/debian jessie-backports main contrib n
 RUN apt-get update
 RUN apt-get dist-upgrade -y
 RUN apt-get install -t jessie-backports -y --no-install-recommends \
+	man-db \
 	ca-certificates-java \
 	default-jre-headless \
 	openjdk-8-jre-headless
