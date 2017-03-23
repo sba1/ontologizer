@@ -11,6 +11,7 @@ RUN apt-get update
 RUN apt-get dist-upgrade -y
 RUN apt-get install -t jessie-backports -y --no-install-recommends \
 	ca-certificates-java \
+	default-jre-headless \
 	openjdk-8-jre-headless
 
 RUN mkdir /target
