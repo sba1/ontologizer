@@ -13,4 +13,4 @@ if [ $# -gt 0 ]; then
 fi
 
 docker build $NO_CACHE . -t onto-cmd-test
-
+docker run -ti --rm onto-cmd-test /bin/bash
