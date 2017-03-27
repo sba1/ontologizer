@@ -3,10 +3,10 @@ package sonumina.math.graph;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import sonumina.collections.ObjectIntHashMap;
 import sonumina.math.graph.AbstractGraph.IVisitor;
 
 /**
@@ -21,7 +21,7 @@ public class SlimDirectedGraphView<VertexType>
 	private Object [] vertices;
 
 	/** Map specific terms to the index in the allTerms array */
-	public HashMap<VertexType,Integer> vertex2Index;
+	public ObjectIntHashMap<VertexType> vertex2Index;
 
 	/** Contains all the ancestors of the terms (and the terms itself).
 	 * Note that the array of ancestors is sorted. */
@@ -292,7 +292,7 @@ public class SlimDirectedGraphView<VertexType>
 
 		/* Vertices */
 		slim.vertices = new Object[graph.getNumberOfVertices()];
-		slim.vertex2Index = new HashMap<V, Integer>();
+		slim.vertex2Index = new ObjectIntHashMap<V>();
 		i = 0;
 
 		for (V t : graph)
@@ -366,15 +366,15 @@ public class SlimDirectedGraphView<VertexType>
 	 * @param iterator
 	 * @return
 	 */
-	private static <V> int[] createIndicesFromIter(HashMap<V,Integer> vertex2Index, Iterator<V> iterator)
+	private static <V> int[] createIndicesFromIter(ObjectIntHashMap<V> vertex2Index, Iterator<V> iterator)
 	{
 		ArrayList<Integer> indicesList = new ArrayList<Integer>(10);
 
 		while (iterator.hasNext())
 		{
 			V p = iterator.next();
-			Integer idx = vertex2Index.get(p);
-			if (idx != null)
+			int idx = vertex2Index.getIfAbsent(p, -1);
+			if (idx != -1)
 				indicesList.add(idx);
 		}
 
