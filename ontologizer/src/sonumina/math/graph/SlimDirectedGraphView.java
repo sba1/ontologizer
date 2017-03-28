@@ -21,7 +21,7 @@ public class SlimDirectedGraphView<VertexType>
 	private Object [] vertices;
 
 	/** Map specific terms to the index in the allTerms array */
-	public ObjectIntHashMap<VertexType> vertex2Index;
+	private ObjectIntHashMap<VertexType> vertex2Index;
 
 	/** Contains all the ancestors of the terms (and the terms itself).
 	 * Note that the array of ancestors is sorted. */
