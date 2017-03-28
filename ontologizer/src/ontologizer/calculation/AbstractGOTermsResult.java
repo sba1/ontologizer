@@ -72,8 +72,7 @@ public class AbstractGOTermsResult implements Iterable<AbstractGOTermProperties>
 			throw new IllegalArgumentException("prop.goTerm mustn't be null");
 
 		list.add(prop);
-		Integer integer = new Integer(index);
-		term2Index.put(prop.goTerm, integer);
+		term2Index.put(prop.goTerm, index);
 		index++;
 	}
 
