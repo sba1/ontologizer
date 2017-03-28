@@ -15,7 +15,7 @@ import sonumina.math.graph.AbstractGraph.IVisitor;
  *
  * @author Sebastian Bauer, Sebastian Koehler
  */
-public class SlimDirectedGraphView<VertexType>
+public final class SlimDirectedGraphView<VertexType>
 {
 	/** An array of all terms */
 	private Object [] vertices;
