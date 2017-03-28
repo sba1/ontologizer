@@ -8,7 +8,6 @@ package ontologizer.calculation;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 
@@ -18,6 +17,7 @@ import ontologizer.dotwriter.GODOTWriter;
 import ontologizer.ontology.Ontology;
 import ontologizer.ontology.Term;
 import ontologizer.ontology.TermID;
+import sonumina.collections.ObjectIntHashMap;
 
 /**
  * An abstraction of any result containing GO terms utilizing
@@ -31,7 +31,7 @@ public class AbstractGOTermsResult implements Iterable<AbstractGOTermProperties>
 	protected ArrayList<AbstractGOTermProperties> list = new ArrayList<AbstractGOTermProperties>();
 
 	/** Maps the go term to an integer (for accesses in constant time) */
-	private HashMap<Term,Integer> go2Index = new HashMap<Term,Integer>();
+	private ObjectIntHashMap<Term> go2Index = new ObjectIntHashMap<Term>();
 
 	/** The current index for adding a new go term property */
 	private int index = 0;
@@ -85,10 +85,7 @@ public class AbstractGOTermsResult implements Iterable<AbstractGOTermProperties>
 	 */
 	public AbstractGOTermProperties getGOTermProperties(TermID termId)
 	{
-		Integer index = go2Index.get(go.getTerm(termId));
-		if (index == null)
-			return null;
-		return list.get(index);
+		return getGOTermProperties(go.getTerm(termId));
 	}
 
 	/**
@@ -99,8 +96,8 @@ public class AbstractGOTermsResult implements Iterable<AbstractGOTermProperties>
 	 */
 	public AbstractGOTermProperties getGOTermProperties(Term term)
 	{
-		Integer idx = go2Index.get(term);
-		if (idx == null) return null;
+		int idx = go2Index.getIfAbsent(term, -1);
+		if (idx == -1) return null;
 		return list.get(idx);
 	}
 
