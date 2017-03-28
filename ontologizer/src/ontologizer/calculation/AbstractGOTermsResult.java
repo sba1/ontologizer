@@ -31,7 +31,7 @@ public class AbstractGOTermsResult implements Iterable<AbstractGOTermProperties>
 	protected ArrayList<AbstractGOTermProperties> list = new ArrayList<AbstractGOTermProperties>();
 
 	/** Maps the go term to an integer (for accesses in constant time) */
-	private ObjectIntHashMap<Term> go2Index = new ObjectIntHashMap<Term>();
+	private ObjectIntHashMap<Term> term2Index = new ObjectIntHashMap<Term>();
 
 	/** The current index for adding a new go term property */
 	private int index = 0;
@@ -73,7 +73,7 @@ public class AbstractGOTermsResult implements Iterable<AbstractGOTermProperties>
 
 		list.add(prop);
 		Integer integer = new Integer(index);
-		go2Index.put(prop.goTerm, integer);
+		term2Index.put(prop.goTerm, integer);
 		index++;
 	}
 
@@ -96,7 +96,7 @@ public class AbstractGOTermsResult implements Iterable<AbstractGOTermProperties>
 	 */
 	public AbstractGOTermProperties getGOTermProperties(Term term)
 	{
-		int idx = go2Index.getIfAbsent(term, -1);
+		int idx = term2Index.getIfAbsent(term, -1);
 		if (idx == -1) return null;
 		return list.get(idx);
 	}
