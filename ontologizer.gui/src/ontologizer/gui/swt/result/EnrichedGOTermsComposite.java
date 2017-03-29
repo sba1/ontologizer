@@ -6,6 +6,9 @@
  */
 package ontologizer.gui.swt.result;
 
+import static ontologizer.util.Util.d;
+import static ontologizer.types.ByteString.EMPTY;
+
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -539,8 +542,17 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 			TermID tid = (TermID)item.getData("term");
 			if (tid != null)
 			{
-				String def = go.getTerm(tid).getDefinition().toString();
-				if (def == null) def = "No definition available";
+				String def;
+				Term term = go.getTerm(tid);
+
+				if (term != null)
+				{
+					def = d(term.getDefinition(), EMPTY).toString();
+				} else
+				{
+					def = "No definition available";
+				}
+
 				str.append(def);
 			}
 
