@@ -397,4 +397,42 @@ public final class SlimDirectedGraphView<VertexType>
 		init(g, graph);
 		return g;
 	}
+
+	/**
+	 * Simple functional interface to provide a map form one type to another
+	 */
+	public static interface Map<K,V>
+	{
+		public V map(K key);
+	}
+
+	/**
+	 * Create the slim view from the given directed graph but apply a mapping of the underlying
+	 * type.
+	 *
+	 * @param graph the graph from which a static mapping
+	 * @param map mapping
+	 * @return the slim graph view.
+	 */
+	public static <K,V> SlimDirectedGraphView<V> create(DirectedGraph<K> graph, Map<K,V> map)
+	{
+		SlimDirectedGraphView<K> kg = create(graph);
+		SlimDirectedGraphView<V> vg = new SlimDirectedGraphView<V>();
+
+		vg.vertexAncestors = kg.vertexAncestors;
+		vg.vertexChildren = kg.vertexChildren;
+		vg.vertexDescendants = kg.vertexDescendants;
+		vg.vertexParents = kg.vertexParents;
+
+		vg.vertices = new Object[kg.vertices.length];
+		vg.vertex2Index = new ObjectIntHashMap<V>(kg.vertices.length);
+		for (int i = 0; i < vg.vertices.length; i++)
+		{
+			V v = map.map(kg.getVertex(i));
+			vg.vertices[i] = v;
+			vg.vertex2Index.put(v, i);
+		}
+
+		return vg;
+	}
 }
