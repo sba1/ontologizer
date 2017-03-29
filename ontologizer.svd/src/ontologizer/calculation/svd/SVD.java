@@ -44,7 +44,7 @@ public class SVD
 				{
 					if (prop.p_adjusted < 0.05)
 					{
-						TermID id = prop.goTerm.getID();
+						TermID id = prop.term;
 						if (!includedTerms.contains(id))
 							includedTerms.addAll(goGraph.getTermsOfInducedGraph(null, id));
 					}
@@ -80,7 +80,7 @@ public class SVD
 
 			for (AbstractGOTermProperties prop : termsResult)
 			{
-				TermID tid = prop.goTerm.getID();
+				TermID tid = prop.term;
 
 				if (includedTerms == null || includedTerms.contains(tid))
 				{
@@ -109,7 +109,7 @@ public class SVD
 		{
 			for (AbstractGOTermProperties prop : studySetResult)
 			{
-				TermID tid = prop.goTerm.getID();
+				TermID tid = prop.term;
 
 				Integer rowInt = term2row.get(tid);
 				if (rowInt == null) continue;
@@ -223,7 +223,7 @@ public class SVD
 			{
 				SVDGOTermProperties termProp = new SVDGOTermProperties(numberOfStudies);
 				termProp.rowInMatrix = i;
-				termProp.goTerm = t;
+				termProp.term = t.getID();
 
 				for (int j=0;j<counts[0].length;j++)
 				{
