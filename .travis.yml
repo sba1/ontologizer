@@ -21,4 +21,6 @@ env:
 # FIXME: Use deploy
 after_success:
     - cd ontologizer.cmdline/target
+    - java -version
+    - java -version 2>&1 | awk '/version/{print $NF}'
     - \[\[ $(java -version 2>&1 | awk '/version/{print $NF}') =~ "1.7" \]\] && ../../deploy
