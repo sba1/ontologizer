@@ -166,6 +166,21 @@ public class Ontology implements Iterable<Term>
 	}
 
 	/**
+	 * @return a slim representation with TermIDs as underlying type.
+	 */
+	public SlimDirectedGraphView<TermID> getTermIDSlimGraphView()
+	{
+		return SlimDirectedGraphView.create(graph, new SlimDirectedGraphView.Map<Term,TermID>()
+		{
+			@Override
+			public TermID map(Term key)
+			{
+				return key.getID();
+			}
+		});
+	}
+
+	/**
 	 * Finds about level 1 terms and fix the root as we assume here
 	 * that there is only a single root.
 	 */
