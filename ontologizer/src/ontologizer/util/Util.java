@@ -298,4 +298,18 @@ public final class Util
 		cis.numberOfCommonInts = commonIntsWithResult(a, b, cis.common);
 		return cis;
 	}
+
+	/**
+	 * Simple method that returns a default if the first argument is null.
+	 *
+	 * This is a special case of the ?: operator.
+	 *
+	 * @param t the object to check.
+	 * @param def the object to return if t equals to null.
+	 * @return t or def
+	 */
+	public static <T> T d(T t, T def)
+	{
+		return t==null?def:t;
+	}
 }
