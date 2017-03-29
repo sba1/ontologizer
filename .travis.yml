@@ -22,5 +22,7 @@ env:
 after_success:
     - cd ontologizer.cmdline/target
     - java -version
-    - java -version 2>&1 | awk '/version/{print $NF}'
-    - \[\[ $(java -version 2>&1 | awk '/version/{print $NF}') =~ "1.7" \]\] && ../../deploy
+    - export
+    - export JAVA_VERSION=$(java -version 2>&1 | awk '/version/{print $NF}')
+    - export
+    - test "$TRAVIS_JDK_VERSION" == "oraclejdk7" && ../../deploy
