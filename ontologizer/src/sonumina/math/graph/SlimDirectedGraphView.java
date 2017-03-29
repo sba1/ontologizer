@@ -286,7 +286,7 @@ public final class SlimDirectedGraphView<VertexType>
 	 * @param graph
 	 */
 	@SuppressWarnings("unchecked")
-	public static <V> void init(SlimDirectedGraphView<V> slim, DirectedGraph<V> graph)
+	private static <V> void init(SlimDirectedGraphView<V> slim, DirectedGraph<V> graph)
 	{
 		int i;
 
