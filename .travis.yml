@@ -20,7 +20,7 @@ env:
 
 # FIXME: Use deploy
 after_success:
-    - cd ontologizer.cmdline/target
+    - cd ../ontologizer.cmdline/target
     - java -version
     - export
     - export JAVA_VERSION=$(java -version 2>&1 | awk '/version/{print $NF}')
