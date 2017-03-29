@@ -11,7 +11,7 @@ import ontologizer.calculation.AbstractGOTermProperties;
 public class Bayes2GOGOTermProperties extends AbstractGOTermProperties
 {
 	private static final String [] propertyNames = new String[]{
-		"ID","Pop.total","Pop.term","Study.total","Study.term","marg","name"
+		"ID","Pop.total","Pop.term","Study.total","Study.term","marg"
 		};
 
 	public double marg;
@@ -33,13 +33,12 @@ public class Bayes2GOGOTermProperties extends AbstractGOTermProperties
 	{
 		switch (propNumber)
 		{
-			case	0: return goTerm.getIDAsString();
+			case	0: return term.toString();
 			case	1: return null; /* population gene count */
 			case	2: return Integer.toString(annotatedPopulationGenes);
 			case	3: return null; /* study gene count */
 			case 	4: return Integer.toString(annotatedStudyGenes);
 			case	5: return Double.toString(marg);
-			case	6: return "\"" + goTerm.getName() + "\"";
 		}
 		return null;
 	}

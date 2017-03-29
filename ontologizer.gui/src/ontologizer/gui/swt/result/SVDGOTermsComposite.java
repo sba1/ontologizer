@@ -14,6 +14,7 @@ import ontologizer.gui.swt.support.GraphCanvas;
 import ontologizer.gui.swt.support.SWTUtil;
 import ontologizer.gui.swt.support.ScatterPlot;
 import ontologizer.gui.swt.support.Chart.XYSeries;
+import ontologizer.ontology.Term;
 import ontologizer.ontology.TermID;
 
 import org.eclipse.swt.SWT;
@@ -265,9 +266,10 @@ public class SVDGOTermsComposite extends AbstractResultComposite
 				if (index != null)
 				{
 					SVDGOTermProperties prop = (SVDGOTermProperties) props[index];
-					item.setText(GOID, prop.goTerm.getIDAsString());
-					item.setText(NAME, prop.goTerm.getName().toString());
-					item.setText(NAMESPACE,prop.goTerm.getNamespace().getAbbreviatedName());
+					Term t = go.getTerm(prop.term);
+					item.setText(GOID, prop.term.toString());
+					item.setText(NAME, t.toString());
+					item.setText(NAMESPACE, t.getNamespace().getAbbreviatedName());
 
 					for (int i=0;i<size;i++)
 						item.setText(LAST + i, getOrginalDataString(prop,i));
@@ -275,10 +277,10 @@ public class SVDGOTermsComposite extends AbstractResultComposite
 					for (int i=0;i<size;i++)
 						item.setText(LAST + i + size, String.format("%.3g",prop.weights[i]));
 
-					if (isCheckedTerm(prop.goTerm.getID()))
+					if (isCheckedTerm(prop.term))
 						item.setChecked(true);
 
-					Color background = termID2Color.get(prop.goTerm.getID());
+					Color background = termID2Color.get(prop.term);
 					if (background != null)
 						item.setBackground(NAMESPACE,background);
 				}
@@ -548,9 +550,9 @@ public class SVDGOTermsComposite extends AbstractResultComposite
 
 		for (int i=0;i<props.length;i++)
 		{
-			if (!shouldTermDisplayed(props[i].goTerm))
+			if (!shouldTermDisplayed(props[i].term))
 				continue;
-			termID2ListLine.put(props[i].goTerm.getID().id, entryNumber);
+			termID2ListLine.put(props[i].term.id, entryNumber);
 			line2TermPos.put(entryNumber, i);
 			entryNumber++;
 		}
@@ -621,9 +623,9 @@ public class SVDGOTermsComposite extends AbstractResultComposite
 				hue = 120f;
 			else hue = 0f;
 
-			termID2Color.put(sortedProps[rank].goTerm.getID(), new Color(getDisplay(),new RGB(hue,saturation,brightness)));
+			termID2Color.put(sortedProps[rank].term, new Color(getDisplay(),new RGB(hue,saturation,brightness)));
 			if (!checkedTermsChanged)
-				addToCheckedTerms(sortedProps[rank].goTerm.getID());
+				addToCheckedTerms(sortedProps[rank].term);
 		}
 	}
 

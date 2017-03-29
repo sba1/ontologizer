@@ -253,24 +253,25 @@ public class DOTDumper
 		{
 			if (props.p_adjusted < alpha)
 			{
-				if (nodeMap.containsKey(props.goTerm))
+				Term t = studRes.getGO().getTerm(props.term);
+				if (nodeMap.containsKey(t))
 				{
 					/* node existing just make sure that significance entry is set properly */
-					nodeMap.get(props.goTerm).significant[row][col] = true;
+					nodeMap.get(t).significant[row][col] = true;
 				} else {
 					/* add node and potential parents */
 					MultResultNodeVisitor visitor =
 						new MultResultNodeVisitor(graph, nodeMap, rows, cols);
 
-					graph.walkToSource(props.goTerm.getID(),visitor);
+					graph.walkToSource(props.term,visitor);
 
 					/* set significance properly, but we have to check before
 					 * if the term is really contained within the map (because
 					 * it can be filtered out, e.g. if it is not part of the
 					 * requested subgraph) */
-					if (nodeMap.containsKey(props.goTerm))
+					if (nodeMap.containsKey(t))
 					{
-						nodeMap.get(props.goTerm).significant[row][col] = true;
+						nodeMap.get(t).significant[row][col] = true;
 					}
 				}
 			}

@@ -279,7 +279,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 			}});
 		termID2PValueRank = new HashMap<TermID,Integer>();
 		for (int rank = 0;rank < props.length; rank++)
-			termID2PValueRank.put(props[rank].goTerm.getID(), rank + 1);
+			termID2PValueRank.put(props[rank].term, rank + 1);
 
 		prepareSignificanceColors();
 		buildCheckedTermHashSet();
@@ -310,7 +310,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 						{
 							int r;
 
-							r = termID2PValueRank.get(o1.goTerm.getID()) - termID2PValueRank.get(o2.goTerm.getID());
+							r = termID2PValueRank.get(o1.term) - termID2PValueRank.get(o2.term);
 
 							r *= direction;
 							return r;
@@ -405,9 +405,9 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 
 		for (int i=0;i<props.length;i++)
 		{
-			if (!shouldTermDisplayed(props[i].goTerm))
+			if (!shouldTermDisplayed(props[i].term))
 				continue;
-			termID2ListLine.put(props[i].goTerm.getID().id, entryNumber);
+			termID2ListLine.put(props[i].term.id, entryNumber);
 			line2TermPos.put(entryNumber, i);
 			entryNumber++;
 		}
@@ -426,10 +426,10 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 		if (idx < 0) return;
 
 		TableItem item = table.getItem(idx);
-		Term goTerm = (Term)item.getData("term");
-		if (goTerm != null)
+		TermID tid = (TermID)item.getData("term");
+		if (tid != null)
 		{
-			graphVisual.selectNode(GODOTWriter.encodeTermID(goTerm.getID()));
+			graphVisual.selectNode(GODOTWriter.encodeTermID(tid));
 		}
 	}
 
@@ -455,10 +455,10 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 				str.append(")");
 				str.append("<br />");
 
-				Term goTerm = (Term)item.getData("term");
-				if (goTerm != null)
+				TermID tid = (TermID)item.getData("term");
+				if (tid != null)
 				{
-					Set<TermID> ancestors = go.getTermParents(goTerm.getID());
+					Set<TermID> ancestors = go.getTermParents(tid);
 					if (ancestors != null)
 					{
 						str.append("<br />Parents: ");
@@ -467,7 +467,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 						str.append("</div>");
 					}
 
-					Set<TermID> siblings = go.getTermsSiblings(goTerm.getID());
+					Set<TermID> siblings = go.getTermsSiblings(tid);
 					if (siblings != null)
 					{
 						str.append("<br />Siblings: ");
@@ -476,7 +476,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 						str.append("</div>");
 					}
 
-					Set<TermID> descendants = go.getTermChildren(goTerm.getID());
+					Set<TermID> descendants = go.getTermChildren(tid);
 					if (descendants != null)
 					{
 						str.append("<br />Children: ");
@@ -485,7 +485,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 						str.append("</div>");
 					}
 
-					String def = ByteString.toString(goTerm.getDefinition());
+					String def = ByteString.toString(go.getTerm(tid).getDefinition());
 					if (def == null) def = "No definition available";
 					str.append("<br />Definition: ");
 					str.append("<font size=\"-1\">");
@@ -497,7 +497,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 					str.append("<h3>Annotated Gene Products</h3>");
 					/* Enumerate the genes */
 					TermEnumerator enumerator = result.getStudySet().enumerateTerms(go,associationContainer);
-					TermAnnotatedGenes annotatedGenes = enumerator.getAnnotatedGenes(goTerm.getID());
+					TermAnnotatedGenes annotatedGenes = enumerator.getAnnotatedGenes(tid);
 
 					HashSet<String> directGenes = new HashSet<String>();
 					for (ByteString gene : annotatedGenes.directAnnotated)
@@ -536,10 +536,10 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 			str.append(item.getText(GOID));
 			str.append(")");
 			str.append("\n\n");
-			Term goTerm = (Term)item.getData("term");
-			if (goTerm != null)
+			TermID tid = (TermID)item.getData("term");
+			if (tid != null)
 			{
-				String def = goTerm.getDefinition().toString();
+				String def = go.getTerm(tid).getDefinition().toString();
 				if (def == null) def = "No definition available";
 				str.append(def);
 			}
@@ -628,7 +628,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 		for (int i=0;i<props.length;i++)
 		{
 			if (props[i].isSignificant(level))
-				addToCheckedTerms(props[i].goTerm.getID());
+				addToCheckedTerms(props[i].term);
 		}
 	}
 
@@ -673,7 +673,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 				 * We want that more significant nodes have more saturation, but
 				 * we avoid having significant nodes with too less saturation (at
 				 * least 0.2) */
-				int rank = termID2PValueRank.get(prop.goTerm.getID()) - 1;
+				int rank = termID2PValueRank.get(prop.term) - 1;
 				assert(rank < count);
 				saturation = 1.0f - (((float)rank  + 1)/count)*0.8f;
 
@@ -681,7 +681,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 				brightness = 1.0f;
 
 				/* Hue depends on namespace */
-				switch (Namespace.getNamespaceEnum(prop.goTerm.getNamespace()))
+				switch (Namespace.getNamespaceEnum(go.getTerm(prop.term).getNamespace()))
 				{
 					case BIOLOGICAL_PROCESS: hue = 120.f;break;
 					case MOLECULAR_FUNCTION: hue = 60.f;break;
@@ -689,7 +689,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 					default: hue = 0.f; saturation = 0.f;
 				}
 
-				termID2Color.put(prop.goTerm.getID(), new Color(getDisplay(),new RGB(hue,saturation,brightness)));
+				termID2Color.put(prop.term, new Color(getDisplay(),new RGB(hue,saturation,brightness)));
 			}
 		}
 	}
@@ -794,8 +794,8 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 
 				if (selectedItem != null)
 				{
-					Term selectedTerm = (Term)selectedItem.getData("term");
-					table.setSelection(termID2ListLine.get(selectedTerm.getID().id));
+					TermID selectedTermID = (TermID)selectedItem.getData("term");
+					table.setSelection(termID2ListLine.get(selectedTermID.id));
 				}
 
 			}
@@ -855,9 +855,9 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 				if (e.detail == SWT.CHECK)
 				{
 					TableItem ti = (TableItem)e.item;
-					Term term = (Term)ti.getData("term");
-					if (ti.getChecked()) addToCheckedTerms(term.getID());
-					else removeFromCheckedTerms(term.getID());
+					TermID tid = (TermID)ti.getData("term");
+					if (ti.getChecked()) addToCheckedTerms(tid);
+					else removeFromCheckedTerms(tid);
 					checkedTermsChanged = true;
 					updateSignificanceText();
 				}
@@ -872,9 +872,10 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 				if (index != null)
 				{
 					AbstractGOTermProperties prop = props[index];
-					item.setText(GOID, prop.goTerm.getIDAsString());
-					item.setText(NAME, prop.goTerm.getName().toString());
-					item.setText(NAMESPACE,prop.goTerm.getNamespace().getAbbreviatedName());
+					Term t = go.getTerm(prop.term);
+					item.setText(GOID, prop.term.toString());
+					item.setText(NAME, t.getName().toString());
+					item.setText(NAMESPACE, t.getNamespace().getAbbreviatedName());
 					if (useMarginal)
 					{
 						if (prop instanceof Bayes2GOGOTermProperties) {
@@ -887,16 +888,16 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 						item.setText(PVAL,String.format("%.3g",prop.p));
 						item.setText(ADJPVAL,String.format("%.3g",prop.p_adjusted));
 					}
-					item.setText(RANK,termID2PValueRank.get(prop.goTerm.getID()).toString());
+					item.setText(RANK,termID2PValueRank.get(prop.term).toString());
 					item.setText(POP,Integer.toString(prop.annotatedPopulationGenes));
 					item.setText(STUDY,Integer.toString(prop.annotatedStudyGenes));
 
-					item.setData("term",prop.goTerm);
+					item.setData("term",prop.term);
 
-					if (isCheckedTerm(prop.goTerm.getID()))
+					if (isCheckedTerm(prop.term))
 						item.setChecked(true);
 
-					Color background = termID2Color.get(prop.goTerm.getID());
+					Color background = termID2Color.get(prop.term);
 					if (useMarginal)
 					{
 						item.setBackground(MARG,background);
@@ -978,7 +979,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 					/* Select all terms */
 					initializeCheckedTerms();
 					for (int i=0;i<props.length;i++)
-						addToCheckedTerms(props[i].goTerm.getID());
+						addToCheckedTerms(props[i].term);
 					checkedTermsChanged = true;
 				}
 				table.clearAll();

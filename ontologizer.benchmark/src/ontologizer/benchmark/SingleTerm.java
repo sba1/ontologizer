@@ -465,11 +465,11 @@ public class SingleTerm
 		EnrichedGOTermsResult r2 = tft.calculateStudySet(graph, assoc, allGenes, newStudyGenes, new Bonferroni());
 		HashSet<TermID> s = new HashSet<TermID>();
 		for (AbstractGOTermProperties p2 : r2)
-			s.add(p2.goTerm.getID());
+			s.add(p2.term);
 		int cnt = 0;
 		for (AbstractGOTermProperties prop : result)
 		{
-			if (!s.contains(prop.goTerm.getID()))
+			if (!s.contains(prop.term))
 			{
 //				System.out.println(prop.annotatedPopulationGenes + "  " + prop.annotatedStudyGenes);
 				cnt++;
@@ -506,8 +506,8 @@ public class SingleTerm
 			int rank = 1;
 			for (AbstractGOTermProperties prop : resultList)
 			{
-				if (wantedActiveTerms.containsKey(prop.goTerm.getID()))
-					System.out.println(" " + prop.goTerm.getIDAsString() + "/" + prop.goTerm.getName() + "   " + (/*1.0f - */prop.p_adjusted) + " rank=" + rank + " beta=" + wantedActiveTerms.get(prop.goTerm.getID()));
+				if (wantedActiveTerms.containsKey(prop.term))
+					System.out.println(" " + prop.term.toString() + "/" + graph.getTerm(prop.term) + "   " + (/*1.0f - */prop.p_adjusted) + " rank=" + rank + " beta=" + wantedActiveTerms.get(prop.term));
 				rank++;
 			}
 
@@ -535,10 +535,10 @@ public class SingleTerm
 				for (TermID wanted : wantedActiveTerms.keySet())
 				{
 					children.addAll(graph.getTermChildren(wanted));
-					if (graph.getTermChildren(wanted).contains(prop.goTerm.getID()))
+					if (graph.getTermChildren(wanted).contains(prop.term))
 						propIsChild = true;
 
-					if (graph.existsPath(wanted, prop.goTerm.getID()) && !wanted.equals(prop.goTerm.getID()))
+					if (graph.existsPath(wanted, prop.term) && !wanted.equals(prop.term))
 					{
 						if (prop.isSignificant(thresh))
 							numDescentantsSig++;
@@ -550,8 +550,8 @@ public class SingleTerm
 				{
 					if (rank <= top || propIsChild)
 					{
-						terms.add(prop.goTerm.getID());
-						System.out.println(" " + prop.goTerm.getIDAsString() + "/" + prop.goTerm.getName() + "   " + (/*1.0f - */prop.p_adjusted) + " rank=" + rank);
+						terms.add(prop.term);
+						System.out.println(" " + prop.term.toString() + "/" + graph.getTerm(prop.term).getName() + "   " + (/*1.0f - */prop.p_adjusted) + " rank=" + rank);
 					}
 
 					numSig++;

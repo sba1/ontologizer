@@ -9,7 +9,7 @@ package ontologizer.calculation;
 public class TermForTermGOTermProperties extends AbstractGOTermProperties
 {
 	private static final String [] propertyNames = new String[]{
-		"ID","Pop.total","Pop.term","Study.total","Study.term","p","p.adjusted","p.min","name"
+		"ID","Pop.total","Pop.term","Study.total","Study.term","p","p.adjusted","p.min"
 		};
 
 	@Override
@@ -29,7 +29,7 @@ public class TermForTermGOTermProperties extends AbstractGOTermProperties
 	{
 		switch (propNumber)
 		{
-			case	0: return goTerm.getIDAsString();
+			case	0: return term.toString();
 			case	1: return null; /* population gene count */
 			case	2: return Integer.toString(annotatedPopulationGenes);
 			case	3: return null; /* study gene count */
@@ -37,7 +37,6 @@ public class TermForTermGOTermProperties extends AbstractGOTermProperties
 			case	5: return Double.toString(p);
 			case	6: return Double.toString(p_adjusted);
 			case	7: return Double.toString(p_min);
-			case	8: return "\"" + goTerm.getName() + "\"";
 		}
 		return null;
 	}

@@ -12,7 +12,7 @@ public class ParentChildGOTermProperties extends AbstractGOTermProperties
 	public int studyFamilyGenes;
 
 	private static final String [] propertyNames = new String[]{
-		"ID","Pop.total","Pop.term","Study.total","Study.term","Pop.family", "Study.family", "nparents", "is.trivial", "p", "p.adjusted", "p.min", "name"
+		"ID","Pop.total","Pop.term","Study.total","Study.term","Pop.family", "Study.family", "nparents", "is.trivial", "p", "p.adjusted", "p.min"
 		};
 
 	@Override
@@ -32,7 +32,7 @@ public class ParentChildGOTermProperties extends AbstractGOTermProperties
 	{
 		switch (propNumber)
 		{
-			case	0: return goTerm.getIDAsString();
+			case	0: return term.toString();
 			case	1: return null; /* population gene count */
 			case	2: return Integer.toString(annotatedPopulationGenes);
 			case	3: return null; /* study gene count */
@@ -44,7 +44,6 @@ public class ParentChildGOTermProperties extends AbstractGOTermProperties
 			case	9: return Double.toString(p);
 			case	10: return Double.toString(p_adjusted);
 			case	11: return Double.toString(p_min);
-			case	12: return "\"" + goTerm.getName() + "\"";
 		}
 		return null;
 	}

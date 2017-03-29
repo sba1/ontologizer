@@ -31,7 +31,7 @@ public class AbstractGOTermsResult implements Iterable<AbstractGOTermProperties>
 	protected ArrayList<AbstractGOTermProperties> list = new ArrayList<AbstractGOTermProperties>();
 
 	/** Maps the go term to an integer (for accesses in constant time) */
-	private ObjectIntHashMap<Term> term2Index = new ObjectIntHashMap<Term>();
+	private ObjectIntHashMap<TermID> term2Index = new ObjectIntHashMap<TermID>();
 
 	/** The current index for adding a new go term property */
 	private int index = 0;
@@ -68,11 +68,11 @@ public class AbstractGOTermsResult implements Iterable<AbstractGOTermProperties>
 	 */
 	public void addGOTermProperties(AbstractGOTermProperties prop)
 	{
-		if (prop.goTerm == null)
-			throw new IllegalArgumentException("prop.goTerm mustn't be null");
+		if (prop.term == null)
+			throw new IllegalArgumentException("prop.term mustn't be null");
 
 		list.add(prop);
-		term2Index.put(prop.goTerm, index);
+		term2Index.put(prop.term, index);
 		index++;
 	}
 
@@ -84,7 +84,9 @@ public class AbstractGOTermsResult implements Iterable<AbstractGOTermProperties>
 	 */
 	public AbstractGOTermProperties getGOTermProperties(TermID termId)
 	{
-		return getGOTermProperties(go.getTerm(termId));
+		int idx = term2Index.getIfAbsent(termId, -1);
+		if (idx == -1) return null;
+		return list.get(idx);
 	}
 
 	/**
@@ -95,9 +97,7 @@ public class AbstractGOTermsResult implements Iterable<AbstractGOTermProperties>
 	 */
 	public AbstractGOTermProperties getGOTermProperties(Term term)
 	{
-		int idx = term2Index.getIfAbsent(term, -1);
-		if (idx == -1) return null;
-		return list.get(idx);
+		return getGOTermProperties(term.getID());
 	}
 
 	/**

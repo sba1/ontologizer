@@ -508,7 +508,7 @@ public class Bayes2GOCalculation implements ICalculation, IProgressFeedback
 				for (TermID t : allTerms)
 				{
 					Bayes2GOGOTermProperties prop = new Bayes2GOGOTermProperties();
-					prop.goTerm = graph.getTerm(t);
+					prop.term = t;
 					prop.annotatedStudyGenes = studyEnumerator.getAnnotatedGenes(t).totalAnnotatedCount();
 					prop.annotatedPopulationGenes = populationEnumerator.getAnnotatedGenes(t).totalAnnotatedCount();
 					prop.marg = ((double)bayes2GOScore.termActivationCounts[bayes2GOScore.term2TermsIdx.get(t)] / bayes2GOScore.numRecords);

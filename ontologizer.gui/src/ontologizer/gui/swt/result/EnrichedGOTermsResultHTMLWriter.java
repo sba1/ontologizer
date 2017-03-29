@@ -14,6 +14,7 @@ import ontologizer.calculation.b2g.Bayes2GOEnrichedGOTermsResult;
 import ontologizer.calculation.b2g.Bayes2GOGOTermProperties;
 import ontologizer.dotwriter.GODOTWriter;
 import ontologizer.gui.swt.support.GraphPaint;
+import ontologizer.ontology.Term;
 import ontologizer.ontology.TermID;
 
 import org.eclipse.swt.SWT;
@@ -196,19 +197,20 @@ public class EnrichedGOTermsResultHTMLWriter
 			for (AbstractGOTermProperties props : sortedProps)
 			{
 				String title;
-				if (props.goTerm.getDefinition() != null)
-					title = " title=\"" +props.goTerm.getDefinition() + "\"";
+				Term term = result.getGO().getTerm(props.term);
+				if (term.getDefinition() != null)
+					title = " title=\"" + term.getDefinition() + "\"";
 				else title = "";
 
 				out.println("<tr" + title + ">");
 				out.println("<td>");
-				out.printf("<a name=\"%s\" href=\"http://www.ebi.ac.uk/ego/DisplayGoTerm?id=%s\">", props.goTerm.getID().id, props.goTerm.getIDAsString());
-				out.println(props.goTerm.getIDAsString());
+				out.printf("<a name=\"%s\" href=\"http://www.ebi.ac.uk/ego/DisplayGoTerm?id=%s\">", props.term.id, props.term.toString());
+				out.println(props.term.toString());
 				out.println("</a>");
 				out.println("</td>");
 
 				out.println("<td>");
-				out.println(props.goTerm.getName());
+				out.println(term.getName());
 				out.println("</td>");
 
 				if (!showMarginals)

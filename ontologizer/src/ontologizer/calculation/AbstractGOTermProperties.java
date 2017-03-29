@@ -1,6 +1,6 @@
 package ontologizer.calculation;
 
-import ontologizer.ontology.Term;
+import ontologizer.ontology.TermID;
 import ontologizer.statistics.PValue;
 
 /**
@@ -13,7 +13,7 @@ import ontologizer.statistics.PValue;
  */
 public abstract class AbstractGOTermProperties extends PValue
 {
-	public Term goTerm;
+	public TermID term;
 	public int annotatedStudyGenes;
 	public int annotatedPopulationGenes;
 

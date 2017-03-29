@@ -101,7 +101,7 @@ public class EnrichedGOTermsResult extends AbstractGOTermsResult
 
 		for (AbstractGOTermProperties goProp : this)
 		{
-			TermID curTerm = goProp.goTerm.getID();
+			TermID curTerm = goProp.term;
 			if (goProp.p_min < pvalCutoff)
 				goodTerms.add(curTerm);
 		}
@@ -151,12 +151,12 @@ public class EnrichedGOTermsResult extends AbstractGOTermsResult
 		final int significants_count = scount;
 
 		/*
-		 * Traverse through the sorted props remembering the GO Terms index
+		 * Traverse through the sorted props remembering the term indices
 		 * in a hash
 		 */
-		final HashMap<Term, Integer> goTermRank = new HashMap<Term, Integer>();
+		final HashMap<TermID, Integer> goTermRank = new HashMap<TermID, Integer>();
 		for (i = 0; i < propArray.length; i++)
-			goTermRank.put(propArray[i].goTerm, i);
+			goTermRank.put(propArray[i].term, i);
 
 		writeDOT(graph, file, rootTerm, terms, new AbstractDotAttributesProvider()
 		{
@@ -215,7 +215,7 @@ public class EnrichedGOTermsResult extends AbstractGOTermsResult
 					 * having significant nodes with too less saturation (at
 					 * least 0.2)
 					 */
-					int rank = goTermRank.get(prop.goTerm);
+					int rank = goTermRank.get(prop.term);
 					assert (rank < significants_count);
 					saturation = 1.0f - (((float) rank + 1) / significants_count) * 0.8f;
 
@@ -223,7 +223,7 @@ public class EnrichedGOTermsResult extends AbstractGOTermsResult
 					brightness = 1.0f;
 
 					/* Hue depends on namespace */
-					switch (Namespace.getNamespaceEnum(prop.goTerm.getNamespace()))
+					switch (Namespace.getNamespaceEnum(go.getTerm(prop.term).getNamespace()))
 					{
 						case BIOLOGICAL_PROCESS: hue = 120.f / 360; break;
 						case MOLECULAR_FUNCTION: hue = 60.f / 360; break;
@@ -258,7 +258,7 @@ public class EnrichedGOTermsResult extends AbstractGOTermsResult
 		for(AbstractGOTermProperties props : this)
 		{
 			if (props.isSignificant(thresh))
-				nodes.add(props.goTerm.getID());
+				nodes.add(props.term);
 		}
 
 		writeDOT(graph,file,thresh,counts,rootTerm,nodes);

@@ -85,13 +85,13 @@ public class EnrichedGOTermsResultLatexWriter
 
 			for (AbstractGOTermProperties props : sortedProps)
 			{
-				if (!terms.contains(props.goTerm.getID()))
+				if (!terms.contains(props.term))
 					continue;
 
-				out.print (props.goTerm.getIDAsString());
+				out.print (props.term.toString());
 				out.print (" & ");
 
-				String name = props.goTerm.getName().toString();
+				String name = result.getGO().getTerm(props.term).getName().toString();
 				name = name.replaceAll("_", " ");
 				out.print(name);
 				out.print(" & $");

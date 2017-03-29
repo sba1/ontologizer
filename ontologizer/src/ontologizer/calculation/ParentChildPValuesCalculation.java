@@ -80,7 +80,7 @@ abstract class ParentChildPValuesCalculation extends AbstractPValueCalculation
 
 		// this is what we give back
 		ParentChildGOTermProperties prop = new ParentChildGOTermProperties();
-		prop.goTerm = graph.getTerm(termId);
+		prop.term = termId;
 		prop.annotatedPopulationGenes = popTermCount;
 		prop.annotatedStudyGenes = studyTermCount;
 
@@ -93,9 +93,7 @@ abstract class ParentChildPValuesCalculation extends AbstractPValueCalculation
 			prop.p_min = 1.0;
 		} else
 		{
-			Term term = prop.goTerm;
-
-			Counts counts = getCounts(studyIds, term);
+			Counts counts = getCounts(studyIds, graph.getTerm(termId));
 
 			int studyFamilyCount = counts.studyFamilyCount;
 			int popFamilyCount = counts.popFamilyCount;

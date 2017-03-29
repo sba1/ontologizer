@@ -44,7 +44,7 @@ public class TermForTermPValueCalculation extends AbstractPValueCalculation
 			int goidAnnotatedStudyGeneCount = Util.commonInts(studyIds, term2Items[i]);
 
 			TermForTermGOTermProperties myP = new TermForTermGOTermProperties();
-			myP.goTerm = graph.getTerm(term);
+			myP.term = term;
 			myP.annotatedStudyGenes = goidAnnotatedStudyGeneCount;
 			myP.annotatedPopulationGenes = goidAnnotatedPopGeneCount;
 

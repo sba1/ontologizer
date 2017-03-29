@@ -103,7 +103,7 @@ public class TopCalculation extends AbstractHypergeometricCalculation
 				}
 
 				TopGOTermProperties myP = new TopGOTermProperties();
-				myP.goTerm = graph.getTerm(term);
+				myP.term = term;
 				myP.annotatedStudyGenes = studyAnnotatedGenes.totalAnnotatedCount();
 				myP.annotatedPopulationGenes = populationTermEnumerator.getAnnotatedGenes(term).totalAnnotatedCount();
 

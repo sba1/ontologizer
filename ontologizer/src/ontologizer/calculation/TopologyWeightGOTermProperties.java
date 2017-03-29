@@ -34,7 +34,7 @@ public class TopologyWeightGOTermProperties extends AbstractGOTermProperties
 	{
 		switch (propNumber)
 		{
-			case	0: return goTerm.getIDAsString();
+			case	0: return term.toString();
 			case	1: return null; /* population gene count */
 			case	2: return Integer.toString(annotatedPopulationGenes);
 			case	3: return null; /* study gene count */

@@ -84,11 +84,11 @@ public abstract class AbstractResultComposite extends Composite
 
 		public int compare(AbstractGOTermProperties o1, AbstractGOTermProperties o2)
 		{
-			return (o1.goTerm.getID().id - o2.goTerm.getID().id)*direction;
+			return (o1.term.id - o2.term.id)*direction;
 		}
 	};
 
-	protected static class GONameComparator implements Comparator<AbstractGOTermProperties>
+	protected class GONameComparator implements Comparator<AbstractGOTermProperties>
 	{
 		private int direction;
 
@@ -99,8 +99,8 @@ public abstract class AbstractResultComposite extends Composite
 
 		public int compare(AbstractGOTermProperties o1, AbstractGOTermProperties o2)
 		{
-			String o1Name = o1.goTerm.getName().toString();
-			String o2Name = o2.goTerm.getName().toString();
+			String o1Name = go.getTerm(o1.term).getName().toString();
+			String o2Name = go.getTerm(o2.term).getName().toString();
 			return o1Name.compareToIgnoreCase(o2Name)*direction;
 		}
 	};
@@ -117,8 +117,8 @@ public abstract class AbstractResultComposite extends Composite
 		{
 			public int compare(AbstractGOTermProperties o1,	AbstractGOTermProperties o2)
 			{
-				boolean c1 = checkedTerms.contains(o1.goTerm.getID());
-				boolean c2 = checkedTerms.contains(o2.goTerm.getID());
+				boolean c1 = checkedTerms.contains(o1.term);
+				boolean c2 = checkedTerms.contains(o2.term);
 
 				if (c1 == c2) return 0;
 				if (c1) return -1 * direction;
@@ -151,7 +151,7 @@ public abstract class AbstractResultComposite extends Composite
 		/* For the suggestion list */
 		Term [] terms = new Term[props.length];
 		for (int i=0;i<terms.length;i++)
-			terms[i] = props[i].goTerm;
+			terms[i] = go.getTerm(props[i].term);
 		subtermFilterComposite.setSupportedTerms(terms);
 
 	}
@@ -198,11 +198,11 @@ public abstract class AbstractResultComposite extends Composite
 	 * @param term
 	 * @return
 	 */
-	protected boolean shouldTermDisplayed(Term term)
+	protected boolean shouldTermDisplayed(TermID termId)
 	{
-		if (emanatingTerm != null && !emanatingTerm.equals(term))
+		if (emanatingTerm != null && !emanatingTerm.getID().equals(termId))
 		{
-			if (!(go.existsPath(emanatingTerm.getID(), term.getID())))
+			if (!(go.existsPath(emanatingTerm.getID(), termId)))
 				return false;
 		}
 		return true;

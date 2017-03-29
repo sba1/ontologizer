@@ -114,10 +114,10 @@ public class Randomize {
 						{
 							Bayes2GOGOTermProperties b2gP = (Bayes2GOGOTermProperties)p;
 
-							out.print(p.goTerm.getID().id + "\t");
+							out.print(p.term.id + "\t");
 							out.print(b2gP.marg + "\t");
 							out.print(index + "\t");
-							out.println("\"" + p.goTerm.getName() + "\"");
+							out.println("\"" + graph.getTerm(p.term) + "\"");
 						}
 					}
 				}

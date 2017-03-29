@@ -354,7 +354,7 @@ public class ProbabilisticCalculation implements ICalculation
 
 		for (AbstractGOTermProperties prop : results)
 		{
-			if (!data.activeTerms.contains(prop.goTerm.getID()))
+			if (!data.activeTerms.contains(prop.term))
 			{
 				prop.p = prop.p_adjusted = 1;
 				prop.ignoreAtMTC = true;

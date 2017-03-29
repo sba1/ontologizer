@@ -802,13 +802,13 @@ public class Benchmark
 
 							for (AbstractGOTermProperties p : result)
 							{
-								Double [] pVals = terms2PVal.get(p.goTerm.getID());
+								Double [] pVals = terms2PVal.get(p.term);
 								if (pVals == null)
 								{
 									pVals = new Double[calcMethods.size()];
 									for (int i=0;i<pVals.length;i++)
 										pVals[i] = 1.0;
-									terms2PVal.put(p.goTerm.getID(), pVals);
+									terms2PVal.put(p.term, pVals);
 								}
 								pVals[mPos] = p.p_adjusted;
 							}
