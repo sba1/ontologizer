@@ -15,18 +15,28 @@ Installation under Debian
 -------------------------
 
 Users that run Debian or a Debian-based distribution are recommended to install the command-line version of Ontologizer
-from Ontologizer's Debian repository. To do so, enter:
+from Ontologizer's Debian repository hosted at Bintray. To do so, first import Bintray's public key:
 
 ```
  $ su
- $ echo deb [arch=all] https://sba1.github.io/ontologizer-deb/ unstable main >/etc/apt/sources.list.d/ontologizer.list
+ $ apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 379CE192D401AB61
+```
+
+Then add the Ontologizer repository to your ```sources.list``` file and update the package database like this:
+
+```
+ $ echo deb [arch=all] https://dl.bintray.com/ontologizer/deb unstable main >>/etc/apt/sources.list.d/ontologizer.list
  $ apt-get update
+```
+
+You are now ready to install Ontologizer:
+```
  $ apt-get install ontologizer-cli
  $ exit
 ```
 
-Note that the Debian packages offered in this repository are currently not signed. You may need to install the Debian package `apt-transport-https`
-prior these steps in order to allow downloading packages via the `https` protocol.
+You may need to install the Debian package `apt-transport-https` prior these steps in order to allow downloading packages
+via the `https` protocol.
 
 
 Help
