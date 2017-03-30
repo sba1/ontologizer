@@ -15,7 +15,12 @@ from subprocess import check_output
 
 all_debs = sorted(glob.glob("*.deb"))
 user = os.environ.get('BINTRAY_USER')
+if user is None:
+	sys.exit('Please specifiy the BINTRAY_USER env variable')
+
 key = os.environ.get('BINTRAY_API_KEY')
+if key is None:
+	sys.exit('Please specify the BINTRAY_API_KEY env variable')
 
 for deb in all_debs:
 	# Check whether this deb should be released after all
