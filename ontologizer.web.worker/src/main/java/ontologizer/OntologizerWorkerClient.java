@@ -180,8 +180,8 @@ public class OntologizerWorkerClient
 			ResultEntry re = ResultEntry.createResultEntry();
 			AbstractGOTermProperties prop = props[gm.getRank()];
 			/* FIXME: Avoid te useless conversions */
-			re.setName(prop.goTerm.getName().toString());
-			re.setID(prop.goTerm.getIDAsString());
+			re.setName(ontology.getTerm(prop.term).getName().toString());
+			re.setID(prop.term.toString());
 			re.setAdjP(prop.p_adjusted);
 			return re;
 		});
