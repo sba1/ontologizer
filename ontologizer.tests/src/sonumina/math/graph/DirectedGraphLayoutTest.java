@@ -60,7 +60,7 @@ public class DirectedGraphLayoutTest
 
 	public void testLayout2()
 	{
-		DirectedGraph<java.lang.Integer> g = new DirectedGraph<java.lang.Integer>();
+		DirectedGraph<Integer> g = new DirectedGraph<Integer>();
 		g.addVertex(0);
 		g.addVertex(10);
 		g.addVertex(232);
@@ -69,13 +69,13 @@ public class DirectedGraphLayoutTest
 		g.addVertex(681);
 		g.addVertex(1540);
 		g.addVertex(2667);
-		g.addEdge(new Edge(0, 1540));
-		g.addEdge(new Edge(10, 232));
-		g.addEdge(new Edge(1540, 311));
-		g.addEdge(new Edge(232, 2667));
-		g.addEdge(new Edge(443, 2667));
-		g.addEdge(new Edge(311, 443));
-		g.addEdge(new Edge(2667, 681));
+		g.addEdge(new Edge<Integer>(0, 1540));
+		g.addEdge(new Edge<Integer>(10, 232));
+		g.addEdge(new Edge<Integer>(1540, 311));
+		g.addEdge(new Edge<Integer>(232, 2667));
+		g.addEdge(new Edge<Integer>(443, 2667));
+		g.addEdge(new Edge<Integer>(311, 443));
+		g.addEdge(new Edge<Integer>(2667, 681));
 
 		DirectedGraphLayout.layout(g,new DirectedGraphLayout.IGetDimension<Integer>()
 				{
