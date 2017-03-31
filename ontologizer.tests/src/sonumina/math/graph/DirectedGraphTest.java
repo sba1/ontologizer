@@ -308,15 +308,12 @@ public class DirectedGraphTest
 		final INeighbourGrabber<TestData> childGrabber = getChildNodeNeighbourGrabber(graph);
 		final HashSet<TestData> visited = new HashSet<TestData>();
 		final IVisitor<TestData> visitor = new IVisitor<TestData>() {
-			private TestData prev;
-
 			@Override
 			public boolean visited(TestData vertex)
 			{
 				Assert.assertFalse(visited.contains(vertex));
 
 				visited.add(vertex);
-				prev = vertex;
 				return true;
 			}
 		};
