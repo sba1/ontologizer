@@ -22,21 +22,6 @@ import sonumina.math.graph.AbstractGraph.INeighbourGrabber;
 import sonumina.math.graph.AbstractGraph.IVisitor;
 import sonumina.math.graph.DirectedGraph.IDistanceVisitor;
 
-class TestData
-{
-	public String id;
-
-	public TestData(String id)
-	{
-		this.id = id;
-	}
-
-	@Override
-	public String toString() {
-		return id;
-	}
-};
-
 public class DirectedGraphTest
 {
 	@Test
