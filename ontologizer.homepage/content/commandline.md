@@ -135,18 +135,10 @@ $ java -jar Ontologizer.jar -a gene_association.sgd -g gene_ontology.obo -s stud
 The corresponding files must be in the current directory (or their full path must be indicated). To create a PNG image with the result, enter
 
 ```
-dot -Tpng view-4hourSMinduced-Parent-Child-Westfall-Young-Single-Step.dot -oExample.png
+$ dot -Tpng view-4hourSMinduced-Parent-Child-Westfall-Young-Single-Step.dot -oExample.png
 ```
 
 The corresponding graphic should look something like this:
 ![Dot Example](/images/Example.png)
 
-## Obtaining Graphviz
-
-Graphviz is a Open Source project which provides tools for layouting and depicting graphs. Hereby, graph references to mathematical entities which consists of nodes and edges.
-
-A installed Graphviz system is a requirement for Ontologizer's facility to visualize the results of an enrichment analysis. More precisely, the tool named dot is invoked which performs the layouting step of the graph.
-
-Windows users can obtain the installation package of Graphviz following the Download link of www.graphviz.org. On this site, you also can find the latest source packages which can be used, for instance by Linux, users to compile the package. Linux Distributions such as Debian provide binary packages for Graphviz as well. This allows a straithforward installation of Graphviz.
-
-Note that in general, the standard installtion (of the Windows and Linux installation) is perfectly suited for Ontologizer. If however, for any reason, the dot exectutable is not in the command path, you have to tell Ontologizer explicitly where this command can be found by entering the full path within the Preferences window, which can be obtained via the Window > Preferences.... menu entry.
+This requires that you have Graphviz installed.
