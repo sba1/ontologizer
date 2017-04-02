@@ -19,7 +19,7 @@ import ontologizer.types.ByteString;
 public class TermContainer extends TermMap implements Iterable<Term>
 {
 	/** To allow easy iteration over all GO terms */
-	private LinkedList<Term> termList;
+	private List<Term> termList;
 
 	/** Format version of the gene_ontology.obo file */
 	private ByteString formatVersion;
@@ -34,8 +34,13 @@ public class TermContainer extends TermMap implements Iterable<Term>
 		formatVersion = format;
 		date = datum;
 
+		int initialCapacity = 100;
+		if (terms instanceof Collection)
+		{
+			initialCapacity = ((Collection<Term>)terms).size();
+		}
 		/* Build our data structures linked list */
-		termList = new LinkedList<Term>();
+		termList = new ArrayList<Term>(initialCapacity);
 		for (Term entry : terms)
 			termList.add(entry);
 	}
