@@ -33,12 +33,24 @@ public final class IntMap<T>
 		}
 	}
 
+	/**
+	 * Get the object with index i.
+	 *
+	 * @param i
+	 * @return the object with index i.
+	 */
 	@SuppressWarnings("unchecked")
 	public T get(int i)
 	{
 		return (T)item[i];
 	}
 
+	/**
+	 * Return the index of the given object.
+	 *
+	 * @param t
+	 * @return the index or -1 if the object is not indexed
+	 */
 	public int getIndex(T t)
 	{
 		return item2Index.getIfAbsent(t, -1);
