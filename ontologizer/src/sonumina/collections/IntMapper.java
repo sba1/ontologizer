@@ -19,13 +19,13 @@ public final class IntMapper<T>
 	/** Map specific terms to the index in the allTerms array */
 	private ObjectIntHashMap<T> item2Index;
 
-	private IntMapper(Collection<T> collection)
+	private IntMapper(Iterable<T> iterable, int size)
 	{
-		item = new Object[collection.size()];
-		item2Index = new ObjectIntHashMap<T>(collection.size());
+		item = new Object[size];
+		item2Index = new ObjectIntHashMap<T>(size);
 
 		int i = 0;
-		for (T t : collection)
+		for (T t : iterable)
 		{
 			item[i] = t;
 			item2Index.put(t, i);
@@ -64,6 +64,18 @@ public final class IntMapper<T>
 	 */
 	public static <T> IntMapper<T> create(Collection<T> collection)
 	{
-		return new IntMapper<T>(collection);
+		return new IntMapper<T>(collection, collection.size());
+	}
+
+	/**
+	 * Create a new intmap from the given iterable with the given amount of elements.
+	 *
+	 * @param iterable
+	 * @param size
+	 * @return the intmap
+	 */
+	public static <T> IntMapper<T> create(Iterable<T> iterable, int size)
+	{
+		return new IntMapper<T>(iterable, size);
 	}
 }
