@@ -11,7 +11,7 @@ import java.util.Collection;
  *
  * @param <T>
  */
-public final class IntMap<T>
+public final class IntMapper<T>
 {
 	/** An array of all items */
 	private Object [] item;
@@ -19,7 +19,7 @@ public final class IntMap<T>
 	/** Map specific terms to the index in the allTerms array */
 	private ObjectIntHashMap<T> item2Index;
 
-	private IntMap(Collection<T> collection)
+	private IntMapper(Collection<T> collection)
 	{
 		item = new Object[collection.size()];
 		item2Index = new ObjectIntHashMap<T>(collection.size());
@@ -62,8 +62,8 @@ public final class IntMap<T>
 	 * @param collection
 	 * @return the intmap
 	 */
-	public static <T> IntMap<T> create(Collection<T> collection)
+	public static <T> IntMapper<T> create(Collection<T> collection)
 	{
-		return new IntMap<T>(collection);
+		return new IntMapper<T>(collection);
 	}
 }
