@@ -57,6 +57,16 @@ public final class IntMapper<T>
 	}
 
 	/**
+	 * Return the size of the mapper, i.e., the number of element it contains.
+	 *
+	 * @return the size.
+	 */
+	public int getSize()
+	{
+		return item.length;
+	}
+
+	/**
 	 * Create a new intmap from the given collection.
 	 *
 	 * @param collection
