@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import sonumina.collections.IntMapper;
 import sonumina.collections.ObjectIntHashMap;
 import sonumina.math.graph.AbstractGraph.IVisitor;
 
@@ -17,11 +18,7 @@ import sonumina.math.graph.AbstractGraph.IVisitor;
  */
 public final class SlimDirectedGraphView<VertexType>
 {
-	/** An array of all terms */
-	private Object [] vertices;
-
-	/** Map specific terms to the index in the allTerms array */
-	private ObjectIntHashMap<VertexType> vertex2Index;
+	private IntMapper<VertexType> mapper;
 
 	/** Contains all the ancestors of the terms (and the terms itself).
 	 * Note that the array of ancestors is sorted. */
@@ -61,7 +58,7 @@ public final class SlimDirectedGraphView<VertexType>
 	 */
 	public int getNumberOfVertices()
 	{
-		return vertices.length;
+		return mapper.getSize();
 	}
 
 	/**
@@ -70,10 +67,9 @@ public final class SlimDirectedGraphView<VertexType>
 	 * @param index
 	 * @return the vertex
 	 */
-	@SuppressWarnings("unchecked")
 	public VertexType getVertex(int index)
 	{
-		return (VertexType)vertices[index];
+		return mapper.get(index);
 	}
 
 	/**
@@ -84,7 +80,7 @@ public final class SlimDirectedGraphView<VertexType>
 	 */
 	public int getVertexIndex(VertexType v)
 	{
-		return vertex2Index.get(v);
+		return mapper.getIndex(v);
 	}
 
 	/**
@@ -101,7 +97,7 @@ public final class SlimDirectedGraphView<VertexType>
 
 		i = 0;
 		for (VertexType v : vertices)
-			vertexArray[i++] = vertex2Index.get(v);
+			vertexArray[i++] = mapper.getIndex(v);
 
 		return vertexArray;
 	}
@@ -153,8 +149,8 @@ public final class SlimDirectedGraphView<VertexType>
 		if ( (! isVertexInGraph(i)) || (! isVertexInGraph(j)))
 			return false;
 
-		int iIdx = vertex2Index.get(i);
-		int jIdx = vertex2Index.get(j);
+		int iIdx = mapper.getIndex(i);
+		int jIdx = mapper.getIndex(j);
 
 		return isAncestor(iIdx, jIdx);
 	}
@@ -173,8 +169,8 @@ public final class SlimDirectedGraphView<VertexType>
 		if ( (! isVertexInGraph(i)) || (! isVertexInGraph(j)))
 			return false;
 
-		int iIdx = vertex2Index.get(i);
-		int jIdx = vertex2Index.get(j);
+		int iIdx = mapper.getIndex(i);
+		int jIdx = mapper.getIndex(j);
 
 		return isDescendant(iIdx, jIdx);
 	}
@@ -239,7 +235,7 @@ public final class SlimDirectedGraphView<VertexType>
 	 * @return True if the vertex can be found. False if not.
 	 */
 	private boolean isVertexInGraph(VertexType vertex){
-		return vertex2Index.containsKey(vertex);
+		return mapper.getIndex(vertex) != -1;
 	}
 
 
@@ -289,33 +285,24 @@ public final class SlimDirectedGraphView<VertexType>
 	private static <V> void init(SlimDirectedGraphView<V> slim, DirectedGraph<V> graph)
 	{
 		int i;
+		IntMapper<V> mapper;
 
 		/* Vertices */
-		slim.vertices = new Object[graph.getNumberOfVertices()];
-		slim.vertex2Index = new ObjectIntHashMap<V>();
-		i = 0;
-
-		for (V t : graph)
-		{
-			slim.vertices[i] = t;
-			slim.vertex2Index.put(t, i);
-			i++;
-		}
+		mapper = slim.mapper = IntMapper.create(graph.getVertices(), graph.getNumberOfVertices());
 
 		/* Term parents stuff */
-		slim.vertexParents = new int[slim.vertices.length][];
-		for (i=0;i<slim.vertices.length;i++)
+		slim.vertexParents = new int[mapper.getSize()][];
+		for (i=0;i<mapper.getSize();i++)
 		{
-			V v 					= (V)slim.vertices[i];
-			Iterator<V> parentIter = graph.getParentNodes(v);
-			slim.vertexParents[i] 				= createIndicesFromIter(slim.vertex2Index,parentIter);
+			V v 				  = mapper.get(i);
+			slim.vertexParents[i] = createIndicesFromIter(mapper,graph.getParentNodes(v));
 		}
 
 		/* Term ancestor stuff */
-		slim.vertexAncestors = new int[slim.vertices.length][];
-		for (i=0;i<slim.vertices.length;i++)
+		slim.vertexAncestors = new int[mapper.getSize()][];
+		for (i=0;i<slim.mapper.getSize();i++)
 		{
-			V v = (V)slim.vertices[i];
+			V v = mapper.get(i);
 			final List<V> ancestors = new ArrayList<V>(20);
 			graph.bfs(v, true, new IVisitor<V>() {
 				public boolean visited(V vertex)
@@ -324,27 +311,25 @@ public final class SlimDirectedGraphView<VertexType>
 					return true;
 				};
 			});
-			slim.vertexAncestors[i] = createIndicesFromIter(slim.vertex2Index,ancestors.iterator());
+			slim.vertexAncestors[i] = createIndicesFromIter(mapper,ancestors.iterator());
 
 			/* Sort them, as we require this for binary search in isAncestor() */
 			Arrays.sort(slim.vertexAncestors[i]);
 		}
 
 		/* Term children stuff */
-		slim.vertexChildren = new int[slim.vertices.length][];
-		for (i=0;i<slim.vertices.length;i++)
+		slim.vertexChildren = new int[mapper.getSize()][];
+		for (i=0;i<mapper.getSize();i++)
 		{
-			V v = (V)slim.vertices[i];
-
-			Iterator<V> childrenIter 	= graph.getChildNodes(v);
-			slim.vertexChildren[i] 		= createIndicesFromIter(slim.vertex2Index,childrenIter);
+			V v = mapper.get(i);
+			slim.vertexChildren[i] = createIndicesFromIter(mapper,graph.getChildNodes(v));
 		}
 
 		/* Term descendants stuff */
-		slim.vertexDescendants = new int[slim.vertices.length][];
-		for (i=0;i<slim.vertices.length;i++)
+		slim.vertexDescendants = new int[mapper.getSize()][];
+		for (i=0;i<mapper.getSize();i++)
 		{
-			V v = (V)slim.vertices[i];
+			V v = mapper.get(i);
 			final List<V> descendants = new ArrayList<V>(20);
 			graph.bfs(v, false, new IVisitor<V>() {
 				public boolean visited(V vertex)
@@ -353,7 +338,7 @@ public final class SlimDirectedGraphView<VertexType>
 					return true;
 				};
 			});
-			slim.vertexDescendants[i] = createIndicesFromIter(slim.vertex2Index, descendants.iterator());
+			slim.vertexDescendants[i] = createIndicesFromIter(mapper, descendants.iterator());
 
 			/* Sort them, as we require this for binary search in isDescendant() */
 			Arrays.sort(slim.vertexDescendants[i]);
@@ -366,14 +351,14 @@ public final class SlimDirectedGraphView<VertexType>
 	 * @param iterator
 	 * @return
 	 */
-	private static <V> int[] createIndicesFromIter(ObjectIntHashMap<V> vertex2Index, Iterator<V> iterator)
+	private static <V> int[] createIndicesFromIter(IntMapper<V> vertex2Index, Iterator<V> iterator)
 	{
 		ArrayList<Integer> indicesList = new ArrayList<Integer>(10);
 
 		while (iterator.hasNext())
 		{
 			V p = iterator.next();
-			int idx = vertex2Index.getIfAbsent(p, -1);
+			int idx = vertex2Index.getIndex(p);
 			if (idx != -1)
 				indicesList.add(idx);
 		}
@@ -414,9 +399,9 @@ public final class SlimDirectedGraphView<VertexType>
 	 * @param map mapping
 	 * @return the slim graph view.
 	 */
-	public static <K,V> SlimDirectedGraphView<V> create(DirectedGraph<K> graph, Map<K,V> map)
+	public static <K,V> SlimDirectedGraphView<V> create(DirectedGraph<K> graph, final Map<K,V> map)
 	{
-		SlimDirectedGraphView<K> kg = create(graph);
+		final SlimDirectedGraphView<K> kg = create(graph);
 		SlimDirectedGraphView<V> vg = new SlimDirectedGraphView<V>();
 
 		vg.vertexAncestors = kg.vertexAncestors;
@@ -424,15 +409,30 @@ public final class SlimDirectedGraphView<VertexType>
 		vg.vertexDescendants = kg.vertexDescendants;
 		vg.vertexParents = kg.vertexParents;
 
-		vg.vertices = new Object[kg.vertices.length];
-		vg.vertex2Index = new ObjectIntHashMap<V>(kg.vertices.length);
-		for (int i = 0; i < vg.vertices.length; i++)
+		vg.mapper = IntMapper.create(new Iterable<V>()
 		{
-			V v = map.map(kg.getVertex(i));
-			vg.vertices[i] = v;
-			vg.vertex2Index.put(v, i);
-		}
+			@Override
+			public Iterator<V> iterator()
+			{
+				return new Iterator<V>()
+				{
+					private int i = 0;
+					private int max = kg.getNumberOfVertices();
 
+					@Override
+					public boolean hasNext()
+					{
+						return i < max;
+					}
+
+					@Override
+					public V next()
+					{
+						return map.map(kg.mapper.get(i++));
+					}
+				};
+			}
+		}, kg.mapper.getSize());
 		return vg;
 	}
 }
