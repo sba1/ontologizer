@@ -430,6 +430,11 @@ public final class SlimDirectedGraphView<VertexType>
 					{
 						return map.map(kg.mapper.get(i++));
 					}
+
+					@Override
+					public void remove()
+					{
+					}
 				};
 			}
 		}, kg.mapper.getSize());
