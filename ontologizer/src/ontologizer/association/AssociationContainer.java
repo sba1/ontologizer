@@ -189,4 +189,21 @@ public class AssociationContainer implements Iterable<Gene2Associations>
 		}
 		return evidenceCounts;
 	}
+
+	/**
+	 * @param i index
+	 * @return the i'th Gene2Association
+	 */
+	public Gene2Associations getItemAssociations(int i)
+	{
+		return associations[i];
+	}
+
+	/**
+	 * @return the associated mapping.
+	 */
+	public AnnotationContext getMapping()
+	{
+		return annotationMapping;
+	}
 }
