@@ -1,6 +1,7 @@
 package ontologizer.association;
 
 import static ontologizer.types.ByteString.EMPTY;
+import static ontologizer.types.ByteString.b;
 import static org.junit.Assert.assertEquals;
 
 import java.io.BufferedWriter;
@@ -16,6 +17,7 @@ import java.util.List;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -37,6 +39,14 @@ public class AssociationParserTest
 	@Test
 	public void testSimple() throws IOException, OBOParserException
 	{
+		int nAnnotatedGenes = 6359;
+		int nAssociations = 87599;
+		int nSynonyms = 9250;
+		int nDBObjects = 6359;
+
+		String[] someGenes = {"SRL1", "DDR2", "UFO1"};
+		int[] someGeneTermCounts = {11, 4, 8};
+
 		OBOParser oboParser = new OBOParser(new OBOParserFileInput(OBO_FILE));
 		oboParser.doParse();
 		AssociationParser ap = new AssociationParser(new OBOParserFileInput(ASSOCIATION_FILE), new TermContainer(oboParser.getTermMap(), EMPTY, EMPTY));
@@ -49,6 +59,16 @@ public class AssociationParserTest
 		/* Note that this excludes NOT annotations */
 		a = ap.getAssociations().get(49088);
 		assertEquals("S000004009",a.getDB_Object().toString());
+
+		AssociationContainer ac = new AssociationContainer(ap.getAssociations(), ap.getAnnotationMapping());
+		Assert.assertEquals("number of parsed associations", nAssociations, ap.getAssociations().size());
+		Assert.assertEquals("number of parsed synonyms", nSynonyms,ap.getAnnotationMapping().getNumberOfSynonyms());
+		Assert.assertEquals("number of parsed DB objects", nDBObjects,ap.getAnnotationMapping().getSymbols().length);
+		Assert.assertEquals("number of annotated genes", nAnnotatedGenes,ac.getAllAnnotatedGenes().size());
+
+		for (int i=0; i<someGenes.length; i++) {
+			Assert.assertEquals(ac.get(b(someGenes[i])).getAssociations().size(), someGeneTermCounts[i]);
+		}
 	}
 
 	@Test
