@@ -12,6 +12,7 @@ import ontologizer.association.AssociationContainer;
 import ontologizer.association.AssociationParser;
 import ontologizer.calculation.AbstractGOTermProperties;
 import ontologizer.calculation.EnrichedGOTermsResult;
+import ontologizer.calculation.EnrichedGOTermsTableWriter;
 import ontologizer.calculation.ICalculation;
 import ontologizer.calculation.ParentChildCalculation;
 import ontologizer.ontology.OBOParser;
@@ -143,7 +144,7 @@ public class SteffenExec
 				// we basically need the first element, but I don't no any other way to get it
 				for (AbstractGOTermProperties prop : result)
 				{
-					out.write(prop.propHeaderToString());
+					out.write(EnrichedGOTermsTableWriter.propHeaderToString(prop));
 					noHeaderYet = false;
 					break;
 				}
@@ -151,7 +152,7 @@ public class SteffenExec
 
 			for (AbstractGOTermProperties prop : result)
 			{
-				out.write(prop.propLineToString(popGeneCount, studGeneCount));
+				out.write(EnrichedGOTermsTableWriter.propLineToString(prop, popGeneCount, studGeneCount));
 			}
 
 		}

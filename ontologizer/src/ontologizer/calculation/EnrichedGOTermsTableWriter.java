@@ -19,6 +19,74 @@ public class EnrichedGOTermsTableWriter
 {
 	private static Logger logger = Logger.getLogger(EnrichedGOTermsResult.class.getName());
 
+
+	/**
+	 * Creates a line giving the data in the object.
+	 *
+	 * Two values which are not Term dependent (but rather StudySet specific)
+	 * and which are needed to make a reasonable line have to be given as
+	 * parameters.
+	 *
+	 * @param populationGeneCount -
+	 *            The number of annotated genes in the PopulationSet
+	 * @param studyGeneCount -
+	 *            The number of annotated genes in the StudySet
+	 *
+	 * @return The line as a String
+	 */
+
+	//TODO: Solve the passing of StudySet related data differently
+
+	public static String propLineToString(AbstractGOTermProperties p, int populationGeneCount, int studyGeneCount)
+	{
+		int i;
+		int columns;
+		StringBuilder locstr = new StringBuilder();
+		columns = p.getNumberOfProperties();
+
+		for (i=0;i<columns;i++)
+		{
+			String prop = p.getProperty(i);
+			if (prop == null)
+			{
+				if (p.isPropertyPopulationGeneCount(i)) prop = Integer.toString(populationGeneCount);
+				else if (p.isPropertyStudyGeneCount(i)) prop = Integer.toString(studyGeneCount);
+			}
+
+			locstr.append(prop);
+			locstr.append("\t");
+		}
+		/* crop last tabulator */
+		locstr.setLength(locstr.length()-1);
+
+		return locstr.toString();
+	}
+
+	/**
+	 * Creates a header to use in connection with propLineToString method
+	 *
+	 * @return The header as a String
+	 */
+	public static String propHeaderToString(AbstractGOTermProperties p)
+	{
+		StringBuilder locstr = new StringBuilder();
+		int i;
+		int headercolumns;
+		headercolumns = p.getNumberOfProperties();
+
+		for (i=0;i<headercolumns;i++)
+		{
+			locstr.append(p.getPropertyName(i));
+			locstr.append("\t");
+		}
+		/* erase last tabulator */
+		locstr.setLength(locstr.length()-1);
+		locstr.append("\n");
+
+		return locstr.toString();
+
+	}
+
 	/**
 	 * Write the results in a tab-separated format to the given output stream.
 	 *
@@ -36,7 +104,7 @@ public class EnrichedGOTermsTableWriter
 
 		/* Write out the table header */
 
-		out.write(first.propHeaderToString());
+		out.write(propHeaderToString(first));
 
 		/* Place the result into an own list, so we can sort the results */
 		ArrayList<AbstractGOTermProperties> propsList = new ArrayList<AbstractGOTermProperties>();
@@ -47,7 +115,7 @@ public class EnrichedGOTermsTableWriter
 		/* Write out table contents */
 		for (AbstractGOTermProperties props : propsList)
 		{
-			out.println(props.propLineToString(result.getPopulationGeneCount(), result.getStudyGeneCount()));
+			out.println(propLineToString(props, result.getPopulationGeneCount(), result.getStudyGeneCount()));
 		}
 		out.flush();
 	}
