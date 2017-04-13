@@ -10,6 +10,9 @@ import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import ontologizer.ontology.Ontology;
+import ontologizer.ontology.Term;
+
 /**
  * Class implementing methods to write enrichment results.
  *
@@ -37,7 +40,7 @@ public class EnrichedGOTermsTableWriter
 
 	//TODO: Solve the passing of StudySet related data differently
 
-	public static String propLineToString(AbstractGOTermProperties p, int populationGeneCount, int studyGeneCount)
+	public static String propLineToString(Ontology o, AbstractGOTermProperties p, int populationGeneCount, int studyGeneCount)
 	{
 		int i;
 		int columns;
@@ -56,8 +59,11 @@ public class EnrichedGOTermsTableWriter
 			locstr.append(prop);
 			locstr.append("\t");
 		}
-		/* crop last tabulator */
-		locstr.setLength(locstr.length()-1);
+		Term t = o.getTerm(p.term);
+		if (t != null)
+			locstr.append(t.getName());
+		else
+			locstr.append("Unknown");
 
 		return locstr.toString();
 	}
@@ -80,7 +86,7 @@ public class EnrichedGOTermsTableWriter
 			locstr.append("\t");
 		}
 		/* erase last tabulator */
-		locstr.setLength(locstr.length()-1);
+		locstr.append("name");
 		locstr.append("\n");
 
 		return locstr.toString();
@@ -115,7 +121,7 @@ public class EnrichedGOTermsTableWriter
 		/* Write out table contents */
 		for (AbstractGOTermProperties props : propsList)
 		{
-			out.println(propLineToString(props, result.getPopulationGeneCount(), result.getStudyGeneCount()));
+			out.println(propLineToString(result.go, props, result.getPopulationGeneCount(), result.getStudyGeneCount()));
 		}
 		out.flush();
 	}
