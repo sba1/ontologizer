@@ -152,7 +152,7 @@ public class SteffenExec
 
 			for (AbstractGOTermProperties prop : result)
 			{
-				out.write(EnrichedGOTermsTableWriter.propLineToString(prop, popGeneCount, studGeneCount));
+				out.write(EnrichedGOTermsTableWriter.propLineToString(result.getGO(), prop, popGeneCount, studGeneCount));
 			}
 
 		}
