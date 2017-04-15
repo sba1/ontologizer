@@ -3,6 +3,7 @@ package ontologizer;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Scanner;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -80,7 +81,22 @@ public class OntologizerCMD
 			if (cmd.hasOption("h"))
 			{
 				HelpFormatter formatter = new HelpFormatter();
-				formatter.printHelp(100, commandName, "Analyze High-Throughput Biological Data Using Gene Ontology", options, "", true);
+				int width;
+				try
+				{
+					Process p = Runtime.getRuntime().exec(new String[] {"sh", "-c", "tput cols 2> /dev/tty" });
+					Scanner scanner = new Scanner(p.getInputStream());
+					width = scanner.nextInt();
+					scanner.close();
+					if (width < 50)
+					{
+						width = 50;
+					}
+				} catch (Exception ex)
+				{
+					width = 100;
+				}
+				formatter.printHelp(width, commandName, "Analyze High-Throughput Biological Data Using Gene Ontology", options, "", true);
 				System.exit(0);
 			}
 
