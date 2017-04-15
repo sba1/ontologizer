@@ -36,8 +36,8 @@ public abstract class AbstractGOTermProperties extends PValue
 
 	/**
 	 * Return the specified property of the term represented
-	 * by the object. If property is not avaiable (e.g.
-	 * eighter it is not stored or argument is invalid) null
+	 * by the object. If property is not available (e.g.
+	 * either it is not stored or argument is invalid) null
 	 * will be returned.
 	 *
 	 * @param propNumber
