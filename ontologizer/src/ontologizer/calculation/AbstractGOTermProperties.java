@@ -22,7 +22,7 @@ public abstract class AbstractGOTermProperties extends PValue
 	 *
 	 * @return the number of properties.
 	 */
-	abstract public int getNumberOfProperties();
+	public abstract int getNumberOfProperties();
 
 	/**
 	 * Return the name of the requested property (starting
@@ -32,7 +32,7 @@ public abstract class AbstractGOTermProperties extends PValue
 	 * @param propNumber
 	 * @return the name.
 	 */
-	abstract public String getPropertyName(int propNumber);
+	public abstract String getPropertyName(int propNumber);
 
 	/**
 	 * Return the specified property of the term represented
@@ -44,7 +44,7 @@ public abstract class AbstractGOTermProperties extends PValue
 	 * @return the property as a String or null, if property
 	 *         is not available.
 	 */
-	abstract public String getProperty(int propNumber);
+	public abstract String getProperty(int propNumber);
 
 	/**
 	 * Sometimes it is convenient to store the population gene count
