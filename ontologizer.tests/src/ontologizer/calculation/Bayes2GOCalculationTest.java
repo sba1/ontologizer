@@ -1,5 +1,7 @@
 package ontologizer.calculation;
 
+import static ontologizer.ontology.TermID.tid;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -54,8 +56,8 @@ public class Bayes2GOCalculationTest
 		InternalOntology internalOntology = new InternalOntology();
 
 		HashMap<TermID,Double> wantedActiveTerms = new HashMap<TermID,Double>(); /* Terms that are active */
-		wantedActiveTerms.put(new TermID("GO:0000010"),0.10);
-		wantedActiveTerms.put(new TermID("GO:0000004"),0.10);
+		wantedActiveTerms.put(tid("GO:0000010"),0.10);
+		wantedActiveTerms.put(tid("GO:0000004"),0.10);
 
 		AssociationContainer assoc = internalOntology.assoc;
 		Ontology ontology = internalOntology.graph;
@@ -78,8 +80,8 @@ public class Bayes2GOCalculationTest
 		InternalOntology internalOntology = new InternalOntology();
 
 		final HashMap<TermID,Double> wantedActiveTerms = new HashMap<TermID,Double>(); /* Terms that are active */
-		wantedActiveTerms.put(new TermID("GO:0000010"),0.10);
-		wantedActiveTerms.put(new TermID("GO:0000004"),0.10);
+		wantedActiveTerms.put(tid("GO:0000010"),0.10);
+		wantedActiveTerms.put(tid("GO:0000004"),0.10);
 
 		AssociationContainer assoc = internalOntology.assoc;
 		Ontology ontology = internalOntology.graph;
@@ -114,7 +116,7 @@ public class Bayes2GOCalculationTest
 		StudySet valuedStudySet = new StudySet();
 		for (String t : terms)
 		{
-			for (ByteString g : populationEnumerator.getAnnotatedGenes(new TermID(t)).totalAnnotated)
+			for (ByteString g : populationEnumerator.getAnnotatedGenes(tid(t)).totalAnnotated)
 			{
 				ValuedItemAttribute via = new ValuedItemAttribute();
 				via.description = "";
