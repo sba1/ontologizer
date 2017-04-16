@@ -266,4 +266,15 @@ public class TermID
 		}
 		return super.equals(obj);
 	}
+
+	/**
+	 * Constructs a new term id.
+	 *
+	 * @param id
+	 * @return the return termid.
+	 */
+	public static TermID tid(String id)
+	{
+		return new TermID(id);
+	}
 }
