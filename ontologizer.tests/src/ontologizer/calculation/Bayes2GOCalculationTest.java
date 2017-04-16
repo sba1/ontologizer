@@ -19,6 +19,7 @@ import ontologizer.association.AssociationContainer;
 import ontologizer.calculation.b2g.B2GParam;
 import ontologizer.calculation.b2g.Bayes2GOCalculation;
 import ontologizer.calculation.b2g.Bayes2GOEnrichedGOTermsResult;
+import ontologizer.calculation.b2g.Bayes2GOGOTermProperties;
 import ontologizer.dotwriter.AbstractDotAttributesProvider;
 import ontologizer.dotwriter.GODOTWriter;
 import ontologizer.enumeration.TermEnumerator;
@@ -51,6 +52,11 @@ class B2GTestParameter
  */
 public class Bayes2GOCalculationTest
 {
+	public static double marg(EnrichedGOTermsResult result, String tid)
+	{
+		return ((Bayes2GOGOTermProperties)result.getGOTermProperties(tid(tid))).marg;
+	}
+
 	@Test
 	public void testBayes2GOSimple()
 	{
@@ -74,6 +80,18 @@ public class Bayes2GOCalculationTest
 
 		EnrichedGOTermsResult result = calc.calculateStudySet(ontology, assoc, scs.pop, scs.study, new None());
 		assertEquals(11, result.getSize());
+		assertEquals(500, result.getPopulationGeneCount());
+		assertEquals(0.5270370540741082,  marg(result, "GO:0000004"), 1e-20);
+		assertEquals(0.5105210210420421,  marg(result, "GO:0000010"), 1e-20);
+		assertEquals(0.5031470062940125,  marg(result, "GO:0000011"), 1e-20);
+		assertEquals(0.5024450048900098,  marg(result, "GO:0000001"), 1e-20);
+		assertEquals(0.498248996497993,   marg(result, "GO:0000008"), 1e-20);
+		assertEquals(0.49514699029398057, marg(result, "GO:0000009"), 1e-20);
+		assertEquals(0.48964097928195854, marg(result, "GO:0000007"), 1e-20);
+		assertEquals(0.47604095208190417, marg(result, "GO:0000006"), 1e-20);
+		assertEquals(0.47122894245788494, marg(result, "GO:0000005"), 1e-20);
+		assertEquals(0.4574169148338297,  marg(result, "GO:0000003"), 1e-20);
+		assertEquals(0.4565269130538261,  marg(result, "GO:0000002"), 1e-20);
 	}
 
 	@Test
