@@ -1,6 +1,7 @@
 package ontologizer.calculation;
 
 import static ontologizer.ontology.TermID.tid;
+import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -71,7 +72,8 @@ public class Bayes2GOCalculationTest
 		calc.setBeta(B2GParam.Type.MCMC);
 		calc.setExpectedNumber(B2GParam.Type.MCMC);
 
-		calc.calculateStudySet(ontology, assoc, scs.pop, scs.study, new None());
+		EnrichedGOTermsResult result = calc.calculateStudySet(ontology, assoc, scs.pop, scs.study, new None());
+		assertEquals(11, result.getSize());
 	}
 
 	@Test
