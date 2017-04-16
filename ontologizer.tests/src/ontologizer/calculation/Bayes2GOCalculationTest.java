@@ -53,7 +53,7 @@ public class Bayes2GOCalculationTest
 	{
 		InternalOntology internalOntology = new InternalOntology();
 
-		final HashMap<TermID,Double> wantedActiveTerms = new HashMap<TermID,Double>(); /* Terms that are active */
+		HashMap<TermID,Double> wantedActiveTerms = new HashMap<TermID,Double>(); /* Terms that are active */
 		wantedActiveTerms.put(new TermID("GO:0000010"),0.10);
 		wantedActiveTerms.put(new TermID("GO:0000004"),0.10);
 
