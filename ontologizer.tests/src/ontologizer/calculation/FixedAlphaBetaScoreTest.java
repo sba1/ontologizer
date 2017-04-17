@@ -1,5 +1,7 @@
 package ontologizer.calculation;
 
+import static ontologizer.ontology.TermID.tid;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -34,8 +36,8 @@ public class FixedAlphaBetaScoreTest
 		InternalOntology internalOntology = new InternalOntology();
 
 		final HashMap<TermID,Double> wantedActiveTerms = new HashMap<TermID,Double>(); /* Terms that are active */
-		wantedActiveTerms.put(new TermID("GO:0000010"),0.00);
-		wantedActiveTerms.put(new TermID("GO:0000004"),0.00);
+		wantedActiveTerms.put(tid("GO:0000010"),0.00);
+		wantedActiveTerms.put(tid("GO:0000004"),0.00);
 
 		AssociationContainer assoc = internalOntology.assoc;
 		Ontology ontology = internalOntology.graph;
@@ -72,8 +74,8 @@ public class FixedAlphaBetaScoreTest
 		InternalOntology internalOntology = new InternalOntology();
 
 		final HashMap<TermID,Double> wantedActiveTerms = new HashMap<TermID,Double>(); /* Terms that are active */
-		wantedActiveTerms.put(new TermID("GO:0000010"),0.00);
-		wantedActiveTerms.put(new TermID("GO:0000004"),0.00);
+		wantedActiveTerms.put(tid("GO:0000010"),0.00);
+		wantedActiveTerms.put(tid("GO:0000004"),0.00);
 
 		AssociationContainer assoc = internalOntology.assoc;
 		Ontology ontology = internalOntology.graph;
