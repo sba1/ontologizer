@@ -38,7 +38,6 @@ abstract public class Bayes2GOScore
 	/** Source of randomness */
 	protected Random rnd;
 
-	protected TermEnumerator populationEnumerator;
 	protected Set<ByteString> population;
 
 	/** Array of terms */
@@ -190,7 +189,6 @@ abstract public class Bayes2GOScore
 			i++;
 		}
 
-		this.populationEnumerator = populationEnumerator;
 	}
 
 	/**
