@@ -147,7 +147,7 @@ public class FixedAlphaBetaScore extends Bayes2GOScore
 
 		/* At this state, all terms are inactive, hence all observed genes are false positive */
 		n10 = observedActiveGenes.size();
-		n00 = population.size() - n10;
+		n00 = geneMapper.getSize() - n10;
 	}
 
 	@Override
