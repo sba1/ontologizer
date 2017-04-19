@@ -374,10 +374,10 @@ abstract public class Bayes2GOScore
 		}
 	}
 
-	public void exchange(TermID t1, TermID t2)
+	public void exchange(int t1, int t2)
 	{
-		switchState(term2TermsIdx.get(t1));
-		switchState(term2TermsIdx.get(t2));
+		switchState(t1);
+		switchState(t2);
 	}
 
 

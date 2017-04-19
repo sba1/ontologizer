@@ -20,8 +20,8 @@ import ontologizer.types.ByteString;
 public class ValuedGOScore extends Bayes2GOScore
 {
 	private int proposalSwitch;
-	private TermID proposalT1;
-	private TermID proposalT2;
+	private int proposalT1;
+	private int proposalT2;
 
 	public ValuedGOScore(Random rnd, List<TermID> termList,
 			TermEnumerator populationEnumerator,
@@ -59,8 +59,8 @@ public class ValuedGOScore extends Bayes2GOScore
 		long oldPossibilities = getNeighborhoodSize();
 
 		proposalSwitch = -1;
-		proposalT1 = null;
-		proposalT2 = null;
+		proposalT1 = -1;
+		proposalT2 = -1;
 
 		long choose = Math.abs(rand) % oldPossibilities;
 
@@ -76,8 +76,8 @@ public class ValuedGOScore extends Bayes2GOScore
 			int activeTermPos = (int)(base / numInactiveTerms);
 			int inactiveTermPos = (int)(base % numInactiveTerms);
 
-			proposalT1 = termsArray[termPartition[activeTermPos + numInactiveTerms]];
-			proposalT2 = termsArray[termPartition[inactiveTermPos]];
+			proposalT1 = termPartition[activeTermPos + numInactiveTerms];
+			proposalT2 = termPartition[inactiveTermPos];
 
 			exchange(proposalT1, proposalT2);
 		}
