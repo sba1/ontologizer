@@ -64,14 +64,14 @@ public class ValuedGOScore extends Bayes2GOScore
 
 		long choose = Math.abs(rand) % oldPossibilities;
 
-		if (choose < termsArray.length)
+		if (choose < numTerms)
 		{
 			/* on/off */
 			proposalSwitch = (int)choose;
 			switchState(proposalSwitch);
 		}	else
 		{
-			long base = choose - termsArray.length;
+			long base = choose - numTerms;
 
 			int activeTermPos = (int)(base / numInactiveTerms);
 			int inactiveTermPos = (int)(base % numInactiveTerms);
@@ -105,6 +105,6 @@ public class ValuedGOScore extends Bayes2GOScore
 	@Override
 	public long getNeighborhoodSize()
 	{
-		return termsArray.length + (termsArray.length - numInactiveTerms) * numInactiveTerms;
+		return numTerms + (numTerms - numInactiveTerms) * numInactiveTerms;
 	}
 }

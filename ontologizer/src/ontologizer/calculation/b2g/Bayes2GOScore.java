@@ -10,7 +10,6 @@ import ontologizer.enumeration.TermEnumerator;
 import ontologizer.ontology.TermID;
 import ontologizer.types.ByteString;
 import sonumina.collections.IntMapper;
-import sonumina.collections.ObjectIntHashMap;
 
 /**
  * The base class of bayes2go Score.
@@ -28,12 +27,7 @@ abstract public class Bayes2GOScore extends Bayes2GOScoreBase
 	protected double [] observedValueOfGene;
 
 	protected IntMapper<ByteString> geneMapper;
-
-	/** Array of terms */
-	protected TermID [] termsArray;
-
-	/** Maps the term to the index in termsArray */
-	protected ObjectIntHashMap<TermID> term2TermsIdx;
+	protected IntMapper<TermID> termMapper;
 
 	protected int numRecords;
 	protected int [] termActivationCounts;
@@ -73,13 +67,14 @@ abstract public class Bayes2GOScore extends Bayes2GOScoreBase
 		boolean smallerIsBetter();
 	}
 
-	public static GeneIDs[] makeTermLinks(List<TermID> termList, TermEnumerator populationEnumerator, IntMapper<ByteString> geneMapper)
+	public static GeneIDs[] makeTermLinks(TermEnumerator populationEnumerator, IntMapper<TermID> termMapper, IntMapper<ByteString> geneMapper)
 	{
-		GeneIDs[] termLinks = new GeneIDs[termList.size()];
+		GeneIDs[] termLinks = new GeneIDs[termMapper.getSize()];
 
-		int i = 0;
-		for (TermID tid : termList)
+		for (int i = 0; i < termMapper.getSize(); i++)
 		{
+			TermID tid = termMapper.get(i);
+
 			/* Fill in the links */
 			termLinks[i] = new GeneIDs(populationEnumerator.getAnnotatedGenes(tid).totalAnnotated.size());
 			int j=0;
@@ -88,18 +83,17 @@ abstract public class Bayes2GOScore extends Bayes2GOScoreBase
 				termLinks[i].gid[j] = geneMapper.getIndex(gene);
 				j++;
 			}
-
-			i++;
 		}
 
 		return termLinks;
 	}
 
-	private Bayes2GOScore(Random rnd, List<TermID> termList, TermEnumerator populationEnumerator, IGeneValueProvider geneValueProvider, IntMapper<ByteString> geneMapper)
+	private Bayes2GOScore(Random rnd, TermEnumerator populationEnumerator, IGeneValueProvider geneValueProvider, IntMapper<TermID> termMapper, IntMapper<ByteString> geneMapper)
 	{
-		super(makeTermLinks(termList, populationEnumerator, geneMapper), geneMapper.getSize());
+		super(makeTermLinks(populationEnumerator, termMapper, geneMapper), geneMapper.getSize());
 
 		this.rnd = rnd;
+		this.termMapper = termMapper;
 		this.geneMapper = geneMapper;
 
 		double threshold = geneValueProvider.getThreshold();
@@ -115,18 +109,7 @@ abstract public class Bayes2GOScore extends Bayes2GOScoreBase
 			else observedGenes[i] = observedValueOfGene[i] >= threshold;
 		}
 
-		/* Initialize basics of terms */
-		termsArray = new TermID[termList.size()];
-		termActivationCounts = new int[termList.size()];
-
-		int i = 0;
-		term2TermsIdx = new ObjectIntHashMap<TermID>(termList.size() * 3 / 2);
-		for (TermID tid : termList)
-		{
-			term2TermsIdx.put(tid,i);
-			termsArray[i]=tid;
-			i++;
-		}
+		termActivationCounts = new int[numTerms];
 	}
 
 	/**
@@ -139,7 +122,7 @@ abstract public class Bayes2GOScore extends Bayes2GOScoreBase
 	 */
 	public Bayes2GOScore(Random rnd, List<TermID> termList, TermEnumerator populationEnumerator, IGeneValueProvider geneValueProvider)
 	{
-		this(rnd, termList, populationEnumerator, geneValueProvider, IntMapper.create(populationEnumerator.getGenes()));
+		this(rnd, populationEnumerator, geneValueProvider, IntMapper.create(termList), IntMapper.create(populationEnumerator.getGenes()));
 	}
 
 	/**
@@ -197,7 +180,7 @@ abstract public class Bayes2GOScore extends Bayes2GOScoreBase
 
 	public void setExpectedNumberOfTerms(double terms)
 	{
-		p = (double)terms / termsArray.length;
+		p = (double)terms / numTerms;
 	}
 
 	/**
@@ -209,8 +192,8 @@ abstract public class Bayes2GOScore extends Bayes2GOScoreBase
 	 */
 	public double score(Collection<TermID> activeTerms)
 	{
-		int [] oldTerms = new int[termsArray.length - numInactiveTerms];
-		for (int i=numInactiveTerms,j=0;i<termsArray.length;i++,j++)
+		int [] oldTerms = new int[numTerms - numInactiveTerms];
+		for (int i=numInactiveTerms,j=0;i<numTerms;i++,j++)
 			oldTerms[j] = termPartition[i];
 
 		/* Deactivate old terms */
@@ -220,8 +203,8 @@ abstract public class Bayes2GOScore extends Bayes2GOScoreBase
 		/* Enable new terms */
 		for (TermID tid : activeTerms)
 		{
-			int idx = term2TermsIdx.getIfAbsent(tid, Integer.MAX_VALUE);
-			if (idx != Integer.MAX_VALUE)
+			int idx = termMapper.getIndex(tid);
+			if (idx != -1)
 				switchState(idx);
 		}
 
@@ -230,8 +213,8 @@ abstract public class Bayes2GOScore extends Bayes2GOScoreBase
 		/* Disable new terms */
 		for (TermID tid : activeTerms)
 		{
-			int idx = term2TermsIdx.getIfAbsent(tid, Integer.MAX_VALUE);
-			if (idx != Integer.MAX_VALUE)
+			int idx = termMapper.getIndex(tid);
+			if (idx != -1)
 				switchState(idx);
 		}
 
@@ -268,7 +251,7 @@ abstract public class Bayes2GOScore extends Bayes2GOScoreBase
 	 */
 	public void record()
 	{
-		for (int i=numInactiveTerms;i<termsArray.length;i++)
+		for (int i = numInactiveTerms; i < numTerms; i++)
 			termActivationCounts[termPartition[i]]++;
 
 		numRecords++;
@@ -276,9 +259,9 @@ abstract public class Bayes2GOScore extends Bayes2GOScoreBase
 
 	public ArrayList<TermID> getActiveTerms()
 	{
-		ArrayList<TermID> list = new ArrayList<TermID>(termsArray.length - numInactiveTerms);
-		for (int i=numInactiveTerms;i<termsArray.length;i++)
-			list.add(termsArray[termPartition[i]]);
+		ArrayList<TermID> list = new ArrayList<TermID>(numTerms - numInactiveTerms);
+		for (int i = numInactiveTerms; i < numTerms; i++)
+			list.add(termMapper.get(termPartition[i]));
 		return list;
 	}
 }

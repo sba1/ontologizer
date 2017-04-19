@@ -209,14 +209,14 @@ public class FixedAlphaBetaScore extends Bayes2GOScore
 		{
 			long choose = Math.abs(rand) % oldPossibilities;
 
-			if (choose < termsArray.length)
+			if (choose < numTerms)
 			{
 				/* on/off */
 				proposalSwitch = (int)choose;
 				switchState(proposalSwitch);
 			}	else
 			{
-				long base = choose - termsArray.length;
+				long base = choose - numTerms;
 
 				int activeTermPos = (int)(base / numInactiveTerms);
 				int inactiveTermPos = (int)(base % numInactiveTerms);
@@ -292,7 +292,7 @@ public class FixedAlphaBetaScore extends Bayes2GOScore
 	{
 		double p;
 		if (Double.isNaN(this.p))
-			p = (double)EXPECTED_NUMBER_OF_TERMS[expIdx] / termsArray.length;
+			p = (double)EXPECTED_NUMBER_OF_TERMS[expIdx] / numTerms;
 		else p = this.p;
 
 		return p;
@@ -340,7 +340,7 @@ public class FixedAlphaBetaScore extends Bayes2GOScore
 			newScore2 = Math.log(alpha) * n10 + Math.log(1-alpha)*n00 + Math.log(1-beta)*n11 + Math.log(beta)*n01;
 
 			if (usePrior)
-				newScore2 += Math.log(p)*(termsArray.length - numInactiveTerms) + Math.log(1-p)*numInactiveTerms;
+				newScore2 += Math.log(p)*(numTerms - numInactiveTerms) + Math.log(1-p)*numInactiveTerms;
 		} else
 		{
 			/* Prior */
@@ -351,7 +351,7 @@ public class FixedAlphaBetaScore extends Bayes2GOScore
 			int p1 = 1; /* Pseudocounts, on */
 			int p2 = 1; /* Pseudocounts, off */
 
-			int m1 = termsArray.length - numInactiveTerms;
+			int m1 = numTerms - numInactiveTerms;
 			int m0 = numInactiveTerms;
 
 			double s1 = logBeta(alpha1 + n10, alpha2 + n00);
@@ -376,7 +376,7 @@ public class FixedAlphaBetaScore extends Bayes2GOScore
 
 	public long getNeighborhoodSize()
 	{
-		long size = termsArray.length + (termsArray.length - numInactiveTerms) * numInactiveTerms;
+		long size = numTerms + (numTerms - numInactiveTerms) * numInactiveTerms;
 		return size;
 	}
 
@@ -393,7 +393,7 @@ public class FixedAlphaBetaScore extends Bayes2GOScore
 		totalAlpha[alphaIdx]++;
 		totalBeta[betaIdx]++;
 		totalExp[expIdx]++;
-		totalT += (termsArray.length - numInactiveTerms);
+		totalT += (numTerms - numInactiveTerms);
 	}
 
 	public double getAvgN00()

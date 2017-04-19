@@ -34,6 +34,8 @@ public abstract class Bayes2GOScoreBase
 	 */
 	protected int numInactiveTerms;
 
+	protected final int numTerms;
+
 	/**
 	 * Contains the position/index of the terms in the partition
 	 * (i.e., termPartition[positionOfTermInPartition[i]] = i must hold)
@@ -50,6 +52,7 @@ public abstract class Bayes2GOScoreBase
 	{
 		this.termLinks = termLinks;
 
+		numTerms = termLinks.length;
 		numInactiveTerms = termLinks.length;
 		isActive = new boolean[termLinks.length];
 		termPartition = new int[termLinks.length];
