@@ -67,20 +67,20 @@ abstract public class Bayes2GOScore extends Bayes2GOScoreBase
 		boolean smallerIsBetter();
 	}
 
-	public static GeneIDs[] makeTermLinks(TermEnumerator populationEnumerator, IntMapper<TermID> termMapper, IntMapper<ByteString> geneMapper)
+	public static int [][] makeTermLinks(TermEnumerator populationEnumerator, IntMapper<TermID> termMapper, IntMapper<ByteString> geneMapper)
 	{
-		GeneIDs[] termLinks = new GeneIDs[termMapper.getSize()];
+		int [][] termLinks = new int[termMapper.getSize()][];
 
 		for (int i = 0; i < termMapper.getSize(); i++)
 		{
 			TermID tid = termMapper.get(i);
 
 			/* Fill in the links */
-			termLinks[i] = new GeneIDs(populationEnumerator.getAnnotatedGenes(tid).totalAnnotated.size());
+			termLinks[i] = new int[populationEnumerator.getAnnotatedGenes(tid).totalAnnotated.size()];
 			int j=0;
 			for (ByteString gene : populationEnumerator.getAnnotatedGenes(tid).totalAnnotated)
 			{
-				termLinks[i].gid[j] = geneMapper.getIndex(gene);
+				termLinks[i][j] = geneMapper.getIndex(gene);
 				j++;
 			}
 		}

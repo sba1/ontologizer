@@ -1,27 +1,12 @@
 package ontologizer.calculation.b2g;
 
-/**
- * A basic container representing a set of genes
- *
- * @author Sebastian Bauer
- */
-class GeneIDs
-{
-	public int [] gid;
-
-	public GeneIDs(int size)
-	{
-		gid = new int[size];
-	}
-}
-
 public abstract class Bayes2GOScoreBase
 {
 	/** Indicates the activation state of a term */
 	private boolean [] isActive;
 
 	/** Maps a term id to the ids of the genes to that the term is annotated */
-	private GeneIDs [] termLinks;
+	private int [][] termLinks;
 
 	/**
 	 * Contains indices to terms of termsArray.
@@ -48,7 +33,7 @@ public abstract class Bayes2GOScoreBase
 	/** Array that indicate the activation counts of the genes */
 	private int [] activeHiddenGenes;
 
-	public Bayes2GOScoreBase(GeneIDs[] termLinks, int numItems)
+	public Bayes2GOScoreBase(int [][] termLinks, int numItems)
 	{
 		this.termLinks = termLinks;
 
@@ -74,7 +59,7 @@ public abstract class Bayes2GOScoreBase
 	 */
 	public void switchState(int toSwitch)
 	{
-		int [] geneIDs = termLinks[toSwitch].gid;
+		int [] geneIDs = termLinks[toSwitch];
 
 		isActive[toSwitch] = !isActive[toSwitch];
 		if (isActive[toSwitch])
