@@ -17,6 +17,8 @@ import ontologizer.ontology.TermID;
 import ontologizer.set.PopulationSet;
 import ontologizer.set.StudySet;
 import ontologizer.statistics.AbstractTestCorrection;
+import ontologizer.types.ByteString;
+import sonumina.collections.IntMapper;
 
 /**
  * This class implements an model-based analysis. The description of the entire
@@ -340,6 +342,11 @@ public class Bayes2GOCalculation implements ICalculation, IProgressFeedback
 
 		logger.log(Level.INFO, allTerms.size() + " terms and " + populationEnumerator.getGenes().size() + " genes in consideration.");
 
+
+		IntMapper<TermID> termMapper = IntMapper.create(populationEnumerator.getAllAnnotatedTermsAsList());
+		IntMapper<ByteString> geneMapper = IntMapper.create(populationEnumerator.getGenesAsList());
+		int [][] termLinks = Bayes2GOScore.makeTermLinks(populationEnumerator, termMapper, geneMapper);
+
 		for (int i=0;i<maxIter;i++)
 		{
 			Bayes2GOScore bayes2GOScore;
@@ -349,7 +356,7 @@ public class Bayes2GOCalculation implements ICalculation, IProgressFeedback
 
 			if (!valuedCalculation)
 			{
-				fixedAlphaBetaScore = new FixedAlphaBetaScore(rnd, allTerms, populationEnumerator,  studyEnumerator.getGenes());
+				fixedAlphaBetaScore = new FixedAlphaBetaScore(rnd, termLinks, termMapper, geneMapper, studyEnumerator.getGenes());
 				fixedAlphaBetaScore.setIntegrateParams(integrateParams);
 
 				if (doEm)
@@ -387,7 +394,7 @@ public class Bayes2GOCalculation implements ICalculation, IProgressFeedback
 				bayes2GOScore = fixedAlphaBetaScore;
 			} else
 			{
-				valuedScore = new ValuedGOScore(rnd,  allTerms,  populationEnumerator, studySet);
+				valuedScore = new ValuedGOScore(rnd, termLinks, termMapper, geneMapper, studySet);
 				bayes2GOScore = valuedScore;
 			}
 

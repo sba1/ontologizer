@@ -1,13 +1,12 @@
 package ontologizer.calculation.b2g;
 
-import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
 import ontologizer.calculation.util.Gamma;
-import ontologizer.enumeration.TermEnumerator;
 import ontologizer.ontology.TermID;
 import ontologizer.types.ByteString;
+import sonumina.collections.IntMapper;
 
 /**
  * Score of a setting in which alpha and beta are not known.
@@ -138,9 +137,9 @@ public class FixedAlphaBetaScore extends Bayes2GOScore
 		this.integrateParams = integrateParams;
 	}
 
-	public FixedAlphaBetaScore(Random rnd, List<TermID> termList, TermEnumerator populationEnumerator, Set<ByteString> observedActiveGenes)
+	public FixedAlphaBetaScore(Random rnd,  int [][] termLinks, IntMapper<TermID> termMapper, IntMapper<ByteString> geneMapper, Set<ByteString> observedActiveGenes)
 	{
-		super(rnd, termList, populationEnumerator, observedActiveGenes);
+		super(rnd, termLinks, termMapper, geneMapper, observedActiveGenes);
 
 		setMaxAlpha(1.);
 		setMaxBeta(1.);

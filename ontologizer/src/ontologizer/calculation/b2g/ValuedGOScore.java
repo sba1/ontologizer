@@ -1,13 +1,12 @@
 package ontologizer.calculation.b2g;
 
-import java.util.List;
 import java.util.Random;
 
-import ontologizer.enumeration.TermEnumerator;
 import ontologizer.ontology.TermID;
 import ontologizer.parser.ValuedItemAttribute;
 import ontologizer.set.StudySet;
 import ontologizer.types.ByteString;
+import sonumina.collections.IntMapper;
 
 /**
  * This implements a score that takes values that are associated the genes into account.
@@ -23,11 +22,10 @@ public class ValuedGOScore extends Bayes2GOScore
 	private int proposalT1;
 	private int proposalT2;
 
-	public ValuedGOScore(Random rnd, List<TermID> termList,
-			TermEnumerator populationEnumerator,
+	public ValuedGOScore(Random rnd, int [][] termLinks, IntMapper<TermID> termMapper, IntMapper<ByteString> geneMapper,
 			final StudySet valuedStudySet)
 	{
-		super(rnd, termList, populationEnumerator, new Bayes2GOScore.IGeneValueProvider() {
+		super(rnd, termLinks, new Bayes2GOScore.IGeneValueProvider() {
 			@Override
 			public boolean smallerIsBetter() {
 				return true;
@@ -42,7 +40,7 @@ public class ValuedGOScore extends Bayes2GOScore
 			public double getGeneValue(ByteString gene) {
 				return ((ValuedItemAttribute)valuedStudySet.getItemAttribute(gene)).getValue();
 			}
-		});
+		}, termMapper, geneMapper);
 	}
 
 	double score;

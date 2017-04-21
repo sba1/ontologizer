@@ -12,12 +12,15 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import ontologizer.association.AssociationContainer;
+import ontologizer.calculation.b2g.Bayes2GOScore;
 import ontologizer.calculation.b2g.FixedAlphaBetaScore;
 import ontologizer.enumeration.TermEnumerator;
 import ontologizer.internal.InternalOntology;
 import ontologizer.ontology.Ontology;
 import ontologizer.ontology.Term;
 import ontologizer.ontology.TermID;
+import ontologizer.types.ByteString;
+import sonumina.collections.IntMapper;
 import sonumina.math.graph.SlimDirectedGraphView;
 
 public class FixedAlphaBetaScoreTest
@@ -44,7 +47,10 @@ public class FixedAlphaBetaScoreTest
 
 		SingleCalculationSetting sss = SingleCalculationSetting.create(new Random(1), wantedActiveTerms, 0.0, ontology, assoc);
 		TermEnumerator popEnumerator = sss.pop.enumerateTerms(ontology, assoc);
-		FixedAlphaBetaScore fabs = new FixedAlphaBetaScore(new Random(1), popEnumerator.getAllAnnotatedTermsAsList(), popEnumerator, sss.study.getAllGeneNames());
+		IntMapper<TermID> termMapper = IntMapper.create(popEnumerator.getAllAnnotatedTermsAsList());
+		IntMapper<ByteString> geneMapper = IntMapper.create(sss.study.getAllGeneNames());
+		int [][] termLinks = Bayes2GOScore.makeTermLinks(popEnumerator, termMapper, geneMapper);
+		FixedAlphaBetaScore fabs = new FixedAlphaBetaScore(new Random(1), termLinks, termMapper, geneMapper, sss.study.getAllGeneNames());
 		fabs.setAlpha(0.001);
 		fabs.setBeta(0.001);
 		fabs.setExpectedNumberOfTerms(2);
@@ -82,7 +88,10 @@ public class FixedAlphaBetaScoreTest
 
 		SingleCalculationSetting sss = SingleCalculationSetting.create(new Random(1), wantedActiveTerms, 0.0, ontology, assoc);
 		TermEnumerator popEnumerator = sss.pop.enumerateTerms(ontology, assoc);
-		FixedAlphaBetaScore fabs = new FixedAlphaBetaScore(new Random(1), popEnumerator.getAllAnnotatedTermsAsList(), popEnumerator, sss.study.getAllGeneNames());
+		IntMapper<TermID> termMapper = IntMapper.create(popEnumerator.getAllAnnotatedTermsAsList());
+		IntMapper<ByteString> geneMapper = IntMapper.create(sss.study.getAllGeneNames());
+		int [][] termLinks = Bayes2GOScore.makeTermLinks(popEnumerator, termMapper, geneMapper);
+		FixedAlphaBetaScore fabs = new FixedAlphaBetaScore(new Random(1), termLinks, termMapper, geneMapper, sss.study.getAllGeneNames());
 		fabs.setIntegrateParams(true);
 
 		SlimDirectedGraphView<Term> slim = ontology.getSlimGraphView();
