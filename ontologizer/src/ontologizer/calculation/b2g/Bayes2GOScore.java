@@ -25,7 +25,6 @@ abstract public class Bayes2GOScore extends Bayes2GOScoreBase
 	/** Array holding the observed values for each gene */
 	protected double [] observedValueOfGene;
 
-	protected IntMapper<ByteString> geneMapper;
 	protected IntMapper<TermID> termMapper;
 
 	protected int numRecords;
@@ -98,7 +97,6 @@ abstract public class Bayes2GOScore extends Bayes2GOScoreBase
 
 		this.rnd = rnd;
 		this.termMapper = termMapper;
-		this.geneMapper = geneMapper;
 
 		double threshold = geneValueProvider.getThreshold();
 		boolean smallerIsBetter = geneValueProvider.smallerIsBetter();
