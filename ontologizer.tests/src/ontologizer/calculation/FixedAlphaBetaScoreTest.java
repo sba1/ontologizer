@@ -48,7 +48,7 @@ public class FixedAlphaBetaScoreTest
 		SingleCalculationSetting sss = SingleCalculationSetting.create(new Random(1), wantedActiveTerms, 0.0, ontology, assoc);
 		TermEnumerator popEnumerator = sss.pop.enumerateTerms(ontology, assoc);
 		IntMapper<TermID> termMapper = IntMapper.create(popEnumerator.getAllAnnotatedTermsAsList());
-		IntMapper<ByteString> geneMapper = IntMapper.create(sss.study.getAllGeneNames());
+		IntMapper<ByteString> geneMapper = IntMapper.create(popEnumerator.getGenesAsList());
 		int [][] termLinks = Bayes2GOScore.makeTermLinks(popEnumerator, termMapper, geneMapper);
 		FixedAlphaBetaScore fabs = new FixedAlphaBetaScore(new Random(1), termLinks, termMapper, geneMapper, sss.study.getAllGeneNames());
 		fabs.setAlpha(0.001);
@@ -89,7 +89,7 @@ public class FixedAlphaBetaScoreTest
 		SingleCalculationSetting sss = SingleCalculationSetting.create(new Random(1), wantedActiveTerms, 0.0, ontology, assoc);
 		TermEnumerator popEnumerator = sss.pop.enumerateTerms(ontology, assoc);
 		IntMapper<TermID> termMapper = IntMapper.create(popEnumerator.getAllAnnotatedTermsAsList());
-		IntMapper<ByteString> geneMapper = IntMapper.create(sss.study.getAllGeneNames());
+		IntMapper<ByteString> geneMapper = IntMapper.create(popEnumerator.getGenesAsList());
 		int [][] termLinks = Bayes2GOScore.makeTermLinks(popEnumerator, termMapper, geneMapper);
 		FixedAlphaBetaScore fabs = new FixedAlphaBetaScore(new Random(1), termLinks, termMapper, geneMapper, sss.study.getAllGeneNames());
 		fabs.setIntegrateParams(true);
