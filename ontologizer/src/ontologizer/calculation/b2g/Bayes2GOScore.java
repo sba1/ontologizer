@@ -79,7 +79,12 @@ abstract public class Bayes2GOScore extends Bayes2GOScoreBase
 			int j=0;
 			for (ByteString gene : populationEnumerator.getAnnotatedGenes(tid).totalAnnotated)
 			{
-				termLinks[i][j] = geneMapper.getIndex(gene);
+				int gid = geneMapper.getIndex(gene);
+				if (gid == -1)
+				{
+					throw new IllegalArgumentException("Gene " + gene.toString() + " is not contained within the gene mapper");
+				}
+				termLinks[i][j] = gid;
 				j++;
 			}
 		}
