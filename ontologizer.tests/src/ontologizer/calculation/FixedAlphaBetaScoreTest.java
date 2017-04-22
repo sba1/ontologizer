@@ -29,7 +29,7 @@ public class FixedAlphaBetaScoreTest
 	{
 		List<TermID> list = new LinkedList<TermID>();
 		for (String t : termIDs)
-			list.add(new TermID(t));
+			list.add(tid(t));
 		return list;
 	}
 
