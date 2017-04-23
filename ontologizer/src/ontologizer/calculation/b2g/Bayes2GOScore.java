@@ -25,8 +25,6 @@ abstract public class Bayes2GOScore extends Bayes2GOScoreBase
 	/** Array holding the observed values for each gene */
 	protected double [] observedValueOfGene;
 
-	protected IntMapper<TermID> termMapper;
-
 	protected int numRecords;
 	protected int [] termActivationCounts;
 
@@ -96,7 +94,6 @@ abstract public class Bayes2GOScore extends Bayes2GOScoreBase
 		super(termLinks, geneMapper.getSize());
 
 		this.rnd = rnd;
-		this.termMapper = termMapper;
 
 		double threshold = geneValueProvider.getThreshold();
 		boolean smallerIsBetter = geneValueProvider.smallerIsBetter();
@@ -166,7 +163,7 @@ abstract public class Bayes2GOScore extends Bayes2GOScoreBase
 	 * @param activeTerms defines which terms are considered as active
 	 * @return the score
 	 */
-	public double score(Collection<TermID> activeTerms)
+	public double score(int [] activeTerms)
 	{
 		int [] oldTerms = new int[numTerms - numInactiveTerms];
 		for (int i=numInactiveTerms,j=0;i<numTerms;i++,j++)
@@ -177,21 +174,17 @@ abstract public class Bayes2GOScore extends Bayes2GOScoreBase
 			switchState(oldTerms[i]);
 
 		/* Enable new terms */
-		for (TermID tid : activeTerms)
+		for (int idx : activeTerms)
 		{
-			int idx = termMapper.getIndex(tid);
-			if (idx != -1)
-				switchState(idx);
+			switchState(idx);
 		}
 
 		double score = getScore();
 
 		/* Disable new terms */
-		for (TermID tid : activeTerms)
+		for (int idx : activeTerms)
 		{
-			int idx = termMapper.getIndex(tid);
-			if (idx != -1)
-				switchState(idx);
+			switchState(idx);
 		}
 
 		/* Enable old terms again */
@@ -233,11 +226,14 @@ abstract public class Bayes2GOScore extends Bayes2GOScoreBase
 		numRecords++;
 	}
 
-	public ArrayList<TermID> getActiveTerms()
+	/**
+	 * @return the terms that are currently activated
+	 */
+	public int [] getActiveTerms()
 	{
-		ArrayList<TermID> list = new ArrayList<TermID>(numTerms - numInactiveTerms);
+		int [] list = new int[numTerms - numInactiveTerms];
 		for (int i = numInactiveTerms; i < numTerms; i++)
-			list.add(termMapper.get(termPartition[i]));
+			list[i-numInactiveTerms] = termPartition[i];
 		return list;
 	}
 }

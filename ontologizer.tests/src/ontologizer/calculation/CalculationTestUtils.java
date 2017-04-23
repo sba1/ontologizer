@@ -1,7 +1,9 @@
 package ontologizer.calculation;
 
+import static ontologizer.ontology.TermID.tid;
 import static org.junit.Assert.assertEquals;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -11,6 +13,7 @@ import ontologizer.ontology.Ontology;
 import ontologizer.ontology.Term;
 import ontologizer.ontology.TermID;
 import ontologizer.statistics.None;
+import sonumina.collections.IntMapper;
 
 public class CalculationTestUtils
 {
@@ -18,6 +21,42 @@ public class CalculationTestUtils
 	public static <T> T prop(EnrichedGOTermsResult result, String id)
 	{
 		return (T)result.getGOTermProperties(new TermID(id));
+	}
+
+	public static int [] asList(IntMapper<TermID> mapper, String...termIDs)
+	{
+		int [] ids = new int[termIDs.length];
+		for (int i = 0; i < termIDs.length; i++)
+		{
+			ids[i] = mapper.getIndex(tid(termIDs[i]));
+		}
+		return ids;
+	}
+
+	public static int [] asList(IntMapper<TermID> mapper, Collection<?> termIDs)
+	{
+		int [] ids = new int[termIDs.size()];
+		int i = 0;
+		for (Object tid : termIDs)
+		{
+			TermID t;
+
+			if (tid instanceof String)
+			{
+				String str = (String) tid;
+				t = tid(str);
+			} else if (tid instanceof TermID)
+			{
+				t = (TermID)tid;
+			} else
+			{
+				throw new IllegalArgumentException("Type " + tid.getClass().getName() + " is not supported!");
+			}
+
+			ids[i] = mapper.getIndex(t);
+			i++;
+		}
+		return ids;
 	}
 
 	/**

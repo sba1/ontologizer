@@ -388,7 +388,7 @@ public class Bayes2GOCalculation implements ICalculation, IProgressFeedback
 					for (int j=0;j<allTerms.size();j++)
 						if (rnd.nextDouble() < pForStart) fixedAlphaBetaScore.switchState(j);
 
-					logger.log(Level.INFO, "Starting with " + fixedAlphaBetaScore.getActiveTerms().size() + " terms (p=" + pForStart + ")");
+					logger.log(Level.INFO, "Starting with " + fixedAlphaBetaScore.getActiveTerms().length + " terms (p=" + pForStart + ")");
 				}
 
 				bayes2GOScore = fixedAlphaBetaScore;
@@ -412,7 +412,7 @@ public class Bayes2GOCalculation implements ICalculation, IProgressFeedback
 				calculationProgress.init(maxSteps);
 
 			double maxScore = score;
-			ArrayList<TermID> maxScoredTerms = bayes2GOScore.getActiveTerms();
+			int [] maxScoredTerms = bayes2GOScore.getActiveTerms();
 			double maxScoredAlpha = Double.NaN;
 			double maxScoredBeta = Double.NaN;
 			double maxScoredP = Double.NaN;
@@ -439,7 +439,7 @@ public class Bayes2GOCalculation implements ICalculation, IProgressFeedback
 				long now = System.currentTimeMillis();
 				if (now - start > updateReportTime)
 				{
-					logger.log(Level.INFO, (t*100/maxSteps) + "% (score=" + score +" maxScore=" + maxScore + " #terms="+bayes2GOScore.getActiveTerms().size()+
+					logger.log(Level.INFO, (t*100/maxSteps) + "% (score=" + score +" maxScore=" + maxScore + " #terms="+bayes2GOScore.getActiveTerms().length+
 										" accept/reject=" + Double.toString((double)numAccepts / (double)numRejects) +
 										" accept/steps=" + Double.toString((double)numAccepts / (double)t) +
 										" exp=" + expectedNumberOfTerms + " usePrior=" + usePrior + ")");
@@ -459,7 +459,7 @@ public class Bayes2GOCalculation implements ICalculation, IProgressFeedback
 
 				boolean DEBUG = false;
 
-				if (DEBUG) System.out.print(bayes2GOScore.getActiveTerms().size() + "  score=" + score + " newScore="+newScore + " maxScore=" + maxScore + " a=" + acceptProb);
+				if (DEBUG) System.out.print(bayes2GOScore.getActiveTerms().length + "  score=" + score + " newScore="+newScore + " maxScore=" + maxScore + " a=" + acceptProb);
 
 				double u = rnd.nextDouble();
 				if (u >= acceptProb)
@@ -518,10 +518,10 @@ public class Bayes2GOCalculation implements ICalculation, IProgressFeedback
 					prop.term = t;
 					prop.annotatedStudyGenes = studyEnumerator.getAnnotatedGenes(t).totalAnnotatedCount();
 					prop.annotatedPopulationGenes = populationEnumerator.getAnnotatedGenes(t).totalAnnotatedCount();
-					prop.marg = ((double)bayes2GOScore.termActivationCounts[bayes2GOScore.termMapper.getIndex(t)] / bayes2GOScore.numRecords);
+					prop.marg = ((double)bayes2GOScore.termActivationCounts[termMapper.getIndex(t)] / bayes2GOScore.numRecords);
 
 					/* At the moment, we need these fields for technical reasons */
-					prop.p = 1 - ((double)bayes2GOScore.termActivationCounts[bayes2GOScore.termMapper.getIndex(t)] / bayes2GOScore.numRecords);
+					prop.p = 1 - ((double)bayes2GOScore.termActivationCounts[termMapper.getIndex(t)] / bayes2GOScore.numRecords);
 					prop.p_adjusted = prop.p;
 					prop.p_min = 0.001;
 
@@ -533,8 +533,9 @@ public class Bayes2GOCalculation implements ICalculation, IProgressFeedback
 
 			/* Print out the term combination which scored max */
 			System.out.println("Term combination that reaches score of " + maxScore + " when alpha=" + maxScoredAlpha + ", beta=" + maxScoredBeta + ", p=" + maxScoredP + " at step " + maxWhenSeen);
-			for (TermID tid : maxScoredTerms)
+			for (int t : maxScoredTerms)
 			{
+				TermID tid = termMapper.get(t);
 				System.out.println(tid.toString() + "/" + graph.getTerm(tid).getName());
 			}
 

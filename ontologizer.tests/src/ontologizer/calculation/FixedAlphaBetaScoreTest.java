@@ -1,11 +1,9 @@
 package ontologizer.calculation;
 
+import static ontologizer.calculation.CalculationTestUtils.asList;
 import static ontologizer.ontology.TermID.tid;
 
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Random;
 
 import org.junit.Assert;
@@ -25,14 +23,6 @@ import sonumina.math.graph.SlimDirectedGraphView;
 
 public class FixedAlphaBetaScoreTest
 {
-	static Collection<TermID> asList(String...termIDs)
-	{
-		List<TermID> list = new LinkedList<TermID>();
-		for (String t : termIDs)
-			list.add(tid(t));
-		return list;
-	}
-
 	@Test
 	public void testWithFixedParameter()
 	{
@@ -57,7 +47,7 @@ public class FixedAlphaBetaScoreTest
 
 		SlimDirectedGraphView<Term> slim = ontology.getSlimGraphView();
 
-		double expectedMax = fabs.score(asList("GO:0000010","GO:0000004"));
+		double expectedMax = fabs.score(asList(termMapper, "GO:0000010","GO:0000004"));
 		double foundMax = Double.NEGATIVE_INFINITY;
 		for (int i=0; i < slim.getNumberOfVertices(); i++)
 		{
@@ -67,7 +57,7 @@ public class FixedAlphaBetaScoreTest
 				tids[0] = slim.getVertex(i).getIDAsString();
 				if (i!=j)
 					tids[1] = slim.getVertex(j).getIDAsString();
-				double score = fabs.score(asList(tids));
+				double score = fabs.score(asList(termMapper, tids));
 				if (score > foundMax) foundMax = score;
 			}
 		}
@@ -96,7 +86,7 @@ public class FixedAlphaBetaScoreTest
 
 		SlimDirectedGraphView<Term> slim = ontology.getSlimGraphView();
 
-		double expectedMax = fabs.score(asList("GO:0000010","GO:0000004"));
+		double expectedMax = fabs.score(asList(termMapper, "GO:0000010","GO:0000004"));
 		double foundMax = Double.NEGATIVE_INFINITY;
 		for (int i=0; i < slim.getNumberOfVertices(); i++)
 		{
@@ -106,7 +96,7 @@ public class FixedAlphaBetaScoreTest
 				tids[0] = slim.getVertex(i).getIDAsString();
 				if (i!=j)
 					tids[1] = slim.getVertex(j).getIDAsString();
-				double score = fabs.score(asList(tids));
+				double score = fabs.score(asList(termMapper, tids));
 				if (score > foundMax) foundMax = score;
 			}
 		}

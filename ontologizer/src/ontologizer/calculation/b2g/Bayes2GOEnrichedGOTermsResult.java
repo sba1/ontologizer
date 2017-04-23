@@ -3,7 +3,9 @@ package ontologizer.calculation.b2g;
 import ontologizer.association.AssociationContainer;
 import ontologizer.calculation.EnrichedGOTermsResult;
 import ontologizer.ontology.Ontology;
+import ontologizer.ontology.TermID;
 import ontologizer.set.StudySet;
+import sonumina.collections.IntMapper;
 
 
 /**
@@ -14,6 +16,9 @@ import ontologizer.set.StudySet;
 public class Bayes2GOEnrichedGOTermsResult extends EnrichedGOTermsResult
 {
 	private Bayes2GOScore score;
+
+	/* FIXME: Remove this */
+	private IntMapper<TermID> termMapper;
 
 	public Bayes2GOEnrichedGOTermsResult(Ontology go,
 			AssociationContainer associations, StudySet studySet,
@@ -30,5 +35,15 @@ public class Bayes2GOEnrichedGOTermsResult extends EnrichedGOTermsResult
 	public Bayes2GOScore getScore()
 	{
 		return score;
+	}
+
+	public void setTermMapper(IntMapper<TermID> termMapper)
+	{
+		this.termMapper = termMapper;
+	}
+
+	public IntMapper<TermID> getTermMapper()
+	{
+		return termMapper;
 	}
 }

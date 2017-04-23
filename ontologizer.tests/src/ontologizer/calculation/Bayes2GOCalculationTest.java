@@ -2,6 +2,7 @@ package ontologizer.calculation;
 
 import static ontologizer.ontology.TermID.tid;
 import static org.junit.Assert.assertEquals;
+import static ontologizer.calculation.CalculationTestUtils.asList;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -495,13 +496,13 @@ public class Bayes2GOCalculationTest
 			if (result instanceof Bayes2GOEnrichedGOTermsResult)
 			{
 				Bayes2GOEnrichedGOTermsResult b2gResult = (Bayes2GOEnrichedGOTermsResult)result;
-				double wantedScore = b2gResult.getScore().score(wantedActiveTerms.keySet());
+				double wantedScore = b2gResult.getScore().score(asList(b2gResult.getTermMapper(), wantedActiveTerms.keySet()));
 //				if (!(((Bayes2GOCalculation)calc).noPrior)) wantedScore += wantedActiveTerms.size() * Math.log(p/(1.0-p));
 				System.out.println("Score of the given set is " + wantedScore);
 
 				HashSet<TermID> terms = new HashSet<TermID>(wantedActiveTerms.keySet());
 				terms.remove(new TermID("GO:0030011"));
-				wantedScore = b2gResult.getScore().score(terms);
+				wantedScore = b2gResult.getScore().score(asList(b2gResult.getTermMapper(), terms));
 				System.out.println("Score of reduced set is " + wantedScore);
 			}
 		}
