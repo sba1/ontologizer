@@ -40,7 +40,7 @@ public class ValuedGOScore extends Bayes2GOScore
 			public double getGeneValue(ByteString gene) {
 				return ((ValuedItemAttribute)valuedStudySet.getItemAttribute(gene)).getValue();
 			}
-		}, termMapper, geneMapper);
+		}, geneMapper);
 	}
 
 	double score;

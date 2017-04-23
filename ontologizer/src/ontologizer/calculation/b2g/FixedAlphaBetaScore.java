@@ -4,7 +4,6 @@ import java.util.Random;
 import java.util.Set;
 
 import ontologizer.calculation.util.Gamma;
-import ontologizer.ontology.TermID;
 import ontologizer.types.ByteString;
 import sonumina.collections.IntMapper;
 
@@ -137,9 +136,9 @@ public class FixedAlphaBetaScore extends Bayes2GOScore
 		this.integrateParams = integrateParams;
 	}
 
-	public FixedAlphaBetaScore(Random rnd,  int [][] termLinks, IntMapper<TermID> termMapper, IntMapper<ByteString> geneMapper, Set<ByteString> observedActiveGenes)
+	public FixedAlphaBetaScore(Random rnd,  int [][] termLinks, IntMapper<ByteString> geneMapper, Set<ByteString> observedActiveGenes)
 	{
-		super(rnd, termLinks, termMapper, geneMapper, observedActiveGenes);
+		super(rnd, termLinks, geneMapper, observedActiveGenes);
 
 		setMaxAlpha(1.);
 		setMaxBeta(1.);

@@ -1,7 +1,5 @@
 package ontologizer.calculation.b2g;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Random;
 import java.util.Set;
 
@@ -89,7 +87,7 @@ abstract public class Bayes2GOScore extends Bayes2GOScoreBase
 		return termLinks;
 	}
 
-	public Bayes2GOScore(Random rnd, int [][] termLinks, IGeneValueProvider geneValueProvider, IntMapper<TermID> termMapper, IntMapper<ByteString> geneMapper)
+	public Bayes2GOScore(Random rnd, int [][] termLinks, IGeneValueProvider geneValueProvider, IntMapper<ByteString> geneMapper)
 	{
 		super(termLinks, geneMapper.getSize());
 
@@ -118,7 +116,7 @@ abstract public class Bayes2GOScore extends Bayes2GOScoreBase
 	 * @param termLinks terms to genes.
 	 * @param observedActiveGenes defines the set of genes that are observed as active.
 	 */
-	public Bayes2GOScore(Random rnd, int [][] termLinks, IntMapper<TermID> termMapper, IntMapper<ByteString> geneMapper, final Set<ByteString> observedActiveGenes)
+	public Bayes2GOScore(Random rnd, int [][] termLinks, IntMapper<ByteString> geneMapper, final Set<ByteString> observedActiveGenes)
 	{
 		/* Here a gene value provider is constructed that maps the boolean observed state back
 		 * to values some values. A gene, that is observed gets a -1, a gene that is not observed
@@ -138,7 +136,7 @@ abstract public class Bayes2GOScore extends Bayes2GOScoreBase
 				if (observedActiveGenes.contains(gene)) return -1;
 				return 1;
 			}
-		}, termMapper, geneMapper);
+		}, geneMapper);
 	}
 
 	public void setUsePrior(boolean usePrior)

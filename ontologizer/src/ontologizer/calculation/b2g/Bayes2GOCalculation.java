@@ -356,7 +356,7 @@ public class Bayes2GOCalculation implements ICalculation, IProgressFeedback
 
 			if (!valuedCalculation)
 			{
-				fixedAlphaBetaScore = new FixedAlphaBetaScore(rnd, termLinks, termMapper, geneMapper, studyEnumerator.getGenes());
+				fixedAlphaBetaScore = new FixedAlphaBetaScore(rnd, termLinks, geneMapper, studyEnumerator.getGenes());
 				fixedAlphaBetaScore.setIntegrateParams(integrateParams);
 
 				if (doEm)
