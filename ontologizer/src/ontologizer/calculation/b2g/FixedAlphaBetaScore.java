@@ -1,11 +1,8 @@
 package ontologizer.calculation.b2g;
 
 import java.util.Random;
-import java.util.Set;
 
 import ontologizer.calculation.util.Gamma;
-import ontologizer.types.ByteString;
-import sonumina.collections.IntMapper;
 
 /**
  * Score of a setting in which alpha and beta are not known.
@@ -136,16 +133,21 @@ public class FixedAlphaBetaScore extends Bayes2GOScore
 		this.integrateParams = integrateParams;
 	}
 
-	public FixedAlphaBetaScore(Random rnd,  int [][] termLinks, IntMapper<ByteString> geneMapper, Set<ByteString> observedActiveGenes)
+	public FixedAlphaBetaScore(Random rnd,  int [][] termLinks, boolean [] observedGenes)
 	{
-		super(rnd, termLinks, geneMapper, observedActiveGenes);
+		super(rnd, termLinks, observedGenes);
 
 		setMaxAlpha(1.);
 		setMaxBeta(1.);
 
 		/* At this state, all terms are inactive, hence all observed genes are false positive */
-		n10 = observedActiveGenes.size();
-		n00 = geneMapper.getSize() - n10;
+		for (int i=0; i < observedGenes.length; i++)
+		{
+			if (observedGenes[i])
+				n10++;
+		}
+
+		n00 = observedGenes.length - n10;
 	}
 
 	@Override

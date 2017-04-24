@@ -22,10 +22,10 @@ public class ValuedGOScore extends Bayes2GOScore
 	private int proposalT1;
 	private int proposalT2;
 
-	public ValuedGOScore(Random rnd, int [][] termLinks, IntMapper<TermID> termMapper, IntMapper<ByteString> geneMapper,
+	public ValuedGOScore(Random rnd, int [][] termLinks, IntMapper<TermID> termMapper, final IntMapper<ByteString> geneMapper,
 			final StudySet valuedStudySet)
 	{
-		super(rnd, termLinks, new Bayes2GOScore.IGeneValueProvider() {
+		super(rnd, termLinks, geneMapper.getSize(), new Bayes2GOScore.IGeneValueProvider() {
 			@Override
 			public boolean smallerIsBetter() {
 				return true;
@@ -37,10 +37,10 @@ public class ValuedGOScore extends Bayes2GOScore
 			}
 
 			@Override
-			public double getGeneValue(ByteString gene) {
-				return ((ValuedItemAttribute)valuedStudySet.getItemAttribute(gene)).getValue();
+			public double getGeneValue(int gid) {
+				return ((ValuedItemAttribute)valuedStudySet.getItemAttribute(geneMapper.get(gid))).getValue();
 			}
-		}, geneMapper);
+		});
 	}
 
 	double score;

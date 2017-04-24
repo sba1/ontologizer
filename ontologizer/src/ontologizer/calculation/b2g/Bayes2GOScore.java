@@ -1,7 +1,6 @@
 package ontologizer.calculation.b2g;
 
 import java.util.Random;
-import java.util.Set;
 
 import ontologizer.enumeration.TermEnumerator;
 import ontologizer.ontology.TermID;
@@ -40,7 +39,7 @@ abstract public class Bayes2GOScore extends Bayes2GOScoreBase
 		 * @param gene the gene whose value should be returned
 		 * @return the value
 		 */
-		double getGeneValue(ByteString gene);
+		double getGeneValue(int gid);
 
 		/**
 		 * Returns the threshold that specifies when a gene is considered as observed or not.
@@ -87,9 +86,9 @@ abstract public class Bayes2GOScore extends Bayes2GOScoreBase
 		return termLinks;
 	}
 
-	public Bayes2GOScore(Random rnd, int [][] termLinks, IGeneValueProvider geneValueProvider, IntMapper<ByteString> geneMapper)
+	public Bayes2GOScore(Random rnd, int [][] termLinks, int numGenes, IGeneValueProvider geneValueProvider)
 	{
-		super(termLinks, geneMapper.getSize());
+		super(termLinks, numGenes);
 
 		this.rnd = rnd;
 
@@ -97,11 +96,11 @@ abstract public class Bayes2GOScore extends Bayes2GOScoreBase
 		boolean smallerIsBetter = geneValueProvider.smallerIsBetter();
 
 		/* Initialize basics of genes */
-		observedValueOfGene = new double[geneMapper.getSize()];
+		observedValueOfGene = new double[numGenes];
 
-		for (int i = 0; i < geneMapper.getSize(); i++)
+		for (int i = 0; i < numGenes; i++)
 		{
-			observedValueOfGene[i] = geneValueProvider.getGeneValue(geneMapper.get(i));
+			observedValueOfGene[i] = geneValueProvider.getGeneValue(i);
 			if (smallerIsBetter) observedGenes[i] = observedValueOfGene[i] <= threshold;
 			else observedGenes[i] = observedValueOfGene[i] >= threshold;
 		}
@@ -114,15 +113,15 @@ abstract public class Bayes2GOScore extends Bayes2GOScoreBase
 	 *
 	 * @param rnd Random source for proposing states.
 	 * @param termLinks terms to genes.
-	 * @param observedActiveGenes defines the set of genes that are observed as active.
+	 * @param observedGenes state of each gene whether it is observed or not.
 	 */
-	public Bayes2GOScore(Random rnd, int [][] termLinks, IntMapper<ByteString> geneMapper, final Set<ByteString> observedActiveGenes)
+	public Bayes2GOScore(Random rnd, int [][] termLinks, final boolean [] observedGenes)
 	{
 		/* Here a gene value provider is constructed that maps the boolean observed state back
 		 * to values some values. A gene, that is observed gets a -1, a gene that is not observed
 		 * gets a 1. Applied with a threshold of one, this gives back the same set of observed genes.
 		 */
-		this(rnd, termLinks, new IGeneValueProvider() {
+		this(rnd, termLinks, observedGenes.length, new IGeneValueProvider() {
 			@Override
 			public boolean smallerIsBetter() {
 				return true;
@@ -132,11 +131,11 @@ abstract public class Bayes2GOScore extends Bayes2GOScoreBase
 				return 0;
 			}
 			@Override
-			public double getGeneValue(ByteString gene) {
-				if (observedActiveGenes.contains(gene)) return -1;
+			public double getGeneValue(int gid) {
+				if (observedGenes[gid]) return -1;
 				return 1;
 			}
-		}, geneMapper);
+		});
 	}
 
 	public void setUsePrior(boolean usePrior)
