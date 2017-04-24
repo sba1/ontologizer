@@ -75,7 +75,7 @@ public final class IntMapper<T>
 	 */
 	public boolean [] getDense(Collection<T> collection)
 	{
-		boolean [] d = new boolean[collection.size()];
+		boolean [] d = new boolean[item.length];
 		for (T c : collection)
 		{
 			d[getIndex(c)] = true;
