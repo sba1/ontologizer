@@ -40,7 +40,7 @@ public class FixedAlphaBetaScoreTest
 		IntMapper<TermID> termMapper = IntMapper.create(popEnumerator.getAllAnnotatedTermsAsList());
 		IntMapper<ByteString> geneMapper = IntMapper.create(popEnumerator.getGenesAsList());
 		int [][] termLinks = Bayes2GOScore.makeTermLinks(popEnumerator, termMapper, geneMapper);
-		FixedAlphaBetaScore fabs = new FixedAlphaBetaScore(new Random(1), termLinks, geneMapper, sss.study.getAllGeneNames());
+		FixedAlphaBetaScore fabs = new FixedAlphaBetaScore(new Random(1), termLinks, geneMapper.getDense(sss.study.getAllGeneNames()));
 		fabs.setAlpha(0.001);
 		fabs.setBeta(0.001);
 		fabs.setExpectedNumberOfTerms(2);
@@ -81,7 +81,7 @@ public class FixedAlphaBetaScoreTest
 		IntMapper<TermID> termMapper = IntMapper.create(popEnumerator.getAllAnnotatedTermsAsList());
 		IntMapper<ByteString> geneMapper = IntMapper.create(popEnumerator.getGenesAsList());
 		int [][] termLinks = Bayes2GOScore.makeTermLinks(popEnumerator, termMapper, geneMapper);
-		FixedAlphaBetaScore fabs = new FixedAlphaBetaScore(new Random(1), termLinks, geneMapper, sss.study.getAllGeneNames());
+		FixedAlphaBetaScore fabs = new FixedAlphaBetaScore(new Random(1), termLinks, geneMapper.getDense(sss.study.getAllGeneNames()));
 		fabs.setIntegrateParams(true);
 
 		SlimDirectedGraphView<Term> slim = ontology.getSlimGraphView();
