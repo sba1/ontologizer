@@ -67,6 +67,23 @@ public final class IntMapper<T>
 	}
 
 	/**
+	 * Return the dense boolean vector of the given collection.
+	 *
+	 * @param collection
+	 * @return the dense boolean vector with true for each element that is in the collection.
+	 * @note all elements in the collection must exist in the mapper
+	 */
+	public boolean [] getDense(Collection<T> collection)
+	{
+		boolean [] d = new boolean[collection.size()];
+		for (T c : collection)
+		{
+			d[getIndex(c)] = true;
+		}
+		return d;
+	}
+
+	/**
 	 * Create a new intmap from the given collection.
 	 *
 	 * @param collection
