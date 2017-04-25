@@ -36,7 +36,7 @@ abstract public class Bayes2GOScore extends Bayes2GOScoreBase
 		/**
 		 * Return the value that is associated with the given gene.
 		 *
-		 * @param gene the gene whose value should be returned
+		 * @param gid id of the gene whose value should be returned
 		 * @return the value
 		 */
 		double getGeneValue(int gid);
