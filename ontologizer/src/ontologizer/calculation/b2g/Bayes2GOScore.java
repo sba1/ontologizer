@@ -2,11 +2,6 @@ package ontologizer.calculation.b2g;
 
 import java.util.Random;
 
-import ontologizer.enumeration.TermEnumerator;
-import ontologizer.ontology.TermID;
-import ontologizer.types.ByteString;
-import sonumina.collections.IntMapper;
-
 /**
  * The base class of bayes2go Score.
  *
@@ -58,32 +53,6 @@ abstract public class Bayes2GOScore extends Bayes2GOScoreBase
 		 * @return whether small numeric values are better than large ones.
 		 */
 		boolean smallerIsBetter();
-	}
-
-	public static int [][] makeTermLinks(TermEnumerator populationEnumerator, IntMapper<TermID> termMapper, IntMapper<ByteString> geneMapper)
-	{
-		int [][] termLinks = new int[termMapper.getSize()][];
-
-		for (int i = 0; i < termMapper.getSize(); i++)
-		{
-			TermID tid = termMapper.get(i);
-
-			/* Fill in the links */
-			termLinks[i] = new int[populationEnumerator.getAnnotatedGenes(tid).totalAnnotated.size()];
-			int j=0;
-			for (ByteString gene : populationEnumerator.getAnnotatedGenes(tid).totalAnnotated)
-			{
-				int gid = geneMapper.getIndex(gene);
-				if (gid == -1)
-				{
-					throw new IllegalArgumentException("Gene " + gene.toString() + " is not contained within the gene mapper");
-				}
-				termLinks[i][j] = gid;
-				j++;
-			}
-		}
-
-		return termLinks;
 	}
 
 	public Bayes2GOScore(Random rnd, int [][] termLinks, int numGenes, IGeneValueProvider geneValueProvider)

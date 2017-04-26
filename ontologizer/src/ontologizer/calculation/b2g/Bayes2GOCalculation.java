@@ -7,6 +7,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import ontologizer.association.AssociationContainer;
+import ontologizer.calculation.CalculationUtils;
 import ontologizer.calculation.EnrichedGOTermsResult;
 import ontologizer.calculation.ICalculation;
 import ontologizer.calculation.ICalculationProgress;
@@ -345,7 +346,7 @@ public class Bayes2GOCalculation implements ICalculation, IProgressFeedback
 
 		IntMapper<TermID> termMapper = IntMapper.create(populationEnumerator.getAllAnnotatedTermsAsList());
 		IntMapper<ByteString> geneMapper = IntMapper.create(populationEnumerator.getGenesAsList());
-		int [][] termLinks = Bayes2GOScore.makeTermLinks(populationEnumerator, termMapper, geneMapper);
+		int [][] termLinks = CalculationUtils.makeTermLinks(populationEnumerator, termMapper, geneMapper);
 
 		for (int i=0;i<maxIter;i++)
 		{

@@ -10,7 +10,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import ontologizer.association.AssociationContainer;
-import ontologizer.calculation.b2g.Bayes2GOScore;
 import ontologizer.calculation.b2g.FixedAlphaBetaScore;
 import ontologizer.enumeration.TermEnumerator;
 import ontologizer.internal.InternalOntology;
@@ -39,7 +38,7 @@ public class FixedAlphaBetaScoreTest
 		TermEnumerator popEnumerator = sss.pop.enumerateTerms(ontology, assoc);
 		IntMapper<TermID> termMapper = IntMapper.create(popEnumerator.getAllAnnotatedTermsAsList());
 		IntMapper<ByteString> geneMapper = IntMapper.create(popEnumerator.getGenesAsList());
-		int [][] termLinks = Bayes2GOScore.makeTermLinks(popEnumerator, termMapper, geneMapper);
+		int [][] termLinks = CalculationUtils.makeTermLinks(popEnumerator, termMapper, geneMapper);
 		FixedAlphaBetaScore fabs = new FixedAlphaBetaScore(new Random(1), termLinks, geneMapper.getDense(sss.study.getAllGeneNames()));
 		fabs.setAlpha(0.001);
 		fabs.setBeta(0.001);
@@ -80,7 +79,7 @@ public class FixedAlphaBetaScoreTest
 		TermEnumerator popEnumerator = sss.pop.enumerateTerms(ontology, assoc);
 		IntMapper<TermID> termMapper = IntMapper.create(popEnumerator.getAllAnnotatedTermsAsList());
 		IntMapper<ByteString> geneMapper = IntMapper.create(popEnumerator.getGenesAsList());
-		int [][] termLinks = Bayes2GOScore.makeTermLinks(popEnumerator, termMapper, geneMapper);
+		int [][] termLinks = CalculationUtils.makeTermLinks(popEnumerator, termMapper, geneMapper);
 		FixedAlphaBetaScore fabs = new FixedAlphaBetaScore(new Random(1), termLinks, geneMapper.getDense(sss.study.getAllGeneNames()));
 		fabs.setIntegrateParams(true);
 
