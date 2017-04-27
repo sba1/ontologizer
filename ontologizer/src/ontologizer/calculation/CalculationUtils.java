@@ -1,5 +1,7 @@
 package ontologizer.calculation;
 
+import java.util.Arrays;
+
 import ontologizer.enumeration.TermEnumerator;
 import ontologizer.ontology.TermID;
 import ontologizer.types.ByteString;
@@ -13,7 +15,8 @@ import sonumina.collections.IntMapper;
 public class CalculationUtils
 {
 	/**
-	 * Creates an array of term to item associations.
+	 * Creates an array of term to item associations. Each item vector is sorted by
+	 * the id.
 	 *
 	 * @param populationEnumerator
 	 * @param termMapper
@@ -41,6 +44,7 @@ public class CalculationUtils
 				termLinks[i][j] = gid;
 				j++;
 			}
+			Arrays.sort(termLinks[i]);
 		}
 
 		return termLinks;
