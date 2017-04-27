@@ -346,6 +346,12 @@ public class Bayes2GOCalculation implements ICalculation, IProgressFeedback
 		IntMapper<TermID> termMapper = IntMapper.create(populationEnumerator.getAllAnnotatedTermsAsList());
 		IntMapper<ByteString> geneMapper = IntMapper.create(populationEnumerator.getGenesAsList());
 		int [][] termLinks = CalculationUtils.makeTermLinks(populationEnumerator, termMapper, geneMapper);
+		boolean [] observedItems = null;
+
+		if (!valuedCalculation)
+		{
+			observedItems = geneMapper.getDense(studyEnumerator.getGenes());
+		}
 
 		for (int i=0;i<maxIter;i++)
 		{
@@ -356,7 +362,7 @@ public class Bayes2GOCalculation implements ICalculation, IProgressFeedback
 
 			if (!valuedCalculation)
 			{
-				fixedAlphaBetaScore = new FixedAlphaBetaScore(rnd, termLinks, geneMapper.getDense(studyEnumerator.getGenes()));
+				fixedAlphaBetaScore = new FixedAlphaBetaScore(rnd, termLinks, observedItems);
 				fixedAlphaBetaScore.setIntegrateParams(integrateParams);
 
 				if (doEm)
