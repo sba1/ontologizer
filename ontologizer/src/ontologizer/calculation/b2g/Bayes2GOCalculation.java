@@ -1,8 +1,9 @@
 package ontologizer.calculation.b2g;
 
+import static java.util.logging.Level.INFO;
+
 import java.util.List;
 import java.util.Random;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import ontologizer.association.AssociationContainer;
@@ -235,10 +236,10 @@ public class Bayes2GOCalculation implements ICalculation, IProgressFeedback
 
 		if (valuedCalculation)
 		{
-			logger.log(Level.INFO, "We have values!");
+			logger.log(INFO, "We have values!");
 		} else
 		{
-			logger.log(Level.INFO, "We don't have values!");
+			logger.log(INFO, "We don't have values!");
 		}
 
 
@@ -257,7 +258,7 @@ public class Bayes2GOCalculation implements ICalculation, IProgressFeedback
 			}
 		}
 
-		logger.log(Level.INFO, "Starting calculation: expectedNumberOfTerms=" + expectedNumberOfTerms +
+		logger.log(INFO, "Starting calculation: expectedNumberOfTerms=" + expectedNumberOfTerms +
 				" alpha=" + alpha +
 				" beta=" + beta +
 				" numberOfPop=" + populationEnumerator.getGenes().size() +
@@ -266,7 +267,7 @@ public class Bayes2GOCalculation implements ICalculation, IProgressFeedback
 		long start = System.currentTimeMillis();
 		calculateByMCMC(graph, result, populationEnumerator, studyEnumerator, populationSet, studySet, valuedCalculation);//, llr);
 		long end = System.currentTimeMillis();
-		logger.log(Level.INFO, (end - start) + "ms");
+		logger.log(INFO, (end - start) + "ms");
 		return result;
 	}
 
@@ -299,11 +300,11 @@ public class Bayes2GOCalculation implements ICalculation, IProgressFeedback
 		if (seed != 0)
 		{
 			rnd = new Random(seed);
-			logger.log(Level.INFO, "Use a random seed of: " + seed);
+			logger.log(INFO, "Use a random seed of: " + seed);
 		} else
 		{
 			long newSeed = new Random().nextLong();
-			logger.log(Level.INFO, "Use a random seed of: " + newSeed);
+			logger.log(INFO, "Use a random seed of: " + newSeed);
 			rnd = new Random(newSeed);
 		}
 
@@ -344,7 +345,7 @@ public class Bayes2GOCalculation implements ICalculation, IProgressFeedback
 		if (doEm) maxIter = 12;
 		else maxIter = 1;
 
-		logger.log(Level.INFO, allTerms.size() + " terms and " + populationEnumerator.getGenes().size() + " genes in consideration.");
+		logger.log(INFO, allTerms.size() + " terms and " + populationEnumerator.getGenes().size() + " genes in consideration.");
 
 
 		IntMapper<TermID> termMapper = IntMapper.create(populationEnumerator.getAllAnnotatedTermsAsList());
@@ -371,10 +372,10 @@ public class Bayes2GOCalculation implements ICalculation, IProgressFeedback
 
 				if (doEm)
 				{
-					logger.log(Level.INFO, "EM-Iter("+i+")" + alpha + "  " + beta + "  " + expectedNumberOfTerms);
+					logger.log(INFO, "EM-Iter("+i+")" + alpha + "  " + beta + "  " + expectedNumberOfTerms);
 				} else
 				{
-					logger.log(Level.INFO, "MCMC only: " + alpha + "  " + beta + "  " + expectedNumberOfTerms);
+					logger.log(INFO, "MCMC only: " + alpha + "  " + beta + "  " + expectedNumberOfTerms);
 
 				}
 
@@ -387,7 +388,7 @@ public class Bayes2GOCalculation implements ICalculation, IProgressFeedback
 				fixedAlphaBetaScore.setExpectedNumberOfTerms(expectedNumberOfTerms);
 				fixedAlphaBetaScore.setUsePrior(usePrior);
 
-				logger.log(Level.INFO, "Score of empty set: " + fixedAlphaBetaScore.getScore());
+				logger.log(INFO, "Score of empty set: " + fixedAlphaBetaScore.getScore());
 
 				/* Provide a starting point */
 				if (randomStart)
@@ -398,7 +399,7 @@ public class Bayes2GOCalculation implements ICalculation, IProgressFeedback
 					for (int j=0;j<allTerms.size();j++)
 						if (rnd.nextDouble() < pForStart) fixedAlphaBetaScore.switchState(j);
 
-					logger.log(Level.INFO, "Starting with " + fixedAlphaBetaScore.getActiveTerms().length + " terms (p=" + pForStart + ")");
+					logger.log(INFO, "Starting with " + fixedAlphaBetaScore.getActiveTerms().length + " terms (p=" + pForStart + ")");
 				}
 
 				bayes2GOScore = fixedAlphaBetaScore;
@@ -411,7 +412,7 @@ public class Bayes2GOCalculation implements ICalculation, IProgressFeedback
 			result.setScore(bayes2GOScore);
 
 			double score = bayes2GOScore.getScore();
-			logger.log(Level.INFO, "Score of initial set: " + score);
+			logger.log(INFO, "Score of initial set: " + score);
 
 			int maxSteps = mcmcSteps;
 			int burnin = 20000;
@@ -449,7 +450,7 @@ public class Bayes2GOCalculation implements ICalculation, IProgressFeedback
 				long now = System.currentTimeMillis();
 				if (now - start > updateReportTime)
 				{
-					logger.log(Level.INFO, (t*100/maxSteps) + "% (score=" + score +" maxScore=" + maxScore + " #terms="+bayes2GOScore.getActiveTerms().length+
+					logger.log(INFO, (t*100/maxSteps) + "% (score=" + score +" maxScore=" + maxScore + " #terms="+bayes2GOScore.getActiveTerms().length+
 										" accept/reject=" + Double.toString((double)numAccepts / (double)numRejects) +
 										" accept/steps=" + Double.toString((double)numAccepts / (double)t) +
 										" exp=" + expectedNumberOfTerms + " usePrior=" + usePrior + ")");
@@ -493,7 +494,7 @@ public class Bayes2GOCalculation implements ICalculation, IProgressFeedback
 					double newAlpha = (double)fixedAlphaBetaScore.getAvgN10()/(fixedAlphaBetaScore.getAvgN00() + fixedAlphaBetaScore.getAvgN10());
 					if (newAlpha < 0.0000001) newAlpha = 0.0000001;
 					if (newAlpha > 0.9999999) newAlpha = 0.9999999;
-					logger.log(Level.INFO, "alpha=" + alpha + "  newAlpha=" + newAlpha);
+					logger.log(INFO, "alpha=" + alpha + "  newAlpha=" + newAlpha);
 					alpha = newAlpha;
 				}
 
@@ -502,7 +503,7 @@ public class Bayes2GOCalculation implements ICalculation, IProgressFeedback
 					double newBeta = (double)fixedAlphaBetaScore.getAvgN01()/(fixedAlphaBetaScore.getAvgN01() + fixedAlphaBetaScore.getAvgN11());
 					if (newBeta < 0.0000001) newBeta = 0.0000001;
 					if (newBeta > 0.9999999) newBeta = 0.9999999;
-					logger.log(Level.INFO, "beta=" + beta + "  newBeta=" + newBeta);
+					logger.log(INFO, "beta=" + beta + "  newBeta=" + newBeta);
 					beta = newBeta;
 				}
 
@@ -510,7 +511,7 @@ public class Bayes2GOCalculation implements ICalculation, IProgressFeedback
 				{
 					double newExpectedNumberOfTerms = (double)fixedAlphaBetaScore.getAvgT();
 					if (newExpectedNumberOfTerms < 0.0000001) newExpectedNumberOfTerms = 0.0000001;
-					logger.log(Level.INFO, "expectedNumberOfTerms=" + expectedNumberOfTerms + "  newExpectedNumberOfTerms=" + newExpectedNumberOfTerms);
+					logger.log(INFO, "expectedNumberOfTerms=" + expectedNumberOfTerms + "  newExpectedNumberOfTerms=" + newExpectedNumberOfTerms);
 					expectedNumberOfTerms = newExpectedNumberOfTerms;
 				}
 			}
@@ -534,12 +535,12 @@ public class Bayes2GOCalculation implements ICalculation, IProgressFeedback
 				}
 			}
 
-			logger.log(Level.INFO, "numAccepts=" + numAccepts + "  numRejects = " + numRejects);
+			logger.log(INFO, "numAccepts=" + numAccepts + "  numRejects = " + numRejects);
 
 			/* Print out the term combination which scored max */
-			if (logger.isLoggable(Level.INFO))
+			if (logger.isLoggable(INFO))
 			{
-				logger.log(Level.INFO, "Term combination that reaches score of " + maxScore +
+				logger.log(INFO, "Term combination that reaches score of " + maxScore +
 							" when alpha=" + maxScoredAlpha +
 							", beta=" + maxScoredBeta +
 							", p=" + maxScoredP +
@@ -547,7 +548,7 @@ public class Bayes2GOCalculation implements ICalculation, IProgressFeedback
 				for (int t : maxScoredTerms)
 				{
 					TermID tid = termMapper.get(t);
-					logger.log(Level.INFO, tid.toString() + "/" + graph.getTerm(tid).getName());
+					logger.log(INFO, tid.toString() + "/" + graph.getTerm(tid).getName());
 				}
 			}
 
@@ -556,19 +557,19 @@ public class Bayes2GOCalculation implements ICalculation, IProgressFeedback
 				if (Double.isNaN(alpha))
 				{
 					for (int j=0;j<fixedAlphaBetaScore.totalAlpha.length;j++)
-						logger.log(Level.INFO, "alpha(" + fixedAlphaBetaScore.ALPHA[j] + ")=" + (double)fixedAlphaBetaScore.totalAlpha[j] / fixedAlphaBetaScore.numRecords);
+						logger.log(INFO, "alpha(" + fixedAlphaBetaScore.ALPHA[j] + ")=" + (double)fixedAlphaBetaScore.totalAlpha[j] / fixedAlphaBetaScore.numRecords);
 				}
 
 				if (Double.isNaN(beta))
 				{
 					for (int j=0;j<fixedAlphaBetaScore.totalBeta.length;j++)
-						logger.log(Level.INFO, "beta(" + fixedAlphaBetaScore.BETA[j] + ")=" + (double)fixedAlphaBetaScore.totalBeta[j] / fixedAlphaBetaScore.numRecords);
+						logger.log(INFO, "beta(" + fixedAlphaBetaScore.BETA[j] + ")=" + (double)fixedAlphaBetaScore.totalBeta[j] / fixedAlphaBetaScore.numRecords);
 				}
 
 				if (Double.isNaN(expectedNumberOfTerms))
 				{
 					for (int j=0;j<fixedAlphaBetaScore.totalExp.length;j++)
-						logger.log(Level.INFO, "exp(" + fixedAlphaBetaScore.EXPECTED_NUMBER_OF_TERMS[j] + ")=" + (double)fixedAlphaBetaScore.totalExp[j] / fixedAlphaBetaScore.numRecords);
+						logger.log(INFO, "exp(" + fixedAlphaBetaScore.EXPECTED_NUMBER_OF_TERMS[j] + ")=" + (double)fixedAlphaBetaScore.totalExp[j] / fixedAlphaBetaScore.numRecords);
 
 				}
 			}
