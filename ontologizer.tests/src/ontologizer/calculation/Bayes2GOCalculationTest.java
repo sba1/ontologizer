@@ -2,10 +2,12 @@ package ontologizer.calculation;
 
 import static ontologizer.ontology.TermID.tid;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static ontologizer.calculation.CalculationTestUtils.asList;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,6 +18,7 @@ import org.junit.Test;
 
 import ontologizer.FileCache;
 import ontologizer.OntologizerThreadGroups;
+import ontologizer.association.AnnotationContext;
 import ontologizer.association.AssociationContainer;
 import ontologizer.calculation.b2g.B2GParam;
 import ontologizer.calculation.b2g.Bayes2GOCalculation;
@@ -36,6 +39,8 @@ import ontologizer.statistics.None;
 import ontologizer.types.ByteString;
 import ontologizer.worksets.WorkSet;
 import ontologizer.worksets.WorkSetLoadThread;
+import sonumina.collections.IntMapper;
+import sonumina.math.graph.SlimDirectedGraphView;
 
 class B2GTestParameter
 {
@@ -94,6 +99,51 @@ public class Bayes2GOCalculationTest
 		assertEquals(0, marg(result, "GO:0000005"), 1e-5);
 		assertEquals(0, marg(result, "GO:0000003"), 1e-5);
 		assertEquals(0, marg(result, "GO:0000002"), 1e-5);
+	}
+
+	@Test
+	public void testBayes2GOSlimSimple()
+	{
+		InternalOntology internalOntology = new InternalOntology();
+
+		HashMap<TermID,Double> wantedActiveTerms = new HashMap<TermID,Double>(); /* Terms that are active */
+		wantedActiveTerms.put(tid("GO:0000010"),0.10);
+		wantedActiveTerms.put(tid("GO:0000004"),0.10);
+
+		AssociationContainer assoc = internalOntology.assoc;
+		Ontology ontology = internalOntology.graph;
+
+		SingleCalculationSetting scs = SingleCalculationSetting.create(new Random(1), wantedActiveTerms, 0.25, ontology, assoc);
+
+		Bayes2GOCalculation calc = new Bayes2GOCalculation();
+		calc.setSeed(2);
+		calc.setMcmcSteps(520000);
+		calc.setAlpha(B2GParam.Type.MCMC);
+		calc.setBeta(B2GParam.Type.MCMC);
+		calc.setExpectedNumber(2);
+
+		AnnotationContext am = assoc.getMapping();
+
+		/* Create int study set */
+		int [] studyIds = new int[scs.study.getGeneCount()];
+		int studyIdsLen = 0;
+		for (ByteString item : scs.study)
+		{
+			int id = am.mapSymbol(item);
+			assertNotEquals(Integer.MAX_VALUE, id);
+			studyIds[studyIdsLen++] = id;
+		}
+		assertEquals(studyIds.length, studyIdsLen);
+		Arrays.sort(studyIds);
+
+		TermEnumerator populationEnumerator = scs.study.enumerateTerms(ontology, assoc);
+		IntMapper<TermID> termMapper = IntMapper.create(populationEnumerator.getAllAnnotatedTermsAsList());
+		IntMapper<ByteString> geneMapper = IntMapper.create(populationEnumerator.getGenesAsList());
+		int [][] termLinks = CalculationUtils.makeTermLinks(populationEnumerator, termMapper, geneMapper);
+
+		System.out.println(am.getSymbols().length);
+		double [] result = calc.calculate(termLinks, studyIds, am.getSymbols().length);
+		assertEquals(termLinks.length, result.length);
 	}
 
 	@Test
