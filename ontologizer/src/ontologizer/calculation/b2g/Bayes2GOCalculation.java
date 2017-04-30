@@ -2,7 +2,6 @@ package ontologizer.calculation.b2g;
 
 import static java.util.logging.Level.INFO;
 
-import java.util.List;
 import java.util.Random;
 import java.util.logging.Logger;
 
@@ -292,289 +291,34 @@ public class Bayes2GOCalculation implements ICalculation, ISlimCalculation, IPro
 			StudySet studySet,
 			boolean valuedCalculation)
 	{
-		List<TermID> allTerms;
-
-		if (takePopulationAsReference) allTerms = populationEnumerator.getAllAnnotatedTermsAsList();
-		else allTerms = studyEnumerator.getAllAnnotatedTermsAsList();
-
-		Random rnd;
-		if (seed != 0)
+		if (valuedCalculation)
 		{
-			rnd = new Random(seed);
-			logger.log(INFO, "Use a random seed of: " + seed);
-		} else
-		{
-			long newSeed = new Random().nextLong();
-			logger.log(INFO, "Use a random seed of: " + newSeed);
-			rnd = new Random(newSeed);
+			throw new IllegalArgumentException("Valued calculation not supported at the moment!");
 		}
-
-		boolean doAlphaEm = false;
-		boolean doBetaEm = false;
-		boolean doPEm = false;
-
-		int maxIter;
-
-		double alpha;
-		double beta;
-		double expectedNumberOfTerms;
-
-		switch (this.alpha.getType())
-		{
-			case	EM: alpha = 0.4; doAlphaEm = true; break;
-			case	MCMC: alpha = Double.NaN; break;
-			default: alpha = this.alpha.getValue(); break;
-		}
-
-		switch (this.beta.getType())
-		{
-			case	EM: beta = 0.4; doBetaEm = true; break;
-			case	MCMC: beta = Double.NaN; break;
-			default: beta = this.beta.getValue(); break;
-		}
-
-
-		switch (this.expectedNumberOfTerms.getType())
-		{
-			case	EM: expectedNumberOfTerms = 1; doPEm = true; break;
-			case	MCMC: expectedNumberOfTerms = Double.NaN; break;
-			default: expectedNumberOfTerms = this.expectedNumberOfTerms.getValue(); break;
-		}
-
-		boolean doEm = doAlphaEm || doBetaEm || doPEm;
-
-		if (doEm) maxIter = 12;
-		else maxIter = 1;
-
-		logger.log(INFO, allTerms.size() + " terms and " + populationEnumerator.getGenes().size() + " genes in consideration.");
-
-
 		IntMapper<TermID> termMapper = IntMapper.create(populationEnumerator.getAllAnnotatedTermsAsList());
 		IntMapper<ByteString> geneMapper = IntMapper.create(populationEnumerator.getGenesAsList());
 		int [][] termLinks = CalculationUtils.makeTermLinks(populationEnumerator, termMapper, geneMapper);
-		boolean [] observedItems = null;
+		boolean [] observedItems = geneMapper.getDense(studyEnumerator.getGenes());
+		double [] r = calculate(termLinks, observedItems);
 
-		if (!valuedCalculation)
+		for (int i = 0; i < r.length; i++)
 		{
-			observedItems = geneMapper.getDense(studyEnumerator.getGenes());
+			TermID tid = termMapper.get(i);
+			Bayes2GOGOTermProperties prop = new Bayes2GOGOTermProperties();
+			prop.term = tid;
+			prop.annotatedStudyGenes = studyEnumerator.getAnnotatedGenes(tid).totalAnnotatedCount();
+			prop.annotatedPopulationGenes = populationEnumerator.getAnnotatedGenes(tid).totalAnnotatedCount();
+			prop.marg = r[i];
+
+			/* At the moment, we need these fields for technical reasons */
+			prop.p = 1 - r[i];
+			prop.p_adjusted = prop.p;
+			prop.p_min = 0.001;
+
+			result.addGOTermProperties(prop);
+
 		}
 
-		for (int i=0;i<maxIter;i++)
-		{
-			Bayes2GOScore bayes2GOScore;
-
-			FixedAlphaBetaScore fixedAlphaBetaScore = null;
-			ValuedGOScore valuedScore = null;
-
-			if (!valuedCalculation)
-			{
-				fixedAlphaBetaScore = new FixedAlphaBetaScore(rnd, termLinks, observedItems);
-				fixedAlphaBetaScore.setIntegrateParams(integrateParams);
-
-				if (doEm)
-				{
-					logger.log(INFO, "EM-Iter("+i+")" + alpha + "  " + beta + "  " + expectedNumberOfTerms);
-				} else
-				{
-					logger.log(INFO, "MCMC only: " + alpha + "  " + beta + "  " + expectedNumberOfTerms);
-
-				}
-
-				fixedAlphaBetaScore.setAlpha(alpha);
-				if (this.alpha.hasMax())
-					fixedAlphaBetaScore.setMaxAlpha(this.alpha.getMax());
-				fixedAlphaBetaScore.setBeta(beta);
-				if (this.beta.hasMax())
-					fixedAlphaBetaScore.setMaxBeta(this.beta.getMax());
-				fixedAlphaBetaScore.setExpectedNumberOfTerms(expectedNumberOfTerms);
-				fixedAlphaBetaScore.setUsePrior(usePrior);
-
-				logger.log(INFO, "Score of empty set: " + fixedAlphaBetaScore.getScore());
-
-				/* Provide a starting point */
-				if (randomStart)
-				{
-					int numberOfTerms = fixedAlphaBetaScore.EXPECTED_NUMBER_OF_TERMS[rnd.nextInt(fixedAlphaBetaScore.EXPECTED_NUMBER_OF_TERMS.length)];
-					double pForStart = ((double)numberOfTerms) / allTerms.size();
-
-					for (int j=0;j<allTerms.size();j++)
-						if (rnd.nextDouble() < pForStart) fixedAlphaBetaScore.switchState(j);
-
-					logger.log(INFO, "Starting with " + fixedAlphaBetaScore.getActiveTerms().length + " terms (p=" + pForStart + ")");
-				}
-
-				bayes2GOScore = fixedAlphaBetaScore;
-			} else
-			{
-				valuedScore = new ValuedGOScore(rnd, termLinks, termMapper, geneMapper, studySet);
-				bayes2GOScore = valuedScore;
-			}
-
-			result.setScore(bayes2GOScore);
-
-			double score = bayes2GOScore.getScore();
-			logger.log(INFO, "Score of initial set: " + score);
-
-			int maxSteps = mcmcSteps;
-			int burnin = 20000;
-			int numAccepts = 0;
-			int numRejects = 0;
-
-			if (calculationProgress != null)
-				calculationProgress.init(maxSteps);
-
-			double maxScore = score;
-			int [] maxScoredTerms = bayes2GOScore.getActiveTerms();
-			double maxScoredAlpha = Double.NaN;
-			double maxScoredBeta = Double.NaN;
-			double maxScoredP = Double.NaN;
-			int maxWhenSeen = -1;
-
-			long start = System.currentTimeMillis();
-
-			for (int t=0;t<maxSteps;t++)
-			{
-				/* Remember maximum score and terms */
-				if (score > maxScore)
-				{
-					maxScore = score;
-					maxScoredTerms = bayes2GOScore.getActiveTerms();
-					if (fixedAlphaBetaScore != null)
-					{
-						maxScoredAlpha = fixedAlphaBetaScore.getAlpha();
-						maxScoredBeta = fixedAlphaBetaScore.getBeta();
-						maxScoredP = fixedAlphaBetaScore.getP();
-					}
-					maxWhenSeen = t;
-				}
-
-				long now = System.currentTimeMillis();
-				if (now - start > updateReportTime)
-				{
-					logger.log(INFO, (t*100/maxSteps) + "% (score=" + score +" maxScore=" + maxScore + " #terms="+bayes2GOScore.getActiveTerms().length+
-										" accept/reject=" + Double.toString((double)numAccepts / (double)numRejects) +
-										" accept/steps=" + Double.toString((double)numAccepts / (double)t) +
-										" exp=" + expectedNumberOfTerms + " usePrior=" + usePrior + ")");
-					start = now;
-
-					if (calculationProgress != null)
-						calculationProgress.update(t);
-				}
-
-				long oldPossibilities = bayes2GOScore.getNeighborhoodSize();
-				long r = rnd.nextLong();
-				bayes2GOScore.proposeNewState(r);
-				double newScore = bayes2GOScore.getScore();
-				long newPossibilities = bayes2GOScore.getNeighborhoodSize();
-
-				double acceptProb = Math.exp(newScore - score)*(double)oldPossibilities/(double)newPossibilities; /* last quotient is the hasting ratio */
-
-				double u = rnd.nextDouble();
-				if (u >= acceptProb)
-				{
-					bayes2GOScore.undoProposal();
-					numRejects++;
-				} else
-				{
-					score = newScore;
-					numAccepts++;
-				}
-
-				if (t>burnin)
-					bayes2GOScore.record();
-
-
-				if (bayes2GOCalculationProgress != null)
-					bayes2GOCalculationProgress.update(i, t, acceptProb, numAccepts, score);
-			}
-
-			if (fixedAlphaBetaScore != null)
-			{
-				if (doAlphaEm)
-				{
-					double newAlpha = (double)fixedAlphaBetaScore.getAvgN10()/(fixedAlphaBetaScore.getAvgN00() + fixedAlphaBetaScore.getAvgN10());
-					if (newAlpha < 0.0000001) newAlpha = 0.0000001;
-					if (newAlpha > 0.9999999) newAlpha = 0.9999999;
-					logger.log(INFO, "alpha=" + alpha + "  newAlpha=" + newAlpha);
-					alpha = newAlpha;
-				}
-
-				if (doBetaEm)
-				{
-					double newBeta = (double)fixedAlphaBetaScore.getAvgN01()/(fixedAlphaBetaScore.getAvgN01() + fixedAlphaBetaScore.getAvgN11());
-					if (newBeta < 0.0000001) newBeta = 0.0000001;
-					if (newBeta > 0.9999999) newBeta = 0.9999999;
-					logger.log(INFO, "beta=" + beta + "  newBeta=" + newBeta);
-					beta = newBeta;
-				}
-
-				if (doPEm)
-				{
-					double newExpectedNumberOfTerms = (double)fixedAlphaBetaScore.getAvgT();
-					if (newExpectedNumberOfTerms < 0.0000001) newExpectedNumberOfTerms = 0.0000001;
-					logger.log(INFO, "expectedNumberOfTerms=" + expectedNumberOfTerms + "  newExpectedNumberOfTerms=" + newExpectedNumberOfTerms);
-					expectedNumberOfTerms = newExpectedNumberOfTerms;
-				}
-			}
-
-			if (i==maxIter - 1)
-			{
-				for (TermID t : allTerms)
-				{
-					Bayes2GOGOTermProperties prop = new Bayes2GOGOTermProperties();
-					prop.term = t;
-					prop.annotatedStudyGenes = studyEnumerator.getAnnotatedGenes(t).totalAnnotatedCount();
-					prop.annotatedPopulationGenes = populationEnumerator.getAnnotatedGenes(t).totalAnnotatedCount();
-					prop.marg = ((double)bayes2GOScore.termActivationCounts[termMapper.getIndex(t)] / bayes2GOScore.numRecords);
-
-					/* At the moment, we need these fields for technical reasons */
-					prop.p = 1 - ((double)bayes2GOScore.termActivationCounts[termMapper.getIndex(t)] / bayes2GOScore.numRecords);
-					prop.p_adjusted = prop.p;
-					prop.p_min = 0.001;
-
-					result.addGOTermProperties(prop);
-				}
-			}
-
-			logger.log(INFO, "numAccepts=" + numAccepts + "  numRejects = " + numRejects);
-
-			/* Print out the term combination which scored max */
-			if (logger.isLoggable(INFO))
-			{
-				logger.log(INFO, "Term combination that reaches score of " + maxScore +
-							" when alpha=" + maxScoredAlpha +
-							", beta=" + maxScoredBeta +
-							", p=" + maxScoredP +
-							" at step " + maxWhenSeen);
-				for (int t : maxScoredTerms)
-				{
-					TermID tid = termMapper.get(t);
-					logger.log(INFO, tid.toString() + "/" + graph.getTerm(tid).getName());
-				}
-			}
-
-			if (fixedAlphaBetaScore != null)
-			{
-				if (Double.isNaN(alpha))
-				{
-					for (int j=0;j<fixedAlphaBetaScore.totalAlpha.length;j++)
-						logger.log(INFO, "alpha(" + fixedAlphaBetaScore.ALPHA[j] + ")=" + (double)fixedAlphaBetaScore.totalAlpha[j] / fixedAlphaBetaScore.numRecords);
-				}
-
-				if (Double.isNaN(beta))
-				{
-					for (int j=0;j<fixedAlphaBetaScore.totalBeta.length;j++)
-						logger.log(INFO, "beta(" + fixedAlphaBetaScore.BETA[j] + ")=" + (double)fixedAlphaBetaScore.totalBeta[j] / fixedAlphaBetaScore.numRecords);
-				}
-
-				if (Double.isNaN(expectedNumberOfTerms))
-				{
-					for (int j=0;j<fixedAlphaBetaScore.totalExp.length;j++)
-						logger.log(INFO, "exp(" + fixedAlphaBetaScore.EXPECTED_NUMBER_OF_TERMS[j] + ")=" + (double)fixedAlphaBetaScore.totalExp[j] / fixedAlphaBetaScore.numRecords);
-
-				}
-			}
-		}
 	}
 
 	/**
@@ -607,14 +351,16 @@ public class Bayes2GOCalculation implements ICalculation, ISlimCalculation, IPro
 		return false;
 	}
 
-	@Override
-	public double[] calculate(int[][] term2Items, int[] studyIds, int numItems)
+	/**
+	 * Perform the calculation.
+	 *
+	 * @param term2Items
+	 * @param observedItems
+	 * @return a vector of marginal probabilities for each term.
+	 */
+	private double[] calculate(int [][] term2Items, boolean [] observedItems)
 	{
 		int numTerms = term2Items.length;
-		boolean [] observedItems = new boolean[numItems];
-		for (int i = 0; i < studyIds.length; i++)
-			observedItems[studyIds[i]] = true;
-
 		double [] res = new double[numTerms];
 
 		Random rnd;
@@ -815,8 +561,6 @@ public class Bayes2GOCalculation implements ICalculation, ISlimCalculation, IPro
 				}
 			}
 
-			logger.log(INFO, "numAccepts=" + numAccepts + "  numRejects = " + numRejects);
-
 			if (fixedAlphaBetaScore != null)
 			{
 				if (Double.isNaN(alpha))
@@ -860,5 +604,15 @@ public class Bayes2GOCalculation implements ICalculation, ISlimCalculation, IPro
 			}
 		}
 		return res;
+
+	}
+
+	@Override
+	public double[] calculate(int[][] term2Items, int[] studyIds, int numItems)
+	{
+		boolean [] observedItems = new boolean[numItems];
+		for (int i = 0; i < studyIds.length; i++)
+			observedItems[studyIds[i]] = true;
+		return calculate(term2Items, observedItems);
 	}
 }

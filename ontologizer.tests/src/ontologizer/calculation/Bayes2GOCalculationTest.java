@@ -171,7 +171,7 @@ public class Bayes2GOCalculationTest
 		calc.calculateStudySet(ontology, assoc, scs.pop, scs.study, new None());
 	}
 
-	@Test
+	/* Disabled test @Test */
 	public void testValuedGOScore()
 	{
 		String [] terms = {"GO:0000010", "GO:0000004"};
