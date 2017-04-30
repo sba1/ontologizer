@@ -838,6 +838,26 @@ public class Bayes2GOCalculation implements ICalculation, ISlimCalculation, IPro
 
 				}
 			}
+
+			logger.log(INFO, "numAccepts=" + numAccepts + "  numRejects = " + numRejects);
+
+			if (logger.isLoggable(INFO))
+			{
+				StringBuilder b = new StringBuilder();
+
+				logger.log(INFO, "Term combination that reaches score of " + maxScore +
+							" when alpha=" + maxScoredAlpha +
+							", beta=" + maxScoredBeta +
+							", p=" + maxScoredP +
+							" at step " + maxWhenSeen);
+				b.append("Indices: ");
+				for (int t : maxScoredTerms)
+				{
+					b.append(t);
+					b.append(", ");
+				}
+				logger.log(INFO, b.toString());
+			}
 		}
 		return res;
 	}
