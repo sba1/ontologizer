@@ -1,9 +1,9 @@
 package ontologizer.calculation;
 
+import static ontologizer.calculation.CalculationTestUtils.asList;
 import static ontologizer.ontology.TermID.tid;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
-import static ontologizer.calculation.CalculationTestUtils.asList;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -40,7 +40,6 @@ import ontologizer.types.ByteString;
 import ontologizer.worksets.WorkSet;
 import ontologizer.worksets.WorkSetLoadThread;
 import sonumina.collections.IntMapper;
-import sonumina.math.graph.SlimDirectedGraphView;
 
 class B2GTestParameter
 {
