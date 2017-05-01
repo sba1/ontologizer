@@ -168,7 +168,8 @@ public class Bayes2GOCalculationTest
 		calc.setBeta(B2GParam.Type.FIXED);
 		calc.setExpectedNumber(2);
 
-		calc.calculateStudySet(ontology, assoc, scs.pop, scs.study, new None());
+		EnrichedGOTermsResult result = calc.calculateStudySet(ontology, assoc, scs.pop, scs.study, new None());
+		EnrichedGOTermsTableWriter.writeTable(System.out, result);
 	}
 
 	/* Disabled test @Test */
