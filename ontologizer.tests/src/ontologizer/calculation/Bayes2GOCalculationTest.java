@@ -140,7 +140,6 @@ public class Bayes2GOCalculationTest
 		IntMapper<ByteString> geneMapper = IntMapper.create(populationEnumerator.getGenesAsList());
 		int [][] termLinks = CalculationUtils.makeTermLinks(populationEnumerator, termMapper, geneMapper);
 
-		System.out.println(am.getSymbols().length);
 		double [] result = calc.calculate(termLinks, studyIds, am.getSymbols().length);
 		assertEquals(termLinks.length, result.length);
 	}
