@@ -169,6 +169,17 @@ public class Bayes2GOCalculationTest
 
 		EnrichedGOTermsResult result = calc.calculateStudySet(ontology, assoc, scs.pop, scs.study, new None());
 		EnrichedGOTermsTableWriter.writeTable(System.out, result);
+		assertEquals(1, marg(result, "GO:0000004"), 1e-5);
+		assertEquals(1, marg(result, "GO:0000010"), 1e-5);
+		assertEquals(0, marg(result, "GO:0000011"), 1e-5);
+		assertEquals(0, marg(result, "GO:0000001"), 1e-5);
+		assertEquals(0, marg(result, "GO:0000008"), 1e-5);
+		assertEquals(0, marg(result, "GO:0000009"), 1e-5);
+		assertEquals(0, marg(result, "GO:0000007"), 1e-5);
+		assertEquals(0, marg(result, "GO:0000006"), 1e-5);
+		assertEquals(0, marg(result, "GO:0000005"), 1e-5);
+		assertEquals(0, marg(result, "GO:0000003"), 1e-5);
+		assertEquals(0, marg(result, "GO:0000002"), 1e-5);
 	}
 
 	/* Disabled test @Test */
