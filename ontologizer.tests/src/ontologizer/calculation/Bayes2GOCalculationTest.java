@@ -163,6 +163,7 @@ public class Bayes2GOCalculationTest
 		calc.setSeed(2);
 		calc.setMcmcSteps(520000);
 		calc.setIntegrateParams(true);
+		/* Hyperparameter are integrated out here, so they don't need to be selected */
 		calc.setAlpha(B2GParam.Type.FIXED);
 		calc.setBeta(B2GParam.Type.FIXED);
 		calc.setExpectedNumber(2);
