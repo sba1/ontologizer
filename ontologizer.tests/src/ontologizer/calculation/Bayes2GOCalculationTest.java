@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Random;
 import java.util.Set;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import ontologizer.association.AnnotationContext;
@@ -48,18 +49,26 @@ public class Bayes2GOCalculationTest
 		return ((Bayes2GOGOTermProperties)result.getGOTermProperties(tid(tid))).marg;
 	}
 
+	private Ontology ontology;
+	private AssociationContainer assoc;
+
+	/** Terms that are assumed to be active */
+	private HashMap<TermID,Double> wantedActiveTerms;
+
+	@Before
+	public void setup()
+	{
+		InternalOntology internalOntology = new InternalOntology();
+		ontology = internalOntology.graph;
+		assoc = internalOntology.assoc;
+		wantedActiveTerms = new HashMap<TermID,Double>(); /* Terms that are active */
+		wantedActiveTerms.put(tid("GO:0000010"),0.10);
+		wantedActiveTerms.put(tid("GO:0000004"),0.10);
+	}
+
 	@Test
 	public void testBayes2GOSimple()
 	{
-		InternalOntology internalOntology = new InternalOntology();
-
-		HashMap<TermID,Double> wantedActiveTerms = new HashMap<TermID,Double>(); /* Terms that are active */
-		wantedActiveTerms.put(tid("GO:0000010"),0.10);
-		wantedActiveTerms.put(tid("GO:0000004"),0.10);
-
-		AssociationContainer assoc = internalOntology.assoc;
-		Ontology ontology = internalOntology.graph;
-
 		SingleCalculationSetting scs = SingleCalculationSetting.create(new Random(1), wantedActiveTerms, 0.25, ontology, assoc);
 
 		Bayes2GOCalculation calc = new Bayes2GOCalculation();
@@ -89,15 +98,6 @@ public class Bayes2GOCalculationTest
 	@Test
 	public void testBayes2GOSlimSimple()
 	{
-		InternalOntology internalOntology = new InternalOntology();
-
-		HashMap<TermID,Double> wantedActiveTerms = new HashMap<TermID,Double>(); /* Terms that are active */
-		wantedActiveTerms.put(tid("GO:0000010"),0.10);
-		wantedActiveTerms.put(tid("GO:0000004"),0.10);
-
-		AssociationContainer assoc = internalOntology.assoc;
-		Ontology ontology = internalOntology.graph;
-
 		SingleCalculationSetting scs = SingleCalculationSetting.create(new Random(1), wantedActiveTerms, 0.25, ontology, assoc);
 
 		Bayes2GOCalculation calc = new Bayes2GOCalculation();
@@ -133,15 +133,6 @@ public class Bayes2GOCalculationTest
 	@Test
 	public void testBayes2GOParameterIntegratedOut()
 	{
-		InternalOntology internalOntology = new InternalOntology();
-
-		final HashMap<TermID,Double> wantedActiveTerms = new HashMap<TermID,Double>(); /* Terms that are active */
-		wantedActiveTerms.put(tid("GO:0000010"),0.10);
-		wantedActiveTerms.put(tid("GO:0000004"),0.10);
-
-		AssociationContainer assoc = internalOntology.assoc;
-		Ontology ontology = internalOntology.graph;
-
 		SingleCalculationSetting scs = SingleCalculationSetting.create(new Random(1), wantedActiveTerms, 0.25, ontology, assoc);
 
 		Bayes2GOCalculation calc = new Bayes2GOCalculation();
