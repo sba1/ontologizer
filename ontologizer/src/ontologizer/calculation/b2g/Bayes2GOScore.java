@@ -165,20 +165,40 @@ abstract public class Bayes2GOScore extends Bayes2GOScoreBase
 	 */
 	public abstract double getScore();
 
+	/**
+	 * Propose a new state.
+	 *
+	 * @param rand
+	 */
 	public abstract void proposeNewState(long rand);
+
 	public void proposeNewState()
 	{
 		proposeNewState(rnd.nextLong());
 	}
 
+	/**
+	 * Exchange the state from t1 to t2. This is merely a short-cut to switchState() being
+	 * called on t1 and t2 in sequence. It does not check if the state is really exchanged.
+	 *
+	 * @param t1 id of the first term to be toggled
+	 * @param t2 id of the second term to be toggled
+	 */
 	public void exchange(int t1, int t2)
 	{
 		switchState(t1);
 		switchState(t2);
 	}
 
+	/**
+	 * Undos the previous proposal.
+	 */
 	public abstract void undoProposal();
 
+	/**
+	 * @return the size of the current neighborhood, i.e., the number of states transitions
+	 * that are possible from the current state.
+	 */
 	public abstract long getNeighborhoodSize();
 
 	/**
