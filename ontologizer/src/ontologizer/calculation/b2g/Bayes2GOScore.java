@@ -3,9 +3,7 @@ package ontologizer.calculation.b2g;
 import java.util.Random;
 
 /**
- * The base class of bayes2go Score.
- *
- * For efficiency reasons terms and genes are represented by own ids.
+ * Extends Bayes2GOScoreBase with p prior and the ability to count term activations.
  *
  * @author Sebastian Bauer
  */
