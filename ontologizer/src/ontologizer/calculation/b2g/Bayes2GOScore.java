@@ -9,7 +9,7 @@ import java.util.Random;
  *
  * @author Sebastian Bauer
  */
-abstract public class Bayes2GOScore extends Bayes2GOScoreBase
+public abstract class Bayes2GOScore extends Bayes2GOScoreBase
 {
 	/** Source of randomness */
 	protected Random rnd;
