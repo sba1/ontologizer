@@ -18,6 +18,8 @@ source repository via
 $ git clone https://github.com/sba1/ontologizer
 ```
 
+Install pandoc (https://pandoc.org/) before proceeding. (The Pandoc dependency is not handled by Maven)
+
 you can start the build procedure via
 
 ```
