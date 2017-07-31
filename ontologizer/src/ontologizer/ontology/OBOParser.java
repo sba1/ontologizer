@@ -215,6 +215,10 @@ public class OBOParser
 		return this.terms;
 	}
 
+	public boolean ignoreObsoleteTerms()
+	{
+		return false;
+    	}
 	/**
 	 * This puts the results of the parse of a single OBO stanza into one Term
 	 * object and stores that in the HashSet terms.
@@ -239,20 +243,23 @@ public class OBOParser
 				return;
 
 			}
+			//Ignore term if both obsolete and we are ignoring obsoletes
+			if (!(ignoreObsoleteTerms() && this.currentObsolete))
+            		{
+				/* Create a Term object and put it in the HashMap terms. */
+				Term t = new Term(currentID, currentName, currentNamespace, currentParents);
+				t.setObsolete(currentObsolete);
+				t.setDefinition(currentDefintion);
+				t.setAlternatives(currentAlternatives);
+				t.setEquivalents(currentEquivalents);
+				t.setSubsets(currentSubsets);
+				t.setSynonyms(currentSynonyms);
+				t.setXrefs(currentXrefs);
+				terms.add(t);
 
-			/* Create a Term object and put it in the HashMap terms. */
-			Term t = new Term(currentID, currentName, currentNamespace, currentParents);
-			t.setObsolete(currentObsolete);
-			t.setDefinition(currentDefintion);
-			t.setAlternatives(currentAlternatives);
-			t.setEquivalents(currentEquivalents);
-			t.setSubsets(currentSubsets);
-			t.setSynonyms(currentSynonyms);
-			t.setXrefs(currentXrefs);
-			terms.add(t);
-
-			/* Statistics */
-			numberOfRelations += currentParents.size();
+				/* Statistics */
+				numberOfRelations += currentParents.size();
+			}
 		}
 
 		resetCurrentStanza();
