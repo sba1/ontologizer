@@ -34,6 +34,7 @@
   </build>
 
   <modules>
+    <module>../ontologizer.lib</module>
     <module>../ontologizer</module>
     <module>../ontologizer.dataprep</module>
     <module>../ontologizer.obogen</module>
