@@ -49,4 +49,5 @@ API - ontologizerlib
 
 The core of Ontologizer can be in principle used by other applications, although the API
 is rather dumb. Please have a look at the https://github.com/ontologizer/ontologizerlib
-for the library project. Note that this project is not yet used by Ontologizer.
+for the library project. The project is currently used in Ontologizer via directly
+importing the source. This simplifies the coordinated development of both projects.
