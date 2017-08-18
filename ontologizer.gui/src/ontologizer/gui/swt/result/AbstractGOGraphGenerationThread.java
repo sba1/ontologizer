@@ -5,10 +5,10 @@ import java.util.HashSet;
 
 import org.eclipse.swt.widgets.Display;
 
-import ontologizer.dotwriter.GODOTWriter;
-import ontologizer.dotwriter.IDotAttributesProvider;
 import ontologizer.gui.swt.support.IGraphGenerationSupport;
 import ontologizer.gui.swt.support.NewGraphGenerationThread;
+import ontologizer.io.dot.ITermDotAttributesProvider;
+import ontologizer.io.dot.OntologyDotWriter;
 import ontologizer.ontology.Ontology;
 import ontologizer.ontology.TermID;
 
@@ -17,7 +17,7 @@ import ontologizer.ontology.TermID;
  *
  * @author Sebastian Bauer
  */
-public abstract class AbstractGOGraphGenerationThread extends NewGraphGenerationThread implements IGraphGenerationSupport, IDotAttributesProvider
+public abstract class AbstractGOGraphGenerationThread extends NewGraphGenerationThread implements IGraphGenerationSupport, ITermDotAttributesProvider
 {
 	private Ontology graph;
 	private HashSet<TermID> leafTerms;
@@ -53,6 +53,6 @@ public abstract class AbstractGOGraphGenerationThread extends NewGraphGeneration
 
 	public final void writeDOT(File dotFile)
 	{
-		GODOTWriter.writeDOT(graph, dotFile, emanatingTerm, leafTerms, this);
+		OntologyDotWriter.writeDOT(graph, dotFile, emanatingTerm, leafTerms, this);
 	}
 }

@@ -12,8 +12,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import ontologizer.association.AssociationContainer;
-import ontologizer.dotwriter.AbstractDotAttributesProvider;
-import ontologizer.dotwriter.GODOTWriter;
+import ontologizer.io.dot.AbstractTermDotAttributesProvider;
+import ontologizer.io.dot.OntologyDotWriter;
 import ontologizer.ontology.Ontology;
 import ontologizer.ontology.Term;
 import ontologizer.ontology.TermID;
@@ -145,12 +145,12 @@ public class AbstractGOTermsResult implements Iterable<AbstractGOTermProperties>
 	 * @param provider
 	 *          should provide for every property an appropiate id.
 	 */
-	public void writeDOT(Ontology graph, File file, TermID rootTerm, HashSet<TermID> terms, AbstractDotAttributesProvider provider)
+	public void writeDOT(Ontology graph, File file, TermID rootTerm, HashSet<TermID> terms, AbstractTermDotAttributesProvider provider)
 	{
 		/* FIXME: graph really necessary? (we have getGO()) */
 		if (list.isEmpty())
 			return;
 
-		GODOTWriter.writeDOT(graph, file, rootTerm, terms, provider);
+		OntologyDotWriter.writeDOT(graph, file, rootTerm, terms, provider);
 	}
 }

@@ -10,10 +10,10 @@ import ontologizer.GlobalPreferences;
 import ontologizer.association.AssociationContainer;
 import ontologizer.calculation.AbstractGOTermProperties;
 import ontologizer.calculation.AbstractGOTermsResult;
-import ontologizer.dotwriter.AbstractDotAttributesProvider;
 import ontologizer.gui.swt.ISimpleAction;
 import ontologizer.gui.swt.support.GraphCanvas;
 import ontologizer.gui.swt.support.IGraphGenerationFinished;
+import ontologizer.io.dot.AbstractTermDotAttributesProvider;
 import ontologizer.ontology.Ontology;
 import ontologizer.ontology.Term;
 import ontologizer.ontology.TermID;
@@ -61,7 +61,7 @@ public abstract class AbstractResultComposite extends Composite
 	private Term emanatingTerm;
 
 	/** The attributes provider */
-	private AbstractDotAttributesProvider dotNodeAttributesProvider;
+	private AbstractTermDotAttributesProvider dotNodeAttributesProvider;
 
 	public AbstractResultComposite(Composite parent, int style)
 	{
@@ -260,7 +260,7 @@ public abstract class AbstractResultComposite extends Composite
 	 *
 	 * @return
 	 */
-	protected GraphGenerationThread createGraphGenerationThread(IGraphGenerationFinished finished, AbstractDotAttributesProvider attrProvider)
+	protected GraphGenerationThread createGraphGenerationThread(IGraphGenerationFinished finished, AbstractTermDotAttributesProvider attrProvider)
 	{
 		GraphGenerationThread ggt = new GraphGenerationThread(getDisplay(),GlobalPreferences.getDOTPath(),finished,attrProvider);
 		ggt.go = go;
@@ -304,7 +304,7 @@ public abstract class AbstractResultComposite extends Composite
 	 *
 	 * @param attributesProvider
 	 */
-	protected void setDotNodeAttributesProvider(AbstractDotAttributesProvider attributesProvider)
+	protected void setDotNodeAttributesProvider(AbstractTermDotAttributesProvider attributesProvider)
 	{
 		this.dotNodeAttributesProvider = attributesProvider;
 	}

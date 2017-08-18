@@ -11,7 +11,7 @@ import ontologizer.calculation.EnrichedGOTermsResult;
 import ontologizer.ontology.Ontology;
 import ontologizer.ontology.Term;
 import ontologizer.ontology.TermID;
-import ontologizer.ontology.Ontology.IVisitingGOVertex;
+import ontologizer.ontology.Ontology.ITermIDVisitor;
 
 /**
  * A class writing dot files for the comparision of different calculation
@@ -127,7 +127,7 @@ public class DOTDumper
 		int numCols = c;
 
 		/* Now build the multi node map */
-		HashMap<Term,MultResultNode> nodeMap = new HashMap<Term,MultResultNode>();
+		HashMap<TermID,MultResultNode> nodeMap = new HashMap<TermID,MultResultNode>();
 		for (EnrichedGOTermsResult studySetResult : studResList)
 		{
 			String correctionName = studySetResult.getCorrectionName();
@@ -215,13 +215,13 @@ public class DOTDumper
 		}
 	}
 
-	public class MultResultNodeVisitor implements IVisitingGOVertex
+	public class MultResultNodeVisitor implements ITermIDVisitor
 	{
-		public HashMap<Term, MultResultNode> nodeMap;
+		public HashMap<TermID, MultResultNode> nodeMap;
 		public Ontology graph;
 		public int rows, cols;
 
-		public MultResultNodeVisitor(Ontology goGraph, HashMap<Term, MultResultNode> map, int nRows, int nCols)
+		public MultResultNodeVisitor(Ontology goGraph, HashMap<TermID, MultResultNode> map, int nRows, int nCols)
 		{
 			graph = goGraph;
 			nodeMap = map;
@@ -229,15 +229,16 @@ public class DOTDumper
 			cols = nCols;
 		}
 
-		public boolean visited(Term term)
+		public boolean visited(TermID tid)
 		{
-			if (term != null && !nodeMap.containsKey(term))
+			Term term = graph.getTerm(tid);
+			if (term != null && !nodeMap.containsKey(tid))
 			{
 //				TermID rootTerm = new TermID(8150);
 //				if (rootTerm.equals(goTermID) || (!graph.isRootGOTermID(goTermID) && graph.existsPath(rootTerm,goTermID)))
 				{
-					MultResultNode newNode = new MultResultNode(term,rows, cols);
-					nodeMap.put(term,newNode);
+					MultResultNode newNode = new MultResultNode(term, rows, cols);
+					nodeMap.put(tid,newNode);
 				}
 			}
 			return true;
@@ -245,7 +246,7 @@ public class DOTDumper
 	}
 
 	private void processStudySetResult(
-			HashMap<Term, MultResultNode> nodeMap,
+			HashMap<TermID, MultResultNode> nodeMap,
 			EnrichedGOTermsResult studRes,
 			double alpha, int rows, int cols, int row, int col)
 	{

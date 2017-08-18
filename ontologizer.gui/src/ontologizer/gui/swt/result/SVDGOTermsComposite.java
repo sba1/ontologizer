@@ -8,11 +8,11 @@ import java.util.Locale;
 import ontologizer.calculation.AbstractGOTermProperties;
 import ontologizer.calculation.svd.SVDGOTermProperties;
 import ontologizer.calculation.svd.SVDResult;
-import ontologizer.dotwriter.AbstractDotAttributesProvider;
 import ontologizer.gui.swt.support.Chart;
 import ontologizer.gui.swt.support.GraphCanvas;
 import ontologizer.gui.swt.support.SWTUtil;
 import ontologizer.gui.swt.support.ScatterPlot;
+import ontologizer.io.dot.AbstractTermDotAttributesProvider;
 import ontologizer.gui.swt.support.Chart.XYSeries;
 import ontologizer.ontology.Term;
 import ontologizer.ontology.TermID;
@@ -308,7 +308,7 @@ public class SVDGOTermsComposite extends AbstractResultComposite
 		if (size <= 0) return;
 
 		/* Graph stuff */
-		setDotNodeAttributesProvider(new AbstractDotAttributesProvider()
+		setDotNodeAttributesProvider(new AbstractTermDotAttributesProvider()
 		{
 			public String getDotNodeAttributes(TermID id)
 			{

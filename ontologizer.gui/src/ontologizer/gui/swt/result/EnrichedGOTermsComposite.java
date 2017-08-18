@@ -62,7 +62,7 @@ import org.swtchart.ILineSeries;
 import org.swtchart.ISeries.SeriesType;
 
 import ontologizer.GlobalPreferences;
-import ontologizer.association.Gene2Associations;
+import ontologizer.association.ItemAssociations;
 import ontologizer.calculation.AbstractGOTermProperties;
 import ontologizer.calculation.EnrichedGOTermsResult;
 import ontologizer.calculation.EnrichedGOTermsResultLatexWriter;
@@ -70,13 +70,13 @@ import ontologizer.calculation.EnrichedGOTermsTableWriter;
 import ontologizer.calculation.b2g.Bayes2GOEnrichedGOTermsResult;
 import ontologizer.calculation.b2g.Bayes2GOGOTermProperties;
 import ontologizer.calculation.b2g.FixedAlphaBetaScore;
-import ontologizer.dotwriter.GODOTWriter;
+import ontologizer.enumeration.TermAnnotations;
 import ontologizer.enumeration.TermEnumerator;
-import ontologizer.enumeration.TermEnumerator.TermAnnotatedGenes;
 import ontologizer.gui.swt.Ontologizer;
 import ontologizer.gui.swt.support.GraphCanvas;
 import ontologizer.gui.swt.support.IGraphGenerationFinished;
 import ontologizer.gui.swt.support.SWTUtil;
+import ontologizer.io.dot.OntologyDotWriter;
 import ontologizer.ontology.Namespace;
 import ontologizer.ontology.Term;
 import ontologizer.ontology.TermID;
@@ -432,7 +432,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 		TermID tid = (TermID)item.getData("term");
 		if (tid != null)
 		{
-			graphVisual.selectNode(GODOTWriter.encodeTermID(tid));
+			graphVisual.selectNode(OntologyDotWriter.encodeTermID(tid));
 		}
 	}
 
@@ -500,7 +500,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 					str.append("<h3>Annotated Gene Products</h3>");
 					/* Enumerate the genes */
 					TermEnumerator enumerator = result.getStudySet().enumerateTerms(go,associationContainer);
-					TermAnnotatedGenes annotatedGenes = enumerator.getAnnotatedGenes(tid);
+					TermAnnotations annotatedGenes = enumerator.getAnnotatedGenes(tid);
 
 					HashSet<String> directGenes = new HashSet<String>();
 					for (ByteString gene : annotatedGenes.directAnnotated)
@@ -572,7 +572,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 		str.append(gene);
 		str.append("<br /><br />");
 
-		Gene2Associations assocs = associationContainer.get(new ByteString(gene));
+		ItemAssociations assocs = associationContainer.get(new ByteString(gene));
 		if (assocs != null)
 		{
 			str.append("Directly annotated by:");
@@ -1039,7 +1039,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 			{
 				try
 				{
-					TermID termId = GODOTWriter.decodeTermID(e.text);
+					TermID termId = OntologyDotWriter.decodeTermID(e.text);
 					Integer selection = termID2ListLine.get(termId.id);
 					if (selection != null)
 					{
@@ -1068,7 +1068,7 @@ public class EnrichedGOTermsComposite extends AbstractResultComposite implements
 			{
 				try
 				{
-					TermID selectedTermId = GODOTWriter.decodeTermID(graphVisual.getNameOfCurrentSelectedNode());
+					TermID selectedTermId = OntologyDotWriter.decodeTermID(graphVisual.getNameOfCurrentSelectedNode());
 
 					if (e.widget.equals(childTermsMenuItem))
 					{

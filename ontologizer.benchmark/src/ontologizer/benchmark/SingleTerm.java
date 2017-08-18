@@ -19,13 +19,13 @@ import ontologizer.calculation.TermForTermCalculation;
 import ontologizer.calculation.b2g.B2GParam;
 import ontologizer.calculation.b2g.Bayes2GOCalculation;
 import ontologizer.calculation.b2g.Bayes2GOGOTermProperties;
-import ontologizer.dotwriter.AbstractDotAttributesProvider;
-import ontologizer.dotwriter.GODOTWriter;
 import ontologizer.enumeration.TermEnumerator;
+import ontologizer.io.dot.AbstractTermDotAttributesProvider;
+import ontologizer.io.dot.OntologyDotWriter;
 import ontologizer.ontology.Ontology;
+import ontologizer.ontology.RelationType;
 import ontologizer.ontology.Term;
 import ontologizer.ontology.TermID;
-import ontologizer.ontology.TermRelation;
 import ontologizer.set.PopulationSet;
 import ontologizer.set.StudySet;
 import ontologizer.statistics.Bonferroni;
@@ -230,7 +230,7 @@ public class SingleTerm
 
 			final TermEnumerator studySetEnumerator = newStudyGenes.enumerateTerms(graph, assoc);
 
-			GODOTWriter.writeDOT(graph, new File("toy-all.dot"), null, allTermIDs, new AbstractDotAttributesProvider()
+			OntologyDotWriter.writeDOT(graph, new File("toy-all.dot"), null, allTermIDs, new AbstractTermDotAttributesProvider()
 			{
 				public String getDotNodeAttributes(TermID id)
 				{
@@ -248,7 +248,7 @@ public class SingleTerm
 				}
 			});
 
-			GODOTWriter.writeDOT(graph, new File("toy-induced.dot"), null, wantedActiveTerms.keySet(), new AbstractDotAttributesProvider()
+			OntologyDotWriter.writeDOT(graph, new File("toy-induced.dot"), null, wantedActiveTerms.keySet(), new AbstractTermDotAttributesProvider()
 			{
 				public String getDotNodeAttributes(TermID id)
 				{
@@ -414,7 +414,7 @@ public class SingleTerm
 
 		String preamble = "d2tfigpreamble=\"" + MAX_BOX + "\"";
 
-		GODOTWriter.writeDOT(graph, new File("goexample.dot"), graph.getRelevantSubontology(), terms, new AbstractDotAttributesProvider()
+		OntologyDotWriter.writeDOT(graph, new File("goexample.dot"), graph.getRelevantSubontology(), terms, new AbstractTermDotAttributesProvider()
 		{
 			public String getDotNodeAttributes(TermID id)
 			{
@@ -433,18 +433,8 @@ public class SingleTerm
 
 			public String getDotEdgeAttributes(TermID id1, TermID id2)
 			{
-				TermRelation relation = graph.getDirectRelation(id1,id2);
-				String relationName;
-
-				switch (relation)
-				{
-					case	IS_A: relationName = "is a"; break;
-					case	PART_OF_A: relationName = "part of"; break;
-					case	REGULATES: relationName = "regulates"; break;
-					case	POSITIVELY_REGULATES: relationName = "$\\begin{array}{c}\\textnormal{positively}\\\\\\ \\textnormal{regulates}\\end{array}$"; break;
-					case	NEGATIVELY_REGULATES: relationName = "$\\begin{array}{c}\\textnormal{negatively}\\\\\\ \\textnormal{regulates}\\end{array}$"; break;
-					default: relationName = "";
-				}
+				RelationType relation = graph.getDirectRelation(id1,id2);
+				String relationName = relation.fancyName().toString();
 				return "margin=\"-0.08,-2\" label=\"\\footnotesize " + relationName + "\"";
 //				return "label=\"test\"";
 			}
@@ -575,7 +565,7 @@ public class SingleTerm
 			else
 				filename = "../dissertation-manuscript/dot/localization-tft.dot";
 
-			GODOTWriter.writeDOT(graph, new File(filename), graph.getRelevantSubontology(), terms, new AbstractDotAttributesProvider()
+			OntologyDotWriter.writeDOT(graph, new File(filename), graph.getRelevantSubontology(), terms, new AbstractTermDotAttributesProvider()
 			{
 				public String getDotNodeAttributes(TermID id)
 				{

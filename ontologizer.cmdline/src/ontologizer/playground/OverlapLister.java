@@ -14,12 +14,12 @@ import java.util.List;
 import java.util.Set;
 
 import ontologizer.association.AssociationContainer;
-import ontologizer.association.AssociationParser;
+import ontologizer.enumeration.TermAnnotations;
 import ontologizer.enumeration.TermEnumerator;
-import ontologizer.enumeration.TermEnumerator.TermAnnotatedGenes;
-import ontologizer.ontology.OBOParser;
-import ontologizer.ontology.OBOParserException;
-import ontologizer.ontology.OBOParserFileInput;
+import ontologizer.io.ParserFileInput;
+import ontologizer.io.annotation.AssociationParser;
+import ontologizer.io.obo.OBOParser;
+import ontologizer.io.obo.OBOParserException;
 import ontologizer.ontology.Ontology;
 import ontologizer.ontology.Term;
 import ontologizer.ontology.TermContainer;
@@ -92,14 +92,14 @@ public class OverlapLister
 
 			/* loading GO graph */
 			System.err.println("Parse obo file");
-			OBOParser oboParser = new OBOParser(new OBOParserFileInput(oboFileName));
+			OBOParser oboParser = new OBOParser(new ParserFileInput(oboFileName));
 			System.err.println(oboParser.doParse());
 			TermContainer goTerms = new TermContainer(oboParser.getTermMap(), oboParser.getFormatVersion(), oboParser.getDate());
 			System.err.println("Building graph");
 			Ontology graph = Ontology.create(goTerms);
 
 			// loading associations
-			AssociationParser assocParser = new AssociationParser(new OBOParserFileInput(assocFileName), goTerms, null);
+			AssociationParser assocParser = new AssociationParser(new ParserFileInput(assocFileName), goTerms, null);
 			AssociationContainer assocs = new AssociationContainer(assocParser.getAssociations(), assocParser.getAnnotationMapping());
 
 			/* build custom population containing all genes */
@@ -128,7 +128,7 @@ public class OverlapLister
 				System.err.print(todo + " terms todo\r");
 				todo--;
 
-				TermAnnotatedGenes termGenes =
+				TermAnnotations termGenes =
 					popTermEnumerator.getAnnotatedGenes(term.getID());
 
 				if (termGenes.totalAnnotatedCount() > 0) {
@@ -140,7 +140,7 @@ public class OverlapLister
 					List<ByteString> termGenesList = termGenes.totalAnnotated;
 
 					for (Term otherTerm : goTerms) {
-						TermAnnotatedGenes otherTermGenes =
+						TermAnnotations otherTermGenes =
 							popTermEnumerator.getAnnotatedGenes(otherTerm.getID());
 
 						if (otherTermGenes.totalAnnotatedCount() > 0) {

@@ -8,9 +8,9 @@ import java.util.Iterator;
 
 import ontologizer.calculation.EnrichedGOTermsResult;
 import ontologizer.calculation.EnrichedGOTermsTableWriter;
-import ontologizer.ontology.OBOParser;
-import ontologizer.ontology.OBOParserException;
-import ontologizer.ontology.OBOParserFileInput;
+import ontologizer.io.ParserFileInput;
+import ontologizer.io.obo.OBOParser;
+import ontologizer.io.obo.OBOParserException;
 import ontologizer.ontology.Ontology;
 import ontologizer.ontology.TermContainer;
 
@@ -170,7 +170,7 @@ public class OntologizerMethodCompareCMD
 			 * Transfer the information to a TermContainer object.
 			 */
 			System.out.println("Parse obo file");
-			OBOParser oboParser = new OBOParser(new OBOParserFileInput(arguments.goTermsOBOFile));
+			OBOParser oboParser = new OBOParser(new ParserFileInput(arguments.goTermsOBOFile));
 			System.out.println(oboParser.doParse());
 			TermContainer goTerms = new TermContainer(oboParser.getTermMap(), oboParser.getFormatVersion(), oboParser.getDate());
 			System.out.println("Building graph");

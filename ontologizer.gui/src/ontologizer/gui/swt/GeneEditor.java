@@ -56,7 +56,7 @@ import org.eclipse.swt.widgets.Shell;
 
 import ontologizer.association.Association;
 import ontologizer.association.AssociationContainer;
-import ontologizer.association.Gene2Associations;
+import ontologizer.association.ItemAssociations;
 import ontologizer.filter.GeneFilter;
 import ontologizer.ontology.Ontology;
 import ontologizer.ontology.Term;
@@ -227,7 +227,7 @@ public class GeneEditor extends Composite
 				if (assoc != null)
 				{
 					String gene = getGeneName(event.lineText);
-					Gene2Associations gene2Associations = getG2A(new ByteString(gene));
+					ItemAssociations gene2Associations = getG2A(new ByteString(gene));
 					if (gene2Associations != null)
 					{
 						event.styles = new StyleRange[1];
@@ -266,7 +266,7 @@ public class GeneEditor extends Composite
 						String line = text.getText(offset1,offset2).trim();
 						String geneName = getGeneName(line);
 
-						Gene2Associations gene2Associations = getG2A(new ByteString(geneName));
+						ItemAssociations gene2Associations = getG2A(new ByteString(geneName));
 						if (gene2Associations != null)
 						{
 							Set<TermID> set = new HashSet<TermID>();
@@ -390,7 +390,7 @@ public class GeneEditor extends Composite
 						int offsetAtLocation = text.getOffsetAtLocation(new Point(e.x,e.y));
 						if ((offsetAtLocation - offset1) < geneName.length())
 						{
-							Gene2Associations gene2Associations = getG2A(new ByteString(geneName));
+							ItemAssociations gene2Associations = getG2A(new ByteString(geneName));
 							if (gene2Associations != null)
 							{
 								StringBuilder str = new StringBuilder();
@@ -519,9 +519,9 @@ public class GeneEditor extends Composite
 	 * @param gene
 	 * @return
 	 */
-	private Gene2Associations getG2A(ByteString gene)
+	private ItemAssociations getG2A(ByteString gene)
 	{
-		Gene2Associations gene2Associations = assoc.get(gene);
+		ItemAssociations gene2Associations = assoc.get(gene);
 		if (gene2Associations == null && gfilter != null)
 		{
 			gene = gfilter.mapGene(gene);
@@ -543,7 +543,7 @@ public class GeneEditor extends Composite
 			for (String l : getLines())
 			{
 				String gene = getGeneName(l);
-				Gene2Associations gene2Associations = getG2A(new ByteString(gene));
+				ItemAssociations gene2Associations = getG2A(new ByteString(gene));
 				if (gene2Associations != null)
 					known++;
 			}

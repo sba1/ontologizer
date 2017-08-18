@@ -18,10 +18,11 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.Parser;
 
-import ontologizer.ontology.OBOParser;
-import ontologizer.ontology.OBOParserException;
-import ontologizer.ontology.OBOParserFileInput;
+import ontologizer.io.ParserFileInput;
+import ontologizer.io.obo.OBOParser;
+import ontologizer.io.obo.OBOParserException;
 import ontologizer.ontology.Ontology;
+import ontologizer.ontology.Ontology.ITermIDVisitor;
 import ontologizer.ontology.Term;
 import ontologizer.ontology.TermContainer;
 import ontologizer.ontology.TermID;
@@ -83,7 +84,7 @@ public class SuperTermLister
 
 			/* loading GO graph */
 			System.err.println("Parse obo file");
-			OBOParser oboParser = new OBOParser(new OBOParserFileInput(oboFileName));
+			OBOParser oboParser = new OBOParser(new ParserFileInput(oboFileName));
 			System.err.println(oboParser.doParse());
 			TermContainer goTerms = new TermContainer(oboParser.getTermMap(), oboParser.getFormatVersion(), oboParser.getDate());
 			System.err.println("Building graph");
@@ -112,15 +113,15 @@ public class SuperTermLister
 				BufferedWriter termOut = new BufferedWriter(new FileWriter(termFile));
 
 				/* A visitor which simply writes the terms out into termOut */
-				class Visitor implements Ontology.IVisitingGOVertex
+				class Visitor implements ITermIDVisitor
 				{
 					public BufferedWriter out;
 
-					public boolean visited(Term term)
+					public boolean visited(TermID tid)
 					{
 						try
 						{
-							out.write(term.toString());
+							out.write(tid.toString());
 							out.write('\n');
 						} catch (IOException e)
 						{

@@ -11,17 +11,6 @@ import java.util.Locale;
 
 import javax.imageio.ImageIO;
 
-import net.sourceforge.nattable.NatTable;
-import ontologizer.GlobalPreferences;
-import ontologizer.association.Gene2Associations;
-import ontologizer.calculation.SemanticResult;
-import ontologizer.gui.swt.support.IGraphCanvas;
-import ontologizer.gui.swt.support.IMinimizedAdapter;
-import ontologizer.ontology.Ontology;
-import ontologizer.ontology.TermID;
-import ontologizer.types.ByteString;
-import ontologizer.util.Util;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.events.MouseAdapter;
@@ -35,6 +24,17 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Text;
+
+import net.sourceforge.nattable.NatTable;
+import ontologizer.GlobalPreferences;
+import ontologizer.association.ItemAssociations;
+import ontologizer.calculation.SemanticResult;
+import ontologizer.gui.swt.support.IGraphCanvas;
+import ontologizer.gui.swt.support.IMinimizedAdapter;
+import ontologizer.ontology.Ontology;
+import ontologizer.ontology.TermID;
+import ontologizer.types.ByteString;
+import ontologizer.util.Util;
 
 /**
  * The GUI for semantic similarity measures.
@@ -170,8 +170,8 @@ public class SemanticSimilarityComposite extends Composite implements IGraphActi
 		HashSet<TermID> onlyG2 = new HashSet<TermID>();
 		HashSet<TermID> both = new HashSet<TermID>();
 
-		Gene2Associations g2a1 = result.assoc.get(g1);
-		Gene2Associations g2a2 = result.assoc.get(g2);
+		ItemAssociations g2a1 = result.assoc.get(g1);
+		ItemAssociations g2a2 = result.assoc.get(g2);
 
 		if (g2a1 != null)
 		{
@@ -268,8 +268,8 @@ public class SemanticSimilarityComposite extends Composite implements IGraphActi
 
 			HashSet<TermID> leafTerms = new HashSet<TermID>();
 
-			Gene2Associations g2a1 = result.assoc.get(g1);
-			Gene2Associations g2a2 = result.assoc.get(g2);
+			ItemAssociations g2a1 = result.assoc.get(g1);
+			ItemAssociations g2a2 = result.assoc.get(g2);
 
 			if (g2a1 != null && g2a2 != null)
 			{

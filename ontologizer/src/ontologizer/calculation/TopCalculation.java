@@ -6,8 +6,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import ontologizer.association.AssociationContainer;
+import ontologizer.enumeration.TermAnnotations;
 import ontologizer.enumeration.TermEnumerator;
-import ontologizer.enumeration.TermEnumerator.TermAnnotatedGenes;
 import ontologizer.ontology.Ontology;
 import ontologizer.ontology.TermID;
 import ontologizer.set.PopulationSet;
@@ -77,12 +77,12 @@ public class TopCalculation extends AbstractHypergeometricCalculation
 				int popGeneCount = populationSet.getGeneCount();
 				int studyGeneCount = studySet.getGeneCount();
 
-				TermAnnotatedGenes studyAnnotatedGenes = studyTermEnumerator.getAnnotatedGenes(term);
+				TermAnnotations studyAnnotatedGenes = studyTermEnumerator.getAnnotatedGenes(term);
 
 				int goidAnnotatedPopGeneCount = 0;
 				int goidAnnotatedStudyGeneCount = 0;
 
-				TermAnnotatedGenes annotated = studyTermEnumerator.getAnnotatedGenes(term);
+				TermAnnotations annotated = studyTermEnumerator.getAnnotatedGenes(term);
 				for (ByteString gene : annotated.totalAnnotated)
 				{
 					if (!markedGenes.contains(gene))

@@ -12,18 +12,18 @@ public class DirectedGraphLayoutTest
 		final String [] names = new String[]{
 				"|Root|","|Node|", "|A third node, which is very long|", "|4th|", "|5th|"
 		};
-		DirectedGraph<Integer> graph = new DirectedGraph<Integer>();
+		DirectedGraph<Integer, Void> graph = new DirectedGraph<Integer, Void>();
 		graph.addVertex(0);
 		graph.addVertex(1);
 		graph.addVertex(2);
 		graph.addVertex(3);
 //		graph.addVertex(4);
 
-		graph.addEdge(new Edge<Integer>(0,1));
-		graph.addEdge(new Edge<Integer>(1,2));
-		graph.addEdge(new Edge<Integer>(0,3));
-		graph.addEdge(new Edge<Integer>(3,2));
-//		graph.addEdge(new Edge<Integer>(2,4));
+		graph.addEdge(0,1);
+		graph.addEdge(1,2);
+		graph.addEdge(0,3);
+		graph.addEdge(3,2);
+//		graph.addEdge(2,4);
 
 		final StringBuilder str = new StringBuilder();
 		final String emptyLine = "                                                                                            \n";
@@ -60,7 +60,7 @@ public class DirectedGraphLayoutTest
 
 	public void testLayout2()
 	{
-		DirectedGraph<Integer> g = new DirectedGraph<Integer>();
+		DirectedGraph<Integer, Void> g = new DirectedGraph<Integer, Void>();
 		g.addVertex(0);
 		g.addVertex(10);
 		g.addVertex(232);
@@ -69,13 +69,13 @@ public class DirectedGraphLayoutTest
 		g.addVertex(681);
 		g.addVertex(1540);
 		g.addVertex(2667);
-		g.addEdge(new Edge<Integer>(0, 1540));
-		g.addEdge(new Edge<Integer>(10, 232));
-		g.addEdge(new Edge<Integer>(1540, 311));
-		g.addEdge(new Edge<Integer>(232, 2667));
-		g.addEdge(new Edge<Integer>(443, 2667));
-		g.addEdge(new Edge<Integer>(311, 443));
-		g.addEdge(new Edge<Integer>(2667, 681));
+		g.addEdge(0, 1540);
+		g.addEdge(10, 232);
+		g.addEdge(1540, 311);
+		g.addEdge(232, 2667);
+		g.addEdge(443, 2667);
+		g.addEdge(311, 443);
+		g.addEdge(2667, 681);
 
 		DirectedGraphLayout.layout(g,new DirectedGraphLayout.IGetDimension<Integer>()
 				{

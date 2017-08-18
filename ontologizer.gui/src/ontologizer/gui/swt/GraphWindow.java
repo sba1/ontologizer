@@ -5,18 +5,6 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 
-import ontologizer.GlobalPreferences;
-import ontologizer.dotwriter.AbstractDotAttributesProvider;
-import ontologizer.gui.swt.result.GraphGenerationThread;
-import ontologizer.gui.swt.support.GraphCanvas;
-import ontologizer.gui.swt.support.IGraphGenerationFinished;
-import ontologizer.ontology.Namespace;
-import ontologizer.ontology.Ontology;
-import ontologizer.ontology.Prefix;
-import ontologizer.ontology.Term;
-import ontologizer.ontology.TermID;
-import ontologizer.util.Util;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -29,7 +17,18 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
 
-import sonumina.math.graph.AbstractGraph;
+import ontologizer.GlobalPreferences;
+import ontologizer.gui.swt.result.GraphGenerationThread;
+import ontologizer.gui.swt.support.GraphCanvas;
+import ontologizer.gui.swt.support.IGraphGenerationFinished;
+import ontologizer.io.dot.AbstractTermDotAttributesProvider;
+import ontologizer.ontology.Namespace;
+import ontologizer.ontology.Ontology;
+import ontologizer.ontology.Prefix;
+import ontologizer.ontology.Term;
+import ontologizer.ontology.TermID;
+import ontologizer.util.Util;
+import sonumina.math.graph.IVisitor;
 
 class GraphWindow extends ApplicationWindow
 {
@@ -73,13 +72,14 @@ class GraphWindow extends ApplicationWindow
 					Term term = currentOntology.getTerm(tid);
 					final HashSet<TermID> newLeafs = new HashSet<TermID>(currentLeafs);
 
-					currentOntology.getGraph().bfs(term, false, new AbstractGraph.IVisitor<Term>() {
-						public boolean visited(Term vertex)
+					currentOntology.getGraph().bfs(term.getID(), false, new IVisitor<TermID>()
+					{
+						public boolean visited(TermID tid)
 						{
-							newLeafs.remove(vertex.getID());
+							newLeafs.remove(tid);
 							return true;
-						}}
-					);
+						}
+					});
 					setVisibleTerms(currentOntology, newLeafs);
 				}
 			}
@@ -138,7 +138,7 @@ class GraphWindow extends ApplicationWindow
 				}
 
 			}
-		}, new AbstractDotAttributesProvider()
+		}, new AbstractTermDotAttributesProvider()
 		{
 
 			public String getDotNodeAttributes(TermID id)

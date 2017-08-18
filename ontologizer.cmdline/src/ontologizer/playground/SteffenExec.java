@@ -9,15 +9,15 @@ import java.io.IOException;
 
 import ontologizer.StudySetResultList;
 import ontologizer.association.AssociationContainer;
-import ontologizer.association.AssociationParser;
 import ontologizer.calculation.AbstractGOTermProperties;
 import ontologizer.calculation.EnrichedGOTermsResult;
 import ontologizer.calculation.EnrichedGOTermsTableWriter;
 import ontologizer.calculation.ICalculation;
 import ontologizer.calculation.ParentChildCalculation;
-import ontologizer.ontology.OBOParser;
-import ontologizer.ontology.OBOParserException;
-import ontologizer.ontology.OBOParserFileInput;
+import ontologizer.io.ParserFileInput;
+import ontologizer.io.annotation.AssociationParser;
+import ontologizer.io.obo.OBOParser;
+import ontologizer.io.obo.OBOParserException;
 import ontologizer.ontology.Ontology;
 import ontologizer.ontology.TermContainer;
 import ontologizer.set.PopulationSet;
@@ -50,7 +50,7 @@ public class SteffenExec
 			GOpath + "gene_ontology.obo";
 
 		System.out.println("Reading in OBO file" + obofilename);
-		OBOParser oboParser = new OBOParser(new OBOParserFileInput(obofilename));
+		OBOParser oboParser = new OBOParser(new ParserFileInput(obofilename));
 		try
 		{
 			System.out.println(oboParser.doParse());
@@ -72,7 +72,7 @@ public class SteffenExec
 		 */
 		AssociationParser ap =
 			new AssociationParser(
-					new OBOParserFileInput(associationFile),
+					new ParserFileInput(associationFile),
 					goTermCont,
 					null
 			);

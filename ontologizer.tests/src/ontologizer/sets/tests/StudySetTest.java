@@ -18,30 +18,32 @@ import ontologizer.association.AnnotationContext;
 import ontologizer.association.AnnotationUtil;
 import ontologizer.association.Association;
 import ontologizer.association.AssociationContainer;
-import ontologizer.association.AssociationParser;
-import ontologizer.association.Gene2Associations;
+import ontologizer.association.ItemAssociations;
 import ontologizer.benchmark.Datafiles;
 import ontologizer.calculation.EnrichedGOTermsResult;
 import ontologizer.calculation.TermForTermCalculation;
-import ontologizer.dotwriter.AbstractDotAttributesProvider;
-import ontologizer.dotwriter.GODOTWriter;
+import ontologizer.enumeration.TermAnnotations;
 import ontologizer.enumeration.TermEnumerator;
-import ontologizer.enumeration.TermEnumerator.TermAnnotatedGenes;
-import ontologizer.ontology.OBOParser;
-import ontologizer.ontology.OBOParserException;
-import ontologizer.ontology.OBOParserFileInput;
-import ontologizer.ontology.OBOParserTest;
+import ontologizer.enumeration.TermEnumerator.IRemover;
+import ontologizer.io.ParserFileInput;
+import ontologizer.io.annotation.AssociationParser;
+import ontologizer.io.dot.AbstractTermDotAttributesProvider;
+import ontologizer.io.dot.DotAttributesProvider;
+import ontologizer.io.dot.DotWriter;
+import ontologizer.io.dot.OntologyDotWriter;
+import ontologizer.io.obo.OBOParser;
+import ontologizer.io.obo.OBOParserException;
 import ontologizer.ontology.Ontology;
 import ontologizer.ontology.ParentTermID;
+import ontologizer.ontology.RelationMeaning;
+import ontologizer.ontology.RelationType;
 import ontologizer.ontology.Term;
 import ontologizer.ontology.TermContainer;
 import ontologizer.ontology.TermID;
-import ontologizer.ontology.TermRelation;
 import ontologizer.set.PopulationSet;
 import ontologizer.set.StudySet;
 import ontologizer.statistics.None;
 import ontologizer.types.ByteString;
-import sonumina.math.graph.AbstractGraph.DotAttributesProvider;
 import sonumina.math.graph.DirectedGraph;
 import sonumina.math.graph.Edge;
 
@@ -51,21 +53,22 @@ class InternalDatafiles extends Datafiles
 	{
 		/* Go Graph */
 		HashSet<Term> terms = new HashSet<Term>();
+		RelationType isA = new RelationType(RelationMeaning.IS_A);
 		Term c1 = new Term("GO:0000001", "C1");
-		Term c2 = new Term("GO:0000002", "C2", new ParentTermID(c1.getID(),TermRelation.IS_A));
-		Term c3 = new Term("GO:0000003", "C3", new ParentTermID(c1.getID(),TermRelation.IS_A));
-		Term c4 = new Term("GO:0000004", "C4", new ParentTermID(c2.getID(),TermRelation.IS_A));
-		Term c5 = new Term("GO:0000005", "C5", new ParentTermID(c2.getID(),TermRelation.IS_A));
-		Term c6 = new Term("GO:0000006", "C6", new ParentTermID(c3.getID(),TermRelation.IS_A),new ParentTermID(c2.getID(),TermRelation.IS_A));
-		Term c7 = new Term("GO:0000007", "C7", new ParentTermID(c5.getID(),TermRelation.IS_A),new ParentTermID(c6.getID(),TermRelation.IS_A));
-		Term c8 = new Term("GO:0000008", "C8", new ParentTermID(c7.getID(),TermRelation.IS_A));
-		Term c9 = new Term("GO:0000009", "C9", new ParentTermID(c7.getID(),TermRelation.IS_A));
-		Term c10 = new Term("GO:0000010", "C10", new ParentTermID(c9.getID(),TermRelation.IS_A));
-		Term c11 = new Term("GO:0000011", "C11", new ParentTermID(c9.getID(),TermRelation.IS_A));
-		Term c12 = new Term("GO:0000012", "C12", new ParentTermID(c8.getID(),TermRelation.IS_A));
-		Term c13 = new Term("GO:0000013", "C13", new ParentTermID(c8.getID(),TermRelation.IS_A));
-		Term c14 = new Term("GO:0000014", "C14", new ParentTermID(c4.getID(),TermRelation.IS_A));
-		Term c15 = new Term("GO:0000015", "C15", new ParentTermID(c4.getID(),TermRelation.IS_A));
+		Term c2 = new Term("GO:0000002", "C2", new ParentTermID(c1.getID(),isA));
+		Term c3 = new Term("GO:0000003", "C3", new ParentTermID(c1.getID(),isA));
+		Term c4 = new Term("GO:0000004", "C4", new ParentTermID(c2.getID(),isA));
+		Term c5 = new Term("GO:0000005", "C5", new ParentTermID(c2.getID(),isA));
+		Term c6 = new Term("GO:0000006", "C6", new ParentTermID(c3.getID(),isA),new ParentTermID(c2.getID(),isA));
+		Term c7 = new Term("GO:0000007", "C7", new ParentTermID(c5.getID(),isA),new ParentTermID(c6.getID(),isA));
+		Term c8 = new Term("GO:0000008", "C8", new ParentTermID(c7.getID(),isA));
+		Term c9 = new Term("GO:0000009", "C9", new ParentTermID(c7.getID(),isA));
+		Term c10 = new Term("GO:0000010", "C10", new ParentTermID(c9.getID(),isA));
+		Term c11 = new Term("GO:0000011", "C11", new ParentTermID(c9.getID(),isA));
+		Term c12 = new Term("GO:0000012", "C12", new ParentTermID(c8.getID(),isA));
+		Term c13 = new Term("GO:0000013", "C13", new ParentTermID(c8.getID(),isA));
+		Term c14 = new Term("GO:0000014", "C14", new ParentTermID(c4.getID(),isA));
+		Term c15 = new Term("GO:0000015", "C15", new ParentTermID(c4.getID(),isA));
 
 		terms.add(c1);
 		terms.add(c2);
@@ -111,14 +114,14 @@ class InternalDatafiles extends Datafiles
 		AnnotationContext mapping = new AnnotationContext(AnnotationUtil.getSymbols(associations), new HashMap<ByteString,ByteString>(), new HashMap<ByteString,ByteString>());
 		assoc = new AssociationContainer(associations, mapping);
 
-		GODOTWriter.writeDOT(graph, new File("example.dot"), null, tids, new AbstractDotAttributesProvider() {
+		OntologyDotWriter.writeDOT(graph, new File("example.dot"), null, tids, new AbstractTermDotAttributesProvider() {
 			public String getDotNodeAttributes(TermID id) {
 
 				return "label=\""+graph.getTerm(id).getName()+"\"";
 			}
 		});
 
-		DirectedGraph<ByteString> graphWithItems = new DirectedGraph<ByteString>();
+		DirectedGraph<ByteString, Void> graphWithItems = new DirectedGraph<ByteString, Void>();
 		for (Term term : terms)
 			graphWithItems.addVertex(term.getName());
 
@@ -126,7 +129,7 @@ class InternalDatafiles extends Datafiles
 		{
 			for (ParentTermID pid : term.getParents())
 			{
-				graphWithItems.addEdge(new Edge<ByteString>(graph.getTerm(pid.termid).getName(),term.getName()));
+				graphWithItems.addEdge(graph.getTerm(pid.getRelated()).getName(),term.getName());
 			}
 		}
 
@@ -136,12 +139,13 @@ class InternalDatafiles extends Datafiles
 		graphWithItems.addVertex(new ByteString("item4"));
 		graphWithItems.addVertex(new ByteString("item5"));
 
-		for (Gene2Associations g2a : assoc)
+		for (ItemAssociations g2a : assoc)
 			for (TermID tid : g2a.getAssociations())
-				graphWithItems.addEdge(new Edge<ByteString>(graph.getTerm(tid).getName(),g2a.name()));
+				graphWithItems.addEdge(graph.getTerm(tid).getName(),g2a.name());
 
 		try {
-			graphWithItems.writeDOT(new FileOutputStream("full.dot"), new DotAttributesProvider<ByteString>()
+			DotWriter.write(graphWithItems, new FileOutputStream("full.dot"), graphWithItems,
+					new DotAttributesProvider<ByteString>()
 					{
 						@Override
 						public String getDotNodeAttributes(ByteString vt)
@@ -169,12 +173,13 @@ class InternalDatafiles extends Datafiles
 public class StudySetTest
 {
 	private final static String GOAssociationFile = "data/gene_association.sgd.gz";
+	public final static String GOFile = "data/gene_ontology.1_2.obo.gz";
 
 	@Test
 	public void testEnumerateWithNonExistentTerms() throws IOException, OBOParserException
 	{
 		// FIXME: Duplicated partly from AssociationParserTest2
-		OBOParser oboParser = new OBOParser(new OBOParserFileInput(OBOParserTest.GOtermsOBOFile));
+		OBOParser oboParser = new OBOParser(new ParserFileInput(GOFile));
 		oboParser.doParse();
 		TermContainer container = new TermContainer(oboParser.getTermMap(), oboParser.getFormatVersion(), oboParser.getDate());
 		Ontology o = Ontology.create(container);
@@ -240,9 +245,9 @@ public class StudySetTest
 		assertEquals(15,result.getSize());
 
 		/* Remove all terms with less than two annotations */
-		gote.removeTerms(new TermEnumerator.IRemover() {
+		gote.removeTerms(new IRemover() {
 			@Override
-			public boolean remove(TermID tid, TermAnnotatedGenes tag)
+			public boolean remove(TermID tid, TermAnnotations tag)
 			{
 				return tag.totalAnnotated.size() < 3;
 			}
@@ -269,11 +274,11 @@ public class StudySetTest
 	public void testEnumerateOnExternal() throws IOException, OBOParserException
 	{
 		// FIXME: Duplicated partly from AssociationParserTest2
-		OBOParser oboParser = new OBOParser(new OBOParserFileInput(OBOParserTest.GOtermsOBOFile));
+		OBOParser oboParser = new OBOParser(new ParserFileInput(GOFile));
 		oboParser.doParse();
 		TermContainer container = new TermContainer(oboParser.getTermMap(), oboParser.getFormatVersion(), oboParser.getDate());
 		Ontology o = Ontology.create(container);
-		AssociationParser assocParser = new AssociationParser(new OBOParserFileInput(GOAssociationFile), container, null);
+		AssociationParser assocParser = new AssociationParser(new ParserFileInput(GOAssociationFile), container, null);
 
 		AssociationContainer assocContainer = new AssociationContainer(assocParser.getAssociations(), assocParser.getAnnotationMapping());
 

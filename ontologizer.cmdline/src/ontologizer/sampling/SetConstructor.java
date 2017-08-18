@@ -13,15 +13,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import ontologizer.association.AssociationContainer;
-import ontologizer.association.AssociationParser;
 import ontologizer.calculation.CalculationRegistry;
 import ontologizer.calculation.EnrichedGOTermsResult;
 import ontologizer.calculation.ICalculation;
+import ontologizer.enumeration.TermAnnotations;
 import ontologizer.enumeration.TermEnumerator;
-import ontologizer.enumeration.TermEnumerator.TermAnnotatedGenes;
+import ontologizer.io.ParserFileInput;
+import ontologizer.io.annotation.AssociationParser;
+import ontologizer.io.obo.OBOParser;
 import ontologizer.ontology.Namespace;
-import ontologizer.ontology.OBOParser;
-import ontologizer.ontology.OBOParserFileInput;
 import ontologizer.ontology.Ontology;
 import ontologizer.ontology.TermContainer;
 import ontologizer.ontology.TermID;
@@ -231,7 +231,7 @@ public class SetConstructor
 
 			// loading GO graph
 			System.out.println("Parse obo file");
-			OBOParser oboParser = new OBOParser(new OBOParserFileInput(oboFileName));
+			OBOParser oboParser = new OBOParser(new ParserFileInput(oboFileName));
 			System.out.println(oboParser.doParse());
 
 			TermContainer goTerms = new TermContainer(oboParser.getTermMap(), oboParser.getFormatVersion(), oboParser.getDate());
@@ -239,7 +239,7 @@ public class SetConstructor
 			Ontology graph = Ontology.create(goTerms);
 
 			// loading associations
-			AssociationParser assocParser = new AssociationParser(new OBOParserFileInput(assocFileName), goTerms, null);
+			AssociationParser assocParser = new AssociationParser(new ParserFileInput(assocFileName), goTerms, null);
 			AssociationContainer assocs = new AssociationContainer(assocParser.getAssociations(), assocParser.getAnnotationMapping());
 
 			// making outDir if necessary
@@ -300,7 +300,7 @@ public class SetConstructor
 
 				for (TermID t : populationTermEnumerator)
 				{
-					TermAnnotatedGenes anno = populationTermEnumerator.getAnnotatedGenes(t);
+					TermAnnotations anno = populationTermEnumerator.getAnnotatedGenes(t);
 					for (ByteString gene : anno.directAnnotated)
 					{
 						annoOut.write(t.toString());

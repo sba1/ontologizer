@@ -13,7 +13,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock.WriteLock;
 import java.util.logging.Logger;
 
 import ontologizer.association.AssociationContainer;
-import ontologizer.association.Gene2Associations;
+import ontologizer.association.ItemAssociations;
 import ontologizer.enumeration.TermEnumerator;
 import ontologizer.ontology.Ontology;
 import ontologizer.ontology.TermID;
@@ -773,7 +773,7 @@ public class SemanticCalculation
 			if (idx == null)
 			{
 				/* Maybe we can find the gene via a mapping */
-				Gene2Associations o2a = goAssociations.get(g);
+				ItemAssociations o2a = goAssociations.get(g);
 				if (o2a != null)
 					idx = gene2index.get(o2a.name());
 			}

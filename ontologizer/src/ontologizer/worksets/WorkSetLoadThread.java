@@ -16,12 +16,12 @@ import ontologizer.FileCache;
 import ontologizer.OntologizerThreadGroups;
 import ontologizer.FileCache.FileCacheUpdateCallback;
 import ontologizer.association.AssociationContainer;
-import ontologizer.association.AssociationParser;
-import ontologizer.association.IAssociationParserProgress;
-import ontologizer.ontology.IOBOParserProgress;
-import ontologizer.ontology.OBOParser;
-import ontologizer.ontology.OBOParserException;
-import ontologizer.ontology.OBOParserFileInput;
+import ontologizer.io.ParserFileInput;
+import ontologizer.io.annotation.AssociationParser;
+import ontologizer.io.annotation.IAssociationParserProgress;
+import ontologizer.io.obo.IOBOParserProgress;
+import ontologizer.io.obo.OBOParser;
+import ontologizer.io.obo.OBOParserException;
 import ontologizer.ontology.Ontology;
 import ontologizer.ontology.TermContainer;
 import ontologizer.util.MemoryWarningSystem;
@@ -407,7 +407,7 @@ public class WorkSetLoadThread extends Thread
 		Ontology graph;
 		if (!graphMap.containsKey(oboName))
 		{
-			OBOParser oboParser = new OBOParser(new OBOParserFileInput(oboName), OBOParser.IGNORE_SYNONYMS);
+			OBOParser oboParser = new OBOParser(new ParserFileInput(oboName), OBOParser.IGNORE_SYNONYMS);
 			workSetProgress.message("Parsing OBO file");
 			oboParser.doParse(new IOBOParserProgress()
 			{
@@ -457,7 +457,7 @@ public class WorkSetLoadThread extends Thread
 
 				workSetProgress.message("Parsing association file");
 				workSetProgress.updateGauge(0);
-				AssociationParser ap = new AssociationParser(new OBOParserFileInput(assocName),graph.getTermMap(),null,new IAssociationParserProgress()
+				AssociationParser ap = new AssociationParser(new ParserFileInput(assocName),graph.getTermMap(),null,new IAssociationParserProgress()
 				{
 					public void init(int max)
 					{

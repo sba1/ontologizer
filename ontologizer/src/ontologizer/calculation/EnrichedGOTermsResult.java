@@ -10,11 +10,10 @@ import java.util.logging.Logger;
 
 import ontologizer.GlobalPreferences;
 import ontologizer.association.AssociationContainer;
-import ontologizer.dotwriter.AbstractDotAttributesProvider;
+import ontologizer.io.dot.AbstractTermDotAttributesProvider;
 import ontologizer.ontology.Namespace;
 import ontologizer.ontology.Ontology;
-import ontologizer.ontology.Ontology.IVisitingGOVertex;
-import ontologizer.ontology.Term;
+import ontologizer.ontology.Ontology.ITermIDVisitor;
 import ontologizer.ontology.TermID;
 import ontologizer.set.StudySet;
 import ontologizer.util.Util;
@@ -158,7 +157,7 @@ public class EnrichedGOTermsResult extends AbstractGOTermsResult
 		for (i = 0; i < propArray.length; i++)
 			goTermRank.put(propArray[i].term, i);
 
-		writeDOT(graph, file, rootTerm, terms, new AbstractDotAttributesProvider()
+		writeDOT(graph, file, rootTerm, terms, new AbstractTermDotAttributesProvider()
 		{
 			public String getDotNodeAttributes(TermID id)
 			{
@@ -190,13 +189,13 @@ public class EnrichedGOTermsResult extends AbstractGOTermsResult
 					/* A term is "extremal" if it is significant and no one of its children is significant */
 					boolean isExtremal;
 
-					class ExtremalVisitor implements IVisitingGOVertex
+					class ExtremalVisitor implements ITermIDVisitor
 					{
 						public boolean isExtremal = true;
 
-						public boolean visited(Term term)
+						public boolean visited(TermID tid)
 						{
-							AbstractGOTermProperties subtermProp = getGOTermProperties(term.getID());
+							AbstractGOTermProperties subtermProp = getGOTermProperties(tid);
 							if (subtermProp != null && subtermProp.p_adjusted < alpha)
 								isExtremal = false;
 							return true;

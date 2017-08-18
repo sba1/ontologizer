@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>ontologizer</groupId>
 		<artifactId>ontologizer.parent</artifactId>
-		<version>0.0.3-SNAPSHOT</version>
+		<version>0.0.4-SNAPSHOT</version>
 		<relativePath>../ontologizer.parent</relativePath>
 	</parent>
 
@@ -20,7 +20,7 @@
         <dependency>
           <groupId>ontologizer</groupId>
           <artifactId>ontologizer</artifactId>
-          <version>0.0.3-SNAPSHOT</version>
+          <version>${project.version}</version>
         </dependency>
 	</dependencies>
 

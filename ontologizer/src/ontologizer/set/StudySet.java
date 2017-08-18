@@ -17,13 +17,12 @@ import java.util.logging.Logger;
 
 import ontologizer.association.Association;
 import ontologizer.association.AssociationContainer;
-import ontologizer.association.Gene2Associations;
+import ontologizer.association.ItemAssociations;
+import ontologizer.enumeration.TermAnnotations;
 import ontologizer.enumeration.TermEnumerator;
-import ontologizer.enumeration.TermEnumerator.TermAnnotatedGenes;
 import ontologizer.filter.GeneFilter;
 import ontologizer.ontology.Ontology;
-import ontologizer.ontology.Ontology.IVisitingGOVertex;
-import ontologizer.ontology.Term;
+import ontologizer.ontology.Ontology.ITermIDVisitor;
 import ontologizer.ontology.TermID;
 import ontologizer.parser.ItemAttribute;
 import ontologizer.parser.ValuedItemAttribute;
@@ -240,7 +239,7 @@ public class StudySet implements Iterable<ByteString>
 
 		for (ByteString geneName : gene2Attribute.keySet())
 		{
-			Gene2Associations gene2Association = associationContainer.get(geneName);
+			ItemAssociations gene2Association = associationContainer.get(geneName);
 			if (gene2Association != null)
 			{
 				boolean add;
@@ -292,7 +291,7 @@ public class StudySet implements Iterable<ByteString>
 		 * into the unannotatedGeneNames list */
 		for (ByteString geneName : gene2Attribute.keySet())
 		{
-			Gene2Associations gene2Association = associationContainer.get(geneName);
+			ItemAssociations gene2Association = associationContainer.get(geneName);
 			if (gene2Association == null)
 				unannotatedGeneNames.add(geneName);
 			else
@@ -349,7 +348,7 @@ public class StudySet implements Iterable<ByteString>
 		/* Iterate over all gene names and add their annotations to the goTermCounter */
 		for (ByteString geneName : gene2Attribute.keySet())
 		{
-			Gene2Associations geneAssociations = associationContainer.get(geneName);
+			ItemAssociations geneAssociations = associationContainer.get(geneName);
 			if (geneAssociations != null)
 				termEnumerator.push(geneAssociations,evidences);
 		}
@@ -410,20 +409,20 @@ public class StudySet implements Iterable<ByteString>
 			termEnumerator = null;
 		}
 
-		class ParentFetcher implements IVisitingGOVertex
+		class ParentFetcher implements ITermIDVisitor
 		{
 			private HashSet<TermID> set = new HashSet<TermID>();
 
 
-			public boolean visited(Term term)
+			public boolean visited(TermID tid)
 			{
 
 //	TODO:
 //				if (goTermID.equals(graph.getBpTerm().getID())) return;
 //				if (goTermID.equals(graph.getMfTerm().getID())) return;
 //				if (goTermID.equals(graph.getCcTerm().getID())) return;
-				if (!graph.isRootTerm(term.getID()))
-					set.add(term.getID());
+				if (!graph.isRootTerm(tid))
+					set.add(tid);
 
 				return true;
 			}
@@ -540,7 +539,7 @@ public class StudySet implements Iterable<ByteString>
 				out.write(id.toString());
 				out.write('\t');
 				out.write("genes={");
-				TermAnnotatedGenes genes = enumerator.getAnnotatedGenes(id);
+				TermAnnotations genes = enumerator.getAnnotatedGenes(id);
 				boolean first = true;
 				for (ByteString gene : genes.totalAnnotated)
 				{
@@ -582,7 +581,7 @@ public class StudySet implements Iterable<ByteString>
 					out.write(desc);
 				out.write('\t');
 
-				Gene2Associations geneAssociations = associations.get(gene);
+				ItemAssociations geneAssociations = associations.get(gene);
 				if (geneAssociations != null)
 				{
 					final HashSet<TermID> direct = new HashSet<TermID>();
@@ -603,12 +602,12 @@ public class StudySet implements Iterable<ByteString>
 
 					/* indirect annotation are those located upstream (nearer to the root),
 					 * i.e., those inferred by the propagation annotation rule  */
-					graph.walkToSource(direct, new IVisitingGOVertex()
+					graph.walkToSource(direct, new ITermIDVisitor()
 					{
-						public boolean visited(Term term)
+						public boolean visited(TermID tid)
 						{
-							if (!direct.contains(term.getID()))
-								indirect.add(term.getID());
+							if (!direct.contains(tid))
+								indirect.add(tid);
 
 							return true;
 						}

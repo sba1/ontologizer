@@ -6,13 +6,13 @@ import org.junit.Before;
 import org.junit.Test;
 
 import ontologizer.association.AssociationContainer;
-import ontologizer.association.AssociationParser;
-import ontologizer.ontology.OBOParser;
-import ontologizer.ontology.OBOParserFileInput;
-import ontologizer.ontology.OBOParserTest;
+import ontologizer.io.ParserFileInput;
+import ontologizer.io.annotation.AssociationParser;
+import ontologizer.io.obo.OBOParser;
 import ontologizer.ontology.TermContainer;
 import ontologizer.set.StudySet;
 import ontologizer.set.StudySetFactory;
+import ontologizer.sets.tests.StudySetTest;
 import ontologizer.types.ByteString;
 
 public class StudySetSamplerTest
@@ -27,10 +27,10 @@ public class StudySetSamplerTest
 	public void setUp() throws Exception
 	{
 		/* FIXME: Duplicated from AssociationParserTest2 */
-		OBOParser oboParser = new OBOParser(new OBOParserFileInput(OBOParserTest.GOtermsOBOFile));
+		OBOParser oboParser = new OBOParser(new ParserFileInput(StudySetTest.GOFile));
 		oboParser.doParse();
 		TermContainer container = new TermContainer(oboParser.getTermMap(), oboParser.getFormatVersion(), oboParser.getDate());
-		AssociationParser assocParser = new AssociationParser(new OBOParserFileInput(GOAssociationFile), container, null);
+		AssociationParser assocParser = new AssociationParser(new ParserFileInput(GOAssociationFile), container, null);
 		AssociationContainer assocContainer = new AssociationContainer(assocParser.getAssociations(), assocParser.getAnnotationMapping());
 
 		Set<ByteString> allAnnotatedGenes = assocContainer.getAllAnnotatedGenes();

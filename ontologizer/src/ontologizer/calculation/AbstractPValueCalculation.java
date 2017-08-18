@@ -4,9 +4,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import ontologizer.association.AssociationContainer;
-import ontologizer.association.Gene2Associations;
+import ontologizer.association.ItemAssociations;
+import ontologizer.enumeration.TermAnnotations;
 import ontologizer.enumeration.TermEnumerator;
-import ontologizer.enumeration.TermEnumerator.TermAnnotatedGenes;
 import ontologizer.ontology.Ontology;
 import ontologizer.ontology.TermID;
 import ontologizer.set.PopulationSet;
@@ -66,7 +66,7 @@ public abstract class AbstractPValueCalculation implements IPValueCalculation
 
 		for (TermID term : populationTermEnumerator)
 		{
-			TermAnnotatedGenes tag = populationTermEnumerator.getAnnotatedGenes(term);
+			TermAnnotations tag = populationTermEnumerator.getAnnotatedGenes(term);
 			int nTermItems = tag.totalAnnotated.size();
 
 			term2Items[i] = new int[nTermItems];
@@ -136,7 +136,7 @@ public abstract class AbstractPValueCalculation implements IPValueCalculation
 			if (index == Integer.MAX_VALUE)
 			{
 				/* Try synonyms etc. */
-				Gene2Associations g2a = associations.get(studyItem);
+				ItemAssociations g2a = associations.get(studyItem);
 				if (g2a != null)
 					index = item2Index.getIfAbsent(g2a.name(), Integer.MAX_VALUE);
 			}

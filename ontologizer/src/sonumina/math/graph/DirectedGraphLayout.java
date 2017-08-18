@@ -10,7 +10,7 @@ import java.util.ListIterator;
  *
  * @author Sebastian Bauer
  */
-public class DirectedGraphLayout<T>
+public class DirectedGraphLayout<T, ED>
 {
 	static class Attr
 	{
@@ -49,7 +49,7 @@ public class DirectedGraphLayout<T>
 		void set(T vertex, int left, int top);
 	}
 
-	protected DirectedGraph<T> graph;
+	protected DirectedGraph<T, ED> graph;
 	protected IGetDimension<T> dimensionCallback;
 	protected IPosition<T> positionCallback;
 	protected SlimDirectedGraphView<T> slimGraph;
@@ -57,7 +57,7 @@ public class DirectedGraphLayout<T>
 	private int maxDistanceToRoot = -1;
 	private Attr [] attrs;
 
-	DirectedGraphLayout(DirectedGraph<T> graph, IGetDimension<T> dimensionCallback, IPosition<T> positionCallback)
+	DirectedGraphLayout(DirectedGraph<T, ED> graph, IGetDimension<T> dimensionCallback, IPosition<T> positionCallback)
 	{
 		this.graph = graph;
 		this.dimensionCallback = dimensionCallback;
@@ -78,7 +78,7 @@ public class DirectedGraphLayout<T>
 		/* Find out the distance to the root of each vertex. Remember the deepest one */
 		for (T root : rootList)
 		{
-			graph.singleSourceLongestPath(root,new DirectedGraph.IDistanceVisitor<T>() {
+			graph.singleSourceLongestPath(root,new IDistanceVisitor<T>() {
 				public boolean visit(T n, List<T> path, int distance)
 				{
 					/* Note that we could have more than one root, for which the distance
@@ -324,15 +324,15 @@ public class DirectedGraphLayout<T>
 		return na.layoutPosX + na.width / 2;
 	}
 
-	public static <T> void layout(DirectedGraph<T> graph, IGetDimension<T> dimensionCallback, IPosition<T> positionCallback)
+	public static <T, ED> void layout(DirectedGraph<T,ED> graph, IGetDimension<T> dimensionCallback, IPosition<T> positionCallback)
 	{
 		layout(graph,dimensionCallback,positionCallback,2,2);
 	}
 
-	public static <T> void layout(DirectedGraph<T> graph, IGetDimension<T> dimensionCallback, IPosition<T> positionCallback, int horizSpace, int vertSpace)
+	public static <T, ED> void layout(DirectedGraph<T, ED> graph, IGetDimension<T> dimensionCallback, IPosition<T> positionCallback, int horizSpace, int vertSpace)
 	{
 		if (graph.getNumberOfVertices() == 0)
 			return;
-		new DirectedGraphLayout<T>(graph,dimensionCallback,positionCallback).layout(horizSpace,vertSpace);
+		new DirectedGraphLayout<T, ED>(graph,dimensionCallback,positionCallback).layout(horizSpace,vertSpace);
 	}
 }

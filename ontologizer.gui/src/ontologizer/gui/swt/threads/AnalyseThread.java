@@ -6,9 +6,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.eclipse.swt.widgets.Display;
+
 import ontologizer.association.AssociationContainer;
-import ontologizer.association.AssociationParser;
-import ontologizer.association.IAssociationParserProgress;
 import ontologizer.calculation.AbstractGOTermsResult;
 import ontologizer.calculation.CalculationRegistry;
 import ontologizer.calculation.EnrichedGOTermsResult;
@@ -20,9 +20,11 @@ import ontologizer.calculation.b2g.Bayes2GOCalculation;
 import ontologizer.filter.GeneFilter;
 import ontologizer.gui.swt.Ontologizer;
 import ontologizer.gui.swt.ResultWindow;
-import ontologizer.ontology.IOBOParserProgress;
-import ontologizer.ontology.OBOParser;
-import ontologizer.ontology.OBOParserFileInput;
+import ontologizer.io.ParserFileInput;
+import ontologizer.io.annotation.AssociationParser;
+import ontologizer.io.annotation.IAssociationParserProgress;
+import ontologizer.io.obo.IOBOParserProgress;
+import ontologizer.io.obo.OBOParser;
 import ontologizer.ontology.Ontology;
 import ontologizer.ontology.TermContainer;
 import ontologizer.set.PopulationSet;
@@ -34,8 +36,6 @@ import ontologizer.statistics.IResampling;
 import ontologizer.statistics.IResamplingProgress;
 import ontologizer.statistics.TestCorrectionRegistry;
 import ontologizer.types.ByteString;
-
-import org.eclipse.swt.widgets.Display;
 
 public class AnalyseThread extends AbstractOntologizerThread
 {
@@ -211,7 +211,7 @@ public class AnalyseThread extends AbstractOntologizerThread
 
 
 			/* OBO */
-			OBOParser oboParser = new OBOParser(new OBOParserFileInput(definitionFile),OBOParser.PARSE_DEFINITIONS);
+			OBOParser oboParser = new OBOParser(new ParserFileInput(definitionFile),OBOParser.PARSE_DEFINITIONS);
 			String diag = oboParser.doParse(new IOBOParserProgress(){
 				public void init(final int max)
 				{
@@ -271,7 +271,7 @@ public class AnalyseThread extends AbstractOntologizerThread
 			 * products. Results are placed in association parser.
 			 */
 			log("Parse associations");
-			AssociationParser ap = new AssociationParser(new OBOParserFileInput(associationsFile), goTerms, populationSet.getAllGeneNames(), checkedEvidences, new IAssociationParserProgress()
+			AssociationParser ap = new AssociationParser(new ParserFileInput(associationsFile), goTerms, populationSet.getAllGeneNames(), checkedEvidences, new IAssociationParserProgress()
 			{
 				public void init(final int max)
 				{

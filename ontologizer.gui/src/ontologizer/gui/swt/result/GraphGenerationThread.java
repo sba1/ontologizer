@@ -4,11 +4,11 @@ import java.io.File;
 import java.util.HashSet;
 
 import ontologizer.calculation.AbstractGOTermsResult;
-import ontologizer.dotwriter.AbstractDotAttributesProvider;
-import ontologizer.dotwriter.GODOTWriter;
 import ontologizer.gui.swt.support.IGraphGenerationFinished;
 import ontologizer.gui.swt.support.IGraphGenerationSupport;
 import ontologizer.gui.swt.support.NewGraphGenerationThread;
+import ontologizer.io.dot.AbstractTermDotAttributesProvider;
+import ontologizer.io.dot.OntologyDotWriter;
 import ontologizer.ontology.Ontology;
 import ontologizer.ontology.Term;
 import ontologizer.ontology.TermID;
@@ -30,9 +30,9 @@ public class GraphGenerationThread extends NewGraphGenerationThread
 	public AbstractGOTermsResult result;
 
 	private IGraphGenerationFinished finished;
-	private AbstractDotAttributesProvider provider;
+	private AbstractTermDotAttributesProvider provider;
 
-	public GraphGenerationThread(Display display, String dotCMDPath, IGraphGenerationFinished f, AbstractDotAttributesProvider p)
+	public GraphGenerationThread(Display display, String dotCMDPath, IGraphGenerationFinished f, AbstractTermDotAttributesProvider p)
 	{
 		super(display, dotCMDPath);
 
@@ -50,7 +50,7 @@ public class GraphGenerationThread extends NewGraphGenerationThread
 						leafTerms, provider);
 				} else
 				{
-					GODOTWriter.writeDOT(go, dotFile,
+					OntologyDotWriter.writeDOT(go, dotFile,
 						emanatingTerm != null ? emanatingTerm.getID() : null,
 						leafTerms, provider);
 				}

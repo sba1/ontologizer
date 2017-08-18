@@ -14,7 +14,7 @@ import org.apache.commons.cli.ParseException;
 
 import ontologizer.calculation.EnrichedGOTermsResult;
 import ontologizer.calculation.EnrichedGOTermsTableWriter;
-import ontologizer.ontology.OBOParserException;
+import ontologizer.io.obo.OBOParserException;
 import ontologizer.ontology.TermID;
 
 /**

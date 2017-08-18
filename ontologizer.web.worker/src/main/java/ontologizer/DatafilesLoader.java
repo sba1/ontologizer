@@ -5,11 +5,11 @@ import java.io.IOException;
 import org.teavm.jso.dom.events.EventListener;
 
 import ontologizer.association.AssociationContainer;
-import ontologizer.association.AssociationParser;
-import ontologizer.association.IAssociationParserProgress;
-import ontologizer.ontology.IOBOParserProgress;
-import ontologizer.ontology.OBOParser;
-import ontologizer.ontology.OBOParserException;
+import ontologizer.io.annotation.AssociationParser;
+import ontologizer.io.annotation.IAssociationParserProgress;
+import ontologizer.io.obo.IOBOParserProgress;
+import ontologizer.io.obo.OBOParser;
+import ontologizer.io.obo.OBOParserException;
 import ontologizer.ontology.Ontology;
 import ontologizer.ontology.TermContainer;
 

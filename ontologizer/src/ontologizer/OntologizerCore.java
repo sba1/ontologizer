@@ -4,17 +4,17 @@ import java.io.*;
 import java.util.*;
 
 import ontologizer.association.AssociationContainer;
-import ontologizer.association.AssociationParser;
-import ontologizer.association.IAssociationParserProgress;
 import ontologizer.calculation.CalculationRegistry;
 import ontologizer.calculation.EnrichedGOTermsResult;
 import ontologizer.calculation.ICalculation;
 import ontologizer.calculation.b2g.B2GParam;
 import ontologizer.calculation.b2g.Bayes2GOCalculation;
 import ontologizer.filter.GeneFilter;
-import ontologizer.ontology.OBOParser;
-import ontologizer.ontology.OBOParserException;
-import ontologizer.ontology.OBOParserFileInput;
+import ontologizer.io.ParserFileInput;
+import ontologizer.io.annotation.AssociationParser;
+import ontologizer.io.annotation.IAssociationParserProgress;
+import ontologizer.io.obo.OBOParser;
+import ontologizer.io.obo.OBOParserException;
 import ontologizer.ontology.Ontology;
 import ontologizer.ontology.TermContainer;
 import ontologizer.set.PopulationSet;
@@ -159,7 +159,7 @@ public class OntologizerCore
 		 */
 		System.err.println("Parse obo file \"" + args.goTermsOBOFile + "\"");
 
-		OBOParser oboParser = new OBOParser(new OBOParserFileInput(args.goTermsOBOFile));
+		OBOParser oboParser = new OBOParser(new ParserFileInput(args.goTermsOBOFile));
 		System.err.println(oboParser.doParse());
 		goTerms = new TermContainer(oboParser.getTermMap(), oboParser.getFormatVersion(), oboParser.getDate());
 		System.err.println("Building graph");
@@ -204,7 +204,7 @@ public class OntologizerCore
 		/* Parse the GO association file containing GO annotations for genes or gene
 		 * products. Results are placed in associationparser.
 		 */
-		AssociationParser ap = new AssociationParser(new OBOParserFileInput(args.associationFile),goTerms,populationSet.getAllGeneNames(),
+		AssociationParser ap = new AssociationParser(new ParserFileInput(args.associationFile),goTerms,populationSet.getAllGeneNames(),
 				new IAssociationParserProgress() {
 					private int max;
 					private long startTime;

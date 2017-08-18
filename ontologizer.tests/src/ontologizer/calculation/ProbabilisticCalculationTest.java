@@ -14,9 +14,10 @@ import ontologizer.association.Association;
 import ontologizer.association.AssociationContainer;
 import ontologizer.ontology.Ontology;
 import ontologizer.ontology.ParentTermID;
+import ontologizer.ontology.RelationMeaning;
+import ontologizer.ontology.RelationType;
 import ontologizer.ontology.Term;
 import ontologizer.ontology.TermContainer;
-import ontologizer.ontology.TermRelation;
 import ontologizer.set.PopulationSet;
 import ontologizer.set.StudySet;
 import ontologizer.statistics.None;
@@ -29,10 +30,11 @@ public class ProbabilisticCalculationTest
 	{
 		/* Go Graph */
 		HashSet<Term> terms = new HashSet<Term>();
+		RelationType isA = new RelationType(RelationMeaning.IS_A);
 		Term c1 = new Term("GO:0000001", "C1");
-		Term c2 = new Term("GO:0000002", "C2",new ParentTermID(c1.getID(),TermRelation.IS_A));
-		Term c3 = new Term("GO:0000003", "C3",new ParentTermID(c1.getID(),TermRelation.IS_A));
-		Term c4 = new Term("GO:0000004", "C4",new ParentTermID(c1.getID(),TermRelation.IS_A));
+		Term c2 = new Term("GO:0000002", "C2",new ParentTermID(c1.getID(),isA));
+		Term c3 = new Term("GO:0000003", "C3",new ParentTermID(c1.getID(),isA));
+		Term c4 = new Term("GO:0000004", "C4",new ParentTermID(c1.getID(),isA));
 		terms.add(c1);
 		terms.add(c2);
 		terms.add(c3);

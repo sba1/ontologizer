@@ -5,8 +5,8 @@ import java.util.HashSet;
 import java.util.Random;
 
 import ontologizer.association.AssociationContainer;
+import ontologizer.enumeration.TermAnnotations;
 import ontologizer.enumeration.TermEnumerator;
-import ontologizer.enumeration.TermEnumerator.TermAnnotatedGenes;
 import ontologizer.ontology.Ontology;
 import ontologizer.ontology.TermID;
 import ontologizer.set.StudySet;
@@ -170,7 +170,7 @@ public class StudySetSampler
 		for (TermID id : enrichRule)
 		{
 			// TermID id = termsToOverRepresent[i];
-			TermAnnotatedGenes annoGenes = termEnum.getAnnotatedGenes(id);
+			TermAnnotations annoGenes = termEnum.getAnnotatedGenes(id);
 			seenGenes.addAll(annoGenes.totalAnnotated);
 			int sampleSize = (int) (0.01 * annoGenes.totalAnnotatedCount() * enrichRule.getPercForTerm(id));
 			if (sampleSize == 0)
@@ -182,7 +182,7 @@ public class StudySetSampler
 		HashSet<ByteString> genesRest = new HashSet<ByteString>();
 		for (TermID id : termEnum)
 		{
-			TermAnnotatedGenes annoGenes = termEnum.getAnnotatedGenes(id);
+			TermAnnotations annoGenes = termEnum.getAnnotatedGenes(id);
 			genesRest.addAll(annoGenes.totalAnnotated);
 		}
 
@@ -222,7 +222,7 @@ public class StudySetSampler
 
 		for (TermID id : termsToOverRepresent)
 		{
-			TermAnnotatedGenes annoGenes = termEnum.getAnnotatedGenes(id);
+			TermAnnotations annoGenes = termEnum.getAnnotatedGenes(id);
 			for (ByteString gene : annoGenes.totalAnnotated)
 				genesToOverRepresent.add(gene);
 		}
