@@ -3,12 +3,13 @@
   <groupId>ontologizer</groupId>
   <artifactId>swt-gtk-linux-x86_64</artifactId>
   <versioning>
-    <release>4.6</release>
+    <release>4.7</release>
     <versions>
       <version>3.7.1</version>
       <version>4.5.1</version>
       <version>4.6</version>
+      <version>4.7</version>
     </versions>
-    <lastUpdated>20160628180737</lastUpdated>
+    <lastUpdated>20170819075011</lastUpdated>
   </versioning>
 </metadata>
