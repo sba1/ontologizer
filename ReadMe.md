@@ -16,7 +16,7 @@ Ontologizer's build process is driven by Maven. You also need to install
 '''pandoc''' (https://pandoc.org/) before proceeding, as this is not handled
 by Maven. After cloning and checking out the source repository via
 ```
-$ git clone https://github.com/sba1/ontologizer
+$ git clone --recurse-submodules https://github.com/sba1/ontologizer
 ```
 
 you can start the build procedure via
