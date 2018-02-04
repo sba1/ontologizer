@@ -81,8 +81,8 @@ public class OntologizerOptions
 		Options options = new Options();
 
 		options.addOption(new Option("h","help",false,"Shows this help"));
-		options.addOption(Option.builder("g").longOpt("go").argName("file").hasArg().desc(
-				"File containig GO terminology and structure (.obo format). Required"
+		options.addOption(Option.builder("g").longOpt("go").argName("file[,root]").hasArg().desc(
+				"File containig GO terminology and structure (.obo format). Specifiying the optional root, allows one to select a particular subontology, e.g, \"biological_process\". Required"
 				).build());
 		options.addOption(Option.builder("a").longOpt("association").argName("file").hasArg().desc(
 				"File containing associations from genes to GO terms. Required"

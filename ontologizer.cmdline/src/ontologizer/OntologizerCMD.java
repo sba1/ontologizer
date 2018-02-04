@@ -108,7 +108,13 @@ public class OntologizerCMD
 				System.exit(0);
 			}
 
-			arguments.goTermsOBOFile = getRequiredOptionValue(cmd,'g');
+			String [] obo = getRequiredOptionValue(cmd,'g').split(",");
+			arguments.goTermsOBOFile = obo[0];
+			if (obo.length > 1)
+			{
+				arguments.subontology = obo[1];
+			}
+
 			arguments.associationFile = getRequiredOptionValue(cmd,'a');
 			arguments.populationFile = getRequiredOptionValue(cmd,'p');
 			arguments.studySet = getRequiredOptionValue(cmd,'s');

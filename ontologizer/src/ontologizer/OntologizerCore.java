@@ -16,6 +16,7 @@ import ontologizer.io.annotation.IAssociationParserProgress;
 import ontologizer.io.obo.OBOParser;
 import ontologizer.io.obo.OBOParserException;
 import ontologizer.ontology.Ontology;
+import ontologizer.ontology.Term;
 import ontologizer.ontology.TermContainer;
 import ontologizer.set.PopulationSet;
 import ontologizer.set.StudySet;
@@ -47,6 +48,9 @@ public class OntologizerCore
 	{
 		/** gene_ontology.obo file (and path) */
 		public String goTermsOBOFile;
+
+		/** An optional name of a subontology */
+		public String subontology;
 
 		/** gene_association.* file (and path) */
 		public String associationFile;
@@ -164,6 +168,42 @@ public class OntologizerCore
 		goTerms = new TermContainer(oboParser.getTermMap(), oboParser.getFormatVersion(), oboParser.getDate());
 		System.err.println("Building graph");
 		goGraph = Ontology.create(goTerms);
+		if (args.subontology != null)
+		{
+			Term t = null;
+
+			try
+			{
+				t = goGraph.getTerm(args.subontology);
+			} catch (IllegalArgumentException e)
+			{
+			}
+
+			if (t == null)
+			{
+				/* Find by name, slow */
+				ByteString name = new ByteString(args.subontology);
+				for (int i = 0; i< goGraph.getTermMap().size(); i++)
+				{
+					Term t2 = goGraph.getTermMap().get(i);
+					if (t2.getName().equals(name))
+					{
+						t = t2;
+						break;
+					}
+				}
+			}
+
+			if (t != null)
+			{
+				goGraph.setRelevantSubontology(t.getName().toString());
+				goGraph = goGraph.getOntlogyOfRelevantTerms();
+			} else
+			{
+				System.err.println("The term \"" + args.subontology + "\" as specified in the -g option, was not found");
+				System.exit(1);
+			}
+		}
 
 		/* create the study list. A directory or a single file might be given */
 		File studyFile = new File(args.studySet);
