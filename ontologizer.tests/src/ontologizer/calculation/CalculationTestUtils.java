@@ -65,7 +65,7 @@ public class CalculationTestUtils
 	 *
 	 * @return the result
 	 */
-	public static EnrichedGOTermsResult performTestCalculation(ICalculation calc)
+	public static EnrichedGOTermsResult performTestCalculation(ICalculation calc, boolean subOntology)
 	{
 		InternalOntology internalOntology = new InternalOntology();
 
@@ -74,6 +74,11 @@ public class CalculationTestUtils
 
 		AssociationContainer assoc = internalOntology.assoc;
 		Ontology ontology = internalOntology.graph;
+
+		if (subOntology)
+		{
+			ontology.setRelevantSubontology("C2");
+		}
 
 		EnrichedGOTermsResult [] r = new EnrichedGOTermsResult[2];
 
@@ -97,6 +102,11 @@ public class CalculationTestUtils
 			assertEquals(r[0].getGOTermProperties(t).p_adjusted, r[1].getGOTermProperties(t).p_adjusted, 1e-10);
 		}
 		return r[0];
+	}
+
+	public static EnrichedGOTermsResult performTestCalculation(ICalculation calc)
+	{
+		return performTestCalculation(calc, false);
 	}
 
 	public static void assertResultEquals(Expected[] expected, Class<?> expectedPropClass, EnrichedGOTermsResult r)

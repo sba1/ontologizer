@@ -55,6 +55,12 @@ public class SimpleCalculationAlgorithmsTest
 	}
 
 	@Test
+	public void whetherPCUWithSubontologyWorks()
+	{
+		performTestCalculation(new ParentChildCalculation(), true);
+	}
+
+	@Test
 	public void whetherPCIWorks()
 	{
 		EnrichedGOTermsResult r = performTestCalculation(new ParentChildCutCalculation());
