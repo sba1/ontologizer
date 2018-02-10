@@ -22,7 +22,7 @@ import sonumina.math.graph.SlimDirectedGraphView;
  */
 abstract class ParentChildPValuesCalculation extends AbstractPValueCalculation
 {
-	protected SlimDirectedGraphView<Term> slimGraph;
+	protected SlimDirectedGraphView<TermID> slimGraph;
 
 	/**
 	 * Return value type for getCounts().
@@ -49,7 +49,7 @@ abstract class ParentChildPValuesCalculation extends AbstractPValueCalculation
 	{
 		super(graph, goAssociations, populationSet, studySet, hyperg);
 
-		slimGraph = graph.getSlimGraphView();
+		slimGraph = graph.getTermIDSlimGraphView();
 	}
 
 	protected PValue [] calculatePValues(StudySet studySet, IPValueCalculationProgress progress)
@@ -93,7 +93,7 @@ abstract class ParentChildPValuesCalculation extends AbstractPValueCalculation
 			prop.p_min = 1.0;
 		} else
 		{
-			Counts counts = getCounts(studyIds, graph.getTerm(termId));
+			Counts counts = getCounts(studyIds, termId);
 
 			int studyFamilyCount = counts.studyFamilyCount;
 			int popFamilyCount = counts.popFamilyCount;
@@ -145,5 +145,5 @@ abstract class ParentChildPValuesCalculation extends AbstractPValueCalculation
 	 * @param term the term for which the counts shall be determined.
 	 * @return the count structure.
 	 */
-	protected abstract Counts getCounts(int[] studyIds, Term term);
+	protected abstract Counts getCounts(int[] studyIds, TermID term);
 };

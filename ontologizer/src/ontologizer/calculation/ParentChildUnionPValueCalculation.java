@@ -2,7 +2,7 @@ package ontologizer.calculation;
 
 import ontologizer.association.AssociationContainer;
 import ontologizer.ontology.Ontology;
-import ontologizer.ontology.Term;
+import ontologizer.ontology.TermID;
 import ontologizer.set.PopulationSet;
 import ontologizer.set.StudySet;
 import ontologizer.statistics.Hypergeometric;
@@ -18,7 +18,7 @@ public class ParentChildUnionPValueCalculation extends ParentChildPValuesCalcula
 	}
 
 	@Override
-	protected Counts getCounts(int[] studyIds, Term term)
+	protected Counts getCounts(int[] studyIds, TermID term)
 	{
 		int slimIndex = slimGraph.getVertexIndex(term);
 		int [] parents = slimGraph.vertexParents[slimIndex];
@@ -27,7 +27,7 @@ public class ParentChildUnionPValueCalculation extends ParentChildPValuesCalcula
 		int i = 0;
 		for (int parent : parents)
 		{
-			parentItems[i++] = term2Items[getIndex(slimGraph.getVertex(parent).getID())];
+			parentItems[i++] = term2Items[getIndex(slimGraph.getVertex(parent))];
 		}
 
 		/* number of genes annotated to family (term and parents) */
