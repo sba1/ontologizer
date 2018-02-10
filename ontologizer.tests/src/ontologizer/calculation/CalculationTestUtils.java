@@ -63,6 +63,8 @@ public class CalculationTestUtils
 	 * Perform a standard test calculation using the supplied algorithm
 	 * on the initial ontology.
 	 *
+	 * @param calc the calculation method to use.
+	 * @param subOntology set to true if calculation should be done on a subontology only.
 	 * @return the result
 	 */
 	public static EnrichedGOTermsResult performTestCalculation(ICalculation calc, boolean subOntology)
