@@ -83,55 +83,45 @@ abstract class ParentChildPValuesCalculation extends AbstractPValueCalculation
 		prop.annotatedPopulationGenes = popTermCount;
 		prop.annotatedStudyGenes = studyTermCount;
 
-		if (graph.isRootTerm(termId))
+		Counts counts = getCounts(studyIds, termId);
+
+		int studyFamilyCount = counts.studyFamilyCount;
+		int popFamilyCount = counts.popFamilyCount;
+
+		prop.popFamilyGenes = popFamilyCount;
+		prop.studyFamilyGenes = studyFamilyCount;
+		prop.nparents = counts.parents;
+
+		if (studyTermCount != 0)
 		{
-			prop.nparents = 0;
-			prop.ignoreAtMTC = true;
-			prop.p = 1.0;
-			prop.p_adjusted = 1.0;
-			prop.p_min = 1.0;
-		} else
-		{
-			Counts counts = getCounts(studyIds, termId);
-
-			int studyFamilyCount = counts.studyFamilyCount;
-			int popFamilyCount = counts.popFamilyCount;
-
-			prop.popFamilyGenes = popFamilyCount;
-			prop.studyFamilyGenes = studyFamilyCount;
-			prop.nparents = counts.parents;
-
-			if (studyTermCount != 0)
-			{
-				if (popFamilyCount == popTermCount)
-				{
-					prop.ignoreAtMTC = true;
-					prop.p = 1.0;
-					prop.p_adjusted = 1.0;
-					prop.p_min = 1.0;
-				} else
-				{
-					double p = hyperg.phypergeometric(
-							popFamilyCount,
-							(double)popTermCount / (double)popFamilyCount,
-							studyFamilyCount,
-							studyTermCount);
-
-					prop.ignoreAtMTC = false;
-					prop.p = p;
-					prop.p_min = hyperg.dhyper(
-							popTermCount,
-							popFamilyCount,
-							popTermCount,
-							popTermCount);
-				}
-			} else
+			if (popFamilyCount == popTermCount)
 			{
 				prop.ignoreAtMTC = true;
 				prop.p = 1.0;
 				prop.p_adjusted = 1.0;
 				prop.p_min = 1.0;
+			} else
+			{
+				double p = hyperg.phypergeometric(
+						popFamilyCount,
+						(double)popTermCount / (double)popFamilyCount,
+						studyFamilyCount,
+						studyTermCount);
+
+				prop.ignoreAtMTC = false;
+				prop.p = p;
+				prop.p_min = hyperg.dhyper(
+						popTermCount,
+						popFamilyCount,
+						popTermCount,
+						popTermCount);
 			}
+		} else
+		{
+			prop.ignoreAtMTC = true;
+			prop.p = 1.0;
+			prop.p_adjusted = 1.0;
+			prop.p_min = 1.0;
 		}
 
 		return prop;
