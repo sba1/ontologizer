@@ -2,7 +2,6 @@ package ontologizer.calculation;
 
 import ontologizer.association.AssociationContainer;
 import ontologizer.ontology.Ontology;
-import ontologizer.ontology.Term;
 import ontologizer.ontology.TermID;
 import ontologizer.set.PopulationSet;
 import ontologizer.set.StudySet;
