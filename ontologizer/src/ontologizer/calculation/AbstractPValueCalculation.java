@@ -20,7 +20,6 @@ import sonumina.collections.ObjectIntHashMap;
 
 public abstract class AbstractPValueCalculation implements IPValueCalculation
 {
-	protected final Ontology graph;
 	protected final AssociationContainer associations;
 	protected final PopulationSet populationSet;
 	protected final StudySet observedStudySet;
@@ -37,7 +36,6 @@ public abstract class AbstractPValueCalculation implements IPValueCalculation
 			AssociationContainer goAssociations, PopulationSet populationSet,
 			StudySet studySet, Hypergeometric hyperg)
 	{
-		this.graph = graph;
 		this.associations = goAssociations;
 		this.populationSet = populationSet;
 		this.observedStudySet = studySet;
