@@ -57,7 +57,23 @@ public class SimpleCalculationAlgorithmsTest
 	@Test
 	public void whetherPCUWithSubontologyWorks()
 	{
-		performTestCalculation(new ParentChildCalculation(), true);
+		EnrichedGOTermsResult r = performTestCalculation(new ParentChildCalculation(), true);
+
+		/* FIXME: Verify manually first */
+		Expected [] expected = new Expected[]
+		{
+			new Expected("GO:0000002", 444, 57, 1),
+			new Expected("GO:0000004",  57, 57, 2.18177417463053E-73),
+			new Expected("GO:0000005", 338, 25, 0.9999999973487158),
+			new Expected("GO:0000006", 333, 26, 0.9999999405678024),
+			new Expected("GO:0000007", 291, 22, 0.6585006334613194),
+			new Expected("GO:0000008",  63,  5, 0.5386240751219415),
+			new Expected("GO:0000009", 179, 10, 0.9654322584198002),
+			new Expected("GO:0000010",  66,  5, 0.2862835934348825),
+			new Expected("GO:0000011",  65,  2, 0.9320736961939712),
+		};
+
+		assertResultEquals(expected, ParentChildGOTermProperties.class, r);
 	}
 
 	@Test

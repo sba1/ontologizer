@@ -48,7 +48,7 @@ abstract class ParentChildPValuesCalculation extends AbstractPValueCalculation
 	{
 		super(graph, goAssociations, populationSet, studySet, hyperg);
 
-		slimGraph = graph.getTermIDSlimGraphView();
+		slimGraph = graph.getOntlogyOfRelevantTerms().getTermIDSlimGraphView();
 	}
 
 	protected PValue [] calculatePValues(StudySet studySet, IPValueCalculationProgress progress)

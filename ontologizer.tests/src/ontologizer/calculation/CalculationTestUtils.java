@@ -70,6 +70,7 @@ public class CalculationTestUtils
 	public static EnrichedGOTermsResult performTestCalculation(ICalculation calc, boolean subOntology)
 	{
 		InternalOntology internalOntology = new InternalOntology();
+		int expectedResultSize = 11;
 
 		final HashMap<TermID,Double> wantedActiveTerms = new HashMap<TermID,Double>(); /* Terms that are active */
 		wantedActiveTerms.put(new TermID("GO:0000004"),0.0);
@@ -80,6 +81,7 @@ public class CalculationTestUtils
 		if (subOntology)
 		{
 			ontology.setRelevantSubontology("C2");
+			expectedResultSize = 9;
 		}
 
 		EnrichedGOTermsResult [] r = new EnrichedGOTermsResult[2];
@@ -94,13 +96,16 @@ public class CalculationTestUtils
 			r[i] = calc.calculateStudySet(ontology, assoc, scs.pop, scs.study, new None());
 			EnrichedGOTermsTableWriter.writeTable(System.out, r[i]);
 
-			assertEquals(11, r[i].getSize());
+			assertEquals(expectedResultSize, r[i].getSize());
 			assertEquals(500, r[i].getPopulationGeneCount());
 			assertEquals(57, r[i].getStudyGeneCount());
 		}
 
 		for (Term t : ontology)
 		{
+			if (!ontology.isRelevantTerm(t))
+				continue;
+
 			assertEquals(r[0].getGOTermProperties(t).p_adjusted, r[1].getGOTermProperties(t).p_adjusted, 1e-10);
 		}
 		return r[0];

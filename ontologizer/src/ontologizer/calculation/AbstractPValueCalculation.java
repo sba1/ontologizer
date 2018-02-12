@@ -47,7 +47,13 @@ public abstract class AbstractPValueCalculation implements IPValueCalculation
 	private void initCalculationContext(Ontology graph, AssociationContainer goAssociations, StudySet populationSet)
 	{
 		TermEnumerator populationTermEnumerator = populationSet.enumerateTerms(graph, goAssociations);
-		totalNumberOfAnnotatedTerms = populationTermEnumerator.getTotalNumberOfAnnotatedTerms();
+		totalNumberOfAnnotatedTerms = 0;//populationTermEnumerator.getTotalNumberOfAnnotatedTerms();
+		for (TermID term : populationTermEnumerator)
+		{
+			if (!graph.isRelevantTermID(term))
+				continue;
+			totalNumberOfAnnotatedTerms++;
+		}
 
 		List<ByteString> itemList = populationTermEnumerator.getGenesAsList();
 		item2Index = new ObjectIntHashMap<ByteString>(itemList.size()*3/2);
@@ -64,6 +70,9 @@ public abstract class AbstractPValueCalculation implements IPValueCalculation
 
 		for (TermID term : populationTermEnumerator)
 		{
+			if (!graph.isRelevantTermID(term))
+				continue;
+
 			TermAnnotations tag = populationTermEnumerator.getAnnotatedGenes(term);
 			int nTermItems = tag.totalAnnotated.size();
 
