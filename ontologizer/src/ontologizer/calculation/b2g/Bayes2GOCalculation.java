@@ -2,6 +2,8 @@ package ontologizer.calculation.b2g;
 
 import static java.util.logging.Level.INFO;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.logging.Logger;
 
@@ -295,7 +297,13 @@ public class Bayes2GOCalculation implements ICalculation, ISlimCalculation, IPro
 		{
 			throw new IllegalArgumentException("Valued calculation not supported at the moment!");
 		}
-		IntMapper<TermID> termMapper = IntMapper.create(populationEnumerator.getAllAnnotatedTermsAsList());
+		List<TermID> relevantTermList = new ArrayList<TermID>();
+		for (TermID t : populationEnumerator.getAllAnnotatedTermsAsList())
+		{
+			if (graph.isRelevantTermID(t))
+				relevantTermList.add(t);
+		}
+		IntMapper<TermID> termMapper = IntMapper.create(relevantTermList);
 		IntMapper<ByteString> geneMapper = IntMapper.create(populationEnumerator.getGenesAsList());
 		int [][] termLinks = CalculationUtils.makeTermLinks(populationEnumerator, termMapper, geneMapper);
 		boolean [] observedItems = geneMapper.getDense(studyEnumerator.getGenes());
