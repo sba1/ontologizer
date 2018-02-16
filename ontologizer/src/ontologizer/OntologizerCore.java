@@ -197,7 +197,6 @@ public class OntologizerCore
 			if (t != null)
 			{
 				goGraph.setRelevantSubontology(t.getName().toString());
-				goGraph = goGraph.getOntlogyOfRelevantTerms();
 			} else
 			{
 				System.err.println("The term \"" + args.subontology + "\" as specified in the -g option, was not found");
