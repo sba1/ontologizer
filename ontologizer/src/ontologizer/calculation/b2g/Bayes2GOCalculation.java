@@ -297,12 +297,7 @@ public class Bayes2GOCalculation implements ICalculation, ISlimCalculation, IPro
 		{
 			throw new IllegalArgumentException("Valued calculation not supported at the moment!");
 		}
-		List<TermID> relevantTermList = new ArrayList<TermID>();
-		for (TermID t : populationEnumerator.getAllAnnotatedTermsAsList())
-		{
-			if (graph.isRelevantTermID(t))
-				relevantTermList.add(t);
-		}
+		List<TermID> relevantTermList = graph.filterRelevant(populationEnumerator.getAllAnnotatedTermsAsList());
 		IntMapper<TermID> termMapper = IntMapper.create(relevantTermList);
 		IntMapper<ByteString> geneMapper = IntMapper.create(populationEnumerator.getGenesAsList());
 		int [][] termLinks = CalculationUtils.makeTermLinks(populationEnumerator, termMapper, geneMapper);
