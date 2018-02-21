@@ -2,7 +2,6 @@ package ontologizer.calculation.b2g;
 
 import static java.util.logging.Level.INFO;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.logging.Logger;
