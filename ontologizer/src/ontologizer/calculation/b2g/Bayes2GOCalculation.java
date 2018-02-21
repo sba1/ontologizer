@@ -23,7 +23,7 @@ import ontologizer.types.ByteString;
 import sonumina.collections.IntMapper;
 
 /**
- * This class implements an model-based analysis. The description of the entire
+ * This class implements a model-based analysis. The description of the entire
  * method can be found in "GOing Bayesian: model-based gene set analysis of genome-scale data"
  *
  * @see <A HREF="http://nar.oxfordjournals.org/content/early/2010/02/19/nar.gkq045.short">GOing Bayesian: model-based gene set analysis of genome-scale data</A>
