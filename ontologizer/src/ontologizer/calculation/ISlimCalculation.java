@@ -6,7 +6,7 @@ package ontologizer.calculation;
  *
  * @author Sebastian Bauer
  */
-public interface ISlimCalculation
+public interface ISlimCalculation extends IBaseCalculation
 {
 	/**
 	 * Perform the calculation.

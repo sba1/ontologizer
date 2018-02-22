@@ -12,15 +12,8 @@ import ontologizer.statistics.AbstractTestCorrection;
  * @author Sebastian Baueer
  *
  */
-public interface ICalculation
+public interface ICalculation extends IBaseCalculation
 {
-	/**
-	 * Returns the name of the calculation method
-	 *
-	 * @return the name of the method.
-	 */
-	public String getName();
-
 	/**
 	 * Returns a short description of the calculation method.
 	 *
