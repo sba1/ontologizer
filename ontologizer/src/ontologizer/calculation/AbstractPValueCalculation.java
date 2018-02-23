@@ -1,7 +1,6 @@
 package ontologizer.calculation;
 
 import java.util.Arrays;
-import java.util.List;
 
 import ontologizer.association.AssociationContainer;
 import ontologizer.association.ItemAssociations;
@@ -16,6 +15,7 @@ import ontologizer.statistics.IPValueCalculation;
 import ontologizer.statistics.IPValueCalculationProgress;
 import ontologizer.statistics.PValue;
 import ontologizer.types.ByteString;
+import sonumina.collections.IntMapper;
 import sonumina.collections.ObjectIntHashMap;
 
 public abstract class AbstractPValueCalculation implements IPValueCalculation
@@ -27,7 +27,7 @@ public abstract class AbstractPValueCalculation implements IPValueCalculation
 
 	private int totalNumberOfAnnotatedTerms;
 
-	protected ObjectIntHashMap<ByteString> item2Index;
+	protected IntMapper<ByteString> itemMapper;
 	protected TermID [] termIds;
 	private ObjectIntHashMap<TermID> termId2Index;
 	protected int [][] term2Items;
@@ -55,13 +55,7 @@ public abstract class AbstractPValueCalculation implements IPValueCalculation
 			totalNumberOfAnnotatedTerms++;
 		}
 
-		List<ByteString> itemList = populationTermEnumerator.getGenesAsList();
-		item2Index = new ObjectIntHashMap<ByteString>(itemList.size()*3/2);
-		int itemId = 0;
-		for (ByteString item : itemList)
-		{
-			item2Index.put(item, itemId++);
-		}
+		itemMapper = IntMapper.create(populationTermEnumerator.getGenesAsList());
 
 		termIds = new TermID[totalNumberOfAnnotatedTerms];
 		term2Items = new int[totalNumberOfAnnotatedTerms][];
@@ -81,7 +75,7 @@ public abstract class AbstractPValueCalculation implements IPValueCalculation
 			int j = 0;
 			for (ByteString item : tag.totalAnnotated)
 			{
-				term2Items[i][j++] = item2Index.get(item);
+				term2Items[i][j++] = itemMapper.getIndex(item);
 			}
 
 			Arrays.sort(term2Items[i]);
@@ -139,15 +133,15 @@ public abstract class AbstractPValueCalculation implements IPValueCalculation
 		int mappedStudyItems = 0;
 		for (ByteString studyItem : studySet)
 		{
-			int index = item2Index.getIfAbsent(studyItem, Integer.MAX_VALUE);
-			if (index == Integer.MAX_VALUE)
+			int index = itemMapper.getIndex(studyItem);
+			if (index == -1)
 			{
 				/* Try synonyms etc. */
 				ItemAssociations g2a = associations.get(studyItem);
 				if (g2a != null)
-					index = item2Index.getIfAbsent(g2a.name(), Integer.MAX_VALUE);
+					index = itemMapper.getIndex(g2a.name());
 			}
-			if (index != Integer.MAX_VALUE)
+			if (index != -1)
 				studyIds[mappedStudyItems++] = index;
 		}
 
