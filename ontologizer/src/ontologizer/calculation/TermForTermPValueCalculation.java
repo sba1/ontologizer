@@ -30,14 +30,14 @@ public class TermForTermPValueCalculation extends AbstractPValueCalculation
 
 		PValue p [] = new PValue[getTotalNumberOfAnnotatedTerms()];
 
-		for (int i = 0; i < termIds.length; i++)
+		for (int i = 0; i < termMapper.getSize(); i++)
 		{
 			if (progress != null && (i % 256) == 0)
 			{
 				progress.update(i);
 			}
 
-			TermID term = termIds[i];
+			TermID term = termMapper.get(i);
 			int goidAnnotatedPopGeneCount = term2Items[i].length;
 			int popGeneCount = populationSet.getGeneCount();
 			int studyGeneCount = studySet.getGeneCount();

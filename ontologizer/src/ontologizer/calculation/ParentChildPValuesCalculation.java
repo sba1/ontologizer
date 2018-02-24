@@ -57,7 +57,7 @@ abstract class ParentChildPValuesCalculation extends AbstractPValueCalculation
 
 		PValue p [] = new PValue[getTotalNumberOfAnnotatedTerms()];
 
-		for (int i = 0; i < termIds.length; i++)
+		for (int i = 0; i < termMapper.getSize(); i++)
 		{
 			if (progress != null && (i % 256) == 0)
 			{
@@ -72,7 +72,7 @@ abstract class ParentChildPValuesCalculation extends AbstractPValueCalculation
 
 	private ParentChildGOTermProperties calculateTerm(int [] studyIds, int termIndex)
 	{
-		TermID termId = termIds[termIndex];
+		TermID termId = termMapper.get(termIndex);
 		// counts annotated to term
 		int studyTermCount = Util.commonInts(studyIds, term2Items[termIndex]);
 		int popTermCount = term2Items[termIndex].length;

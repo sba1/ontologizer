@@ -16,7 +16,6 @@ import ontologizer.statistics.IPValueCalculationProgress;
 import ontologizer.statistics.PValue;
 import ontologizer.types.ByteString;
 import sonumina.collections.IntMapper;
-import sonumina.collections.ObjectIntHashMap;
 
 public abstract class AbstractPValueCalculation implements IPValueCalculation
 {
@@ -28,8 +27,7 @@ public abstract class AbstractPValueCalculation implements IPValueCalculation
 	private int totalNumberOfAnnotatedTerms;
 
 	protected IntMapper<ByteString> itemMapper;
-	protected TermID [] termIds;
-	private ObjectIntHashMap<TermID> termId2Index;
+	protected IntMapper<TermID> termMapper;
 	protected int [][] term2Items;
 
 	public AbstractPValueCalculation(Ontology graph,
@@ -56,8 +54,8 @@ public abstract class AbstractPValueCalculation implements IPValueCalculation
 		}
 
 		itemMapper = IntMapper.create(populationTermEnumerator.getGenesAsList());
+		termMapper = IntMapper.create(graph.filterRelevant(populationTermEnumerator.getAllAnnotatedTermsAsList()));
 
-		termIds = new TermID[totalNumberOfAnnotatedTerms];
 		term2Items = new int[totalNumberOfAnnotatedTerms][];
 
 		int i = 0;
@@ -80,7 +78,6 @@ public abstract class AbstractPValueCalculation implements IPValueCalculation
 
 			Arrays.sort(term2Items[i]);
 
-			termIds[i] = term;
 			i++;
 		}
 	}
@@ -97,7 +94,7 @@ public abstract class AbstractPValueCalculation implements IPValueCalculation
 
 	public final int getNumberOfPValues()
 	{
-		return termIds.length;
+		return termMapper.getSize();
 	}
 
 	/**
@@ -168,12 +165,11 @@ public abstract class AbstractPValueCalculation implements IPValueCalculation
 	 */
 	protected final int getIndex(TermID tid)
 	{
-		if (termId2Index == null)
+		int idx = termMapper.getIndex(tid);
+		if (idx == -1)
 		{
-			termId2Index = new ObjectIntHashMap<TermID>(termIds.length);
-			for (int i = 0; i < termIds.length; i++)
-				termId2Index.put(termIds[i], i);
+			return Integer.MAX_VALUE;
 		}
-		return termId2Index.getIfAbsentPut(tid, Integer.MAX_VALUE);
+		return idx;
 	}
 }
