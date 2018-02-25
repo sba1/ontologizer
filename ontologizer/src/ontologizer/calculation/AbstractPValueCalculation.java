@@ -105,16 +105,16 @@ public abstract class AbstractPValueCalculation implements IPValueCalculation
 	 * @param progress the progress,
 	 * @return the array of p-values.
 	 */
-	protected abstract PValue [] calculatePValues(StudySet studySet, IPValueCalculationProgress progress);
+	protected abstract PValue [] calculatePValues(int [] studyIds, IPValueCalculationProgress progress);
 
 	public final PValue[] calculateRawPValues(IPValueCalculationProgress progress)
 	{
-		return calculatePValues(observedStudySet, progress);
+		return calculatePValues(getUniqueIDs(observedStudySet), progress);
 	}
 
 	public final PValue[] calculateRandomPValues(IPValueCalculationProgress progress)
 	{
-		return calculatePValues(populationSet.generateRandomStudySet(observedStudySet.getGeneCount()), progress);
+		return calculatePValues(getUniqueIDs(populationSet.generateRandomStudySet(observedStudySet.getGeneCount())), progress);
 	}
 
 

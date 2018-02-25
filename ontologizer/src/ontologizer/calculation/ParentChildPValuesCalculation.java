@@ -51,10 +51,8 @@ abstract class ParentChildPValuesCalculation extends AbstractPValueCalculation
 		slimGraph = graph.getOntlogyOfRelevantTerms().getTermIDSlimGraphView();
 	}
 
-	protected PValue [] calculatePValues(StudySet studySet, IPValueCalculationProgress progress)
+	protected PValue [] calculatePValues(int [] studyIds, IPValueCalculationProgress progress)
 	{
-		int[] studyIds = getUniqueIDs(studySet);
-
 		PValue p [] = new PValue[getTotalNumberOfAnnotatedTerms()];
 
 		for (int i = 0; i < termMapper.getSize(); i++)

@@ -24,10 +24,8 @@ public class TermForTermPValueCalculation extends AbstractPValueCalculation
 		super(graph, associations, populationSet, studySet, hyperg);
 	}
 
-	protected PValue [] calculatePValues(StudySet studySet, IPValueCalculationProgress progress)
+	protected PValue [] calculatePValues(int [] studyIds, IPValueCalculationProgress progress)
 	{
-		int[] studyIds = getUniqueIDs(studySet);
-
 		PValue p [] = new PValue[getTotalNumberOfAnnotatedTerms()];
 
 		for (int i = 0; i < termMapper.getSize(); i++)
@@ -40,7 +38,7 @@ public class TermForTermPValueCalculation extends AbstractPValueCalculation
 			TermID term = termMapper.get(i);
 			int goidAnnotatedPopGeneCount = term2Items[i].length;
 			int popGeneCount = populationSet.getGeneCount();
-			int studyGeneCount = studySet.getGeneCount();
+			int studyGeneCount = studyIds.length;
 			int goidAnnotatedStudyGeneCount = Util.commonInts(studyIds, term2Items[i]);
 
 			TermForTermGOTermProperties myP = new TermForTermGOTermProperties();
