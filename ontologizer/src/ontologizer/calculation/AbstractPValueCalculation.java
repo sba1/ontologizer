@@ -101,7 +101,7 @@ public abstract class AbstractPValueCalculation implements IPValueCalculation
 	 * Calculate the p-values for the given study set. The study set must not be the same
 	 * as the observed study set.
 	 *
-	 * @param studySet the studyset.
+	 * @param studyIds the ids of the study set.
 	 * @param progress the progress,
 	 * @return the array of p-values.
 	 */
