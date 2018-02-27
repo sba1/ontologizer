@@ -124,7 +124,7 @@ public abstract class AbstractPValueCalculation implements IPValueCalculation
 	 * @param studySet the study set
 	 * @return the unique id representation of the study set.
 	 */
-	protected int[] getUniqueIDs(StudySet studySet)
+	private int[] getUniqueIDs(StudySet studySet)
 	{
 		int [] studyIds = new int[studySet.getGeneCount()];
 		int mappedStudyItems = 0;
