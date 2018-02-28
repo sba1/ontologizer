@@ -109,12 +109,12 @@ public abstract class AbstractPValueCalculation implements IPValueCalculation
 
 	public final PValue[] calculateRawPValues(IPValueCalculationProgress progress)
 	{
-		return calculatePValues(getUniqueIDs(observedStudySet), progress);
+		return calculatePValues(getUniqueIDs(observedStudySet, itemMapper, associations), progress);
 	}
 
 	public final PValue[] calculateRandomPValues(IPValueCalculationProgress progress)
 	{
-		return calculatePValues(getUniqueIDs(populationSet.generateRandomStudySet(observedStudySet.getGeneCount())), progress);
+		return calculatePValues(getUniqueIDs(populationSet.generateRandomStudySet(observedStudySet.getGeneCount()), itemMapper, associations), progress);
 	}
 
 
@@ -122,9 +122,11 @@ public abstract class AbstractPValueCalculation implements IPValueCalculation
 	 * Get a unique id representation of the given study set.
 	 *
 	 * @param studySet the study set
+	 * @param itemMapper the mapper for getting unique integer ids.
+	 * @param associations the container for getting synonyms.
 	 * @return the unique id representation of the study set.
 	 */
-	private int[] getUniqueIDs(StudySet studySet)
+	private static int[] getUniqueIDs(StudySet studySet, IntMapper<ByteString> itemMapper, AssociationContainer associations)
 	{
 		int [] studyIds = new int[studySet.getGeneCount()];
 		int mappedStudyItems = 0;
