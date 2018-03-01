@@ -19,9 +19,9 @@ import sonumina.collections.IntMapper;
 
 public abstract class AbstractPValueCalculation implements IPValueCalculation
 {
-	protected final AssociationContainer associations;
+	private final AssociationContainer associations;
 	protected final PopulationSet populationSet;
-	protected final StudySet observedStudySet;
+	private final StudySet observedStudySet;
 	protected final Hypergeometric hyperg;
 
 	private int totalNumberOfAnnotatedTerms;
