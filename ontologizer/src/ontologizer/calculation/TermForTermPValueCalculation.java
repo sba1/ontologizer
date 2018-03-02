@@ -37,7 +37,7 @@ public class TermForTermPValueCalculation extends AbstractPValueCalculation
 
 			TermID term = termMapper.get(i);
 			int goidAnnotatedPopGeneCount = term2Items[i].length;
-			int popGeneCount = populationSet.getGeneCount();
+			int popGeneCount = itemMapper.getSize();
 			int studyGeneCount = studyIds.length;
 			int goidAnnotatedStudyGeneCount = Util.commonInts(studyIds, term2Items[i]);
 
