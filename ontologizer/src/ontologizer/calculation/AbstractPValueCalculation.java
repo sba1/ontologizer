@@ -114,6 +114,7 @@ public abstract class AbstractPValueCalculation implements IPValueCalculation
 
 	public final PValue[] calculateRandomPValues(IPValueCalculationProgress progress)
 	{
+		// TODO: Simply randomly draw integers
 		return calculatePValues(getUniqueIDs(populationSet.generateRandomStudySet(observedStudySet.getGeneCount()), itemMapper, associations), progress);
 	}
 
