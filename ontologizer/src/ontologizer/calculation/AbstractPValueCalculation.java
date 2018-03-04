@@ -2,6 +2,7 @@ package ontologizer.calculation;
 
 import java.util.Arrays;
 
+import ontologizer.association.AnnotationContext;
 import ontologizer.association.AssociationContainer;
 import ontologizer.association.ItemAssociations;
 import ontologizer.enumeration.TermAnnotations;
@@ -109,13 +110,13 @@ public abstract class AbstractPValueCalculation implements IPValueCalculation
 
 	public final PValue[] calculateRawPValues(IPValueCalculationProgress progress)
 	{
-		return calculatePValues(getUniqueIDs(observedStudySet, itemMapper, associations), progress);
+		return calculatePValues(getUniqueIDs(observedStudySet, itemMapper, associations.getMapping()), progress);
 	}
 
 	public final PValue[] calculateRandomPValues(IPValueCalculationProgress progress)
 	{
 		// TODO: Simply randomly draw integers
-		return calculatePValues(getUniqueIDs(populationSet.generateRandomStudySet(observedStudySet.getGeneCount()), itemMapper, associations), progress);
+		return calculatePValues(getUniqueIDs(populationSet.generateRandomStudySet(observedStudySet.getGeneCount()), itemMapper, associations.getMapping()), progress);
 	}
 
 
@@ -127,7 +128,7 @@ public abstract class AbstractPValueCalculation implements IPValueCalculation
 	 * @param associations the container for getting synonyms.
 	 * @return the unique id representation of the study set.
 	 */
-	private static int[] getUniqueIDs(StudySet studySet, IntMapper<ByteString> itemMapper, AssociationContainer associations)
+	private static int[] getUniqueIDs(StudySet studySet, IntMapper<ByteString> itemMapper, AnnotationContext annotationContext)
 	{
 		int [] studyIds = new int[studySet.getGeneCount()];
 		int mappedStudyItems = 0;
@@ -137,9 +138,11 @@ public abstract class AbstractPValueCalculation implements IPValueCalculation
 			if (index == -1)
 			{
 				/* Try synonyms etc. */
-				ItemAssociations g2a = associations.get(studyItem);
-				if (g2a != null)
-					index = itemMapper.getIndex(g2a.name());
+				int id = annotationContext.mapSynonym(studyItem);
+				if (id != Integer.MAX_VALUE)
+				{
+					index = itemMapper.getIndex(annotationContext.getSymbols()[id]);
+				}
 			}
 			if (index != -1)
 				studyIds[mappedStudyItems++] = index;
