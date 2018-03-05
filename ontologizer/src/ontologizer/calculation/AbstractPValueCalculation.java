@@ -110,58 +110,15 @@ public abstract class AbstractPValueCalculation implements IPValueCalculation
 
 	public final PValue[] calculateRawPValues(IPValueCalculationProgress progress)
 	{
-		return calculatePValues(getUniqueIDs(observedStudySet, itemMapper, associations.getMapping()), progress);
+		return calculatePValues(CalculationUtils.getUniqueIDs(observedStudySet, itemMapper, associations.getMapping()), progress);
 	}
 
 	public final PValue[] calculateRandomPValues(IPValueCalculationProgress progress)
 	{
 		// TODO: Simply randomly draw integers
-		return calculatePValues(getUniqueIDs(populationSet.generateRandomStudySet(observedStudySet.getGeneCount()), itemMapper, associations.getMapping()), progress);
+		return calculatePValues(CalculationUtils.getUniqueIDs(populationSet.generateRandomStudySet(observedStudySet.getGeneCount()), itemMapper, associations.getMapping()), progress);
 	}
 
-
-	/**
-	 * Get a unique id representation of the given study set.
-	 *
-	 * @param studySet the study set
-	 * @param itemMapper the mapper for getting unique integer ids.
-	 * @param associations the container for getting synonyms.
-	 * @return the unique id representation of the study set.
-	 */
-	private static int[] getUniqueIDs(StudySet studySet, IntMapper<ByteString> itemMapper, AnnotationContext annotationContext)
-	{
-		int [] studyIds = new int[studySet.getGeneCount()];
-		int mappedStudyItems = 0;
-		for (ByteString studyItem : studySet)
-		{
-			int index = itemMapper.getIndex(studyItem);
-			if (index == -1)
-			{
-				/* Try synonyms etc. */
-				int id = annotationContext.mapSynonym(studyItem);
-				if (id != Integer.MAX_VALUE)
-				{
-					index = itemMapper.getIndex(annotationContext.getSymbols()[id]);
-				}
-			}
-			if (index != -1)
-				studyIds[mappedStudyItems++] = index;
-		}
-
-		if (mappedStudyItems != studyIds.length)
-		{
-			/* This could only happen if there are items in the study set that are not in the population */
-			int [] newStudyIds = new int[mappedStudyItems];
-			for (int j = 0; j < mappedStudyItems; j++)
-			{
-				newStudyIds[j] = studyIds[j];
-			}
-			studyIds = newStudyIds;
-		}
-		/* Sort for simpler intersection finding */
-		Arrays.sort(studyIds);
-		return studyIds;
-	}
 
 	/**
 	 * Return the index of the given term.
