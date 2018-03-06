@@ -57,7 +57,7 @@ public class CalculationUtils
 	 *
 	 * @param studySet the study set
 	 * @param itemMapper the mapper for getting unique integer ids.
-	 * @param associations the container for getting synonyms.
+	 * @param annotationContext context of the annotations for synonyms.
 	 * @return the unique id representation of the study set.
 	 */
 	public static int[] getUniqueIDs(StudySet studySet, IntMapper<ByteString> itemMapper, AnnotationContext annotationContext)
