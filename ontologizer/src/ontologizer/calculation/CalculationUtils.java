@@ -55,14 +55,15 @@ public class CalculationUtils
 	/**
 	 * Get a unique id representation of the given study set.
 	 *
-	 * @param studySet the study set
+	 * @param studySet the study set as an iterable
+	 * @param size the number of elements in the iterable
 	 * @param itemMapper the mapper for getting unique integer ids.
 	 * @param annotationContext context of the annotations for synonyms.
 	 * @return the unique id representation of the study set.
 	 */
-	public static int[] getUniqueIDs(StudySet studySet, IntMapper<ByteString> itemMapper, AnnotationContext annotationContext)
+	public static int[] getUniqueIDs(Iterable<ByteString> studySet, int size, IntMapper<ByteString> itemMapper, AnnotationContext annotationContext)
 	{
-		int [] studyIds = new int[studySet.getGeneCount()];
+		int [] studyIds = new int[size];
 		int mappedStudyItems = 0;
 		for (ByteString studyItem : studySet)
 		{
@@ -95,4 +96,16 @@ public class CalculationUtils
 		return studyIds;
 	}
 
+	/**
+	 * Get a unique id representation of the given study set.
+	 *
+	 * @param studySet the study set
+	 * @param itemMapper the mapper for getting unique integer ids.
+	 * @param annotationContext context of the annotations for synonyms.
+	 * @return the unique id representation of the study set.
+	 */
+	public static int[] getUniqueIDs(StudySet studySet, IntMapper<ByteString> itemMapper, AnnotationContext annotationContext)
+	{
+		return getUniqueIDs(studySet, studySet.getGeneCount(), itemMapper, annotationContext);
+	}
 }
