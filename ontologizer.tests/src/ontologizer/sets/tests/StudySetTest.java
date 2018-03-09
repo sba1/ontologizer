@@ -45,7 +45,6 @@ import ontologizer.set.StudySet;
 import ontologizer.statistics.None;
 import ontologizer.types.ByteString;
 import sonumina.math.graph.DirectedGraph;
-import sonumina.math.graph.Edge;
 
 class InternalDatafiles extends Datafiles
 {
