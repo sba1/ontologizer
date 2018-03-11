@@ -10,6 +10,8 @@ import ontologizer.set.StudySet;
 import ontologizer.types.ByteString;
 import sonumina.collections.IntMapper;
 
+import static ontologizer.types.ByteString.b;
+
 public class CalculationUtilsTest
 {
 	@Test
@@ -19,11 +21,11 @@ public class CalculationUtilsTest
 		AnnotationContext annotationContext = idf.assoc.getMapping();
 
 		StudySet studySet = new StudySet();
-		studySet.addGene(new ByteString("item1"), "");
-		studySet.addGene(new ByteString("item2"), "");
-		studySet.addGene(new ByteString("item3"), "");
-		studySet.addGene(new ByteString("item4"), "");
-		studySet.addGene(new ByteString("item5"), "");
+		studySet.addGene(b("item1"), "");
+		studySet.addGene(b("item2"), "");
+		studySet.addGene(b("item3"), "");
+		studySet.addGene(b("item4"), "");
+		studySet.addGene(b("item5"), "");
 
 		IntMapper<ByteString> mapper = IntMapper.create(studySet, studySet.getGeneCount());
 
