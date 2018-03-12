@@ -1,6 +1,7 @@
 package ontologizer.sets.tests;
 
 import static ontologizer.types.ByteString.EMPTY;
+import static ontologizer.types.ByteString.b;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
@@ -93,21 +94,21 @@ class InternalDatafiles extends Datafiles
 			tids.add(term.getID());
 
 		ArrayList<Association> associations = new ArrayList<Association>();
-		associations.add(new Association(new ByteString("item1"),"GO:0000004"));
-		associations.add(new Association(new ByteString("item1"),"GO:0000011"));
+		associations.add(new Association(b("item1"),"GO:0000004"));
+		associations.add(new Association(b("item1"),"GO:0000011"));
 
-		associations.add(new Association(new ByteString("item2"),"GO:0000010"));
-		associations.add(new Association(new ByteString("item2"),"GO:0000013"));
+		associations.add(new Association(b("item2"),"GO:0000010"));
+		associations.add(new Association(b("item2"),"GO:0000013"));
 
-		associations.add(new Association(new ByteString("item3"),"GO:0000007"));
-		associations.add(new Association(new ByteString("item3"),"GO:0000015"));
+		associations.add(new Association(b("item3"),"GO:0000007"));
+		associations.add(new Association(b("item3"),"GO:0000015"));
 
-		associations.add(new Association(new ByteString("item4"),"GO:0000012"));
-		associations.add(new Association(new ByteString("item4"),"GO:0000013"));
-		associations.add(new Association(new ByteString("item4"),"GO:0000014"));
+		associations.add(new Association(b("item4"),"GO:0000012"));
+		associations.add(new Association(b("item4"),"GO:0000013"));
+		associations.add(new Association(b("item4"),"GO:0000014"));
 
-		associations.add(new Association(new ByteString("item5"),"GO:0000006"));
-		associations.add(new Association(new ByteString("item5"),"GO:0000014"));
+		associations.add(new Association(b("item5"),"GO:0000006"));
+		associations.add(new Association(b("item5"),"GO:0000014"));
 
 		/* Associations */
 		AnnotationContext mapping = new AnnotationContext(AnnotationUtil.getSymbols(associations), new HashMap<ByteString,ByteString>(), new HashMap<ByteString,ByteString>());
@@ -132,11 +133,11 @@ class InternalDatafiles extends Datafiles
 			}
 		}
 
-		graphWithItems.addVertex(new ByteString("item1"));
-		graphWithItems.addVertex(new ByteString("item2"));
-		graphWithItems.addVertex(new ByteString("item3"));
-		graphWithItems.addVertex(new ByteString("item4"));
-		graphWithItems.addVertex(new ByteString("item5"));
+		graphWithItems.addVertex(b("item1"));
+		graphWithItems.addVertex(b("item2"));
+		graphWithItems.addVertex(b("item3"));
+		graphWithItems.addVertex(b("item4"));
+		graphWithItems.addVertex(b("item5"));
 
 		for (ItemAssociations g2a : assoc)
 			for (TermID tid : g2a.getAssociations())
@@ -184,12 +185,12 @@ public class StudySetTest
 		Ontology o = Ontology.create(container);
 
 		ArrayList<Association> associations = new ArrayList<Association>();
-		associations.add(new Association(new ByteString("Test"), "TEST:0000000"));
+		associations.add(new Association(b("Test"), "TEST:0000000"));
 
 		AnnotationContext mapping = new AnnotationContext(AnnotationUtil.getSymbols(associations), new HashMap<ByteString,ByteString>(), new HashMap<ByteString,ByteString>());
 		AssociationContainer assoc = new AssociationContainer(associations, mapping);
 		StudySet study = new StudySet();
-		study.addGene(new ByteString("Test"), "");
+		study.addGene(b("Test"), "");
 
 		try
 		{
@@ -206,18 +207,18 @@ public class StudySetTest
 		InternalDatafiles idf = new InternalDatafiles();
 
 		StudySet studySet = new StudySet();
-		studySet.addGene(new ByteString("item1"), "");
-		studySet.addGene(new ByteString("item2"), "");
-		studySet.addGene(new ByteString("item3"), "");
-		studySet.addGene(new ByteString("item4"), "");
-		studySet.addGene(new ByteString("item5"), "");
+		studySet.addGene(b("item1"), "");
+		studySet.addGene(b("item2"), "");
+		studySet.addGene(b("item3"), "");
+		studySet.addGene(b("item4"), "");
+		studySet.addGene(b("item5"), "");
 
 		PopulationSet populationSet = new PopulationSet();
-		populationSet.addGene(new ByteString("item1"), "");
-		populationSet.addGene(new ByteString("item2"), "");
-		populationSet.addGene(new ByteString("item3"), "");
-		populationSet.addGene(new ByteString("item4"), "");
-		populationSet.addGene(new ByteString("item5"), "");
+		populationSet.addGene(b("item1"), "");
+		populationSet.addGene(b("item2"), "");
+		populationSet.addGene(b("item3"), "");
+		populationSet.addGene(b("item4"), "");
+		populationSet.addGene(b("item5"), "");
 
 
 		TermEnumerator gote = populationSet.enumerateTerms(idf.graph, idf.assoc);
