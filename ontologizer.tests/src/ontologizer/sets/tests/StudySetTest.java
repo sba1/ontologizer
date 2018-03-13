@@ -111,7 +111,13 @@ class InternalDatafiles extends Datafiles
 		associations.add(new Association(b("item5"),"GO:0000014"));
 
 		/* Associations */
-		AnnotationContext mapping = new AnnotationContext(AnnotationUtil.getSymbols(associations), new HashMap<ByteString,ByteString>(), new HashMap<ByteString,ByteString>());
+		HashMap<ByteString, ByteString> synonym2Item = new HashMap<ByteString, ByteString>();
+		synonym2Item.put(b("gene1"), b("item1"));
+		synonym2Item.put(b("gene2"), b("item2"));
+		synonym2Item.put(b("gene3"), b("item3"));
+		synonym2Item.put(b("gene4"), b("item4"));
+		synonym2Item.put(b("gene5"), b("item5"));
+		AnnotationContext mapping = new AnnotationContext(AnnotationUtil.getSymbols(associations), synonym2Item, new HashMap<ByteString,ByteString>());
 		assoc = new AssociationContainer(associations, mapping);
 
 		OntologyDotWriter.writeDOT(graph, new File("example.dot"), null, tids, new AbstractTermDotAttributesProvider() {
