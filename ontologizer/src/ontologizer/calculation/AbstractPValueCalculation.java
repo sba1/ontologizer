@@ -2,9 +2,7 @@ package ontologizer.calculation;
 
 import java.util.Arrays;
 
-import ontologizer.association.AnnotationContext;
 import ontologizer.association.AssociationContainer;
-import ontologizer.association.ItemAssociations;
 import ontologizer.enumeration.TermAnnotations;
 import ontologizer.enumeration.TermEnumerator;
 import ontologizer.ontology.Ontology;
