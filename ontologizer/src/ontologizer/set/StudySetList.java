@@ -114,6 +114,14 @@ public class StudySetList implements Iterable<StudySet>
 	}
 
 	/**
+	 * @return the name of the study set
+	 */
+	public String getName()
+	{
+		return name;
+	}
+
+	/**
 	 * Adds a StudySet to the list
 	 *
 	 * @param study The StudySet to be added
