@@ -559,7 +559,7 @@ public class Bayes2GOCalculation implements ICalculation, ISlimCalculation, IPro
 			{
 				for (int t = 0; t < numTerms; t++)
 				{
-					res[t] = fixedAlphaBetaScore.termActivationCounts[t] / fixedAlphaBetaScore.numRecords;
+					res[t] = (double)fixedAlphaBetaScore.termActivationCounts[t] / fixedAlphaBetaScore.numRecords;
 				}
 			}
 
