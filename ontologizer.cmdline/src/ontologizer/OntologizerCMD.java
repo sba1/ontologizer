@@ -140,6 +140,7 @@ public class OntologizerCMD
 					System.exit(-1);
 				}
 			}
+			arguments.mcmcSteps = GlobalPreferences.getMcmcSteps();
 
 			if (cmd.hasOption(OntologizerOptions.MAX_ALPHA))
 			{

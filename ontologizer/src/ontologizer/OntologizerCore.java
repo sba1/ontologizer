@@ -77,6 +77,11 @@ public class OntologizerCore
 		public int resamplingSteps;
 
 		/**
+		 * Number of mcmc steps to be used when running a mcmc-based calculation.
+		 */
+		public int mcmcSteps;
+
+		/**
 		 * Tolerance in percent for Westfall-Young-Approximate
 		 */
 		public int sizeTolerance;
@@ -138,7 +143,10 @@ public class OntologizerCore
 			b2g.setAlpha(B2GParam.Type.MCMC);
 			b2g.setBeta(B2GParam.Type.MCMC);
 			b2g.setExpectedNumber(B2GParam.Type.MCMC);
-			b2g.setMcmcSteps(1000000);
+			if (args.mcmcSteps >= 100000)
+			{
+				b2g.setMcmcSteps(args.mcmcSteps);
+			}
 		}
 
 		/* Set the desired test correction or set the default */
