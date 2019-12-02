@@ -97,7 +97,13 @@ public class OntologizerCore
 
 		/** Specifies the filter file */
 		public String filterFile;
-	};
+
+		/** The maximal value alpha could have in the MGSA algorithm */
+		public double upperAlpha;
+
+		/** The maximal value alpha could have in the MGSA algorithm */
+		public double upperBeta;
+};
 
 	/** Contains all available GOTerms */
 	private TermContainer goTerms;
@@ -142,6 +148,8 @@ public class OntologizerCore
 			Bayes2GOCalculation b2g = (Bayes2GOCalculation) calculation;
 			b2g.setAlpha(B2GParam.Type.MCMC);
 			b2g.setBeta(B2GParam.Type.MCMC);
+			b2g.setAlphaBounds(0, args.upperAlpha);
+			b2g.setBetaBounds(0, args.upperBeta);
 			b2g.setExpectedNumber(B2GParam.Type.MCMC);
 			if (args.mcmcSteps >= 100000)
 			{

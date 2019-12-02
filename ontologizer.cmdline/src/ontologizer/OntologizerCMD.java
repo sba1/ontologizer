@@ -160,6 +160,7 @@ public class OntologizerCMD
 					System.exit(-1);
 				}
 			}
+			arguments.upperAlpha = GlobalPreferences.getUpperAlpha();
 
 			if (cmd.hasOption(OntologizerOptions.MAX_BETA))
 			{
@@ -179,6 +180,7 @@ public class OntologizerCMD
 					System.exit(-1);
 				}
 			}
+			arguments.upperBeta = GlobalPreferences.getUpperBeta();
 
 			/* Prepare the output directory name */
 			String outputDirectoryName = cmd.getOptionValue('o', ".");
